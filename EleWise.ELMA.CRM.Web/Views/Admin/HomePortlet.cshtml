@@ -1,0 +1,52 @@
+﻿@using EleWise.ELMA.CRM.Web
+@using EleWise.ELMA.CRM.Web.Extensions
+@using EleWise.ELMA.ComponentModel
+@inherits BaseViewPage<EleWise.ELMA.CRM.Web.Portlets.CRMHomePortletPersonalization>
+@{
+    var links = ComponentManager.Current.GetExtensionPoints<ICrmModuleSettingsItemProvider>().SelectMany(p => p.GetItems(Html.Url())).OrderBy(l => l.Order).ToList();
+
+    var categories = links.Where(x => !String.IsNullOrEmpty(x.Category)).Select(x => x.Category).Distinct();
+}
+<table style="width: 100%;font-size: 15px;">
+    <tr>
+        <td>
+            <ul class="portletList" id="crmHomePortletList">
+                <div class="column">
+                    @foreach (var elem in links.Where(x => String.IsNullOrEmpty(x.Category)))
+                    {
+                        <li>
+                            <a href="@elem.Url" tooltiptext="@elem.Description">@elem.Text</a>
+                        </li>
+                    }
+                </div>
+            </ul>
+        </td>
+    </tr>
+</table>
+@foreach (var category in categories.Where(c => links.Any(l => !String.IsNullOrEmpty(l.Category) && l.Category.Equals(c))))
+{
+    <table style="width: 100%;font-size: 15px;">
+        <tr>
+            <td colspan="2">
+                <h3 class="bold_text base-element-margin-top">@category</h3>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <ul class="portletList">
+                    <div class="column">
+                        @{
+                            string category1 = category;
+                            foreach (var elem in links.Where(x => !String.IsNullOrEmpty(x.Category) && x.Category.Equals(category1)))
+                            {
+                                <li>
+                                    <a href="@elem.Url" tooltiptext="@elem.Description">@elem.Text</a>
+                                </li>
+                            }
+                        }
+                    </div>
+                </ul>
+            </td>
+        </tr>
+    </table>
+}

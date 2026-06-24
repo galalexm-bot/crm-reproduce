@@ -1,0 +1,171 @@
+﻿@model MarketingStatisticModel
+
+@using EleWise.ELMA
+@using EleWise.ELMA.Common.Models
+@using EleWise.ELMA.CRM.Enums
+@using EleWise.ELMA.CRM.Models
+@using EleWise.ELMA.CRM.Web
+@using EleWise.ELMA.CRM.Web.Components
+@using EleWise.ELMA.CRM.Web.Models
+
+@{
+    const string gridId = "MarketingStatisticGrid";
+
+    Model.PeriodModelList.Remove(Model.PeriodModelList[0]);
+}
+
+@helper RenderTd(long count, OnePeriodStatisticModel period, string type, string status)
+{
+    <td>
+    @if (count != 0)
+    {
+        var isLead = type == "Lead";
+        var leadRouteValues = new RouteValueDictionary
+            {
+                {"area", RouteProvider.AreaName}, 
+                {"FilterId", 0},
+                {"Filter.RelativeCreationDate.IsRelative", false},
+                {"Filter.RelativeCreationDate.DateTimeRange.From", period.Period.From.Value.ToShortDateString()},
+                {"Filter.RelativeCreationDate.DateTimeRange.To", period.Period.To.Value.ToShortDateString()},
+                {"Filter.SummaryLeadStatus", status}
+            };
+        var saleRouteValues = new RouteValueDictionary
+            {
+                {"area", RouteProvider.AreaName}, 
+                {"FilterId", 0},
+                {"Filter.CreationDate.From", period.Period.From.Value.ToShortDateString()},
+                {"Filter.CreationDate.To", period.Period.To.Value.ToShortDateString()},
+                {"Filter.SaleStatus", status}
+            };
+
+
+        var link = isLead
+            ? Html.ActionLink(count.ToString(), "Index", "Lead", leadRouteValues, new Dictionary<string, object> { {"title", "Возможности"} })
+            : Html.ActionLink(count.ToString(), "Index", "Sale", saleRouteValues, new Dictionary<string, object> { { "title", "Сделки" } });
+        
+        <span>@link</span>
+        if (period.SumPayment > 0)
+        {
+            @MvcHtmlString.Create(string.Format(" / <span title='{1}'>{0}</span>", ShowMoneyHelper(period.SumPayment / count), isLead ? SR.T("Цена одной возможности за период") : SR.T("Цена одной сделки за период")))
+        }
+    }
+    </td>
+}
+
+@helper ShowMoneyHelper(double value)
+{
+    @Html.HtmlHelperFunc((Money)(value), helper => helper.Display(x => x))
+}
+
+<div id="@gridId">
+    <table>
+        <thead>
+            <tr>
+                <td></td>
+                @foreach (var item in Model.PeriodModelList)
+                {
+                    <td>
+                        <div class="lead-date">
+                            @MvcHtmlString.Create(MarketingHelper.HeaderTableDateText(Model.Mode, item.Period.From.Value, item.Period.To.Value.AddDays(-1)))
+                        </div>
+                        
+                        @if (item.SumPayment != 0)
+                        {
+                            <br><span title="@SR.T("Бюджет за период")">@ShowMoneyHelper(item.SumPayment)</span>
+                        }
+                    </td>
+                }
+            </tr>
+        </thead>
+
+        <tbody>
+            <tr>
+                <td>@SR.T("Всего")</td>
+                @foreach (var item in Model.PeriodModelList)
+                {
+                    @RenderTd(item.LeadCount.AllCount, item, "Lead", "")
+                }
+            </tr>
+            <tr>
+                <td>@SR.T("Новый")</td>
+                @foreach (var item in Model.PeriodModelList)
+                {
+                    @RenderTd(item.LeadCount.NewCount, item, "Lead", Enum.GetName(typeof(SummaryLeadStatus), SummaryLeadStatus.New))
+                }
+            </tr>
+            <tr>
+                <td>@SR.T("В работе")</td>
+                @foreach (var item in Model.PeriodModelList)
+                {
+                    @RenderTd(item.LeadCount.InHandCount, item, "Lead", Enum.GetName(typeof(SummaryLeadStatus), SummaryLeadStatus.InHand))
+                }
+            </tr>
+            <tr>
+                <td>@SR.T("Закрыто")</td>
+                @foreach (var item in Model.PeriodModelList)
+                {
+                    @RenderTd(item.LeadCount.QualifiedCount + item.LeadCount.UnqualifiedCount, item, "Lead", Enum.GetName(typeof(SummaryLeadStatus), SummaryLeadStatus.Closed))
+                }
+            </tr>
+            <tr>
+                <td>
+                    <span class="indent-first">@SR.T("Квалифицированный (сделки)")</span>
+                </td>
+                @foreach (var item in Model.PeriodModelList)
+                {
+                    @RenderTd(item.LeadCount.QualifiedCount, item, "Lead", Enum.GetName(typeof(SummaryLeadStatus), SummaryLeadStatus.Qualified))
+                }
+            </tr>
+            <tr>
+                <td>
+                    <span class="indent-second">@SR.T("Успех")</span>
+                </td>
+                @foreach (var item in Model.PeriodModelList)
+                {
+                    @RenderTd(item.LeadCount.SalePositive, item, "Sale", Enum.GetName(typeof(SaleStatus), SaleStatus.PositiveClosed))
+                }
+            </tr>
+            <tr>
+                <td>
+                    <span class="indent-second">@SR.T("Текущие")</span>
+                </td>
+                @foreach (var item in Model.PeriodModelList)
+                {
+                    @RenderTd(item.LeadCount.SaleCurrent, item, "Sale", Enum.GetName(typeof(SaleStatus), SaleStatus.Active))
+                }
+            </tr>
+            <tr>
+                <td>
+                    <span class="indent-second">@SR.T("Неуспех")</span>
+                </td>
+                @foreach (var item in Model.PeriodModelList)
+                {
+                    @RenderTd(item.LeadCount.SaleNegative, item, "Sale", Enum.GetName(typeof(SaleStatus), SaleStatus.NegativeClosed))
+                }
+            </tr>
+            <tr>
+                <td>
+                    <span class="indent-first">@SR.T("Неквалифицированный")</span>
+                </td>
+                @foreach (var item in Model.PeriodModelList)
+                {
+                    @RenderTd(item.LeadCount.UnqualifiedCount, item, "Lead", Enum.GetName(typeof(SummaryLeadStatus), SummaryLeadStatus.Unqualified))
+                }
+            </tr>
+            <tr>
+                <td>@SR.T("Дубль")</td>
+                @foreach (var item in Model.PeriodModelList)
+                {
+                    @RenderTd(item.LeadCount.DublicateCount, item, "Lead", Enum.GetName(typeof(SummaryLeadStatus), SummaryLeadStatus.Dublicate))
+                }
+            </tr>
+            <tr>
+                <td>@SR.T("Удалено")</td>
+                @foreach (var item in Model.PeriodModelList)
+                {
+                    @RenderTd(item.LeadCount.DeletedCount, item, "Lead", Enum.GetName(typeof(SummaryLeadStatus), SummaryLeadStatus.Deleted))
+                }
+            </tr>
+        </tbody>
+    </table>
+</div>

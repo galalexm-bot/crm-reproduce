@@ -1,0 +1,67 @@
+﻿@using EleWise.ELMA.CRM.Web
+@using EleWise.ELMA.Services
+@using EleWise.ELMA.Web.Content
+@using EleWise.ELMA
+@model EleWise.ELMA.CRM.Web.Models.CRMPermissionModel
+
+@{
+    var enableInherit = string.Format("enableInherit{0}", Model.Id);
+    var disableInherit = string.Format("disableInherit{0}", Model.Id);
+    var inheritPermissionshandler = "return " + (Model.InheritPermissions ? disableInherit + "()" : enableInherit + "()") + ";";
+    var containerId = string.Format("Relationshippermissionscontainer{0}", Model.Id);
+    var enableDisableInheritUrl = string.Format("enableDisableInheritUrl{0}", Model.Id);
+}
+@if (Model.LockEditPermission)
+{
+    <div class="base-element-margin-bottom">
+        @Html.InfoPanel(SR.T("Производится перерасчет разрешений. Изменение заблокировано. Пожалуйста попробуйте позже."))
+    </div>
+}
+<div id="@containerId" class="permission-settings-list">
+    
+    @if (Model.InheritAvailable && !Model.LockEditPermission)
+    {
+        <div class="base-element-margin-bottom">
+            @(Html.ModernCheckBox(false)
+                  .Name("inheritPermissions")
+                  .Checked(Model.InheritPermissions)
+                  .LabelText(SR.T("Наследовать права родительского объекта"))
+                  .Attributes(a => { a.onclick = inheritPermissionshandler; a["onkeydown"] = inheritPermissionshandler; }))
+        </div>
+    }
+
+    @if (Model.InheritPermissionsModel != null)
+    {
+        <h3 class="permission-settings-list-item-header">@SR.T("Права унаследованные из родительского объекта")</h3>
+        @Html.Partial("~/Modules/EleWise.ELMA.BPM.Web.Security/Views/PermissionManagment/EntityDependedPermissionSettings.cshtml", Model.InheritPermissionsModel)
+        <h3 class="permission-settings-list-item-header">@SR.T("Дополнительные права")</h3>
+    }
+
+    @Html.Partial("~/Modules/EleWise.ELMA.BPM.Web.Security/Views/PermissionManagment/EntityDependedPermissionSettings.cshtml", Model.AdditionalPermissionsModel)
+</div>
+
+<script language="javascript" type="text/javascript">
+        var @(enableDisableInheritUrl) = '@Url.Action("EnableInheritPermission", "Relationship", new { area = RouteProvider.AreaName, id = Model.Id })';
+        function @(enableInherit)() {
+            jConfirm('@SR.T("Будут добавлены разрешения родительского объекта. Продолжить?")', '@SR.T("Подтверждение")', function (r) {
+                if (r) {
+                    elma.openPleaseWait(true);
+                    jQuery('#@(containerId)').closest('div').load(@(enableDisableInheritUrl), { enable: 'true' }, function () {
+                        elma.closePleaseWait(true);
+                    });
+                }
+            });
+            return false;
+        }
+        function @(disableInherit)() {
+            jConfirm('@SR.T("Права родительского объекта не будут учитываться и будут добавлены в качестве явных разрешений. Продолжить?")', '@SR.T("Подтверждение")', function(r) {
+                if(r) {
+                    elma.openPleaseWait(true);
+                    jQuery('#@(containerId)').closest('div').load(@(enableDisableInheritUrl), { enable: 'false' }, function () {
+                        elma.closePleaseWait(true);
+                    });
+                }
+            });
+            return false;
+        }
+</script>

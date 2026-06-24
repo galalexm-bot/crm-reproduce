@@ -1,0 +1,22 @@
+﻿@model IMarketingBase
+
+@using EleWise.ELMA
+@using EleWise.ELMA.CRM.Models
+@using EleWise.ELMA.CRM.Web
+
+@{
+    Html.Header(SR.T("Редактирование параметров бюджета"));
+
+    var cancelUrl = Url.Action("Details", "MarketingActivity", new { area = CRMAreaRegistration.AREA_NAME, id = Model.Id });
+
+    Html.Toolbar().Group("toolbar-group-1")
+        .ToolbarSubmit(SR.Save, "#save.svg", "toolbar-action-Save")
+        .ToolbarLink(SR.Cancel, "#close_outline.svg", cancelUrl, "toolbar-action-Cancel");
+}
+
+<div class="general-form-container">
+    @using (Html.ElmaForm(routeValues: new { action = "BudgetEdit", controller = "MarketingActivity", area = CRMAreaRegistration.AREA_NAME }))
+    {
+        @Html.Partial("BudgetForm")
+    }
+</div>

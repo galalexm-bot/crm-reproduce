@@ -1,0 +1,20 @@
+﻿@using EleWise.ELMA.CRM.Web.Models
+@using EleWise.ELMA.Extensions
+@using EleWise.ELMA.Model.Views
+@using EleWise.ELMA.BPM.Web.Common.Extensions
+@using EleWise.ELMA.BPM.Web.Common.Models
+@using EleWise.ELMA
+@inherits EleWise.ELMA.Web.Mvc.Views.ViewItem.ViewItemControl<PropertyValueViewItem, RelationshipModel, DateTime>
+
+@{
+    var clientDateTime = Model.ToClientDateTime();
+}
+@if (OriginalModel is RelationshipMeetingModel && ((RelationshipMeetingModel)OriginalModel).Entity.TimeNotSet)
+{
+    @clientDateTime.ToString("d")
+    @(" (" + SR.T("точное время окончания будет указано позднее") + ")")
+}
+else
+{
+    @clientDateTime.ToString(clientDateTime.IsEndDamperTime() ? "g" : "d")
+}

@@ -1,0 +1,222 @@
+﻿@model MarketingStatisticModel
+
+@using EleWise.ELMA
+@using EleWise.ELMA.BPM.Web.Common.Models
+@using EleWise.ELMA.CRM.Web
+@using EleWise.ELMA.CRM.Web.Menu
+@using EleWise.ELMA.CRM.Web.Models
+@using EleWise.ELMA.Helpers
+@using EleWise.ELMA.Model.Types.Settings
+@using EleWise.ELMA.Web.Mvc.Html.FilterSearchForm
+
+@{
+    var header = SR.T("Статистика");
+    Html.Title(header);
+
+    const string gridId = "MarketingStatisticGrid";
+    
+    var currentDateTimeFormat = DateTimeFormatHelper.GetCurrentFullFormat();
+    var filterModel = new FilterModel();
+    var builder = new FilterModelBuilder(filterModel);
+}
+
+@(Html.Toolbar().Group("marketing-statistic-main")
+    .ToolbarButton(new ActionToolbarItem("marketing-statistic-mode")
+    {
+        Text = SR.T("Период"),
+        IconUrl = "#period.svg",
+        Items = new ActionItemList
+        {
+            new ActionToolbarItem("mode-month")
+            {
+                Click = "changeViewMode('Month')",
+                Text = SR.T("Месяц")
+            },
+            new ActionToolbarItem("mode-week")
+            {
+                Click = "changeViewMode('Week')",
+                Text = SR.T("Неделя")
+            },
+            new ActionToolbarItem("mode-day")
+            {
+                Click = "changeViewMode('Day')",
+                Text = SR.T("День")
+            }
+        }
+    }))
+
+@helper NavigationCalendar()
+{
+    var textPeriod = HeaderDateText(Model.Mode, Model.PeriodList[1].From.Value, Model.PeriodList[Model.PeriodList.Count - 1].To.Value.AddDays(-1));
+    <div style="float: right;">
+        <table>
+            <tr>
+                <td class="td_calendar_navigator">
+                    @Html.ImageButton("#arrow_left.svg", "", "updateDynamicTable(-1);",
+                                new { @class = "fc-button calendar_navigator svg-16-size" })
+                </td>
+                <td class="td_calendar_navigator">
+                    <div style="display: none; z-index: 2;">
+                        @Html.Editor(m => m.CurrentDate, a =>
+                        {
+                            a.Html.onchange = "updateDate";
+                            a.TypeSettings = new DateTimeSettings { ShowTime = false };
+                        })
+                    </div>
+                    @Html.ImageLink("#calendar.svg", "", "javascript:toggleMarketingCalendar(this);", new { style = "padding-right: 5px" })
+                </td>
+                <td class="td_calendar_navigator">
+                    <span class="page_header_title">@textPeriod</span>
+                </td>
+                <td class='td_calendar_navigator'>
+                    @Html.ImageButton("#arrow_right.svg", "", "updateDynamicTable(1);",
+                                new { @class = "fc-button calendar_navigator svg-16-size" })
+                </td>
+            </tr>
+        </table>
+    </div>
+}
+
+@functions {
+    string HeaderDateText(MarketingPeriodEnum mode, DateTime date1, DateTime date2)
+    {
+        switch (mode)
+        {
+            case MarketingPeriodEnum.Day:
+            case MarketingPeriodEnum.Week:
+                if (date1.Year != date2.Year)
+                {
+                    return SR.CalendarDMYDMY(date1, date2);
+                }
+                if (date1.Month != date2.Month)
+                {
+                    return SR.CalendarDMDMY(date1, date2);
+                }
+                return SR.T("{0:dd} - {1:d MMMM yyyy} г.", date1, date2);
+            case MarketingPeriodEnum.Month:
+                return SR.T("{0:MMMM}", date1) + (date2.Year != date1.Year ? SR.T(" {0:yyyy} г.", date1) : "") + " - " + SR.YearMonth(date2);
+        }
+        return "";
+    }
+}   
+
+@helper SimpleSearchTr(HtmlHelper<FilterModel> html, string hdr)
+{
+    @Html.FilterSearchForm().FastSearchBoxFor("").Enabled(false).IsShortSearch(true).ActionButtons(a =>
+    {
+        a.Add(new FastSearchFilterTreeButton(hdr, Url.Action("Index") + "?FilterId=")
+        {
+            OnClick = string.Format("openPopoverWindow('{0}', this);",
+            FastSearchFilterTreeButton.GetFilterTreeId(CRMMenuItems.MARKETING_ACTIVITIES_MENU)),
+        });
+    });
+}
+
+@helper HeaderContent(HtmlHelper<FilterModel> html, string hdr)
+{
+    <span class="page_header_title">
+        @hdr
+        @NavigationCalendar()
+    </span>
+}
+
+@Html.Hidden("CurrentDate", Model.CurrentDate.ToShortDateString())
+@Html.HiddenFor(m => m.Mode)
+
+@Html.Partial("Filter/FilterModel", builder
+    .FilterMenuItemCode(CRMMenuItems.MARKETING_ACTIVITIES_MENU)
+    .HeaderContent(html => HeaderContent(html, header))
+    .SimpleSearchTr(html => SimpleSearchTr(html, header))
+    .Model)
+
+@Html.Partial("MarketingStatistic/MarketingStatisticGrid")
+
+<script type="text/javascript">
+    function updateDate(e) {
+        var date = $.telerik.datetime.format(e.date, jQuery.telerik.cultureInfo.shortDate);
+        var mode = $("#Mode").val();
+
+        updateTitleMarketing(mode, date);
+        reloadGrid(date, mode);
+    }
+
+    function updateDynamicTable(count) {
+        var date = $.telerik.datetime.parse({ value: $("#CurrentDate").val(), format: '@currentDateTimeFormat' }).value;
+        var mode = $("#Mode").val();
+        if (mode == '@MarketingPeriodEnum.Month') {
+            date.addMonths(count);
+        }
+        else if (mode == '@MarketingPeriodEnum.Week') {
+            date.addDays(count * 7);
+        }
+        else if (mode == '@MarketingPeriodEnum.Day') {
+            date.addDays(count);
+        }
+        var dateString = $.telerik.datetime.format(date, jQuery.telerik.cultureInfo.shortDate);
+        updateTitleMarketing(mode, dateString);
+        reloadGrid(dateString, mode);
+    }
+
+    function updateTitleMarketing(mode, currentDate) {
+        var date = $.telerik.datetime.parse({ value: currentDate, format: '@currentDateTimeFormat' }).value;
+        var date1, date2, format;
+        switch (mode) {
+        case "@MarketingPeriodEnum.Month":
+            date1 = new Date(date.getFullYear(), date.getMonth(), 1).addMonths(-5);
+            date2 = new Date(date.getFullYear(), date.getMonth(), 1).addMonths(1).addDays(-1);
+            format = "MMM[ yyyy]{ '&ndash;'[ MMM] yyyy}";
+            break;
+        case "@MarketingPeriodEnum.Week":
+            var firstWeek = new Date(date.setDate(date.getDate() - date.getDay() + (date.getDay() == 0 ? -6 : 1)));
+            date1 = new Date(firstWeek).addDays(-35);
+            date2 = new Date(firstWeek).addDays(6);
+            format = "d MMM[ yyyy]{ '&ndash;' d[ MMM] yyyy}";
+            break;
+        case "@MarketingPeriodEnum.Day":
+            date1 = new Date(date).addDays(-13);
+            date2 = new Date(date);
+            format = "d[ MMM][ yyyy]{ '&ndash;' d MMM yyyy}";
+            break;
+        }
+        $(".td_calendar_navigator .page_header_title").html(Date.dateTimePickerTitleFormatDates(date1, date2, format));
+    }
+
+    function changeViewMode(mode) {
+        elma.closeAllMenu();
+        if (mode == $("#Mode").val())
+            return;
+
+        var date = $("#CurrentDate").val();
+        updateTitleMarketing(mode, date);
+        reloadGrid(date, mode);
+    }
+
+    function reloadGrid(date, mode) {
+        elma.openPleaseWait(true);
+        $.ajax({
+            type: 'POST',
+            url: '@Url.Action("MarketingStatisticGrid", "MarketingActivity", new { area = CRMAreaRegistration.AREA_NAME })?date=' + date + '&mode=' + mode,
+            error: function () {
+                elma.closePleaseWait(true);
+            },
+            success: function (data) {
+                if (data) {
+                    $("#@gridId").html(data);
+                    $("#CurrentDate").val(date);
+                    $("#Mode").val(mode);
+                }
+                elma.closePleaseWait(true);
+            }
+        });
+    }
+
+    function toggleMarketingCalendar(obj) {
+        if ($('#CurrentDate_date').data('tDatePicker').dateView.isOpened()) {
+            $('#CurrentDate_date').data('tDatePicker').close();
+        }
+        else {
+            var position = $(obj).offset();
+            $("#CurrentDate_date").data("tDatePicker").dateView.open({ offset: { top: position.top, left: position.left - 72 }, outerHeight: $(obj).outerHeight(), outerWidth: $(obj).outerWidth(), zIndex: 2 });
+        }
+    }
+</script>

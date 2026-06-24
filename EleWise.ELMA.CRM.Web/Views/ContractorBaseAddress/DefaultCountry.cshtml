@@ -1,0 +1,23 @@
+﻿@model CrmSettings
+@using EleWise.ELMA.CRM.Components
+@using EleWise.ELMA
+@using EleWise.ELMA.CRM.Web
+
+@{
+    Html.Header(SR.T("Страна по умолчанию"));
+}
+
+@(Html.Toolbar()
+    .Group("main")
+        .ToolbarSubmit(SR.Save, "#save.svg", itemUid: "save")
+        .ToolbarClick(SR.Cancel, "", "#close_outline.svg", "history.back(); return false;", itemUid: "cancel")
+)
+<div class="general-form-container">
+@using (Html.ELMAForm("DefaultCountrySave", "ContractorBaseAddress"))
+{
+    @Html.TableFormStart(a => a.Attributes(x => x.@class = "settings_table").ViewType(EleWise.ELMA.Model.Views.ViewType.Edit))
+    @Html.EditableProperty(m => m.DefaultCountry)
+    @Html.TableFormEnd()
+
+}
+</div>

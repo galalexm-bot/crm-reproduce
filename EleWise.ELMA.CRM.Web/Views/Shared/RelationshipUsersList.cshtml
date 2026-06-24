@@ -1,0 +1,45 @@
+﻿@using EleWise.ELMA
+@using EleWise.ELMA.CRM.Enums
+@using EleWise.ELMA.Web.Mvc.Models.Panels
+@model EleWise.ELMA.CRM.Models.IRelationship
+
+@{
+    var icon = "#complete.svg";
+    var iconText = ""; //SR.T("Подтвержено");
+}
+
+@using (Html.CollapsiblePanel(new CollapsiblePanel
+                                                    {
+                                                        Id = "eventPartisipantsUsers", 
+                                                        Expanded = true, 
+                                                        Header = SR.Partisipants + " (" + Model.RelationshipUsers.Count(eu => eu.Status == RelationshipUserStatus.Participant) + ")",
+                                                        Class = "brickTitle",
+                                                        LoadMode = DynamicLoadMode.Client
+                                                    }))
+{
+    <table style="width: 100%; margin: 5px 0 15px 15px ;">
+        @foreach (var ev in Model.RelationshipUsers.Where(eu => eu.Status == RelationshipUserStatus.Participant))
+        {
+            <tr>
+                <td style="width: 20px; white-space: nowrap">@(Html.Image(icon, iconText))</td>
+                <td>@Html.HtmlHelperFunc(ev, helper => helper.Display(u => u.User))</td>
+            </tr>
+        }
+    </table>
+}
+
+@if (Model.RelationshipUsers.Any(eu => eu.Status == RelationshipUserStatus.InfromTo))
+{
+    using (Html.CollapsiblePanel(new CollapsiblePanel { Id = "eventToInfromUsers", Expanded = true, Header = SR.ToInfrom + " (" + Model.RelationshipUsers.Count(eu => eu.Status == RelationshipUserStatus.InfromTo) + ")", Class = "bold_text", LoadMode = DynamicLoadMode.Client }))
+    {
+        <table style="width: 100%;  margin: 5px 0 15px 15px ;">
+            @foreach (var ev in Model.RelationshipUsers.Where(eu => eu.Status == RelationshipUserStatus.InfromTo))
+            {
+                <tr>
+                    <td style="width: 20px; white-space: nowrap">@(Html.Image(icon, iconText))</td>
+                    <td>@Html.HtmlHelperFunc(ev, helper => helper.Display(u => u.User))</td>
+                </tr>
+            }
+        </table>
+    }
+}

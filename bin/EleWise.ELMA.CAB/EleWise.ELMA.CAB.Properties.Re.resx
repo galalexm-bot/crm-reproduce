@@ -1,0 +1,144 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+<resheader name="resmimetype"><value>text/microsoft-resx</value></resheader><resheader name="version"><value>1.3</value></resheader><resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader><resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader><data name="WorkItemExtensionRegistered"><value>Registered WorkItem extension type {0} for WorkItem type {1}.</value></data>
+  <data name="TraceWorkItemRunStarted"><value>WorkItem {0} Run method has started.</value></data>
+  <data name="SolutionProfileNotFound"><value>Catalog file at location {0} could not be found.</value></data>
+  <data name="InvalidPublicationScope"><value>The value for the PublicationScope is invalid.</value></data>
+  <data name="TraceWorkItemRun"><value>The work item {0} has been run.</value></data>
+  <data name="WorkItemExtensionTypeAlreadyRegistered"><value>The WorkItem Extension type {0} is already registered for WorkItem type {1}.</value></data>
+  <data name="WorkItemTerminated"><value>WorkItem has already been disposed or terminated.</value></data>
+  <data name="NamedObjectNotFound"><value>Объект "{0}" не найден</value></data>
+  <data name="InvalidSolutionProfileXml"><value>There is an error in the XML document. &lt;{0} xmlns='{1}'&gt; was not expected.</value></data>
+  <data name="BackgroundSubscriberException"><value>An exception thrown in a background subscriber was not handled. The exception was {0}.</value></data>
+  <data name="EventTopicTracePublicationAdded"><value>Publication for the EventTopic {0} was added for the event {1} on the type {2}.</value></data>
+  <data name="ReferencedAssemblyNotFound"><value>The ModuleLoaderService cannot initialize the module because some of their dependencies are not present. Make sure to deploy all the assemblies needed to execute the module.</value></data>
+  <data name="VisualizerAlreadyInitialized"><value>The visualizer has already been initialized.</value></data>
+  <data name="CommandInjectionTearDown"><value>Removing command handler from {0} for command '{1}'</value></data>
+  <data name="DuplicateService"><value>A service of this type already exists: {0}.</value></data>
+  <data name="StaticPublisherNotAllowed"><value>Registering static event {0} as topic publication is not allowed.</value></data>
+  <data name="EventTopicTraceFireCompleted"><value>EventTopic {0} fire completed.</value></data>
+  <data name="StringCannotBeEmpty"><value>The provided String argument {0} must not be empty.</value></data>
+  <data name="ModuleNotFound"><value>Assembly file {0} was not found.</value></data>
+  <data name="ProfileNotFoundInCatalog"><value>Profile {0} was not found in the catalog.</value></data>
+  <data name="EventCommandAdapterInvokerNotType"><value>Invoker is not of type {0}</value></data>
+  <data name="DuplicateUIExtensionSite"><value>A UI extension site with this name already exists: {0}</value></data>
+  <data name="ErrorReadingProfile"><value>An error occurred while reading the solution profile {0}.</value></data>
+  <data name="DuplicateID"><value>An object with this ID already exists: {0}.</value></data>
+  <data name="CannotRegisterStaticSubscriptionMethods"><value>Subscription {0}.{1} is static and is not supported.</value></data>
+  <data name="EventTopicTraceFireExceptions"><value>Exceptions occurred while firing the EventTopic {0}.</value></data>
+  <data name="LogModuleAssemblyLoaded"><value>Loaded assembly file {0} for Module.</value></data>
+  <data name="NamedServiceNotFound"><value>Служба "{0}" не найдена</value></data>
+  <data name="InvalidAdapter"><value>The adapter type is not a ICommandAdapter.</value></data>
+  <data name="TraceWorkItemStatusActivating"><value>The work item {0} is Activating.</value></data>
+  <data name="TypeNotCompatible"><value>The provided type {0} is not compatible with {1}.</value></data>
+  <data name="FailedToLoadModule"><value>Failed to load module from assembly {0}. Error was:
+{1}</value></data>
+  <data name="ServiceMissingExceptionSimpleMessage"><value>Service {0} is not available in the current context.</value></data>
+  <data name="ErrorEnumeratingModules"><value>An exception occurred while enumerating the modules using the {0} enumerator.</value></data>
+  <data name="InvalidCatalogXml"><value>There is an error in the XML document. &lt;{0} xmlns='{1}'&gt; was not expected.</value></data>
+  <data name="ModulePathNotUnderRoot"><value>Assembly path {0} does not fall under the current application root.</value></data>
+  <data name="ModuleStartCalled"><value>Load() method called for Module {0}.</value></data>
+  <data name="ConfigurationProviderMustBeUserScoped"><value>Settings must be user-scoped in order to use the selected provider. </value></data>
+  <data name="CannotLoadState"><value>An error occurred while loading the state with id {0} from the storage.</value></data>
+  <data name="OnlyOnePublicationIsAllowed"><value>Cannot add more than one instance of the same publisher to one topic.</value></data>
+  <data name="ReadProfileException"><value>An exception occurred while reading the profile.</value></data>
+  <data name="NoRemoveWorkItemFromManagedObjectCollection"><value>Removing WorkItems is not permitted. Use WorkItem.Terminate or WorkItem.Dispose to clean up a WorkItem.</value></data>
+  <data name="CannotSaveState"><value>An error occurred while saving the state with id {0} to the storage.</value></data>
+  <data name="TraceWorkItemStatusChangedToActivated"><value>The work item {0} is Activated.</value></data>
+  <data name="InvalidEnumValue"><value>The value of the argument {0} provided for the enumeration {1} is invalid.</value></data>
+  <data name="StateDoesNotExist"><value>There is no state persisted with the given id {0}.</value></data>
+  <data name="InvalidCryptographyValue"><value>The UseCryptography setting must be set to a valid boolean value.</value></data>
+  <data name="WorkItemDesignerCodeWarning"><value>Do not modify this method, changes will be lost upon regeneration by the designer.</value></data>
+  <data name="CommandInjectionBuildUp"><value>Adding command handler on {0} for command '{1}'</value></data>
+  <data name="InvalidStateStream"><value>State stream from storage is invalid.</value></data>
+  <data name="InvalidFileCatalogFilePath"><value>Catalog file path cannot be empty or null, and must be a local file under the application folder.</value></data>
+  <data name="RemoveCommandFromWorkItemIsNotPermitted"><value>Removing Commands from WorkItem is not permitted. An attempt was made to remove the command {0}.</value></data>
+  <data name="CannotUnregisterSiteRegisteredWithParent"><value>Cannot unregister site that was registered in parent: {0}</value></data>
+  <data name="DictionaryIsReadOnly"><value>The dictionary is readonly and can not be modified.</value></data>
+  <data name="SmartPartNotInWorkspace"><value>The smartpart is not present in the workspace.</value></data>
+  <data name="EventTopicTraceFireStarted"><value>Firing EventTopic {0}</value></data>
+  <data name="EventTopicFireException"><value>One or more exceptions occurred while firing the topic '{0}'</value></data>
+  <data name="WorkItemExtensionInitialized"><value>Initialized WorkItem extension {0} with WorkItem {1}.</value></data>
+  <data name="NullSolutionProfileReaderReturned"><value>The ModuleEnumerator implementation {0} returned a null reader for the catalog.</value></data>
+  <data name="CannotGetCommandAdapter"><value>The Command {0} cannot get an adapter for the type "{1}"</value></data>
+  <data name="DuplicatedModule"><value>A duplicated module with name {0} has been found by the loader.</value></data>
+  <data name="ExtensionSiteDoesNotExist"><value>Extension site does not exist: {0}</value></data>
+  <data name="TraceWorkItemStatusTerminating"><value>The work item {0} is Terminating.</value></data>
+  <data name="ServiceMissingExceptionMessage"><value>Service {0}, required for component {1} is not available in the current context.</value></data>
+  <data name="SubscriberHandlerNotFound"><value>The specified method handler {0} is not present or accessible on the subscriber type {1}.</value></data>
+  <data name="ServiceAddedOnDemand"><value>Service {1} will be added on demand for Module {0}.</value></data>
+  <data name="EventTopicTraceSubscriptionRemoved"><value>Subscription on EventTopic {0} removed for the method {1} on the type {2}</value></data>
+  <data name="EventTopicTraceSubscriptionAdded"><value>Subscription for EventTopic {0} added for the method {1} on the type {2}</value></data>
+  <data name="DependencyForUnknownModule"><value>Cannot add dependency for unknown module '{0}'; call AddModule() before AddDependency()</value></data>
+  <data name="EventNotPresentOnInvoker"><value>The event {0} on the invoker {1} is not present.</value></data>
+  <data name="TraceWorkItemStatusChangedToInitialized"><value>The work item {0} is Initialized.</value></data>
+  <data name="ServiceLocatorNotInitialized"><value>Менеджер служб не инициализирован</value></data>
+  <data name="TraceWorkItemStatusChangedToDisposed"><value>The work item {0} is Disposed.</value></data>
+  <data name="ServiceAdded"><value>Service {1} added for Module {0}.</value></data>
+  <data name="WorkItemExtensionRootRegistered"><value>Registered WorkItem extension type {0} for root WorkItem.</value></data>
+  <data name="VisualizerMustImplementIVisualizer"><value>Visualizer type must implement IVisualizer.</value></data>
+  <data name="InvalidSolutionProfilePath"><value>Catalog file path {0} is not a local file under the application folder {1}.</value></data>
+  <data name="CannotFindPublishedEvent"><value>The specified event {0} was not found in the publisher.</value></data>
+  <data name="InvalidIsolatedStorageStatePersistanceScope"><value>Scope value {0} is invalid. {1} does not exist in the IsolatedStorageScope enumeration.</value></data>
+  <data name="SmartPartMustImplementISmartPartInfoProvider"><value>Implement ISmartPartInfoProvider in the containing smart part. Required in order for contained smart part infos to work.</value></data>
+  <data name="TraceWorkItemStatusChangedToTerminated"><value>The work item {0} is Terminated.</value></data>
+  <data name="ServiceNotFound"><value>Служба не найдена</value></data>
+  <data name="DependencyOnMissingModule"><value>A module declared a dependency on another module which is not declared to be loaded. Missing module(s): {0}</value></data>
+  <data name="ProfileNotFound"><value>Profile {0} was not found in the catalog.</value></data>
+  <data name="InvalidSubscriptionSignature"><value>Subscription method {0}.{1} must have a signature receiving an object and an EventArgs parameter (EventHandler or EventHandler&lt;T&gt; delegates signature).</value></data>
+  <data name="InvalidPublicationSignature"><value>Publication event {0}.{1} must have a delegate type compatible with EventHandler or EventHandler&lt;T&gt;.</value></data>
+  <data name="AddServicesCalled"><value>AddServices() method called for Module {0}.</value></data>
+  <data name="NoRegisteredUIElementFactory"><value>No UIElementAdapterFactory register for type {0}.</value></data>
+  <data name="UnsupportedSmartPartType"><value>Smart part type {0} is not supported. Expected {1} or a compatible type.</value></data>
+  <data name="StaticCommandPublisherNotSupported"><value>Static command publisher "{0}" is not supported.</value></data>
+  <data name="ConfigurationProviderNotSupportLocation"><value>This provider only supports settings classes defined in assemblies deployed locally.</value></data>
+  <data name="AutogeneratedCodeWarning"><value>This code is required by the smart part informations.</value></data>
+  <data name="NamedObjectWithIdNotFound"><value>Объект "{0}" с идентификатором {1} не найден</value></data>
+  <data name="TraceWorkItemStatusChangedToDeactivated"><value>The work item {0} is Deactivated.</value></data>
+  <data name="RemoveEventTopicFromWorkItemIsNotPermitted"><value>Removing EventTopic from WorkItem is not permitted. An attempt was made to remove the EventTopic {0}.</value></data>
+  <data name="CannotGetMapService"><value>The Command "{0}" does not have access to the IAdapterMapService to perform the AddInvoker operation.</value></data>
+  <data name="ConfigurationAttributeOnValueWithIncompatibleType"><value>Property marked as configuration property is not valid as its type {0} does not inherit from ApplicationSettingsBase.</value></data>
+  <data name="UIElementNotCorrectType"><value>UI element must be a {0}</value></data>
+  <data name="NullReaderReturned"><value>Service implementation {0} returned a null reader for the catalog.</value></data>
+  <data name="TraceCommandExecuted"><value>The Command {0} has been executed.</value></data>
+  <data name="LogModuleAdded"><value>Module {0} added to the container.</value></data>
+  <data name="DefaultProfileNotSpecified"><value>No default profile has been specified.</value></data>
+  <data name="TraceWorkItemStatusDeactivating"><value>The work item {0} is Deactivating.</value></data>
+  <data name="TraceStateChangedMessage"><value>The state with ID {0} has changed. The changed value was {1}.</value></data>
+  <data name="EventTopicTracePublicationRemoved"><value>Publication removed from EventTopic {0} for the event {1} on the type {2}</value></data>
+  <data name="CannotAddWorkItemToItself"><value>A WorkItem cannot be added to itself.</value></data>
+  <data name="InvalidIsolatedStorageStatePersistanceParsedScope"><value>Cannot open an isolated store with scope {0}. Check the IsolatedStorageFile documentation for the valid combination of values.</value></data>
+  <data name="StaticCommandHandlerNotSupported"><value>Static command handler "{0}" is not supported.</value></data>
+  <data name="AdapterAlreadyBoundToACommand"><value>Command adapter has already been bound to a command.</value></data>
+  <data name="TraceCommandStatusChanged"><value>Command status for command {0} has changed to {1}.</value></data>
+  <data name="ObjectNotFound"><value>Объект не найден</value></data>
+  <data name="AdapterNotBoundToGivenCommand"><value>The adapter has not been previously bound to the command.</value></data>
+  <data name="InvalidConfigurationSectionType"><value>Configuration section {0} must be of type {1}.</value></data>
+  </root>

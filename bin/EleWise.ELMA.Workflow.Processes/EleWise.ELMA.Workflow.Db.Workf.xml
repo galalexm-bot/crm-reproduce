@@ -1,0 +1,33 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<root uid="{2586F1BD-2732-4F1C-8D26-A09A2F095FA3}">
+
+  <procedures>
+  </procedures>
+
+  <methods>
+
+    <method name="CreateDefaultMyProcessesFiltersForAllUsers" />
+    <method name="CreateSystemMyResponsibilityFilterForAllUsers" />
+    <method name="CreateSystemActionFilters" />
+    <method name="CreateFullMonitorActionFilter" />
+    <method name="CreateImprovementUserGroups" />
+    <method name="CreateImprovementActionFilters" />
+    <method name="ImproveProcessDisableHandRun2" />
+    <method name="UpdateMyProcessStartFilters" />
+    <method name="RecreateMonitorAllCache1" />
+    <method name="RecreateMonitorAllCacheCountByUsers1" ExecuteTime="OnIndexesCreated" />
+    <method name="OptimizeMonitorCacheActions" />
+    <method name="UpdateCustomActivity" />
+    <method name="UpdateProcessImprovementMajor" />
+    <method name="RenameMonitorProcessActionFilter"/>
+    <method name="RemovePreviouslyDeliveredMessages" />
+    <method name="UpdateWorkflowMessageBookmarkStatus" />
+  </methods>
+
+  <scripts>
+  </scripts>
+
+  <indexes>
+    <index name="IX_WorkflowMessageItem_ITD" tableName="WorkflowMessageItem" columns="DestinationWorkflowInstance, MessageType, Timestamp" />
+  </indexes>
+</root>

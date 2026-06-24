@@ -1,0 +1,2692 @@
+{
+  "Files": [
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/RelationshipIsPrivate.cshtml",
+      "HashCode": "BFqmQFNiGOx4iDD8Pp9ZvUmrBVgZUqYlmVJBibFOKtw",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_RelationshipIsPrivate_cshtml_61784e96",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/Address/DefaultProviderRegion.cshtml",
+      "HashCode": "rMPS/3A3BDEsAkFRaPi+7w2gNFZ5DArbGAdY+6moZBU",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_Address_DefaultProviderRegion_cshtml_9fe54e1c",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/Admin/CrmPermissionsGrid.cshtml",
+      "HashCode": "rujOh+wdQCdTvxJDxMnA9h81+i1DC+JErpFTUua99EY",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_Admin_CrmPermissionsGrid_cshtml_b6a11453",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/Admin/HomePortlet.cshtml",
+      "HashCode": "WirDwbkgiISi+1Zs0LDybZJMt4H3Gyn8AEVOK2dcVWA",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_Admin_HomePortlet_cshtml_7b42b7f2",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/Admin/ModuleSettingsPage.cshtml",
+      "HashCode": "pk+ueYVf/mMGZxKoC6FW5cUyQYKJsgyGLv6vE7U09is",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_Admin_ModuleSettingsPage_cshtml_756afdf7",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/Attachment/AddAttachmentPopup.cshtml",
+      "HashCode": "i7nZ5rTymomA2hY+4/jJiBFXo4CbwRYgE13zeRvEO8g",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_Attachment_AddAttachmentPopup_cshtml_c1e7300b",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/Attachment/Create.cshtml",
+      "HashCode": "Yi5jsAKYDBl21DI7XXcxkxISdmtiKyU2uRUelgwnD0Y",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_Attachment_Create_cshtml_f3962819",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/AttachmentFilter/AttachmentGrid.cshtml",
+      "HashCode": "FPB1gZcBJT9nO9VWnngSSCAXe9nZPdlWGQMoCMchUaE",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_AttachmentFilter_AttachmentGrid_cshtml_c4171fb2",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/AutomaticCurrencyImport/Index.cshtml",
+      "HashCode": "3nwjtpyXfU4X78SJbAGduk1V4qD0WvAKUQOkfN513jE",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_AutomaticCurrencyImport_Index_cshtml_33ebc45",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/BankAccount/Details.cshtml",
+      "HashCode": "NTH2oIQu0QEfBQGcTIgmxwMgrYP9uG1VkKksDiFJ2iY",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_BankAccount_Details_cshtml_e5001cad",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/BankAccount/PopupBankAccount.cshtml",
+      "HashCode": "100jPj8fxjRz18exejqSSQJBjQaJ8v+tKRMPV3mDyLU",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_BankAccount_PopupBankAccount_cshtml_55f710ca",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/BankDetailsSWIFT/BankDetailsSWIFTEditForm.cshtml",
+      "HashCode": "GYPlj2k8BhmvoPpNAcs2paUe3pDsJV8y0tWsGD9lUTk",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_BankDetailsSWIFT_BankDetailsSWIFTEditForm_cshtml_c228ef02",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/Category/EditForm.cshtml",
+      "HashCode": "OTrxu7PUVyg8AvVKKM1SCFBCb8QS3/8Zxcu57ydmeuA",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_Category_EditForm_cshtml_d5a0168",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/Category/Grid.cshtml",
+      "HashCode": "fYeGbj3atjrksWk3MI2H2gOXYsxxMWggq59tTZiGL3c",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_Category_Grid_cshtml_f5a023a",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/Category/Index.cshtml",
+      "HashCode": "EuL3GpUMKIRxPvPtRUCMdLhB7f7eXCAsrEjgDviaLNo",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_Category_Index_cshtml_afbb0ba4",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/CategoryRule/CategoryRulesList.cshtml",
+      "HashCode": "Ha+49KL4ypSjIBEhb77y8Y926vj8beJweEpx/Kv+ECc",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_CategoryRule_CategoryRulesList_cshtml_6ecd00e9",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/CategoryRule/CategoryRulesListGrid.cshtml",
+      "HashCode": "bqVCe0/jXgHkly3cgXYJ1iIZaa9yZ0tdZhxzrNZhb0w",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_CategoryRule_CategoryRulesListGrid_cshtml_db9fee25",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/CategoryRule/EditForm.cshtml",
+      "HashCode": "hsjFgkR4QQgwroWGMSJ50jf2Tyq++dInGzLS5+o9UKc",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_CategoryRule_EditForm_cshtml_10c24112",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/CategoryRule/Index.cshtml",
+      "HashCode": "R6actyo7W8xFP/GNfVgZQhTSHrDscAGztlNHaox0j4o",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_CategoryRule_Index_cshtml_873d0aa2",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/Contact/ContactPermissionSetting.cshtml",
+      "HashCode": "83LViKBEF2u5rdUPeAKyb636zeog8AIJNs18I9fUt6w",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_Contact_ContactPermissionSetting_cshtml_dcb0fd9",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/Contact/Create.cshtml",
+      "HashCode": "tvSLR5h02m4M9ZqOJGILTFoy7WNPKJj7QTitNQto02s",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_Contact_Create_cshtml_cf6564a2",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/Contact/DeleteGroup.cshtml",
+      "HashCode": "a0QBZ+tPCGJqar0Bgw9w0WmO6593cRPbl2QpEgU1R+4",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_Contact_DeleteGroup_cshtml_8869b2b6",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/Contact/Details.cshtml",
+      "HashCode": "q2Jy6kkb/hG4DaTC9pygfre/Qk42kuBt5xUP6ofLMEM",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_Contact_Details_cshtml_55e74af2",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/Contact/DetailsForm.cshtml",
+      "HashCode": "l4rjeeH7eq+qEf6io6bDotY5MOy3OkAVPOnoCJgW05c",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_Contact_DetailsForm_cshtml_8c0df56c",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/Contact/Edit.cshtml",
+      "HashCode": "5MlTdxov5wQiJdxGt0X7vmujgtRGB9PqnBu4BL9kenw",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_Contact_Edit_cshtml_2f7fe616",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/Contact/Grid.cshtml",
+      "HashCode": "NfDiLg9H8xb1FnD1a42QMvGO+2h8MA+XRZpzzRm9mDU",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_Contact_Grid_cshtml_e625f976",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/Contact/GridTable.cshtml",
+      "HashCode": "EdDCUHJ+kXLsKnMOWoU3SkH4f7MpwlTy9h+yzFrznmc",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_Contact_GridTable_cshtml_c8e8973c",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/Contact/Index.cshtml",
+      "HashCode": "rChNJ+2iYBfdfv9xCkWoP+4XW7FYzfCPpcVNb1vbk1k",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_Contact_Index_cshtml_285f73c4",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/Contact/TabView.cshtml",
+      "HashCode": "hO3bkoA1UOB7YbuOzOsLjzBbxU28mYpvYhPEpBjY95Q",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_Contact_TabView_cshtml_cf513cb2",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/Contact/TasksTab.cshtml",
+      "HashCode": "oCXFYK2xcbEcFe7jb07qklhTbN/myXifa1JXgDlTbLM",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_Contact_TasksTab_cshtml_47df4541",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/Contact/Editors/ContactEdit.cshtml",
+      "HashCode": "F38sRW/jraYZqRl2ADXJKq05VtoEW/3IZeCnkCfseAk",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_Contact_Editors_ContactEdit_cshtml_113af595",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/Contractor/ContractorPermissionSetting.cshtml",
+      "HashCode": "/0zkhVcBlDbSY+FP7AsIbaKhOnt2fk4To+sAxnNiudE",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_Contractor_ContractorPermissionSetting_cshtml_a62c28d9",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/Contractor/DeleteGroup.cshtml",
+      "HashCode": "N5cGv2XV0Igw4Keiaq0iwsz1E0LDB0E3pXCkkUVPizE",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_Contractor_DeleteGroup_cshtml_14b57ab1",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/Contractor/Grid.cshtml",
+      "HashCode": "+6Hr31OM+n7THUUcV2YT45wSZW47I08wqAdQlUi7MSw",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_Contractor_Grid_cshtml_dd794e53",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/Contractor/Index.cshtml",
+      "HashCode": "9YegnkN3uX84ofuC5hh0R/baNZJ3IogxJ5sozVw5pfg",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_Contractor_Index_cshtml_405c492d",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/ContractorBaseAddress/DefaultCountry.cshtml",
+      "HashCode": "GsaJJHSd7QW9ftQvx6UccPGM8lwaKCQVx+UQ296MSwQ",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_ContractorBaseAddress_DefaultCountry_cshtml_9d50f16b",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/ContractorBaseAddress/Settings.cshtml",
+      "HashCode": "Oyot7TnHuq7WPa9roPabnV/357T6x3g3Np/LBe5ubKg",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_ContractorBaseAddress_Settings_cshtml_35334bb5",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/ContractorIndividual/Create.cshtml",
+      "HashCode": "1GptZz4/wSuWZpH49bQsL2x1ktzX+9wfsZ1zK7fPKSI",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_ContractorIndividual_Create_cshtml_9b0b3162",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/ContractorIndividual/Details.cshtml",
+      "HashCode": "8lfnHAoqksulylniOpwGS1auMPFoR0j+idCIsv0W17w",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_ContractorIndividual_Details_cshtml_4832e1c2",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/ContractorIndividual/Edit.cshtml",
+      "HashCode": "CTWnJzOLURq6gqp2S8GEH/VPUNH4nm+wXLersdNITPk",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_ContractorIndividual_Edit_cshtml_53ea06aa",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/ContractorIndividual/TabView.cshtml",
+      "HashCode": "oRmq1Qvu1X/zCU6Q+rODALPog7Dz4fR/hL1apt7nLfM",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_ContractorIndividual_TabView_cshtml_beee1fa6",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/ContractorIndividual/Editors/ContractorIndividualEdit.cshtml",
+      "HashCode": "qmL4HhsYesdBMZra4SyJ3QcNndeoxEBsniX8UB2iKoA",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_ContractorIndividual_Editors_ContractorIndividualEdit_cshtml_4e27af1d",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/ContractorLegal/Create.cshtml",
+      "HashCode": "ux8mPbW5OTkN8CiSDJOLOKegldrG6Lvs2YRf33UQXLM",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_ContractorLegal_Create_cshtml_94bc2e46",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/ContractorLegal/Details.cshtml",
+      "HashCode": "FJrxXtoP//A5LQlxJ37ePtE6SgN8nL2HKigEF8dgEZw",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_ContractorLegal_Details_cshtml_d10cbc46",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/ContractorLegal/Edit.cshtml",
+      "HashCode": "rZfOhuvwjmFBVLBKtHux1ea2ANLQOhJBlku1wqaREAI",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_ContractorLegal_Edit_cshtml_595272f2",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/ContractorLegal/TabView.cshtml",
+      "HashCode": "WjtdQtC30BrGUzMARq9p00Qx4hR4BUvykK7Pj85pH7Y",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_ContractorLegal_TabView_cshtml_28561fc6",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/ContractorLegal/Editors/ContractorLegalEdit.cshtml",
+      "HashCode": "FkiiGyLOwXs4QnQlxPCfTa3xaichFvBrWvQHzCw7dr4",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_ContractorLegal_Editors_ContractorLegalEdit_cshtml_ed4661d5",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/CrmSettings/Edit.cshtml",
+      "HashCode": "HIjLsOrqPthWQFQqJ8got5HtYT4ainogpT0V6wP8IXU",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_CrmSettings_Edit_cshtml_d0ee6f6d",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/CrmSettings/View.cshtml",
+      "HashCode": "3MljiWS+rs4hRD8Wvm4ZcNKevMCMtXG6FYh6njrtoFw",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_CrmSettings_View_cshtml_f249eb58",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/CurrencyDynamics/Index.cshtml",
+      "HashCode": "FwdTaJvc/ULXYtZDtZewUueWnafKBISzs4qTR5dsnMI",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_CurrencyDynamics_Index_cshtml_bb700233",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/CurrencyQualifier/CurrencyImportSettings.cshtml",
+      "HashCode": "BKwiDgjyG4ZARhr8sWqPOR32svN/A6VhT/kxX18Vyis",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_CurrencyQualifier_CurrencyImportSettings_cshtml_aded3c82",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/CurrencyQualifier/CurrencyList.cshtml",
+      "HashCode": "EdqWo5dZVKyquOv71GKX/bDEDS0HyYfvgaWhX1PmdtI",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_CurrencyQualifier_CurrencyList_cshtml_a2fa6c02",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/CurrencyQualifier/Index.cshtml",
+      "HashCode": "cdksxoODR9L8PuKu3WqHZeK9m1EGm+RxWq8gzmxS65A",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_CurrencyQualifier_Index_cshtml_40c54c95",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/CurrencyRatesGrid/DisplayGridRow.cshtml",
+      "HashCode": "p5XGj64NHcvdbnzxgB2X4aamcmtuIcGhy02ptJPvw6w",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_CurrencyRatesGrid_DisplayGridRow_cshtml_14be94d6",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/CurrencyRatesGrid/Grid.cshtml",
+      "HashCode": "3k086sJATRmTLJ4ThskFps8O4sCn6nlXh1hQKf/WpvY",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_CurrencyRatesGrid_Grid_cshtml_99fd6c3c",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/CurrencyRatesGrid/GridRow.cshtml",
+      "HashCode": "i/1EQ28lCJzl3s5v+tGJFg2sS9Hzkwa0xc7S1WHEDbQ",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_CurrencyRatesGrid_GridRow_cshtml_3d538986",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/CurrencyRatesGrid/ProviderCell.cshtml",
+      "HashCode": "LG/FY5DwYrOQkLJbDyUhjRBN2Fw83vsk25k+NHKzXf4",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_CurrencyRatesGrid_ProviderCell_cshtml_56a5a675",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/EditorTemplates/CrmAttachment.cshtml",
+      "HashCode": "6OYe0qF3gUTQH7CWM0TUOYJaZq8OquYUhO9yxJfZe2c",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_EditorTemplates_CrmAttachment_cshtml_38fae6bf",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/FullTextSearch/Settings/FullTextSearchCRMSettingsEditForm.cshtml",
+      "HashCode": "UfQunIRKIiwJIXv87AkMi5YG5MuN5zMFN0AeqvsTcQw",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_FullTextSearch_Settings_FullTextSearchCRMSettingsEditForm_cshtml_5a1121f5",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/FullTextSearch/Settings/FullTextSearchCRMSettingsViewForm.cshtml",
+      "HashCode": "wIyBBbgn4Wycnrei5UY+J3PKCnesxt9PunWBfhlU/JY",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_FullTextSearch_Settings_FullTextSearchCRMSettingsViewForm_cshtml_ffabf9b6",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/Inpayment/Details.cshtml",
+      "HashCode": "albuA7W+QK+YoydbaFn8hkTKIif0N2yv5E1wl89n4WQ",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_Inpayment_Details_cshtml_3c7abf07",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/Inpayment/Edit.cshtml",
+      "HashCode": "0YGebKtFP3htucdsqYnYenwT8t8NB5K578+6X8SIZ9w",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_Inpayment_Edit_cshtml_42cb5c29",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/Inpayment/EditInpayment.cshtml",
+      "HashCode": "aPXFe+kgT+MqKYi0WBSkcISkTaQAA7lW2EysVQM8zTA",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_Inpayment_EditInpayment_cshtml_64ea7a14",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/Inpayment/Grids.cshtml",
+      "HashCode": "En1cMuBSvqBysZnSgsz0zQdvANaIQLVI9EwWL0A2Hzs",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_Inpayment_Grids_cshtml_92398326",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/Inpayment/Index.cshtml",
+      "HashCode": "blWuKQ2e4zG49O+Kn2wmhIiQ/GbOXNwRmsrMRH+EhPY",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_Inpayment_Index_cshtml_ed94cd87",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/Inpayment/InpaymentPortlet.cshtml",
+      "HashCode": "Koo3QAzmLIiLiPLTQWClKfjB2bXh4j7At4Cycxw2CWQ",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_Inpayment_InpaymentPortlet_cshtml_26cdd192",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/Inpayment/InpaymentPortletSettings.cshtml",
+      "HashCode": "UMF28M5/9ncpW0eOCgo+MaId+IbFMLyQEpTUhLGqBtY",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_Inpayment_InpaymentPortletSettings_cshtml_770ac05d",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/Inpayment/PortletGrid.cshtml",
+      "HashCode": "qDfzqse7Hz4NfYcBNXhRCvPKRE2rFTKcIFA26TyIjDA",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_Inpayment_PortletGrid_cshtml_64c46019",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/Inpayment/PortletSplitGrids.cshtml",
+      "HashCode": "M6JY5Vv4fOJ6+iHODivuc9S8Qyp3W7JUvumY2TXEJRo",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_Inpayment_PortletSplitGrids_cshtml_a20bf10a",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/Inpayment/SetInpaymentDatePopup.cshtml",
+      "HashCode": "PU0pxXlMxVsvKwqlcalj+sNWrVP/nmbiy0wFqInQKRc",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_Inpayment_SetInpaymentDatePopup_cshtml_69e0c6b0",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/Inpayment/SetInpaymentStatusPopup.cshtml",
+      "HashCode": "R6b108RptkJ3JwoVNeoe0xNAbFJ3qXQ+7aYgPwDlrrg",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_Inpayment_SetInpaymentStatusPopup_cshtml_e1cf945a",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/Inpayment/SubPanelGrid.cshtml",
+      "HashCode": "jj4W+1fqw+pLdl+/Y5NxQ+BFzMBm6f8MzK2N2QYwguo",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_Inpayment_SubPanelGrid_cshtml_9cc2ed77",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/Inpayment/SubPanelGridTotal.cshtml",
+      "HashCode": "iZwpasLgw0LJZiDRpl80l6tFVf9QjlYHPwM1M1e9iek",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_Inpayment_SubPanelGridTotal_cshtml_d50100ed",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/Inpayment/TabView.cshtml",
+      "HashCode": "yiySrMy34sDMTsOckyQcVNMm+VNsqUYkvW7i+nghngs",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_Inpayment_TabView_cshtml_53ec4a27",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/Inpayment/Editors/InpaymentEdit.cshtml",
+      "HashCode": "qR2s6nBjUvidrvBQ89QoB5Ckcd0G1Fxs1+Ud9MEy17k",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_Inpayment_Editors_InpaymentEdit_cshtml_b3c40535",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/Inpayment/SaleInpayments/Grid.cshtml",
+      "HashCode": "EXUzure2CotCGrPCJ77s90aJp9ZGqv+R66ULrvf/B8I",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_Inpayment_SaleInpayments_Grid_cshtml_7b0f71ab",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/Inpayment/SaleInpayments/Inpayments.cshtml",
+      "HashCode": "DRE2rP7lXER8lSQi0YXAjrW1Qcy4u7i505Ls+QJqzoo",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_Inpayment_SaleInpayments_Inpayments_cshtml_efa4dd",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/Lead/Convert.cshtml",
+      "HashCode": "cIZY8dkCVnsWjMHyNqaohYg/jJBL7PIwtxPKwjIy1vA",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_Lead_Convert_cshtml_7d0b071f",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/Lead/Create.cshtml",
+      "HashCode": "cKRtaB4XUqSazZvGSpucI9O39vomSZIJj3yZ487v/dM",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_Lead_Create_cshtml_d459f600",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/Lead/DeleteGroup.cshtml",
+      "HashCode": "cQbHh913CrUgaa67Jh7OJNHDChINBKMPVNUscbyvC0s",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_Lead_DeleteGroup_cshtml_ec247600",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/Lead/Details.cshtml",
+      "HashCode": "rtSI8hFFJE563Zxb60PExn/o7ezHbZ/d5HUfGdTXrdE",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_Lead_Details_cshtml_48ec39e4",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/Lead/Dublicate.cshtml",
+      "HashCode": "6jFGa4HPMdV8jsWNoBMpo0icnKArsf/FXZhGUAWoMzA",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_Lead_Dublicate_cshtml_f752ec5d",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/Lead/DublicateContractorsGrid.cshtml",
+      "HashCode": "4QVmo+4hBye3U+2je0BMPkUdJsQXo0gvyr/IJhUokSU",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_Lead_DublicateContractorsGrid_cshtml_cf263e85",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/Lead/DublicateLeadsGrid.cshtml",
+      "HashCode": "IePIe8fDuhco5+UCrmtOdO2Jm46+XpGxujIXqColHbY",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_Lead_DublicateLeadsGrid_cshtml_f53d4e5e",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/Lead/Edit.cshtml",
+      "HashCode": "GQq7MaV0gaTH4XqLFTwBLi8Y2YB9DDbQwfkNcjNWK0o",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_Lead_Edit_cshtml_68c0a6cc",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/Lead/Grid.cshtml",
+      "HashCode": "6UfbGbQ2U9udMrnINc9viaqXyoOAWVckSzPm/5tX79E",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_Lead_Grid_cshtml_698bcebc",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/Lead/Index.cshtml",
+      "HashCode": "kHISVq5NJMKB6M3RCvcrIJ9SCzbnIfyog0POTm7X9Ls",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_Lead_Index_cshtml_129e91e2",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/Lead/LeadPermissionSetting.cshtml",
+      "HashCode": "GqAdvcPA4+iyZgcF8/mQLtx9en9jfh8J1wOLoENvSPk",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_Lead_LeadPermissionSetting_cshtml_c1e1e7c1",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/Lead/LeadPortlet.cshtml",
+      "HashCode": "/TX8wbYXwAtWVrak1z/2RLBOwtI8Ydd0bfYVjP1USxA",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_Lead_LeadPortlet_cshtml_67e94eb8",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/Lead/LeadPortletSettings.cshtml",
+      "HashCode": "HbPotcE0eCSeu3lw8xWyz8fSCB2y/kCmbvU/FXZeWmU",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_Lead_LeadPortletSettings_cshtml_4c12c085",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/Lead/PortletGrid.cshtml",
+      "HashCode": "DSqU2SsIChKcCLjGlFDpY2hSY7636158yRhchIQ7sRs",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_Lead_PortletGrid_cshtml_8ac19e86",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/Lead/ScoringPanel.cshtml",
+      "HashCode": "4WxLwNUrUSAxL7KGhT1Uv0XMZNhakLGXxR1iWmJplJE",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_Lead_ScoringPanel_cshtml_74a1b8df",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/Lead/SelectResponsible.cshtml",
+      "HashCode": "+JJeaIgbAziEDqvpealWpWlN41fxTTXPQa7otPOPetc",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_Lead_SelectResponsible_cshtml_2b9abf82",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/Lead/SelectTypes.cshtml",
+      "HashCode": "gSFFSsbtyNbXF3BOdE7O1SDkVfCQOol2B7NIQqAND68",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_Lead_SelectTypes_cshtml_5a99713f",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/Lead/TabView.cshtml",
+      "HashCode": "jw5FjXbNvlK3easnlZHotZsEueUm0NNwF0v9npOjOus",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_Lead_TabView_cshtml_4a900ef4",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/Lead/TasksTab.cshtml",
+      "HashCode": "UntqFrotRaWqxqXW0WIXm3g6EDLmOLU2l23m5jXspsg",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_Lead_TasksTab_cshtml_b87e4fd",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/Lead/Convert/StepContacts.cshtml",
+      "HashCode": "YK8EAWC7YN6oMCDmPVoFDHRVkSVXEC2AZuw6TB1VRwo",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_Lead_Convert_StepContacts_cshtml_505bc02d",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/Lead/Convert/StepContractor.cshtml",
+      "HashCode": "W8cgconG/4qzxxhf+zr6XHPmt3/fahMhHBOlipX/1jU",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_Lead_Convert_StepContractor_cshtml_4b52ba1",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/Lead/Convert/StepConvertInit.cshtml",
+      "HashCode": "EfgTEs+4zOZ6J1TgS+psyDMGmkGAI6eWbPJ8DWW9FNw",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_Lead_Convert_StepConvertInit_cshtml_9b43b26f",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/Lead/Convert/StepRelationship.cshtml",
+      "HashCode": "0tJ+19Y1aeAbwOGtnlTSnaLI5Q+jPDBgdQOpvKDIYqM",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_Lead_Convert_StepRelationship_cshtml_ed3857e0",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/Lead/Convert/StepSale.cshtml",
+      "HashCode": "2RqKRjqsuATC7kAO31cHKfTXfnwsh6jHCXt0BuBznsU",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_Lead_Convert_StepSale_cshtml_3f6d8c15",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/Lead/Convert/Wizard.cshtml",
+      "HashCode": "FzdsNMpkxQXuw8eSo4Oa+ht4jkwY7n8pS5LYWq4BCTc",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_Lead_Convert_Wizard_cshtml_115bca43",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/Lead/Editors/LeadEdit.cshtml",
+      "HashCode": "gYn9xQTXI0mIOWSNiMzuEmOpZTHWoZdVXzliPlFQBFo",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_Lead_Editors_LeadEdit_cshtml_9a2f6ac9",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/Lead/State/Fail.cshtml",
+      "HashCode": "wHei9GNfdU91AxObgXI5FEiYdbIRkTZK9j2LFIMr5lk",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_Lead_State_Fail_cshtml_50dd3176",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/LeadContact/Create.cshtml",
+      "HashCode": "QiwddKvZW3sXDp6PRkDOywyl0ZBahkvNvwTVtL1DWlA",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_LeadContact_Create_cshtml_5eba8ee0",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/LeadContact/DeleteLeadContact.cshtml",
+      "HashCode": "RPdfrch/ad8G5TFfIOawVv6GGOl1gGK9HHcuK2m8bYQ",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_LeadContact_DeleteLeadContact_cshtml_3957a285",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/LeadContact/Edit.cshtml",
+      "HashCode": "78VKj8eaq4MJNEDh6Lh5k9lHg7Z0cwpYEf/0LXY+lEg",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_LeadContact_Edit_cshtml_8a96ee4c",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/LeadContact/GridTable.cshtml",
+      "HashCode": "Sv0lclZ0hYsobROUz7inzlmYo7WIBizhSwIWHFeK5GE",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_LeadContact_GridTable_cshtml_da183112",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/LeadContact/Editors/LeadContactEdit.cshtml",
+      "HashCode": "WzdKcy0+VKWnx/Fp0yyDqdEhK3mez+p0wwmThkcc3zw",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_LeadContact_Editors_LeadContactEdit_cshtml_ceee54d5",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/LeadScoringSettings/Edit.cshtml",
+      "HashCode": "lJp8idHRX09Aq3Q7Dk0dMZ6CECuSWJff4BRu+6I+b/Q",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_LeadScoringSettings_Edit_cshtml_2086d540",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/LeadScoringSettings/EditStep.cshtml",
+      "HashCode": "x3p0Lz7phLUDnF++L2jvvWZ/q4XD5HsTtKsQgDlp468",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_LeadScoringSettings_EditStep_cshtml_9e903ca",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/LeadScoringSettings/Grid.cshtml",
+      "HashCode": "Ea8eFCCj2Lzw8mw8mvCQIAACW49VSKi2ROpceC1b6l0",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_LeadScoringSettings_Grid_cshtml_c20890e0",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/LeadScoringSettings/Index.cshtml",
+      "HashCode": "lSDr/4gssXhMfFa7X1Eg3sjq3c+gTNM4jKG+rHIuoB0",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_LeadScoringSettings_Index_cshtml_128a3c72",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/LeadScoringSettings/SettingsProperty.cshtml",
+      "HashCode": "+ZRmGY7Ntr5X6H/uZt9PFdpiI8PkqDjU9Otcy6Uvgwo",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_LeadScoringSettings_SettingsProperty_cshtml_eab9e814",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/LeadScoringSettings/StepGrid.cshtml",
+      "HashCode": "M5Erzlujr1j82y8yr0xBkn4ZNGiR+Z7bgM9T02fPBXI",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_LeadScoringSettings_StepGrid_cshtml_daad32be",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/MarketingActivity/ActivityEffectsGrid.cshtml",
+      "HashCode": "0aTjkeyI2g8lebZbdsssWvtP3EizFcTda0uWvwOxp5I",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_MarketingActivity_ActivityEffectsGrid_cshtml_c0287840",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/MarketingActivity/BudgetEdit.cshtml",
+      "HashCode": "pKy18x6PEB9YaPvN9E/hPaWmAdLsAMQZU/05FQU/DfA",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_MarketingActivity_BudgetEdit_cshtml_fcbd6dec",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/MarketingActivity/BudgetForm.cshtml",
+      "HashCode": "It64uPZwkzkP3yFuR84PaHzEPnVbOIZ6yxZydEFHrvE",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_MarketingActivity_BudgetForm_cshtml_cec44c3a",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/MarketingActivity/Create.cshtml",
+      "HashCode": "nccIKe84+giKWISbIkep3PAuVNQ1H7sFUp1yYJ9ThK8",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_MarketingActivity_Create_cshtml_11850c51",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/MarketingActivity/Details.cshtml",
+      "HashCode": "NwylZM0Zv5zqxYd9UxpIulL6ulOVF9mO5y4l1WiDD14",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_MarketingActivity_Details_cshtml_a705e2af",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/MarketingActivity/Edit.cshtml",
+      "HashCode": "Tfnwuws8idK0Cu6COi9nD2oWLe8+SwGu7lngef4jXns",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_MarketingActivity_Edit_cshtml_b097958d",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/MarketingActivity/EffectsClientTemplate.cshtml",
+      "HashCode": "USp+0NCqYYU6APFHbMA/dLW4H1JVziJ7wBJYNMWRoXQ",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_MarketingActivity_EffectsClientTemplate_cshtml_78021cc2",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/MarketingActivity/EffectsTemplate.cshtml",
+      "HashCode": "N94b4pbe6c0m1IEqzhArf5iY2UIHd/LafUvUG/EF7Pw",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_MarketingActivity_EffectsTemplate_cshtml_d893a9b9",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/MarketingActivity/Explorer.cshtml",
+      "HashCode": "mKQajc4XYrnOKh/p89AjHh1h6uN9fmSsu6tyDc+Ftu4",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_MarketingActivity_Explorer_cshtml_8fe67252",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/MarketingActivity/Grid.cshtml",
+      "HashCode": "BCMihQPAdbx4pGofYxm6E6x5AJ1hD3IJtwFptrERx7o",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_MarketingActivity_Grid_cshtml_c7ec382d",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/MarketingActivity/GroupActivitiesGrid.cshtml",
+      "HashCode": "Jnr5tBrBYAz+Zh6o6wM5o7WVBpkwKKIZ8NwQmXkOXts",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_MarketingActivity_GroupActivitiesGrid_cshtml_169b99bd",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/MarketingActivity/GroupEffectGrid.cshtml",
+      "HashCode": "OzCmcqSJQHcFmkcdBs/Djb8UJCO2qELo/357czUWCKk",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_MarketingActivity_GroupEffectGrid_cshtml_819f743d",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/MarketingActivity/Index.cshtml",
+      "HashCode": "BBoSIQ/3xwhDP7TjL9HoevPxPXol4ZAkQPNnZcetGAQ",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_MarketingActivity_Index_cshtml_e0a6992f",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/MarketingActivity/LinkEntity.cshtml",
+      "HashCode": "3PfUePJLOwixApyoDWKms8aQjD9SkYd+w7413RbTfCk",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_MarketingActivity_LinkEntity_cshtml_91e72582",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/MarketingActivity/MarketingActivityPermissionSettings.cshtml",
+      "HashCode": "uGijp9rtvJqcea+Ot7pdTJ4bvjB0m9CIyEDntHFBfrQ",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_MarketingActivity_MarketingActivityPermissionSettings_cshtml_b142f66e",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/MarketingActivity/MarketingTagParent.cshtml",
+      "HashCode": "KZOWJqd5bnhPjGVbEHlkbfEJLPWt11umYdnV4/YhJXw",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_MarketingActivity_MarketingTagParent_cshtml_4ab44a27",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/MarketingActivity/MarketingTagPopup.cshtml",
+      "HashCode": "iurV/7m5/3L8RNxcN4nX51Ww/duJS1jNGevSH5a7gZM",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_MarketingActivity_MarketingTagPopup_cshtml_8e115099",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/MarketingActivity/SelectMarketingActivity.cshtml",
+      "HashCode": "MJ7lA01gQob6cxs1js6V/N9hOgkMOWNoYXhgMN4womE",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_MarketingActivity_SelectMarketingActivity_cshtml_d1e2fd10",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/MarketingActivity/TabView.cshtml",
+      "HashCode": "ug1WFu34YZ8daOgQ9HBXIL5ni90ZagON595hPLQQ2sY",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_MarketingActivity_TabView_cshtml_3fb8b3ef",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/MarketingActivity/Editors/MarketingActivityEdit.cshtml",
+      "HashCode": "96nkNVc23ahwzyuzy78K50A/WFRuV+ALTnoJM8yZv9k",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_MarketingActivity_Editors_MarketingActivityEdit_cshtml_d5b161f5",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/MarketingActivity/LeadDynamic/LeadDynamic.cshtml",
+      "HashCode": "XtM7mMrbtB9KGgJbMaSsBMGQktBaq5RFGpT1cSQSz1k",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_MarketingActivity_LeadDynamic_LeadDynamic_cshtml_d68e344e",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/MarketingActivity/LeadDynamic/LeadDynamicActivity.cshtml",
+      "HashCode": "RKikZBvDFdbT5QXH33l2PyvOadtbHyrQ/+PiOrvcghE",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_MarketingActivity_LeadDynamic_LeadDynamicActivity_cshtml_7048c2af",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/MarketingActivity/LeadDynamic/LeadDynamicGrid.cshtml",
+      "HashCode": "CxEIrnTjBJCtZrCWk9vupJosDBMqbVQuMU07NEYUHEQ",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_MarketingActivity_LeadDynamic_LeadDynamicGrid_cshtml_583590ae",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/MarketingActivity/MarketingPayment/AddPaymentPopup.cshtml",
+      "HashCode": "eivdqJjw16Mv24oZr0pKnvGobcBiBk04BPvDTY+OAOY",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_MarketingActivity_MarketingPayment_AddPaymentPopup_cshtml_e1b6a3e9",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/MarketingActivity/MarketingPayment/EditPayment.cshtml",
+      "HashCode": "83+iNOLxluDo4UnwO2dbz2fqLBmG8DMbG5mKjsnJGf0",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_MarketingActivity_MarketingPayment_EditPayment_cshtml_fb94f506",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/MarketingActivity/MarketingPayment/GridPayment.cshtml",
+      "HashCode": "z7I6myEv7t2CZ/G+618dVVj1cf789YVmUSK9FK61zr4",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_MarketingActivity_MarketingPayment_GridPayment_cshtml_9527e0d2",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/MarketingActivity/MarketingPayment/PaymentForm.cshtml",
+      "HashCode": "0Xv3lemMTmeN1Ha0FXTtCfVg9+5oZYBKmszvxSDR1mU",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_MarketingActivity_MarketingPayment_PaymentForm_cshtml_39f49d98",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/MarketingActivity/MarketingStatistic/MarketingStatistic.cshtml",
+      "HashCode": "2v2vzJJl4ywgm/LZ1ZLovt4mpzPqDX+DBwl+6rqSnR8",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_MarketingActivity_MarketingStatistic_MarketingStatistic_cshtml_be8c9f64",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/MarketingActivity/MarketingStatistic/MarketingStatisticGrid.cshtml",
+      "HashCode": "F9zrpZlHGaVm66wWGj8V8V+6N3625tw0pUqup30CvRA",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_MarketingActivity_MarketingStatistic_MarketingStatisticGrid_cshtml_53708a14",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/MarketingActivity/MarketingStatistic/MarketingStatisticObject.cshtml",
+      "HashCode": "/rBZ3SwShblJZDyq8CiluHM65gkt349kHb245EfaxAk",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_MarketingActivity_MarketingStatistic_MarketingStatisticObject_cshtml_15cfe46f",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/MarketingActivity/RelatedMarketingActivityEntities/RelatedContractorsGrid.cshtml",
+      "HashCode": "nDlUOS9whZKDqzo8hGB9H5CG4plrqvJaTXfGl9KLevw",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_MarketingActivity_RelatedMarketingActivityEntities_RelatedContractorsGrid_cshtml_233bb364",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/MarketingActivity/RelatedMarketingActivityEntities/RelatedLeadsGrid.cshtml",
+      "HashCode": "3sUg1x6p5o3j2krI1qzUq56YxKs4Zs3BkQZb+b0wqYU",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_MarketingActivity_RelatedMarketingActivityEntities_RelatedLeadsGrid_cshtml_242c814d",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/MarketingActivity/RelatedMarketingActivityEntities/RelatedSalesGrid.cshtml",
+      "HashCode": "S28GfVDiG6ZagUeG6WsFj62uRdzt+n3n/OyUQRTF6mc",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_MarketingActivity_RelatedMarketingActivityEntities_RelatedSalesGrid_cshtml_f207ce38",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/Payment/Create.cshtml",
+      "HashCode": "EV8pvcvmcMNaWG4VmRUflHZLEpNpnk8PeDcquqrHFkw",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_Payment_Create_cshtml_cf901574",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/PaymentCard/Details.cshtml",
+      "HashCode": "9ui7goMRIFJTPnnkwim23BZOc8wnjjLCCv7QQmhUpkw",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_PaymentCard_Details_cshtml_a3e36906",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/PaymentCard/PopupPaymentCard.cshtml",
+      "HashCode": "18vVihCXv3truzlot0emXlWbKBrlU/R12zpB0OjD2Jk",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_PaymentCard_PopupPaymentCard_cshtml_6a1251c0",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/Product/Details.cshtml",
+      "HashCode": "GHcIYbgAzd9ClgWCPSX8QhpHzZR4RmX4S+0QSKPeGEQ",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_Product_Details_cshtml_878cf705",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/Product/DetailsForm.cshtml",
+      "HashCode": "GfYYzymcqj05IMnQWFlKMGH/1s/iOlDkhNy3U+bArb8",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_Product_DetailsForm_cshtml_9019aeb",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/Product/Edit.cshtml",
+      "HashCode": "75nG4rkTO5ZZBfHQmYqb2KXs4cTdOtZdvFERYrkFWQA",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_Product_Edit_cshtml_f3d68657",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/Product/EditForm.cshtml",
+      "HashCode": "mwc2SUkKX1BPHdDt80kd+9kap8n9GwJT/AxprDVACzc",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_Product_EditForm_cshtml_68814c79",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/Product/EditorFields.cshtml",
+      "HashCode": "6cPrJscDST2OV8qrqGumdavVp8H9yTjO2fhFsM2VAzY",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_Product_EditorFields_cshtml_4cfc90c3",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/Product/Index.cshtml",
+      "HashCode": "StcLyDuhBfqEWI8wm8nqX5lOG6Zjo2EYXrDoSTnp+uA",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_Product_Index_cshtml_33456979",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/Relationship/CommentsClientTemplate.cshtml",
+      "HashCode": "gvKrLor+v7Zb5EZFccFhmhT3dpcsVRXc3M6/o8S3QBM",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_Relationship_CommentsClientTemplate_cshtml_c1680591",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/Relationship/CommentsTemplate.cshtml",
+      "HashCode": "F+vWBuVdHzX8zQwGmypqSEEpvaPY6ZHRmCUvXsb7oso",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_Relationship_CommentsTemplate_cshtml_b275bf88",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/Relationship/Grid.cshtml",
+      "HashCode": "6OW2Kr5aQiOea0T/zb1oG2UpT4JfzxuCnI4FYtr0xH4",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_Relationship_Grid_cshtml_f4d7ec90",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/Relationship/LinkedEntity.cshtml",
+      "HashCode": "c+IV6fiBbeuoqDjYJSBzkdtC+Xlav+O07XZg9M00Wp8",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_Relationship_LinkedEntity_cshtml_e51c13ae",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/Relationship/RelationshipPermissionSetting.cshtml",
+      "HashCode": "3oa5uh4Y9In38ChJIB0NMS0KpGRGyPGbx2f4o78M5mg",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_Relationship_RelationshipPermissionSetting_cshtml_fcdd1f11",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/RelationshipCall/Create.cshtml",
+      "HashCode": "cGnXwqGGaxWc1wrAAKK0/Qgyi5gqNuie9jEyfWNfypE",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_RelationshipCall_Create_cshtml_190e5e60",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/RelationshipCall/Details.cshtml",
+      "HashCode": "r/mifwaljzTlrxDiDGK3PNMHhHaPH+kTTYANR/2EW84",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_RelationshipCall_Details_cshtml_7d14d24c",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/RelationshipCall/Edit.cshtml",
+      "HashCode": "nCmynyWQZMZWpv/Yq/4It7UBghdIjlV5qe/SzPrxINI",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_RelationshipCall_Edit_cshtml_9d9c7808",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/RelationshipCall/TabView.cshtml",
+      "HashCode": "oI/BRHXGWiSegp6E9I1lFKZyOZ9V35MzXEWlaPshxSg",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_RelationshipCall_TabView_cshtml_2319f900",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/RelationshipCall/Editors/RelationshipCallEdit.cshtml",
+      "HashCode": "vvQojBcaVOhmTMSfYjEkv1kQFZSUOL1XJrO6E9f79pM",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_RelationshipCall_Editors_RelationshipCallEdit_cshtml_b2d0bf7d",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/RelationshipMail/Create.cshtml",
+      "HashCode": "yH7XdGxraS16Xrk3xMzySYGwpJb+DMhQyFqy9F2DF5s",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_RelationshipMail_Create_cshtml_d7550c89",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/RelationshipMail/Details.cshtml",
+      "HashCode": "rxp97GZzsLVqmjgsTfveqVDDTIpCx747XSAV5t3l8/c",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_RelationshipMail_Details_cshtml_46f4087",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/RelationshipMail/Edit.cshtml",
+      "HashCode": "URPNu013yNsAcayFbpwx0z056xAZ3HF8v1Xo84VxEi4",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_RelationshipMail_Edit_cshtml_3ed0bd8d",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/RelationshipMail/TabView.cshtml",
+      "HashCode": "iujUAlkGAXHGYs1FPrtNsCYpB0jfCTJzjuUJbpKAdP4",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_RelationshipMail_TabView_cshtml_ff5336c7",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/RelationshipMail/Editors/RelationshipMailEdit.cshtml",
+      "HashCode": "R9ZXXrw64Rud0a4QKsNJt6I1nm+302lPrbJFxqTN3dw",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_RelationshipMail_Editors_RelationshipMailEdit_cshtml_5c52e6c5",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/RelationshipMeeting/Create.cshtml",
+      "HashCode": "7Y7RnxFLVnj2GntFkemrGFoflgK7/yB2shd0bqBVoGk",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_RelationshipMeeting_Create_cshtml_a047b63d",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/RelationshipMeeting/Details.cshtml",
+      "HashCode": "VHJuLq+ZDnxLZHDCm8HiTboF955vTK0HB4p/OP7Dz5Y",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_RelationshipMeeting_Details_cshtml_3f6bdf97",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/RelationshipMeeting/Edit.cshtml",
+      "HashCode": "owqZ4NXYDvtOdTLZnWcCXyNlh73MiXofdfpIew0gosM",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_RelationshipMeeting_Edit_cshtml_5a06869",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/RelationshipMeeting/TabView.cshtml",
+      "HashCode": "CA9DVAOEuqU9SWXnt5O+YlzXAA4aaQvRrBB6eTs43/Y",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_RelationshipMeeting_TabView_cshtml_b8b69c27",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/RelationshipMeeting/Editors/RelationshipMeetingEdit.cshtml",
+      "HashCode": "KeUZE5ukTLRMhj7S9fp5cCZpHkBittLdHeKhKihRhMw",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_RelationshipMeeting_Editors_RelationshipMeetingEdit_cshtml_2483755",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/Sale/Create.cshtml",
+      "HashCode": "GFbevX8z2ehXERDScJ8KuuNRwaiuWmykoTjPNU86L2A",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_Sale_Create_cshtml_af71cf2b",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/Sale/Details.cshtml",
+      "HashCode": "elxXbA2dIMOA9ISZ9177wKydxAS6uRBSVrU75YKKb+U",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_Sale_Details_cshtml_aaae95e5",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/Sale/Edit.cshtml",
+      "HashCode": "u5xuEeD+xHIP18TjzeHEHqS0Jv3xVc6aTLQfzqUoKDQ",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_Sale_Edit_cshtml_22d48cab",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/Sale/Grid.cshtml",
+      "HashCode": "9nmOPq9UkT98u1j7C9MYnaE+J5iXS9dzsEQ0rQPTe3I",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_Sale_Grid_cshtml_21b2519f",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/Sale/Index.cshtml",
+      "HashCode": "UnrYEIb20slYk9J2CW/8q4nxXBZw/0YTuCk9v8EIk9M",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_Sale_Index_cshtml_2a62fae1",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/Sale/PortletGrid.cshtml",
+      "HashCode": "/sNogimY7KJoe5b/94de0bxB7XhmyAs4Wn3xuzmhh18",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_Sale_PortletGrid_cshtml_d100c53f",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/Sale/SaleAcessinggridViewItem.cshtml",
+      "HashCode": "meU/sZ8DwhrdxklRyHwN/CHxPWcaH5QqPi/3Tdil0ps",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_Sale_SaleAcessinggridViewItem_cshtml_98c5f65f",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/Sale/SalePermissionSetting.cshtml",
+      "HashCode": "e93ow0hRRPxAXYMUxtMVlK8MN9I+cXTfxTzB0oJmPNE",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_Sale_SalePermissionSetting_cshtml_b926b5c9",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/Sale/SalePortlet.cshtml",
+      "HashCode": "+hsKNRvIdD+PI5RN2jJRGlmfRdW77fYJ8qWzOaWA6Y4",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_Sale_SalePortlet_cshtml_8e8c0902",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/Sale/SalePortletSettings.cshtml",
+      "HashCode": "jhNX0pm11BHXoa93Nwp+1QmlxfdHNS9Z4ZAFTonkAuA",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_Sale_SalePortletSettings_cshtml_18829ff5",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/Sale/SalesOfContractorGrid.cshtml",
+      "HashCode": "dcvpyjJcexWXqMACBVrrKo7MszyHvC3Epkn6dOOzsLE",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_Sale_SalesOfContractorGrid_cshtml_9f132855",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/Sale/SummaryTable.cshtml",
+      "HashCode": "zxZ2K+PpznxsKo6PGky5AF+FYTY9Q5eG40UpbiJ/nc4",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_Sale_SummaryTable_cshtml_1bb1d9a9",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/Sale/TabView.cshtml",
+      "HashCode": "lDEYceaP1RXRpvnO5geHxhOR1eP1mvmW9l0+AcO/W/o",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_Sale_TabView_cshtml_4bc88d11",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/Sale/TasksTab.cshtml",
+      "HashCode": "6qZ6ci8/4oi0uVOmKb4i0up7HpqjwctIRj6keqXaBTw",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_Sale_TasksTab_cshtml_c6632bd2",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/Sale/Editors/SaleEdit.cshtml",
+      "HashCode": "gFiEMl6/FFaiFQxcDVlqK/2G4WsbARYPb4DtaGWXwqU",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_Sale_Editors_SaleEdit_cshtml_a806e451",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/Sale/Editors/SaleStageEdit.cshtml",
+      "HashCode": "uHppSPhQOTsv+WaMtXr004BmIgqqSvM52J3tILJ8i6s",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_Sale_Editors_SaleStageEdit_cshtml_68be490d",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/Sale/Editors/SaleStatusEdit.cshtml",
+      "HashCode": "OgebX+crxl9tTVzlxfyBaWWElivfz8bk/m/hFKfmFgA",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_Sale_Editors_SaleStatusEdit_cshtml_e87be6dd",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/Sale/Editors/SaleTypeEdit.cshtml",
+      "HashCode": "/AaZ5ReHfMIBJizOmlqYkg3vMbMERRa0zPQnHU2Rk8k",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_Sale_Editors_SaleTypeEdit_cshtml_1f298e91",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/Sale/SaleProducts/CreateProduct.cshtml",
+      "HashCode": "h+pA22ykPFuo73CBsonwgPIywEFQU2duHtpLctehwjk",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_Sale_SaleProducts_CreateProduct_cshtml_77150c0c",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/Sale/SaleProducts/EditProduct.cshtml",
+      "HashCode": "lDWKk7uepkP4y+3PjL8w2XHhhoZ1FXjBOLnO4RTk/g4",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_Sale_SaleProducts_EditProduct_cshtml_9c47bd30",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/Sale/SaleProducts/Grid.cshtml",
+      "HashCode": "z2Pcu0FumQp0QBAa4ri1/lvXN2XfKxq+OpDNqhyT2xU",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_Sale_SaleProducts_Grid_cshtml_cf0482c7",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/Sale/SaleProducts/Products.cshtml",
+      "HashCode": "EB59NHJNaX29J2H7nhi/PLN6DF/GRj+MBbuoSAXQsn0",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_Sale_SaleProducts_Products_cshtml_95d6bee7",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/SaleFunnel/AddStage.cshtml",
+      "HashCode": "yb3cdJ5J3/pMNrHMhGniO0SnwoxtVBRwxWlEFfuHxCM",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_SaleFunnel_AddStage_cshtml_889c0ed8",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/SaleFunnel/Edit.cshtml",
+      "HashCode": "1HLdzvPQv+ZrJ1OOjbS+wtxR6an4rO/FYxazVeMj+Rk",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_SaleFunnel_Edit_cshtml_44b34635",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/SaleFunnel/Grid.cshtml",
+      "HashCode": "D4O/4U6Ardeym0VUpRD7koYJ1Bo7EhDQ9VTT3U+BlPw",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_SaleFunnel_Grid_cshtml_f220d45",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/SaleFunnel/Index.cshtml",
+      "HashCode": "X22+5RiegTuZjmOLcZxtcRBB+/sRerNrN0NOYSTU+fE",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_SaleFunnel_Index_cshtml_6fed9fcf",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/SaleFunnel/SaleStagesGrid.cshtml",
+      "HashCode": "tzdI1C+nJl0qTVbY8/0rqje44cIyfd0QjFwwvLcR5V4",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_SaleFunnel_SaleStagesGrid_cshtml_950b8689",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/SaleFunnelReport/Index.cshtml",
+      "HashCode": "tkvrA4d6w1v7RcDqGMfJmiHIUMWfDPy+yW0BQ1nfPhk",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_SaleFunnelReport_Index_cshtml_ce6be209",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/SaleFunnelReport/SaleFunnel.cshtml",
+      "HashCode": "qeZ3PMVK4rTprB2jUGX5m7mBOjl/emN3C9D8VSXNLQs",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_SaleFunnelReport_SaleFunnel_cshtml_d012a1e6",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/SalesPlan/Calendar.cshtml",
+      "HashCode": "zRQpkT/Msj/LRSANR8tgnUNy7SVFATJT8MuC//BaYWA",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_SalesPlan_Calendar_cshtml_b48ed931",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/SalesPlan/Days.cshtml",
+      "HashCode": "Lry8dI0y8FK38rlxLLPp81BA580UajWHtgM9bWLGIh8",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_SalesPlan_Days_cshtml_1102cb6c",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/SalesPlan/Grid.cshtml",
+      "HashCode": "GkpIJmq1EUSHZrotITFwP2P+VE6NB3PBQK4k+SxRP8o",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_SalesPlan_Grid_cshtml_6dd2b3b3",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/SalesPlan/Index.cshtml",
+      "HashCode": "wVwUIb4+vmL3zUfRObodgAINnIjbOaBpAzyapPAMmE4",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_SalesPlan_Index_cshtml_5e1bde29",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/SalesPlan/Payment.cshtml",
+      "HashCode": "9mzTK0Lu+lEfKKJtqqHfojxPS4+b3b+jHQR//YaoDw4",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_SalesPlan_Payment_cshtml_f4cdb789",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/SalesPlan/Sale.cshtml",
+      "HashCode": "1GYBL9DGulc8TG2PYAxL7fh8hsEWHMC9GoKPjbd7iHw",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_SalesPlan_Sale_cshtml_8c6bcb5c",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/SalesPlan/SalesPlan.cshtml",
+      "HashCode": "jZxT+KKUQqjIJUjJv37LorHEyiKHE3yLr8UyeAWGIvs",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_SalesPlan_SalesPlan_cshtml_be7c30b0",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/SalesPlan/Week.cshtml",
+      "HashCode": "fZM9VefuNZeiRKvTVz+4ow+BuL/8yaBUyc6LS4oO3QQ",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_SalesPlan_Week_cshtml_8279bd6f",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/SaleStage/Grid.cshtml",
+      "HashCode": "vpsddwARoXoNlAjPbBdIb4gwuaDAk589faB6UIed59w",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_SaleStage_Grid_cshtml_3589c1d7",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/SaleStage/GridContent.cshtml",
+      "HashCode": "llTqVf6seTbx9mbo3vFHT5cIWLZI6ql6XJX3ob8d8L0",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_SaleStage_GridContent_cshtml_9dfa836",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/SaleStage/Index.cshtml",
+      "HashCode": "GMyeH7OYBlEUND1J8J5BO0V3KhhfcyP3d+kKLAaUILQ",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_SaleStage_Index_cshtml_57ecb239",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/SaleType/Edit.cshtml",
+      "HashCode": "cSe7IYwX8t3oy7QZ7+eNU8ChYUqBM2tJbeV7Macoka8",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_SaleType_Edit_cshtml_4a13793",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/SaleType/Grid.cshtml",
+      "HashCode": "ZVlF62X1vT0/X4sk/kHP79tZF4MuDj9LAJM9fyQ81OM",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_SaleType_Grid_cshtml_406d98f",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/SaleType/Index.cshtml",
+      "HashCode": "6KcidFdjgFM1NWesnqWsec1H4tmUneLwPZY2ixIHb94",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_SaleType_Index_cshtml_dad96e59",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/Security/Permissions.cshtml",
+      "HashCode": "FAeAP3Zn8Jw6hrt+u3lzdD/CNDliYooaZV593MXWuLE",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_Security_Permissions_cshtml_ba0397d6",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/Security/PropertiesPermissions.cshtml",
+      "HashCode": "lu68MogF6GAqMVG7qD50LHwSNYI5gboBJMTwGO49DNY",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_Security_PropertiesPermissions_cshtml_f620ad33",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/Shared/CrmAttachment.cshtml",
+      "HashCode": "rdg5fuVv40GSPESKORPfhftdzq3oPGY5iFm9XPD6NtE",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_Shared_CrmAttachment_cshtml_22f08b44",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/Shared/CrmAttachmentDocument.cshtml",
+      "HashCode": "FJ9fFkSnwDeJhuKFTwbW7C9zso9QDXYuTKcQKni8GFc",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_Shared_CrmAttachmentDocument_cshtml_ca19c13f",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/Shared/CrmAttachmentFile.cshtml",
+      "HashCode": "NGBh29Vgl+ZeLnxNpgLMoOODu36oJrRtH4ZIpvFEpwk",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_Shared_CrmAttachmentFile_cshtml_95599ce2",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/Shared/CrmAttachmentItems.cshtml",
+      "HashCode": "Vyie4F28Kfc64x+iSOdq52Z7imlwNn9qg7xR6R9vt9o",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_Shared_CrmAttachmentItems_cshtml_7b778fc2",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/Shared/DeleteCategoriesDialog.cshtml",
+      "HashCode": "muEnLBFwlLiXV2uv0NC5D0s9vne15LHKSiPr0oNw9MA",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_Shared_DeleteCategoriesDialog_cshtml_85313c06",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/Shared/LeadDublicatePanel.cshtml",
+      "HashCode": "bJKhxHu15gCW98v7yhvqFDi7GxICdUdMz1uuN38pEg0",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_Shared_LeadDublicatePanel_cshtml_17c97c2c",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/Shared/RelationshipAddDay.cshtml",
+      "HashCode": "xn722d0cw8c3aprdfEuQPr23L2GLWcjFdJYn8UoVQF8",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_Shared_RelationshipAddDay_cshtml_c2ace36c",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/Shared/RelationshipChangeTime.cshtml",
+      "HashCode": "K9Hw/V5Bu1m8cAfTondULhP0fDEEMJTgww76qeqywhg",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_Shared_RelationshipChangeTime_cshtml_ebf2839e",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/Shared/RelationshipComplete.cshtml",
+      "HashCode": "T0gEx4K2vLqB784XEjSrLqpnat/2mTFFSm5tUCZVeLk",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_Shared_RelationshipComplete_cshtml_ca5cef0c",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/Shared/RelationshipSchedulesList.cshtml",
+      "HashCode": "k2fZ6URyxQFVMGWOZnUNLJn7Sr44M6qzjQWvuoobv5I",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_Shared_RelationshipSchedulesList_cshtml_cec129f9",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/Shared/RelationshipUsersList.cshtml",
+      "HashCode": "GID3xzDfHv8eMI6+TS3KiWY/FZUmkDFtC/rD9AdzEfI",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_Shared_RelationshipUsersList_cshtml_a0857715",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/Shared/ScriptPanelBankAccount.cshtml",
+      "HashCode": "hYfwIK7YQz0jnxq/3wIcRSJedzAaK9R+hlbMqB8/IpA",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_Shared_ScriptPanelBankAccount_cshtml_950ea2e7",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/Shared/ScriptPanelBDS.cshtml",
+      "HashCode": "/Om7O9xfvvF+gvtdHNzkRhMnLebvWE41GxflNcz6O0A",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_Shared_ScriptPanelBDS_cshtml_853938e9",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/Shared/ScriptPanelPaymentCard.cshtml",
+      "HashCode": "jyufWMDRzTkjw1xtktlxQ1DNeuNflR1qxlcvxT2SOzw",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_Shared_ScriptPanelPaymentCard_cshtml_a025e1bc",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/Shared/TaskEntityDisplay.cshtml",
+      "HashCode": "ojUlnGXihOAdRY9sOaqqWFlOoCMsiMEdcrJ2ouonTPA",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_Shared_TaskEntityDisplay_cshtml_25055599",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/Shared/TaskEntitySelector.cshtml",
+      "HashCode": "cx0Q6s/QxBS1RL5gY8yX3vdvsPyEPRtYj6KgjbOFjBs",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_Shared_TaskEntitySelector_cshtml_10ff874a",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/Shared/Address/ContentBegin.cshtml",
+      "HashCode": "mBOpWEthsfkjBoYK8pxKdy0kFHwc3QFU34klfr39t4k",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_Shared_Address_ContentBegin_cshtml_95483f3e",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/Shared/AuditView/Address.Edit.cshtml",
+      "HashCode": "7C1vDnjhrk/Zz91oj+F57xbd/aohxw94d43X8gugzoE",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_Shared_AuditView_Address_Edit_cshtml_5499c658",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/Shared/AuditView/Contact.Edit.cshtml",
+      "HashCode": "Z+lVK8f7TUu8qc5NZ7cRSfYQlE2qAS4ihN6Q4ah6foE",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_Shared_AuditView_Contact_Edit_cshtml_425ddbe8",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/Shared/AuditView/Contractor.ChangeAccess.cshtml",
+      "HashCode": "15MgosPz8Xo+L6uqGeR/w6Iqd5m2ypU6LfxOqDozinQ",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_Shared_AuditView_Contractor_ChangeAccess_cshtml_8e0e2b69",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/Shared/AuditView/Contractor.Edit.cshtml",
+      "HashCode": "r/Y6XNm3tBC3N042TlK0nRr34V+E6iX/X80f4DqX0i0",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_Shared_AuditView_Contractor_Edit_cshtml_d585e43b",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/Shared/AuditView/ContractorSlave.Edit.cshtml",
+      "HashCode": "dILY9cp5O+o8+2OZ3vz4GrHUd3U++RIa/bUsP0WC3r8",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_Shared_AuditView_ContractorSlave_Edit_cshtml_6bc3e156",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/Shared/AuditView/Marketing.Update.cshtml",
+      "HashCode": "lJvlaHgMtdRw+xdVbNmo3rxT6IOdbnLnGFIo6cJJHwo",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_Shared_AuditView_Marketing_Update_cshtml_68f36705",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/Shared/AuditView/Relationship.ChangeTime.cshtml",
+      "HashCode": "JRKK53StqBwjEdbbPv+Mb4KCW1uI2+J62fE4UBGicfA",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_Shared_AuditView_Relationship_ChangeTime_cshtml_4f536863",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/Shared/AuditView/Relationship.Edit.cshtml",
+      "HashCode": "0I2pXMyFKNMjeVEROMIvicOA4WEcU5E9ylqcOgwXkps",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_Shared_AuditView_Relationship_Edit_cshtml_2c2253e8",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/Shared/AuditView/Sale.ChangeStage.cshtml",
+      "HashCode": "PoeQI55o8NVKvGCtRarWYb5d2UMJinhxRUz7TW4s45w",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_Shared_AuditView_Sale_ChangeStage_cshtml_719b07f9",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/Shared/AuditView/Sale.ChangeStatus.cshtml",
+      "HashCode": "Ij+pBaIWzKTozWGikFbhj2f4xAiuONe0qb9RYElUFTk",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_Shared_AuditView_Sale_ChangeStatus_cshtml_663d4819",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/Shared/AuditView/Sale.UpdateView.cshtml",
+      "HashCode": "eb/0NWh+Kp/MJlCQXzFKPWN0bTUS6xxOEt8+czoF/bg",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_Shared_AuditView_Sale_UpdateView_cshtml_ad639e3f",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/Shared/Contact/ContactEditForm.cshtml",
+      "HashCode": "GsdnyRmniFsAfzMNf8egRt0L/HBcbFiTzZ9owKmLWes",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_Shared_Contact_ContactEditForm_cshtml_c72c224",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/Shared/Contractor/TasksTab.cshtml",
+      "HashCode": "NZQOQsrBNl8uW2xljNHhUeDTJqtT7d6pevaEqbQWk7o",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_Shared_Contractor_TasksTab_cshtml_a7e5c73c",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/Shared/ContractorIndividual/ContractorIndividualEditForm.cshtml",
+      "HashCode": "FHzbeT0GlFPoCAfB0mggRpZ2bgtanqxLr94Vr3okJGI",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_Shared_ContractorIndividual_ContractorIndividualEditForm_cshtml_b46e199a",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/Shared/ContractorLegal/ContractorLegalEditForm.cshtml",
+      "HashCode": "Azy86ATklqsW3bhQ5PgxaXdM7+4mzLabxItlibaDdyc",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_Shared_ContractorLegal_ContractorLegalEditForm_cshtml_3b869e64",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/Shared/DisplayTemplates/ContactBirthDate.cshtml",
+      "HashCode": "hcQyCCNKpWc9kdqsUVV1GqcXw6tIWPMldvez/jYEg/w",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_Shared_DisplayTemplates_ContactBirthDate_cshtml_6775b45e",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/Shared/DisplayTemplates/RelationshipInformToPanel.cshtml",
+      "HashCode": "vesAXiWdxHrBk7tBWXZPXM9MqWBQnHWW+rywnd0COpQ",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_Shared_DisplayTemplates_RelationshipInformToPanel_cshtml_d8f16293",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/Shared/DisplayTemplates/RelationshipMeetingSchedulesPanel.cshtml",
+      "HashCode": "Og6rWBow6tvAILcuOWZ+LlhRwyVrKlkaosQfNlR6fWA",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_Shared_DisplayTemplates_RelationshipMeetingSchedulesPanel_cshtml_b3f27600",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/Shared/DisplayTemplates/RelationshipMeetingWholeDay.cshtml",
+      "HashCode": "spqfMT5NJArlwr4Z/wK60kDa+ZQ22t3Qak3f/rYyNAo",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_Shared_DisplayTemplates_RelationshipMeetingWholeDay_cshtml_e6c69203",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/Shared/DisplayTemplates/RelationshipParticipantsPanel.cshtml",
+      "HashCode": "XKTbA7iMGF5K8+0ujGfzE6sLgwF8QSUCPQIbuEaAYn8",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_Shared_DisplayTemplates_RelationshipParticipantsPanel_cshtml_e54b5d55",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/Shared/DisplayTemplates/TimeNotSet.cshtml",
+      "HashCode": "g0QmwvSHU1kPXdF/D4jvBKOQAnwek2sSIVUm+dQ/zSo",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_Shared_DisplayTemplates_TimeNotSet_cshtml_7b531551",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/Shared/DisplayTemplates/Entities/Address.cshtml",
+      "HashCode": "9JMEQRpYaaERevLYP1EjlpYU5At8bgJR4OQgkf+wLE8",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_Shared_DisplayTemplates_Entities_Address_cshtml_8af6b3bb",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/Shared/DisplayTemplates/Entities/BankAccountsSet.cshtml",
+      "HashCode": "A49YRiVmujLfS7a7qKhRN0ljYs73sEjqSMffRNzLJpI",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_Shared_DisplayTemplates_Entities_BankAccountsSet_cshtml_7a279857",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/Shared/DisplayTemplates/Entities/BankDetails.cshtml",
+      "HashCode": "NByLPHOHaBXYoM7LvE7V8bLhUuTrC5oERAJZcqsFfMg",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_Shared_DisplayTemplates_Entities_BankDetails_cshtml_648a655",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/Shared/DisplayTemplates/Entities/BankDetailsSet.cshtml",
+      "HashCode": "I7ps5WRoTsyMscf9ka9IsKRESimXVy19apZE0UkrjnI",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_Shared_DisplayTemplates_Entities_BankDetailsSet_cshtml_57e63897",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/Shared/DisplayTemplates/Entities/BankDetailsSWIFT.cshtml",
+      "HashCode": "f8GISRHbvCDkA3hbxuP01h7QOGoOSA2tsB6B4OYf7WQ",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_Shared_DisplayTemplates_Entities_BankDetailsSWIFT_cshtml_612f531c",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/Shared/DisplayTemplates/Entities/BankDetailsSWIFTSet.cshtml",
+      "HashCode": "iMu+fhppC9t6HccmxSt/p7W1mA2QtpZ5dX82duqN9oU",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_Shared_DisplayTemplates_Entities_BankDetailsSWIFTSet_cshtml_3e0ba3ae",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/Shared/DisplayTemplates/Entities/Contact.cshtml",
+      "HashCode": "YGqBXek1eDt7B3yhnMPlnU/UEOTEKZhPeRVFzCeeFfg",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_Shared_DisplayTemplates_Entities_Contact_cshtml_cf922d25",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/Shared/DisplayTemplates/Entities/ContactSet.cshtml",
+      "HashCode": "5BmycxO93DmXt7Mc97ZJ8bT+nNxkfjZw1RVDF+vVjok",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_Shared_DisplayTemplates_Entities_ContactSet_cshtml_e353766b",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/Shared/DisplayTemplates/Entities/Contractor.cshtml",
+      "HashCode": "x3/Rg+NqosETHdjw2OTzd8vc+YcWeJse80muKYTIASA",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_Shared_DisplayTemplates_Entities_Contractor_cshtml_f3b68a0",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/Shared/DisplayTemplates/Entities/ContractorIndividual.cshtml",
+      "HashCode": "WjT5DH/NWu0TnZAurCOAETITL+2KNdOR77vccmT04GY",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_Shared_DisplayTemplates_Entities_ContractorIndividual_cshtml_cf737447",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/Shared/DisplayTemplates/Entities/ContractorIndividualSet.cshtml",
+      "HashCode": "iDe4CiYAiaPwb7b7dqJ9SgocTDu3pVP38of7YFg8iR8",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_Shared_DisplayTemplates_Entities_ContractorIndividualSet_cshtml_572d6c9d",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/Shared/DisplayTemplates/Entities/ContractorLegal.cshtml",
+      "HashCode": "O0Yr2tNM3huQp4e63DaojEZm6wqssPJV/raKGIhlvL0",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_Shared_DisplayTemplates_Entities_ContractorLegal_cshtml_e99cbfc9",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/Shared/DisplayTemplates/Entities/ContractorLegalSet.cshtml",
+      "HashCode": "pCXBXgOxW7Awxz6D6Ki3MeF9nWttthVtyH7+A+SNVe4",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_Shared_DisplayTemplates_Entities_ContractorLegalSet_cshtml_bf55aab7",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/Shared/DisplayTemplates/Entities/ContractorSet.cshtml",
+      "HashCode": "DGxQviFcqVajwzdZ4MatyVNVcumQGLoqphCZUkMMsq4",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_Shared_DisplayTemplates_Entities_ContractorSet_cshtml_2a9ec08a",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/Shared/DisplayTemplates/Entities/Email.cshtml",
+      "HashCode": "Duen7noZ8fIixxqeK8RKYPngnTo8P8dftsauSrtsoOw",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_Shared_DisplayTemplates_Entities_Email_cshtml_65f07661",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/Shared/DisplayTemplates/Entities/EmailSet.cshtml",
+      "HashCode": "L4F5+N+xUcg1slh8YTm4OGBIkLXex3KbO4vMO6IPD58",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_Shared_DisplayTemplates_Entities_EmailSet_cshtml_1f941c1f",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/Shared/DisplayTemplates/Entities/FinancialInstitutionBank.cshtml",
+      "HashCode": "hf4lgzXvmqive8Xb6EYUpQUBHf38v32DZ50hGbhVP5I",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_Shared_DisplayTemplates_Entities_FinancialInstitutionBank_cshtml_c861a066",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/Shared/DisplayTemplates/Entities/Lead.cshtml",
+      "HashCode": "wGuscxGPwm4/uB43snmmitrTRmktj9NKZCPlyG1ghMM",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_Shared_DisplayTemplates_Entities_Lead_cshtml_611a59bd",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/Shared/DisplayTemplates/Entities/LeadContact.cshtml",
+      "HashCode": "TijtkhE5hzwnhfbhmjQ+R/ZeuIhJRjKtVkcjwWMfwsQ",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_Shared_DisplayTemplates_Entities_LeadContact_cshtml_72898fc5",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/Shared/DisplayTemplates/Entities/LeadContactSet.cshtml",
+      "HashCode": "QyIP7nHsIVTanQmipnpB55lMmRyUuL0OZoZONAVtPQg",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_Shared_DisplayTemplates_Entities_LeadContactSet_cshtml_32028713",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/Shared/DisplayTemplates/Entities/LeadSet.cshtml",
+      "HashCode": "ALE83i1VVmK01UpGC3A9tvZKP3EqCaHAjSDe9EkN4go",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_Shared_DisplayTemplates_Entities_LeadSet_cshtml_df1d0097",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/Shared/DisplayTemplates/Entities/MarketingEffect.cshtml",
+      "HashCode": "a/bDfPJArdQXdbR6mTfiCFR5FDLHYBqQuE3+4WNm0eA",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_Shared_DisplayTemplates_Entities_MarketingEffect_cshtml_67008cd6",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/Shared/DisplayTemplates/Entities/MarketingTagSet.cshtml",
+      "HashCode": "7lTiNzopJ/iS/F2ojXU5nuUpGdcRFe4eWXwwMd/QoY4",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_Shared_DisplayTemplates_Entities_MarketingTagSet_cshtml_8612b8fd",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/Shared/DisplayTemplates/Entities/PaymentCardsSet.cshtml",
+      "HashCode": "vyDwh1Q+Gz1USIayVwTFTEUGDWfkLHVN5197YO7uv9c",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_Shared_DisplayTemplates_Entities_PaymentCardsSet_cshtml_2c57f068",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/Shared/DisplayTemplates/Entities/PaymentSystem.cshtml",
+      "HashCode": "zF6FLY3zm3ugWPv8OYYObaxNwGyko8aX5V+cS96LWkI",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_Shared_DisplayTemplates_Entities_PaymentSystem_cshtml_7e70d0b0",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/Shared/DisplayTemplates/Entities/PaymentSystemSet.cshtml",
+      "HashCode": "qcqSibHv4wKKn23S/Q8KV5cRj84dMMz9FN9l+vVTTR8",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_Shared_DisplayTemplates_Entities_PaymentSystemSet_cshtml_13eff0e",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/Shared/DisplayTemplates/Entities/Phone.cshtml",
+      "HashCode": "9kpwfWbfvYrb8zor8+7uwS97a4cyNJiq1H4intYXs4A",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_Shared_DisplayTemplates_Entities_Phone_cshtml_bda22005",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/Shared/DisplayTemplates/Entities/PhoneSet.cshtml",
+      "HashCode": "nXQGE+GCWKZe6CT9LRwWOLtwWpv6uLiZZa0XsuPJTy0",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_Shared_DisplayTemplates_Entities_PhoneSet_cshtml_b9066b17",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/Shared/DisplayTemplates/Entities/Relationship.cshtml",
+      "HashCode": "FkHSOV3sib9RP+8zo3ZAJi1oTguk6b3fWTCph7aerns",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_Shared_DisplayTemplates_Entities_Relationship_cshtml_763389d1",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/Shared/DisplayTemplates/Entities/RelationshipCall.cshtml",
+      "HashCode": "m01ppcXyKo/XLeIDTsHx0gATCG4Cck20T38UoQlVuXY",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_Shared_DisplayTemplates_Entities_RelationshipCall_cshtml_5358fe4b",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/Shared/DisplayTemplates/Entities/RelationshipCallSet.cshtml",
+      "HashCode": "8vKkmAs2IDCPt3ib1vb1LlEcz8jp0WL4CuZvJaHIQ/0",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_Shared_DisplayTemplates_Entities_RelationshipCallSet_cshtml_4857911",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/Shared/DisplayTemplates/Entities/RelationshipCompleted.cshtml",
+      "HashCode": "7jEH3i6yBsmZJVSTF0YrtohdSUG2WDJi7jp1UL/PaAI",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_Shared_DisplayTemplates_Entities_RelationshipCompleted_cshtml_78d91bc8",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/Shared/DisplayTemplates/Entities/RelationshipEndDateWithQuestionMarks.cshtml",
+      "HashCode": "j+EDo11gjIrbzPf9lvnSZWkGZKNfYu9Sk8swMTuT+Pk",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_Shared_DisplayTemplates_Entities_RelationshipEndDateWithQuestionMarks_cshtml_a1489a38",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/Shared/DisplayTemplates/Entities/RelationshipMail.cshtml",
+      "HashCode": "+laaQwHSu4ewj1qVei0a36hspOuO4eCyQ+bOOp39afM",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_Shared_DisplayTemplates_Entities_RelationshipMail_cshtml_8b12de62",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/Shared/DisplayTemplates/Entities/RelationshipMailSet.cshtml",
+      "HashCode": "qzm6hq4V6dFKVBLT6MTXdl21Q4/pmhvB8vp9y1InlyQ",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_Shared_DisplayTemplates_Entities_RelationshipMailSet_cshtml_59bf8948",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/Shared/DisplayTemplates/Entities/RelationshipMeeting.cshtml",
+      "HashCode": "mckYAT9sbEdWljBtdes9nMmFhGKa72pQIrBc331mPP8",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_Shared_DisplayTemplates_Entities_RelationshipMeeting_cshtml_a737bc0c",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/Shared/DisplayTemplates/Entities/RelationshipMeetingSet.cshtml",
+      "HashCode": "TBCa2iGPdRxWyT6b2u/x3ESW4hM2IGjbTRhhynXOj8Y",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_Shared_DisplayTemplates_Entities_RelationshipMeetingSet_cshtml_f850b84a",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/Shared/DisplayTemplates/Entities/RelationshipSet.cshtml",
+      "HashCode": "tPzOfV9ykflkvw3aQ6/USa0wTJgmvzJEqEIrP7+FYXw",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_Shared_DisplayTemplates_Entities_RelationshipSet_cshtml_86252de7",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/Shared/DisplayTemplates/Entities/RelationshipStartDateWithReminder.cshtml",
+      "HashCode": "uCnKnCnPaQvprq3MuE7u4/qvFInZ7tVnaRBbUYxCFFE",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_Shared_DisplayTemplates_Entities_RelationshipStartDateWithReminder_cshtml_a47726d",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/Shared/DisplayTemplates/Entities/Sale.cshtml",
+      "HashCode": "70aXg+wepaxko5hoWJpJXIa+v8qKN+7NT4OacW5rces",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_Shared_DisplayTemplates_Entities_Sale_cshtml_abfce49c",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/Shared/DisplayTemplates/Entities/SaleSet.cshtml",
+      "HashCode": "xKcgCKJw4w0RO0g/NG7bqUnNvEx6wU0L7XdaYnLNWmY",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_Shared_DisplayTemplates_Entities_SaleSet_cshtml_48adf1ae",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/Shared/DisplayTemplates/Entities/SaleStage.cshtml",
+      "HashCode": "I1E8XbnhWL0RyZ45aGwiDonJgutOVE4qwnwoxkNKuAQ",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_Shared_DisplayTemplates_Entities_SaleStage_cshtml_14e64cb0",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/Shared/DisplayTemplates/Entities/SaleStageSet.cshtml",
+      "HashCode": "7LF+AxNrVL12zVWaEkYpGqktoMxUhUrziRczoEn7wJU",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_Shared_DisplayTemplates_Entities_SaleStageSet_cshtml_f6fec30e",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/Shared/DisplayTemplates/Entities/Schedule.cshtml",
+      "HashCode": "/L8GZEFGA7HtXDyV8/bsDr/S9O+YuLIcrLw04q4xFmg",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_Shared_DisplayTemplates_Entities_Schedule_cshtml_f6c83eda",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/Shared/EditorTemplates/ContactBirthDate.cshtml",
+      "HashCode": "bkcNIUFt6tP/y3JiIkdjgSyIC7P3B4XMwpFXP47CM/A",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_Shared_EditorTemplates_ContactBirthDate_cshtml_7ddf2f11",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/Shared/EditorTemplates/ContractorContactList.cshtml",
+      "HashCode": "Xs4G24Yhr7tVVR/Yf3NYF6t4DoxvjJE9JxfcUAaOFz8",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_Shared_EditorTemplates_ContractorContactList_cshtml_e0310175",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/Shared/EditorTemplates/ContractorSale.cshtml",
+      "HashCode": "w+jl3k+MAjueIQh+i96hY3ckishQQipYafFmwIuoBWg",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_Shared_EditorTemplates_ContractorSale_cshtml_ed2647c8",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/Shared/EditorTemplates/LeadContactList.cshtml",
+      "HashCode": "c928m0D5zcHHS6kaU73wqKoU8IPULa9tanotgUAfRxM",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_Shared_EditorTemplates_LeadContactList_cshtml_8c31ce08",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/Shared/EditorTemplates/ProductFilterPropertyEditor.cshtml",
+      "HashCode": "lsk2svl9L+Hi/qF702D57dSdMu+wdlohFA8OMUW+KMU",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_Shared_EditorTemplates_ProductFilterPropertyEditor_cshtml_3404203d",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/Shared/EditorTemplates/RelationshipInformTo.cshtml",
+      "HashCode": "dNRZ91/hwVkeWFv5p8ToZaBAzJjUIMIG8P1k804G+po",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_Shared_EditorTemplates_RelationshipInformTo_cshtml_88a1dd5a",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/Shared/EditorTemplates/RelationshipInterval.cshtml",
+      "HashCode": "Sjj6in7duX3X+1uP6itbsZUFUspKVcdl+sN9lIRf5ag",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_Shared_EditorTemplates_RelationshipInterval_cshtml_cd4cb7b",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/Shared/EditorTemplates/RelationshipMeetingSchedules.cshtml",
+      "HashCode": "A8ZYHhnTMiHEz8yfgVM+0wwKPrIyQyQofj6lli/RPJU",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_Shared_EditorTemplates_RelationshipMeetingSchedules_cshtml_fe9f5f53",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/Shared/EditorTemplates/RelationshipMeetingWholeDay.cshtml",
+      "HashCode": "BwQRoWiEwONFf3CooaIAuNLtlHq4xZoYooeTUdHYS5E",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_Shared_EditorTemplates_RelationshipMeetingWholeDay_cshtml_b3f69766",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/Shared/EditorTemplates/RelationshipParticipants.cshtml",
+      "HashCode": "0Igkij67NJUgGgTz9AgAHCluxh0RnbEwjHfy6n/4Gjo",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_Shared_EditorTemplates_RelationshipParticipants_cshtml_2a43f174",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/Shared/EditorTemplates/Address/AptType.cshtml",
+      "HashCode": "hojs8YG5BA1sMSsByz4wxw8GmgUmBBfh0f14UKCH/Vs",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_Shared_EditorTemplates_Address_AptType_cshtml_5bd0bc36",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/Shared/EditorTemplates/Address/ComboBox.cshtml",
+      "HashCode": "mHhjT+AksTVBUlZkIfgJbqwr17zHegBO5AzZyJUJwPE",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_Shared_EditorTemplates_Address_ComboBox_cshtml_6c05b262",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/Shared/EditorTemplates/Address/TextBox.cshtml",
+      "HashCode": "8TK7pduW0oDSN7gmHamkcXlNGp2zifHez6chEEP42BQ",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_Shared_EditorTemplates_Address_TextBox_cshtml_877fc459",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/Shared/EditorTemplates/Entities/Address.cshtml",
+      "HashCode": "iMhG3+khANtOY/ZqpCSvlxepjNSxDoKBB+FUvtbprLQ",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_Shared_EditorTemplates_Entities_Address_cshtml_da4b123c",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/Shared/EditorTemplates/Entities/BankAccountsSet.cshtml",
+      "HashCode": "mo3iHNg9CvhvGYkGYnIbw9DLf7c9TZygBRK7/hkpr8Y",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_Shared_EditorTemplates_Entities_BankAccountsSet_cshtml_4dfe72d6",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/Shared/EditorTemplates/Entities/Email.cshtml",
+      "HashCode": "zjBYSWH/TzQ7l8wKJY3KH+Wv+IY1nmMYKnRYsaf7xRc",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_Shared_EditorTemplates_Entities_Email_cshtml_548025b8",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/Shared/EditorTemplates/Entities/EmailSet.cshtml",
+      "HashCode": "bolC7Q82lLW5e0wcRMqz/Epia/kLuACj/4ag2bkql/Q",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_Shared_EditorTemplates_Entities_EmailSet_cshtml_41c36fa2",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/Shared/EditorTemplates/Entities/MarketingEffect.cshtml",
+      "HashCode": "E7c2EHE/hrqsdqtEX/0dqTu18M0rkXpryx5gFX0qIeg",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_Shared_EditorTemplates_Entities_MarketingEffect_cshtml_f584ab8d",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/Shared/EditorTemplates/Entities/MarketingTagSet.cshtml",
+      "HashCode": "JpMJ47rFZUYRjkWoHXQuwGhZ+99kBXVbTQG+Neo/zRk",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_Shared_EditorTemplates_Entities_MarketingTagSet_cshtml_7a036ff8",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/Shared/EditorTemplates/Entities/PaymentCardsSet.cshtml",
+      "HashCode": "OzEKQ3fSrmS8qwyMcmtdh3Iz/xz3J2zR+mpmqYV4pdo",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_Shared_EditorTemplates_Entities_PaymentCardsSet_cshtml_2505f825",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/Shared/EditorTemplates/Entities/Phone.cshtml",
+      "HashCode": "WT2orBGHC5HhZlqExFugmF+9tXb9NITv3K2SFdy9aio",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_Shared_EditorTemplates_Entities_Phone_cshtml_380d6940",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/Shared/EditorTemplates/Entities/PhoneSet.cshtml",
+      "HashCode": "VXM9tiiWiB9ZS/ZW23PvPsEJglJbq7G3QIpEQXq3jI0",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_Shared_EditorTemplates_Entities_PhoneSet_cshtml_4ff9e2e6",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/Shared/EditorTemplates/Entities/PopupEntity.cshtml",
+      "HashCode": "ZY4rKCwy6ojfEDefp2miQ8NZ6PZAcybU6cs21yFBpvY",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_Shared_EditorTemplates_Entities_PopupEntity_cshtml_7eecdb0f",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/Shared/EditorTemplates/Entities/SaleProductSet.cshtml",
+      "HashCode": "GRvieDl9gGLJjho2FrG/u+WNyQQjmcF7InTa159+gmQ",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_Shared_EditorTemplates_Entities_SaleProductSet_cshtml_9fa40ad8",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/Shared/EditorTemplates/ViewItems/LegalAddress.cshtml",
+      "HashCode": "GWpX/xELy+nWNk6CpLToyAJc7WJFJJm3lGUobCkcI9s",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_Shared_EditorTemplates_ViewItems_LegalAddress_cshtml_5389e439",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/Shared/EditorTemplates/ViewItems/LegalAddressLite.cshtml",
+      "HashCode": "rqWuNsvUw6Bje7m/B2+42kuafohlnSQVW3v6fcdD+gU",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_Shared_EditorTemplates_ViewItems_LegalAddressLite_cshtml_14b50f05",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/Shared/EditorTemplates/ViewItems/LegalAddressValue.cshtml",
+      "HashCode": "RqBiVxOx9ksraMvbVZ5zMplx0Q9UtxllZss5XOkRQcI",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_Shared_EditorTemplates_ViewItems_LegalAddressValue_cshtml_f2ae4c9e",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/Shared/EditorTemplates/ViewItems/PostalAddress.cshtml",
+      "HashCode": "5vLp/KCzQU0ZERVprwnxXcBsmYwJ3uAFMgnJB3QMjvY",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_Shared_EditorTemplates_ViewItems_PostalAddress_cshtml_48bf5423",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/Shared/EditorTemplates/ViewItems/PostalAddressLite.cshtml",
+      "HashCode": "rPF4/7KtJJT/ss6HcqOkXZA7DX3MrdioSXlLmP8nW94",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_Shared_EditorTemplates_ViewItems_PostalAddressLite_cshtml_ea224047",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/Shared/EditorTemplates/ViewItems/PostalAddressValue.cshtml",
+      "HashCode": "Bg1dDqf9TmEG0x0CXC0xGJR51Bx3ciwTyjl15MSbqQo",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_Shared_EditorTemplates_ViewItems_PostalAddressValue_cshtml_d4d8f6de",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/Shared/HistoryParts/ContractorEditedProperties.cshtml",
+      "HashCode": "GqsGoKw7Do78JcteDyOf8kuAe9IkYqtUJV7C6D1+YVY",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_Shared_HistoryParts_ContractorEditedProperties_cshtml_dac91117",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/Shared/HistoryParts/RelationshipEditedProperties.cshtml",
+      "HashCode": "FC6nWS3QYByGnkxnfriHIlBUi2Ms6Fgor2q6KBKNbXg",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_Shared_HistoryParts_RelationshipEditedProperties_cshtml_d848f078",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/Shared/HistoryParts/SaleUpdatedProperties.cshtml",
+      "HashCode": "jPrVqc+YYmBkSo2OIpiDN645VxaEJiJ3eYmR/Ow3HdI",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_Shared_HistoryParts_SaleUpdatedProperties_cshtml_f8114fab",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/Shared/Lead/LeadEditFields.cshtml",
+      "HashCode": "qzT7eJRAOjePQ/XFWNi8wISznhIcPDEIWPIyWK3cBAQ",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_Shared_Lead_LeadEditFields_cshtml_fdd8aa7f",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/Shared/Relationship/ContactInfo.cshtml",
+      "HashCode": "nG7msCweiuCNKc7au98sGLkYTtY1qaHBWyxd7+8ngtc",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_Shared_Relationship_ContactInfo_cshtml_68aa08a0",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/Shared/Relationship/FollowingActions.cshtml",
+      "HashCode": "6twBhj8K5syUYLlRl2iF8uNN0/zyPzf7tIr3DNdGLIE",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_Shared_Relationship_FollowingActions_cshtml_ca44237c",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/Shared/Relationship/RelationshipSubmitScript.cshtml",
+      "HashCode": "0Oh3cc96IJvKb2LsEoPdrYKxduP9fFsVl5ykET3vcuU",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_Shared_Relationship_RelationshipSubmitScript_cshtml_5397e875",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/Shared/RelationshipCall/RelationshipCallEditForm.cshtml",
+      "HashCode": "T5ZsK/j8U6i6sBMbWd1TTWS7xzpEh8xV/Jj1K8cKfAY",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_Shared_RelationshipCall_RelationshipCallEditForm_cshtml_976ddfa",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/Shared/RelationshipMail/RelationshipMailEditForm.cshtml",
+      "HashCode": "OaBgPVk9jqrJYJO0bwOHJQN9xeCtFf83EnjJasm2Dk4",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_Shared_RelationshipMail_RelationshipMailEditForm_cshtml_e4ed6630",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/Shared/RelationshipMeeting/RelationshipMeetingChangeTime.cshtml",
+      "HashCode": "ZCZ6htzuXv0pQU4LYpoEH03YbNOPspreqs2aYgvkKSc",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_Shared_RelationshipMeeting_RelationshipMeetingChangeTime_cshtml_d58e3191",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/Shared/RelationshipMeeting/RelationshipMeetingEditForm.cshtml",
+      "HashCode": "fKEyaUTdTCstLjZxJIqVt88tSq+Qn2pyrBNiYfuCB4I",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_Shared_RelationshipMeeting_RelationshipMeetingEditForm_cshtml_907f2a24",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/Shared/Sale/SaleEditForm.cshtml",
+      "HashCode": "wUqQcccsoSX+T8I4Ot1X7UAbxMSG61d8tbP7+t9dj3c",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_Shared_Sale_SaleEditForm_cshtml_a6c4d6d4",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/Shared/SaleProductEditor/AddSaleProductPopup.cshtml",
+      "HashCode": "mWbI7TTtfEU5dF80zrlnVyex6+Lo4DcIGME4Y8igeys",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_Shared_SaleProductEditor_AddSaleProductPopup_cshtml_a54a3fba",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/Shared/ViewItems/AttachmentsGridViewItem.cshtml",
+      "HashCode": "Wsyqa8lGEs8RrHGZa2AP8/XcW4wjtZr5Tjpir+Dw9IQ",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_Shared_ViewItems_AttachmentsGridViewItem_cshtml_26ea8b13",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/Shared/ViewItems/ContractorAcessingTabCaption.cshtml",
+      "HashCode": "htw0otLVHyvLwWtw5PHFT7ahnzhK4nlZQehySp6GPKc",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_Shared_ViewItems_ContractorAcessingTabCaption_cshtml_164230f6",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/Shared/ViewItems/ContractorAttachmentsTabCaption.cshtml",
+      "HashCode": "iyXVEk5X3oeQtDg3C3573MwBk+hHQyQbxV0c9ifgqF4",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_Shared_ViewItems_ContractorAttachmentsTabCaption_cshtml_da6fe495",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/Shared/ViewItems/ContractorContactsGridViewItem.cshtml",
+      "HashCode": "OWVh0rI++no9AWpMyWuAEWi8XjQ/A5qDLn0YMQwyjWM",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_Shared_ViewItems_ContractorContactsGridViewItem_cshtml_e12cf179",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/Shared/ViewItems/ContractorRelationshipsTabCaption.cshtml",
+      "HashCode": "2Uf2DObhQg/0KXK6bDqDmX09xFJ+gxwT1yDrQYNrNgQ",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_Shared_ViewItems_ContractorRelationshipsTabCaption_cshtml_124796b4",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/Shared/ViewItems/ContractorSalesGridViewItem.cshtml",
+      "HashCode": "43hdKWcBX6aGo1dxFrZzofIOnab6+0YiuebTBp5c78A",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_Shared_ViewItems_ContractorSalesGridViewItem_cshtml_d1f5992a",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/Shared/ViewItems/ContractorSalesTabCaption.cshtml",
+      "HashCode": "Kwv+01ni90BRjdszj2tIqQjOMvIR59EADl5787onS2Q",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_Shared_ViewItems_ContractorSalesTabCaption_cshtml_6f7ef6eb",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/Shared/ViewItems/ContractorTasksTabCaption.cshtml",
+      "HashCode": "eWuCi6p2cAuWMt/knQ99AWh6NIR07ja5vyrn206mnE8",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_Shared_ViewItems_ContractorTasksTabCaption_cshtml_f9793d3d",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/Shared/ViewItems/LeadContact.cshtml",
+      "HashCode": "PpSpzSRuE1sBk+vFtpSgfHi5E0qIHSvkoxpWrtX3v74",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_Shared_ViewItems_LeadContact_cshtml_78f5c801",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/Shared/ViewItems/LeadContactsGridViewItem.cshtml",
+      "HashCode": "0E8Qjx0bS2xCpTJhjOhFjCz7dYn3ohEBF77LMr1Benk",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_Shared_ViewItems_LeadContactsGridViewItem_cshtml_dbd1fc68",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/Shared/ViewItems/PermissionGridViewItem.cshtml",
+      "HashCode": "d6PyjgtHYmrFyVPZTGkZYFYSYWu1lC8+YerSKEhHbbc",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_Shared_ViewItems_PermissionGridViewItem_cshtml_7bd20a9c",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/Shared/ViewItems/RelationshipCallPermissiontabCaption.cshtml",
+      "HashCode": "xQjG0u5c0r8gFu0m5nwVwZ5qpjc8WO4w2iyV2X2RcEs",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_Shared_ViewItems_RelationshipCallPermissiontabCaption_cshtml_3f935ccd",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/Shared/ViewItems/RelationshipContactInfoViewItem.cshtml",
+      "HashCode": "1xs64h32/oLVyoMoCF1JVPIqucHLg9YdD/tCvh26xu8",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_Shared_ViewItems_RelationshipContactInfoViewItem_cshtml_505163a3",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/Shared/ViewItems/RelationshipGeneralInfo.cshtml",
+      "HashCode": "DLSptMQLoqjCKkutSnwU/I88zkjBhMFUE1PPmyE+Lvg",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_Shared_ViewItems_RelationshipGeneralInfo_cshtml_ae2b97f9",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/Shared/ViewItems/RelationshipInformToViewItem.cshtml",
+      "HashCode": "ankcYKc9eNMq+BvZuA6/VFFIkOEY4qzY/bkg1Dd+Ql8",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_Shared_ViewItems_RelationshipInformToViewItem_cshtml_4f03e423",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/Shared/ViewItems/RelationshipIntervalViewItem.cshtml",
+      "HashCode": "XoAV8mEm+AqA4XE1ef7IysOTVp9u3xk/QqG/yuAtXTQ",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_Shared_ViewItems_RelationshipIntervalViewItem_cshtml_1987a34",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/Shared/ViewItems/RelationshipIsPrivateViewItem.cshtml",
+      "HashCode": "jQiXw9ObWdxvMGKHPireWpe/j/uI28+Gb++VqVlZmXE",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_Shared_ViewItems_RelationshipIsPrivateViewItem_cshtml_ac9ba6b6",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/Shared/ViewItems/RelationshipLinkedEntityViewItem.cshtml",
+      "HashCode": "iIn/GeUs03hVfyTRVe+vXirfXZrE3ZQn7ouVDOWrWg4",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_Shared_ViewItems_RelationshipLinkedEntityViewItem_cshtml_24a3530f",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/Shared/ViewItems/RelationshipMailPermissiontabCaption.cshtml",
+      "HashCode": "2bnzufcl9Vxd+C78W2v5SGRxHz6Vn7hi2ysm/OsNYfA",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_Shared_ViewItems_RelationshipMailPermissiontabCaption_cshtml_bca90790",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/Shared/ViewItems/RelationshipMeetingPermissiontabCaption.cshtml",
+      "HashCode": "D7yHAFAXVW0e6wP+5BEb6qj9P86RwOaZmuJJ70w5vH8",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_Shared_ViewItems_RelationshipMeetingPermissiontabCaption_cshtml_390c90e2",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/Shared/ViewItems/RelationshipMeetingSchedulesViewItem.cshtml",
+      "HashCode": "BTE3IrXycXBEZAqyLZ1cCMnlmM117oA/e1uGLlLQMBQ",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_Shared_ViewItems_RelationshipMeetingSchedulesViewItem_cshtml_82e5c2bc",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/Shared/ViewItems/RelationshipMeetingWholeDayViewItem.cshtml",
+      "HashCode": "dwX8t55sPMeTWTbS3ZH+QB0pDpjjI+rbncMRF27LVMA",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_Shared_ViewItems_RelationshipMeetingWholeDayViewItem_cshtml_9f8eaab9",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/Shared/ViewItems/RelationshipParticipantsViewItem.cshtml",
+      "HashCode": "b1zvJ3mMazbKp15DXyUCjFabh/gw50ssw35Hl5GbIZU",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_Shared_ViewItems_RelationshipParticipantsViewItem_cshtml_80c0a931",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/Shared/ViewItems/RelationshipsGridViewItem.cshtml",
+      "HashCode": "0vwLpZgMnu6LH1RJ6QG4y9WuUfGh4DSkcF29vEOV1Ck",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_Shared_ViewItems_RelationshipsGridViewItem_cshtml_c1e25748",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/Shared/ViewItems/RelationshipTypeViewItem.cshtml",
+      "HashCode": "jlvdZMXBkU/YBRdE22x8d8jhOgn7TXruSorZ4/Ub6sw",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_Shared_ViewItems_RelationshipTypeViewItem_cshtml_b4f5e77d",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/Shared/ViewItems/SaleCategoriesViewItem.cshtml",
+      "HashCode": "z0X4ZucPbUHaaikIWJqcKz4Ak+UXZKRnNBqQh6qUFo8",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_Shared_ViewItems_SaleCategoriesViewItem_cshtml_72cf00f4",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/Shared/ViewItems/SaleContractorId.cshtml",
+      "HashCode": "xfoFkYF6tvwYNdBKA63Qk8ECAsSUD6G5NIOBpTd0tHE",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_Shared_ViewItems_SaleContractorId_cshtml_8c5cf95c",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/Shared/ViewItems/SaleGeneralInfo.cshtml",
+      "HashCode": "TwbkOl0rm1yvvyDBIMzY532ngmhySI1qgWqhyIX3VNA",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_Shared_ViewItems_SaleGeneralInfo_cshtml_2ada6784",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/Shared/ViewItems/SaleInpaymentsGridViewItem.cshtml",
+      "HashCode": "mW2ctsxEW2JthuKzAJz/wWlddqkrwuhT6hxOLOP9840",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_Shared_ViewItems_SaleInpaymentsGridViewItem_cshtml_3a48ade4",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/Shared/ViewItems/SalePermissiontabCaption.cshtml",
+      "HashCode": "/jo1m27lkcKSxyVx6OSo4Esl8vWhxCBu5X64+DAkysc",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_Shared_ViewItems_SalePermissiontabCaption_cshtml_90b3dd32",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/Shared/ViewItems/SaleProductsGridViewItem.cshtml",
+      "HashCode": "qsapVWqwCOwUYFVgBhnjlKoPt2YYzCYCnWcIYWlcvh0",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_Shared_ViewItems_SaleProductsGridViewItem_cshtml_429fef4c",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/Shared/ViewItems/SaleProductsTabCaption.cshtml",
+      "HashCode": "X+LGec3FUZ8dL0hTLFsGJN+/Huot08NfHp3qC3aqSJs",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_Shared_ViewItems_SaleProductsTabCaption_cshtml_f968429f",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/Shared/ViewItems/SaleRelationshipsTabCaption.cshtml",
+      "HashCode": "2bCpadbIvbWtlZW0MZSJ3FOpcXJHIQda0Gx+MqNlxQU",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_Shared_ViewItems_SaleRelationshipsTabCaption_cshtml_f1d2d808",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/Shared/ViewItems/SaleTasksTabCaption.cshtml",
+      "HashCode": "P3ZsDso3sv2g3AR2Ce7uZPQZ3L3yQacCCp4i/ARAVhU",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_Shared_ViewItems_SaleTasksTabCaption_cshtml_3499afe1",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/Shared/ViewItems/TasksGridViewItem.cshtml",
+      "HashCode": "R4eESZk+fnCE8ESjqugz2oPIz2U5LFq+rPUewmbLwzY",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_Shared_ViewItems_TasksGridViewItem_cshtml_a6e72d0f",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/Task/TaskGrid.cshtml",
+      "HashCode": "WWQPln6Fsbut9xdaWoJHsvDW1DA2b/03ugEh9/yjsFU",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_Task_TaskGrid_cshtml_527fdb90",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    },
+    {
+      "VirtualPath": "/Modules/EleWise.ELMA.CRM.Web/Views/WorkLogItem/RelationshipInfo.cshtml",
+      "HashCode": "9NQyQRoxjLsfaDa22WhtxDbzE1W7lzkK+Z/arzJpBk0",
+      "AssemblyUid": "224469489aa5508b5a0b74809bdc64a87cc8b2fbe",
+      "ClassName": "ASP._Page_Modules_EleWise_ELMA_CRM_Web_Views_WorkLogItem_RelationshipInfo_cshtml_cdfee9a",
+      "LastUseDate": "2023-07-03T05:18:57.3971016Z"
+    }
+  ]
+}

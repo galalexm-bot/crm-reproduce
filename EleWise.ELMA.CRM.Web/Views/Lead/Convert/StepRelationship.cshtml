@@ -1,0 +1,7 @@
+﻿@model EleWise.ELMA.CRM.Web.Models.LeadConvertModel
+
+@Html.Hidden("Relationship.__TypeName", Model.Relationship.GetType().AssemblyQualifiedName)
+@Html.Partial(Model.Relationship.EditorViewName, Model.Relationship, new ViewDataDictionary(new ViewDataDictionary { { "FormId", "RelationshipForm" } })
+{
+    TemplateInfo = new TemplateInfo { HtmlFieldPrefix = ViewData.TemplateInfo.GetFullHtmlFieldName("Relationship") }
+}) 

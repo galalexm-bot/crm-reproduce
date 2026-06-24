@@ -1,0 +1,104 @@
+﻿@using EleWise.ELMA
+@using EleWise.ELMA.CRM.Models
+@model ICRMTaskBase
+@{
+    var model = Model;
+
+    var prefix = "CRMTaskBaseCreate";
+    var isNullContractor = model.Contractor == null;
+    var isNullConcat = model.Contact == null;
+    var isNullLead = model.Lead == null;
+    var isNullSale = model.Sale == null;
+    var visiblePropertyId = "CRMTaskVisiblePropertyId";
+
+}
+<tr>
+    <td class="captionCell" >
+        <a onmouseup="elma.CRMTaskBaseCreate.showMenu(this)" id="ShowCRMTaskBaseMenu">
+            <span id="@visiblePropertyId">@SR.T("Контрагент")</span>
+            @Html.RotatableArrow(true, new { @class = "t-icon t-arrow-down task-caption-arrow" })
+        </a>
+    </td>
+    <td>
+        <div class="container">
+            <div id="ContractorDiv" style="@(isNullContractor ? "display:none" : "")">@Html.Editor(m => m.Contractor)</div>
+            <div id="ContactDiv" style="@(isNullConcat ? "display:none" : "")">@Html.Editor(m => m.Contact)</div>
+            <div id="LeadDiv" style="@(isNullLead ? "display:none" : "")">@Html.Editor(m => m.Lead)</div>
+            <div id="SaleDiv" style="@(isNullSale ? "display:none" : "")">@Html.Editor(m => m.Sale)</div>
+        </div>
+        <script>
+            elma.CRMTaskBaseCreate = function()
+            {
+                var showItem = function (item) {
+                    if (item == null) return;
+                    if (item.id.length == 0 || item.caption.length == 0) return;  
+                    $("#@visiblePropertyId").html(item.caption);
+                    for (var i = 0; i < items.length; i++){
+                        var editor = '#' + items[i].id + 'Div';
+                        if (items[i].id == item.id){
+                            $(editor).show();
+                        }
+                        else {
+                            $(editor).hide();
+                            var comboboxElem = $('#' + items[i].fullFieldId);
+                            if (comboboxElem.val().length != 0){
+                                var combobox = comboboxElem.data('tComboBox');
+                                if (combobox != null){
+                                    combobox.clearSelect();
+                                    combobox.trigger.change();
+                                }
+                            }
+                            
+                        }
+                    }
+                };
+                var items = [{
+                    id: 'Contractor',
+                    caption: '@SR.T("Контрагент")',
+                    fullFieldId : '@ViewData.TemplateInfo.GetFullHtmlFieldId("Contractor.Id")',
+                    execute: function () {
+                        showItem(items[0]);
+                    }
+                },
+                {
+                    id: 'Contact',
+                    caption: '@SR.T("Контакт")',
+                    fullFieldId : '@ViewData.TemplateInfo.GetFullHtmlFieldId("Contact.Id")',
+                    execute: function () {
+                        showItem(items[1]);
+                    }
+                },
+                {
+                    id: 'Lead',
+                    caption: '@SR.T("Возможность")',
+                    fullFieldId : '@ViewData.TemplateInfo.GetFullHtmlFieldId("Lead.Id")',
+                    execute: function () {
+                        showItem(items[2]);
+                    }
+                },
+                {
+                    id: 'Sale',
+                    caption: '@SR.T("Сделка")',
+                    fullFieldId : '@ViewData.TemplateInfo.GetFullHtmlFieldId("Sale.Id")',
+                    execute: function () {
+                        showItem(items[3]);
+                    }
+                }];
+
+                return {
+                    init : function(){
+                        elma.ElmaMenuMgr.init('@prefix', {}, items);
+                        showItem(items[@(!isNullContractor ? 0 : !isNullConcat ? 1 : !isNullLead ? 2 : !isNullSale ? 3 : 0 )]);
+                    },
+                    showMenu : function(element){
+                        elma.ElmaMenuMgr.show('@prefix', element, element, "", [], false);
+                    }
+                };
+            } ();
+
+            $(document).ready(function () {
+                elma.CRMTaskBaseCreate.init();
+            });
+        </script>
+    </td>
+</tr>

@@ -1,0 +1,27 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <AssemblyName>EleWise.ELMA.BridgeCompiler</AssemblyName>
+    <GenerateAssemblyInfo>False</GenerateAssemblyInfo>
+    <TargetFramework>net48</TargetFramework>
+  </PropertyGroup>
+  <PropertyGroup>
+    <LangVersion>Preview</LangVersion>
+    <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
+  </PropertyGroup>
+  <PropertyGroup />
+  <ItemGroup />
+  <ItemGroup>
+    <Reference Include="EleWise.ELMA.SDK">
+      <HintPath>..\EleWise.ELMA.SDK.dll</HintPath>
+    </Reference>
+    <Reference Include="EleWise.ELMA.SDK.UIBuilder">
+      <HintPath>..\EleWise.ELMA.SDK.UIBuilder.dll</HintPath>
+    </Reference>
+    <Reference Include="Bridge.Translator" />
+    <Reference Include="AjaxMin" />
+    <Reference Include="Bridge.Contract" />
+    <Reference Include="System.Core" />
+    <Reference Include="Mono.Cecil" />
+    <Reference Include="ICSharpCode.NRefactory.CSharp" />
+  </ItemGroup>
+</Project>

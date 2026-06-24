@@ -1,0 +1,33 @@
+﻿@model EleWise.ELMA.Web.Mvc.Models.Selectors.EntityPopupSelectorModel
+
+<div style=" padding-top: 10px; height: 300px;">
+@{
+    var ddName = "EntitySelector" + Model.InputId + "SelectedList";
+    var ddId = TagBuilder.CreateSanitizedId(ddName);
+    
+    @Html.DropDownList(ddName, Model.AvalibleItems, new { style = "width:100%", size = 16 })
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        var selector = elma.EntitySelector.Manager.get('@Model.InputId');
+
+        var onItemSelect = function(evt) {
+            var sv = $('#@ddId').val();
+            if(!!sv) {
+                var st = $('#@ddId').find('option[value="' + sv + '"]').text();
+                selector.addItem(sv, st);
+            }
+            
+            @(Html.ClosePopup("EntityPopup" + Model.InputId))
+        };
+
+        $('#@ddId').dblclick(onItemSelect);
+        $('#@(Model.InputId)-selectbutton').click(onItemSelect);
+    });
+</script>
+}
+</div>
+<div class="popup-buttons">
+    <input id='@(Model.InputId + "-selectbutton")' type="button" class="confirm" value="@EleWise.ELMA.SR.Select" />
+    <input type="button" value="@EleWise.ELMA.SR.Cancel" onclick="@(Html.ClosePopup("EntityPopup" + Model.InputId))" />
+</div>

@@ -1,0 +1,107 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <AssemblyName>EleWise.ELMA.Documents</AssemblyName>
+    <GenerateAssemblyInfo>False</GenerateAssemblyInfo>
+    <TargetFramework>net48</TargetFramework>
+  </PropertyGroup>
+  <PropertyGroup>
+    <LangVersion>Preview</LangVersion>
+    <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
+  </PropertyGroup>
+  <PropertyGroup>
+    <RootNamespace />
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Remove="EleWise.ELMA.Documents.Models..cs" />
+    <Compile Remove="EleWise.ELMA.Documents.Models..cs" />
+    <Compile Remove="EleWise.ELMA.Documents.Models..cs" />
+    <None Remove="EleWise.ELMA.Documents.Notific.xml" />
+    <None Remove="EleWise.ELMA.Documents.Notific.xml" />
+    <None Remove="EleWise.ELMA.Documents.Notific.xml" />
+    <None Remove="EleWise.ELMA.Documents.Notific.xml" />
+    <None Remove="EleWise.ELMA.Documents.Notific.xml" />
+    <None Remove="EleWise.ELMA.Documents.Notific.xml" />
+    <None Remove="EleWise.ELMA.Documents.Notific.xml" />
+    <None Remove="EleWise.ELMA.Documents.Notific.xml" />
+    <None Remove="EleWise.ELMA.Documents.Db.Docu.xml" />
+    <None Remove="EleWise.ELMA.Documents.Notific.xml" />
+    <None Remove="EleWise.ELMA.Documents.Notific.xml" />
+    <None Remove="EleWise.ELMA.Documents.Notific.xml" />
+    <None Remove="EleWise.ELMA.Documents.Notific.xml" />
+    <None Remove="EleWise.ELMA.Documents.Notific.xml" />
+    <None Remove="EleWise.ELMA.Documents.Notific.xml" />
+    <None Remove="EleWise.ELMA.Documents.Models..xml" />
+    <None Remove="EleWise.ELMA.Documents.Models..xml" />
+    <None Remove="EleWise.ELMA.Documents.Models..xml" />
+    <None Remove="EleWise.ELMA.Documents.Models..xml" />
+    <None Remove="EleWise.ELMA.Documents.Models..xml" />
+    <None Remove="EleWise.ELMA.Documents.Models..xml" />
+    <None Remove="EleWise.ELMA.Documents.Models..xml" />
+    <None Remove="EleWise.ELMA.Documents.Models..xml" />
+    <EmbeddedResource Include="EleWise.ELMA.Documents.Models..cs" />
+    <EmbeddedResource Include="EleWise.ELMA.Documents.Models..cs" />
+    <EmbeddedResource Include="EleWise.ELMA.Documents.Models..cs" />
+    <EmbeddedResource Include="EleWise.ELMA.Documents.Notific.xml" />
+    <EmbeddedResource Include="EleWise.ELMA.Documents.Notific.xml" />
+    <EmbeddedResource Include="EleWise.ELMA.Documents.Notific.xml" />
+    <EmbeddedResource Include="EleWise.ELMA.Documents.Notific.xml" />
+    <EmbeddedResource Include="EleWise.ELMA.Documents.Notific.xml" />
+    <EmbeddedResource Include="EleWise.ELMA.Documents.Notific.xml" />
+    <EmbeddedResource Include="EleWise.ELMA.Documents.Notific.xml" />
+    <EmbeddedResource Include="EleWise.ELMA.Documents.Notific.xml" />
+    <EmbeddedResource Include="EleWise.ELMA.Documents.Db.Docu.xml" />
+    <EmbeddedResource Include="EleWise.ELMA.Documents.Notific.xml" />
+    <EmbeddedResource Include="EleWise.ELMA.Documents.Notific.xml" />
+    <EmbeddedResource Include="EleWise.ELMA.Documents.Notific.xml" />
+    <EmbeddedResource Include="EleWise.ELMA.Documents.Notific.xml" />
+    <EmbeddedResource Include="EleWise.ELMA.Documents.Notific.xml" />
+    <EmbeddedResource Include="EleWise.ELMA.Documents.Notific.xml" />
+    <EmbeddedResource Include="EleWise.ELMA.Documents.Models..xml" />
+    <EmbeddedResource Include="EleWise.ELMA.Documents.Models..xml" />
+    <EmbeddedResource Include="EleWise.ELMA.Documents.Models..xml" />
+    <EmbeddedResource Include="EleWise.ELMA.Documents.Models..xml" />
+    <EmbeddedResource Include="EleWise.ELMA.Documents.Models..xml" />
+    <EmbeddedResource Include="EleWise.ELMA.Documents.Models..xml" />
+    <EmbeddedResource Include="EleWise.ELMA.Documents.Models..xml" />
+    <EmbeddedResource Include="EleWise.ELMA.Documents.Models..xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="EleWise.ELMA.SDK">
+      <HintPath>..\EleWise.ELMA.SDK.dll</HintPath>
+    </Reference>
+    <Reference Include="EleWise.ELMA.SDK.Web">
+      <HintPath>..\EleWise.ELMA.SDK.Web.dll</HintPath>
+    </Reference>
+    <Reference Include="EleWise.ELMA.Tasks">
+      <HintPath>..\EleWise.ELMA.Tasks.dll</HintPath>
+    </Reference>
+    <Reference Include="EleWise.ELMA.Security">
+      <HintPath>..\EleWise.ELMA.Security.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Core" />
+    <Reference Include="EleWise.ELMA.Common">
+      <HintPath>..\EleWise.ELMA.Common.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Xml" />
+    <Reference Include="Iesi.Collections" />
+    <Reference Include="NHibernate" />
+    <Reference Include="System.Data" />
+    <Reference Include="EleWise.TemplateGenerator.Merged">
+      <HintPath>..\EleWise.TemplateGenerator.Merged.dll</HintPath>
+    </Reference>
+    <Reference Include="EleWise.ELMA.Messages">
+      <HintPath>..\EleWise.ELMA.Messages.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web" />
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="EleWise.ELMA.Calendar">
+      <HintPath>..\EleWise.ELMA.Calendar.dll</HintPath>
+    </Reference>
+    <Reference Include="EleWise.ELMA.History">
+      <HintPath>..\EleWise.ELMA.History.dll</HintPath>
+    </Reference>
+    <Reference Include="AutoMapper" />
+    <Reference Include="System.ServiceModel" />
+    <Reference Include="System.ServiceModel.Web" />
+  </ItemGroup>
+</Project>

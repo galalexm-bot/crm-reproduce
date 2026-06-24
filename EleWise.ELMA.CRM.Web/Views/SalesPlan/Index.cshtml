@@ -1,0 +1,163 @@
+﻿@using EleWise.ELMA.CRM.Web.Models.SalesPlan
+@using EleWise.ELMA.Web.Mvc.Models.Panels
+@model CalendarModel
+
+@{
+    string rightPanel = "SalesPlanRightPanel";
+}
+
+<script type="text/javascript">
+    function changeMode(mode) {
+        $.ajax({
+            type: 'POST',
+            url: '@(Url.Action("Calendar"))',
+            data: ({ mode: mode }),
+            success: function (data) {
+                $("#calendar-place-holder").html(data);
+            }
+        });
+        elma.closeAllMenu();
+    }
+    function goToToday() {
+        $.ajax({
+            type: 'POST',
+            url: '@(Url.Action("CalendarToday"))',
+            success: function (data) {
+                $("#calendar-place-holder").html(data);
+            }
+        });
+    }
+    function toggleSplitter() {
+        var collapsed = !$('#sales-list').is(':visible');
+        $('#list-splitter').toggleClass('collapsed');
+        $('#sales-list').toggle();
+        $.ajax({
+            url: '@(Url.Action("SaveMenuState", "State", new { area = "EleWise.ELMA.BPM.Web.Common" }))',
+            data: ({ Id: '@(rightPanel)', Collapsed: !collapsed, Width: 180 }),
+            dataType: "json"
+        });
+    }
+</script>
+
+@(Html.Toolbar()
+    .Group()
+        .ToolbarButton(new ActionToolbarItem("SalesPlan_mode_btn")
+        {
+            Text = EleWise.ELMA.SR.T("Режимы"),
+            Items = new ActionItemList()
+                {
+                    new ActionToolbarItem("SalesPlan_mode_1_btn")
+                    {
+                        Click = "changeMode(1);",
+                        Text = EleWise.ELMA.SR.T("1 месяц")
+                    },
+                    new ActionToolbarItem("SalesPlan_mode_2_btn")
+                    {
+                        Click = "changeMode(2);",
+                        Text = EleWise.ELMA.SR.T("2 месяца")
+                    },
+                    new ActionToolbarItem("SalesPlan_mode_3_btn")
+                    {
+                        Click = "changeMode(3);",
+                        Text = EleWise.ELMA.SR.T("3 месяца")
+                    }
+                }
+        })
+        .ToolbarButton(new ActionToolbarItem("SalesPlan_today_btn")
+        {
+            Text = EleWise.ELMA.SR.T("Сегодня"),
+            IconUrl = "#calendar_today.svg",
+            Click = "goToToday();"
+        }))
+
+<div id="salesplan-container">
+    @Html.Partial("SalesPlan", Model)
+</div>
+
+<style type="text/css">
+    span.month
+    {
+        font-weight:bold;
+        color:#003366;
+    }
+    td.month 
+    {
+        border-top: 1px solid #CCCCCC;
+        border-right: 2px solid #91B6E6;
+    }
+    .week-container
+    {
+        width:100%;
+    }
+    .week-container-hover
+    {
+        background-color: #D7F6D3;
+    }
+    table.week {
+        width: 100%;
+        empty-cells: show;
+    }
+    tr.week {
+        border-bottom: 1px solid #CCCCCC;
+    }
+    tr.week-past {
+        background-color: #FAEEC3;
+    }
+    td.week {
+        width: 85px;
+        border-left: 1px solid #91B6E6;
+        border-right: 1px solid #91B6E6;
+        padding: 5px;
+        /*font-size: 14px;*/
+    }
+    td.week span {
+        font-weight: bold;
+        text-align: center;
+    }
+    td.week div {
+        text-align: center;
+    }
+    /*div.payment-container
+    {
+        background-color: #F5E9C6;
+    }*/
+    table.payment, table.expired-payment {
+        width: 100%;
+        border-collapse: collapse;
+    }
+    table.expired-payment td.week {
+        border: none;
+    }
+    /*table.payment td {
+        padding:5px;
+    }
+    table.payment td.payment-name
+    {
+        width: 80%;
+        border-right: 1px solid #CCCCCC;
+    }
+    table.payment td.payment-sum
+    {
+        width: 20%;
+    }*/
+    .collapsible-panel-header img {
+        float: left;
+    }
+    div.month-name {
+        font-weight: bold;
+        padding: 5px;
+        text-align: center;
+        background-color: #91B6E6;
+         margin-top: 2px;
+    }
+    #paymentSum
+    {
+        width: 200px;
+    }
+    
+    table.sale-payment td {
+        vertical-align: middle;
+    }
+</style>
+
+

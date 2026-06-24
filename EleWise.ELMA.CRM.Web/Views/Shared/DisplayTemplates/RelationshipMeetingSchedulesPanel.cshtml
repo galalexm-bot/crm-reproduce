@@ -1,0 +1,27 @@
+﻿@using EleWise.ELMA
+@using EleWise.ELMA.BPM.Web.Calendar
+@using EleWise.ELMA.CRM.Web.Models
+@using EleWise.ELMA.Web.Mvc.Models.Panels
+@model RelationshipMeetingModel
+
+@if (Model.Entity.Schedules.Any())
+{
+    <tr class="full-row">
+        <td colspan="3" style="border-bottom: none; padding: 0;">
+            <div class="brickPanel">
+                @using (Html.CollapsiblePanel(new CollapsiblePanel { Id = "eventSchedules", Expanded = true, Header = SR.T("Общие календари") + " (" + Model.Entity.Schedules.Count() + ")", Class = "brickTitle", LoadMode = DynamicLoadMode.Client }))
+                {
+                    <table style="width: 100%;">
+                        @foreach (var sc in Model.Entity.Schedules)
+                        {
+                            <tr>
+                                <td style="width: 20px; white-space: nowrap">@(Html.Image("#calendar.svg", ""))</td>
+                                <td>@Html.Partial("Shared/DisplayTemplates/Entities/Schedule", sc)
+                            </tr>
+                        }
+                    </table>
+                }
+            </div>
+        </td>
+    </tr>
+}

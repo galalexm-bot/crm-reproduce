@@ -1,0 +1,222 @@
+using System;
+using EleWise.ELMA.Common.Models;
+using EleWise.ELMA.ComponentModel;
+using EleWise.ELMA.Model.Attributes;
+using EleWise.ELMA.Model.Entities;
+using EleWise.ELMA.Model.Metadata;
+using EleWise.ELMA.Model.Types.Settings;
+using EleWise.ELMA.Model.Types.Validation;
+using EleWise.ELMA.Model.Views;
+using EleWise.ELMA.Security.Models;
+using EleWise.ELMA.Security.Types.Settings;
+using Iesi.Collections.Generic;
+
+namespace EleWise.ELMA.Documents.Models;
+
+[MetadataType(typeof(EntityMetadata))]
+[Uid("2b660715-d111-4cc6-acfd-965661719fba")]
+[DisplayName("SR.M('Документ')")]
+[Description("SR.M('Базовый тип документа')")]
+[BaseClass("e0cfbfd4-f303-4b9a-acaf-11000f0e7ef4")]
+[AllowCreateHeirs(true)]
+[DisplayFormat("{$Name}")]
+[Image(typeof(IDocument), "task", 16, ImageFormatType.IconPack, false)]
+[ClassFormsScheme(ClassFormsScheme.FormConstructor)]
+[DefaultForm(ViewType.Create, "00000000-0000-0000-0000-000000000000", "1ea63fc3-cf64-4235-9507-aa1ed6cb7ff9", "00000000-0000-0000-0000-000000000000", "00000000-0000-0000-0000-000000000000", false)]
+[DefaultForm(ViewType.Edit, "00000000-0000-0000-0000-000000000000", "1fad0087-513e-4793-b836-a157e35dc131", "00000000-0000-0000-0000-000000000000", "00000000-0000-0000-0000-000000000000", false)]
+[DefaultForm(ViewType.Display, "00000000-0000-0000-0000-000000000000", "de8cf73d-aecb-48b2-85f5-42864d5ad8aa", "00000000-0000-0000-0000-000000000000", "00000000-0000-0000-0000-000000000000", false)]
+[Form(typeof(IDocument), "EleWise.ELMA.Documents.Models.Document.Form.Display.xml")]
+[Form(typeof(IDocument), "EleWise.ELMA.Documents.Models.Document.Form.Edit.xml")]
+[Form(typeof(IDocument), "EleWise.ELMA.Documents.Models.Document.Form.Create.xml")]
+[FormView("<?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<FormView xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\">\r\n  <Uid>00000000-0000-0000-0000-000000000000</Uid>\r\n  <ViewType>Display</ViewType>\r\n  <CanUseCommonView>true</CanUseCommonView>\r\n  <CanUseCommonRazorView>true</CanUseCommonRazorView>\r\n  <CanUseTabView>true</CanUseTabView>\r\n  <CanUseTabRazorView>true</CanUseTabRazorView>\r\n  <ViewInCommon>true</ViewInCommon>\r\n</FormView>")]
+[FormView("<?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<FormView xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\">\r\n  <Uid>00000000-0000-0000-0000-000000000000</Uid>\r\n  <ViewType>Create</ViewType>\r\n  <CanUseCommonView>true</CanUseCommonView>\r\n  <CanUseCommonRazorView>true</CanUseCommonRazorView>\r\n  <ViewInCommon>true</ViewInCommon>\r\n</FormView>")]
+[FormView("<?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<FormView xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\">\r\n  <Uid>00000000-0000-0000-0000-000000000000</Uid>\r\n  <ViewType>Edit</ViewType>\r\n  <CanUseCommonView>true</CanUseCommonView>\r\n  <CanUseCommonRazorView>true</CanUseCommonRazorView>\r\n  <ViewInCommon>true</ViewInCommon>\r\n</FormView>")]
+[TableView("<?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<TableView xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\">\r\n  <Uid>966926d8-e4d4-46b1-91f3-5ec690ffd42d</Uid>\r\n  <ViewType>List</ViewType>\r\n</TableView>")]
+[Entity("Document")]
+[IdType("d90a59af-7e47-48c5-8c4c-dad04834e6e3")]
+[ShowInCatalogList(false)]
+[EntityMetadataType(EntityMetadataType.Interface)]
+[SaveHistory]
+[Filterable]
+[ImplementationUid("77a266e2-e8df-41ab-82ee-8fd93db77eec")]
+[FilterType(typeof(IDocumentFilter))]
+[ActionsType(typeof(DocumentActions))]
+public interface IDocument : IDmsObject, IEntity<long>, IEntity, IIdentified, ISoftDeletable, IInheritable
+{
+	[Uid("f83a8f11-4d37-48fd-903d-e6fe0cf408d7")]
+	[Order(7)]
+	[Property("9b9aac17-22bb-425c-aa93-9c02c5146965")]
+	[StringSettings(MultiLine = true, FieldName = "Description")]
+	[DisplayName("SR.M('Описание')")]
+	[View(ViewType = ViewType.Create, ItemType = ItemType.Default, Visibility = Visibility.Hidden, ReadOnly = false)]
+	[View(ViewType = ViewType.Edit, ItemType = ItemType.Default, Visibility = Visibility.Hidden, ReadOnly = false)]
+	[View(ViewType = ViewType.Display, ItemType = ItemType.Default, Visibility = Visibility.Visible, ReadOnly = true)]
+	[View(ViewType = ViewType.List, ItemType = ItemType.Default, Visibility = Visibility.Hidden, ReadOnly = false)]
+	[View(ViewType = ViewType.Filter, ItemType = ItemType.Default, Visibility = Visibility.Hidden, ReadOnly = false)]
+	[FastSearch(true)]
+	[EntityProperty]
+	string Description { get; set; }
+
+	[Uid("ce7b40e3-69a5-4bfd-8932-fbdd5bd6a74d")]
+	[Order(1)]
+	[Property("72ed98ca-f260-4671-9bcd-ff1d80235f47", "9badf2da-7e56-45a1-a91b-9fccb5ad9ca9")]
+	[EntitySettings(RelationType = RelationType.OneToMany, KeyColumnUidStr = "4ad7ab56-5ffe-4f27-a285-75119e5196b6", CascadeMode = CascadeMode.SaveUpdate, CopyAction = CopyAction.Ignore)]
+	[DisplayName("SR.M('Версии')")]
+	[View(ViewType = ViewType.Create, ItemType = ItemType.Default, Visibility = Visibility.Hidden, ReadOnly = false)]
+	[View(ViewType = ViewType.Edit, ItemType = ItemType.Default, Visibility = Visibility.Hidden, ReadOnly = false)]
+	[View(ViewType = ViewType.Display, ItemType = ItemType.Default, Visibility = Visibility.Hidden, ReadOnly = true)]
+	[View(ViewType = ViewType.List, ItemType = ItemType.Default, Visibility = Visibility.ForceHidden, ReadOnly = false)]
+	[View(ViewType = ViewType.Filter, ItemType = ItemType.Default, Visibility = Visibility.Hidden, ReadOnly = false)]
+	[EntityProperty]
+	ISet<IDocumentVersion> Versions { get; set; }
+
+	[Uid("6f84f12b-d77d-403a-a460-4718f21da2dd")]
+	[Order(2)]
+	[Property("72ed98ca-f260-4671-9bcd-ff1d80235f47", "e70b68f9-15b1-4b31-8db4-9990152bb51d")]
+	[EntitySettings(RelationType = RelationType.ManyToMany, RelationTableName = "Document_Comment", ParentColumnName = "DocumentId", ChildColumnName = "CommentId", CascadeMode = CascadeMode.SaveUpdate, CopyAction = CopyAction.Ignore)]
+	[DisplayName("SR.M('Комментарии')")]
+	[PropertyHandler("f05f5cd0-2f19-4a89-8920-f6a24c8ac94e")]
+	[View(ViewType = ViewType.Create, ItemType = ItemType.Default, Visibility = Visibility.Hidden, ReadOnly = false)]
+	[View(ViewType = ViewType.Edit, ItemType = ItemType.Default, Visibility = Visibility.Hidden, ReadOnly = false)]
+	[View(ViewType = ViewType.Display, ItemType = ItemType.Default, Visibility = Visibility.Hidden, ReadOnly = true)]
+	[View(ViewType = ViewType.List, ItemType = ItemType.Default, Visibility = Visibility.Hidden, ReadOnly = false)]
+	[View(ViewType = ViewType.Filter, ItemType = ItemType.Default, Visibility = Visibility.Hidden, ReadOnly = false)]
+	[EntityProperty]
+	ISet<IComment> Comments { get; set; }
+
+	[Uid("26f6b56a-66b1-4085-af97-7a62a88afd95")]
+	[Property("72ed98ca-f260-4671-9bcd-ff1d80235f47", "0bf0145b-21ae-4184-80eb-f26c967dcce6")]
+	[EntitySettings(CascadeMode = CascadeMode.SaveUpdate, CopyAction = CopyAction.Ignore, FieldName = "Status")]
+	[DisplayName("SR.M('Статус')")]
+	[View(ViewType = ViewType.Create, ItemType = ItemType.Default, Visibility = Visibility.Hidden, ReadOnly = false)]
+	[View(ViewType = ViewType.Edit, ItemType = ItemType.Default, Visibility = Visibility.Hidden, ReadOnly = false)]
+	[View(ViewType = ViewType.Display, ItemType = ItemType.Default, Visibility = Visibility.Hidden, ReadOnly = true)]
+	[View(ViewType = ViewType.List, ItemType = ItemType.Default, Visibility = Visibility.Hidden, ReadOnly = false)]
+	[View(ViewType = ViewType.Filter, ItemType = ItemType.Default, Visibility = Visibility.Hidden, ReadOnly = false)]
+	[Filterable]
+	[EntityProperty]
+	ILifeCycleStatus Status { get; set; }
+
+	[Uid("c8a02529-3b19-40b1-ad44-9801e0b6d4b4")]
+	[Order(3)]
+	[Property("72ed98ca-f260-4671-9bcd-ff1d80235f47", "d1bfe6d8-fa26-469a-af73-13b9dab3f4af")]
+	[EntitySettings(CascadeMode = CascadeMode.SaveUpdate, CopyAction = CopyAction.Ignore, FieldName = "Template")]
+	[DisplayName("SR.M('Шаблон для генерации')")]
+	[View(ViewType = ViewType.Create, ItemType = ItemType.Default, Visibility = Visibility.Hidden, ReadOnly = false)]
+	[View(ViewType = ViewType.Edit, ItemType = ItemType.Default, Visibility = Visibility.Hidden, ReadOnly = false)]
+	[View(ViewType = ViewType.Display, ItemType = ItemType.Default, Visibility = Visibility.Hidden, ReadOnly = true)]
+	[View(ViewType = ViewType.List, ItemType = ItemType.Default, Visibility = Visibility.ForceHidden, ReadOnly = false)]
+	[View(ViewType = ViewType.Filter, ItemType = ItemType.Default, Visibility = Visibility.Hidden, ReadOnly = false)]
+	[EntityProperty]
+	IDocumentTemplate Template { get; set; }
+
+	[Uid("e47b96e0-6061-4007-93ff-d7b44a4c995d")]
+	[Order(4)]
+	[Property("72ed98ca-f260-4671-9bcd-ff1d80235f47", "3536c931-154c-4618-93b8-4e35bd8db226")]
+	[EntitySettings(RelationType = RelationType.ManyToMany, RelationTableName = "M_Document_Attachments", ParentColumnName = "DocumentId", ChildColumnName = "AttachmentId", CascadeMode = CascadeMode.SaveUpdate, CopyAction = CopyAction.Ignore)]
+	[DisplayName("SR.M('Вложения')")]
+	[PropertyHandler("81c57a64-25c0-4a7d-84a1-d018e2727460")]
+	[View(ViewType = ViewType.Create, ItemType = ItemType.Default, Visibility = Visibility.Hidden, ReadOnly = false)]
+	[View(ViewType = ViewType.Edit, ItemType = ItemType.Default, Visibility = Visibility.Hidden, ReadOnly = false)]
+	[View(ViewType = ViewType.Display, ItemType = ItemType.Default, Visibility = Visibility.Hidden, ReadOnly = true)]
+	[View(ViewType = ViewType.List, ItemType = ItemType.Default, Visibility = Visibility.ForceHidden, ReadOnly = false)]
+	[View(ViewType = ViewType.Filter, ItemType = ItemType.Default, Visibility = Visibility.Hidden, ReadOnly = false)]
+	[EntityProperty]
+	ISet<IAttachment> Attachments { get; set; }
+
+	[Uid("09eb862c-f467-47b2-8ff9-690ccdb43be3")]
+	[Order(5)]
+	[Property("72ed98ca-f260-4671-9bcd-ff1d80235f47", "3712c676-4afd-4121-aa1a-4e47ee2e09f8")]
+	[EntitySettings(RelationType = RelationType.ManyToMany, RelationTableName = "M_Document_DocAttachments", ParentColumnName = "DocumentId", ChildColumnName = "AttachmentId", CascadeMode = CascadeMode.SaveUpdate, CopyAction = CopyAction.Ignore)]
+	[DisplayName("SR.M('Вложения с документами')")]
+	[PropertyHandler("53df388f-023d-458e-9d1d-2d72945a6226")]
+	[View(ViewType = ViewType.Create, ItemType = ItemType.Default, Visibility = Visibility.Hidden, ReadOnly = false)]
+	[View(ViewType = ViewType.Edit, ItemType = ItemType.Default, Visibility = Visibility.Hidden, ReadOnly = false)]
+	[View(ViewType = ViewType.Display, ItemType = ItemType.Default, Visibility = Visibility.Hidden, ReadOnly = true)]
+	[View(ViewType = ViewType.List, ItemType = ItemType.Default, Visibility = Visibility.ForceHidden, ReadOnly = false)]
+	[View(ViewType = ViewType.Filter, ItemType = ItemType.Default, Visibility = Visibility.Hidden, ReadOnly = false)]
+	[EntityProperty]
+	ISet<IDocumentAttachment> DocumentAttachments { get; set; }
+
+	[Uid("49c9f655-1404-45c9-86d1-7e523b951f5a")]
+	[Order(6)]
+	[Property("72ed98ca-f260-4671-9bcd-ff1d80235f47", "9badf2da-7e56-45a1-a91b-9fccb5ad9ca9")]
+	[EntitySettings(CascadeMode = CascadeMode.SaveUpdate, CopyAction = CopyAction.Ignore, FieldName = "CurrentVersion")]
+	[DisplayName("SR.M('Текущая версия')")]
+	[View(ViewType = ViewType.Create, ItemType = ItemType.Default, Visibility = Visibility.Hidden, ReadOnly = false)]
+	[View(ViewType = ViewType.Edit, ItemType = ItemType.Default, Visibility = Visibility.Hidden, ReadOnly = false)]
+	[View(ViewType = ViewType.Display, ItemType = ItemType.Default, Visibility = Visibility.Hidden, ReadOnly = true)]
+	[View(ViewType = ViewType.List, ItemType = ItemType.Default, Visibility = Visibility.ForceHidden, ReadOnly = false)]
+	[View(ViewType = ViewType.Filter, ItemType = ItemType.Default, Visibility = Visibility.Hidden, ReadOnly = false)]
+	[EntityProperty]
+	IDocumentVersion CurrentVersion { get; set; }
+
+	[Uid("116bea36-4e55-4184-a561-a8191aa149b1")]
+	[Order(8)]
+	[NotNull]
+	[Property("9cd56a40-6192-4d8a-840c-c4bd4dfb88eb")]
+	[BoolSettings(FieldName = "Encrypt")]
+	[DisplayName("SR.M('Зашифровано')")]
+	[View(ViewType = ViewType.Create, ItemType = ItemType.Default, Visibility = Visibility.Hidden, ReadOnly = false)]
+	[View(ViewType = ViewType.Edit, ItemType = ItemType.Default, Visibility = Visibility.Hidden, ReadOnly = false)]
+	[View(ViewType = ViewType.Display, ItemType = ItemType.Default, Visibility = Visibility.Hidden, ReadOnly = true)]
+	[View(ViewType = ViewType.List, ItemType = ItemType.Default, Visibility = Visibility.ForceHidden, ReadOnly = false)]
+	[View(ViewType = ViewType.Filter, ItemType = ItemType.Default, Visibility = Visibility.Hidden, ReadOnly = false)]
+	[EntityProperty]
+	bool Encrypt { get; set; }
+
+	[Uid("a456cc84-1eb8-4a3c-b45b-107d5ecb3712")]
+	[Order(9)]
+	[Property("72ed98ca-f260-4671-9bcd-ff1d80235f47", "cfdeb03c-35e9-45e7-aad8-037d83888f73")]
+	[EntityUserSettings(CascadeMode = CascadeMode.SaveUpdate, FieldName = "EncryptUser")]
+	[DisplayName("SR.M('Зашифровал')")]
+	[View(ViewType = ViewType.Create, ItemType = ItemType.Default, Visibility = Visibility.Hidden, ReadOnly = false)]
+	[View(ViewType = ViewType.Edit, ItemType = ItemType.Default, Visibility = Visibility.Hidden, ReadOnly = false)]
+	[View(ViewType = ViewType.Display, ItemType = ItemType.Default, Visibility = Visibility.Hidden, ReadOnly = true)]
+	[View(ViewType = ViewType.List, ItemType = ItemType.Default, Visibility = Visibility.Hidden, ReadOnly = false)]
+	[View(ViewType = ViewType.Filter, ItemType = ItemType.Default, Visibility = Visibility.Hidden, ReadOnly = false)]
+	[EntityProperty]
+	IUser EncryptUser { get; set; }
+
+	[Uid("d6caf64c-15e9-42e1-9e70-eaef079b08a2")]
+	[Order(10)]
+	[CanBeNull]
+	[Property("dac9211e-e02b-47cd-8868-89a3bfc0f749")]
+	[DateTimeSettings(FieldName = "EncryptDate")]
+	[DisplayName("SR.M('Дата шифрования')")]
+	[View(ViewType = ViewType.Create, ItemType = ItemType.Default, Visibility = Visibility.Hidden, ReadOnly = false)]
+	[View(ViewType = ViewType.Edit, ItemType = ItemType.Default, Visibility = Visibility.Hidden, ReadOnly = false)]
+	[View(ViewType = ViewType.Display, ItemType = ItemType.Default, Visibility = Visibility.Hidden, ReadOnly = true)]
+	[View(ViewType = ViewType.List, ItemType = ItemType.Default, Visibility = Visibility.Hidden, ReadOnly = false)]
+	[View(ViewType = ViewType.Filter, ItemType = ItemType.Default, Visibility = Visibility.Hidden, ReadOnly = false)]
+	[EntityProperty]
+	DateTime? EncryptDate { get; set; }
+
+	[Uid("4d8451ae-e274-44d7-9a80-948eb91edc0a")]
+	[Order(11)]
+	[Property("9b9aac17-22bb-425c-aa93-9c02c5146965")]
+	[StringSettings(MaxValueString = "2000", FieldName = "Salt")]
+	[StringRangeLength(0, "2000")]
+	[DisplayName("SR.M('Соль')")]
+	[Description("SR.M('Используется в механизме шифрования')")]
+	[View(ViewType = ViewType.Create, ItemType = ItemType.Default, Visibility = Visibility.Hidden, ReadOnly = false)]
+	[View(ViewType = ViewType.Edit, ItemType = ItemType.Default, Visibility = Visibility.Hidden, ReadOnly = false)]
+	[View(ViewType = ViewType.Display, ItemType = ItemType.Default, Visibility = Visibility.Hidden, ReadOnly = true)]
+	[View(ViewType = ViewType.List, ItemType = ItemType.Default, Visibility = Visibility.Hidden, ReadOnly = false)]
+	[View(ViewType = ViewType.Filter, ItemType = ItemType.Default, Visibility = Visibility.Hidden, ReadOnly = false)]
+	[EntityProperty]
+	string Salt { get; set; }
+
+	[Uid("2c15fbdc-b6bf-494c-8df2-90d877b7f3c6")]
+	[Order(12)]
+	[Property("9b9aac17-22bb-425c-aa93-9c02c5146965")]
+	[StringSettings(FieldName = "CryptoToken")]
+	[DisplayName("SR.M('Токен проверки авторизации по шифрованию')")]
+	[View(ViewType = ViewType.Create, ItemType = ItemType.Default, Visibility = Visibility.Hidden, ReadOnly = false)]
+	[View(ViewType = ViewType.Edit, ItemType = ItemType.Default, Visibility = Visibility.Hidden, ReadOnly = false)]
+	[View(ViewType = ViewType.Display, ItemType = ItemType.Default, Visibility = Visibility.Hidden, ReadOnly = true)]
+	[View(ViewType = ViewType.List, ItemType = ItemType.Default, Visibility = Visibility.ForceHidden, ReadOnly = false)]
+	[View(ViewType = ViewType.Filter, ItemType = ItemType.Default, Visibility = Visibility.Hidden, ReadOnly = false)]
+	[EntityProperty]
+	string CryptoToken { get; set; }
+}

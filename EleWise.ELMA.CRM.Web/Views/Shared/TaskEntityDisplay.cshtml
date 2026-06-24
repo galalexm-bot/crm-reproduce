@@ -1,0 +1,22 @@
+﻿@model EleWise.ELMA.CRM.Models.ICRMTaskBase
+
+@if (Model.Contractor != null)
+{
+    @Html.HiddenFor(m => m.Contractor.Id)
+    @Html.Property(m => m.Contractor)
+}
+@if (Model.Contact != null)
+{
+    @Html.HiddenFor(m => m.Contact.Id)
+    @Html.Property(m => m.Contact)
+}
+@if (Model.Lead != null)
+{
+    @Html.HiddenFor(m => m.Lead.Id)
+    @Html.Property(m => m.Lead)
+}
+@if (Model.Sale != null)
+{
+    @Html.HiddenFor(m => m.Sale.Id)
+    @Html.Property(m => m.Sale)
+}

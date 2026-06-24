@@ -1,0 +1,37 @@
+using System.IO;
+using System.Text;
+using System.Web;
+
+namespace Orchard.Mvc.Spooling;
+
+public class HtmlStringWriter : TextWriter, IHtmlString
+{
+	private readonly TextWriter _writer;
+
+	public override Encoding Encoding => _writer.Encoding;
+
+	public HtmlStringWriter()
+	{
+		_writer = new StringWriter();
+	}
+
+	public string ToHtmlString()
+	{
+		return _writer.ToString();
+	}
+
+	public override string ToString()
+	{
+		return _writer.ToString();
+	}
+
+	public override void Write(string value)
+	{
+		_writer.Write(value);
+	}
+
+	public override void Write(char value)
+	{
+		_writer.Write(value);
+	}
+}

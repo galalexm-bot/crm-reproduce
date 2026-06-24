@@ -1,0 +1,1127 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<root uid="{7EB94B0C-057B-440F-984E-DBD4DF6F93DF}" provider="PostgreSQL">
+
+  <procedures>
+
+    <procedure name="GetOrgItemHierarchy">
+      <text>
+create or replace function GetOrgItemHierarchy(&amp;&amp;StartItemId&amp;&amp; bigint)
+returns table(&amp;&amp;OrgItemId&amp;&amp; bigint, &amp;&amp;Lvl&amp;&amp; bigint, &amp;&amp;UserId&amp;&amp; bigint)
+as
+$$
+
+with recursive t_Rec as (
+	select oi.&amp;&amp;Id&amp;&amp;, oi.&amp;&amp;Parentitem&amp;&amp;, 0 as &amp;&amp;Lvl&amp;&amp;
+        from &amp;&amp;OrganizationItem&amp;&amp; oi
+        where oi.&amp;&amp;IsDeleted&amp;&amp; = 0 and oi.&amp;&amp;Id&amp;&amp; = $1
+
+        union all
+
+        select oit.&amp;&amp;Id&amp;&amp;, oit.&amp;&amp;ParentItem&amp;&amp;, t_Rec.&amp;&amp;Lvl&amp;&amp; + 1 as &amp;&amp;Lvl&amp;&amp;
+        from &amp;&amp;OrganizationItem&amp;&amp; oit inner join t_Rec on t_Rec.&amp;&amp;ParentItem&amp;&amp; = oit.&amp;&amp;Id&amp;&amp; and oit.&amp;&amp;IsDeleted&amp;&amp; = 0
+        )
+
+select t_Rec.&amp;&amp;Id&amp;&amp; as &amp;&amp;OrgItemId&amp;&amp;, cast(t_Rec.&amp;&amp;Lvl&amp;&amp; as bigint) as &amp;&amp;Lvl&amp;&amp;, ussc.&amp;&amp;UserId&amp;&amp; as &amp;&amp;UserId&amp;&amp;
+from t_Rec left join &amp;&amp;UserSecuritySetCache&amp;&amp; ussc on t_Rec.&amp;&amp;Id&amp;&amp; = ussc.&amp;&amp;OrgItemId&amp;&amp;
+where t_Rec.&amp;&amp;Id&amp;&amp; != $1
+	and ussc.&amp;&amp;UserCount&amp;&amp; != -1
+	and ussc.&amp;&amp;OrgItemId&amp;&amp; is not null
+
+$$
+language sql;
+      </text>
+    </procedure>
+
+    <procedure name="GetOrgItemChilds">
+      <text>
+        create or replace function GetOrgItemChilds(&amp;&amp;StartItemId&amp;&amp; bigint)
+        returns table (&amp;&amp;OrgItemId&amp;&amp; bigint, &amp;&amp;Lvl&amp;&amp; bigint)
+        as
+        $$
+
+        with recursive t_Rec as (
+        select oi.&amp;&amp;Id&amp;&amp;, oi.&amp;&amp;ParentItem&amp;&amp;, 0 as &amp;&amp;Lvl&amp;&amp;
+        from &amp;&amp;OrganizationItem&amp;&amp; oi
+        where oi.&amp;&amp;IsDeleted&amp;&amp;=0 and oi.&amp;&amp;Id&amp;&amp; = $1
+
+        union all
+
+        select oit.&amp;&amp;Id&amp;&amp;, oit.&amp;&amp;ParentItem&amp;&amp;, t_Rec.&amp;&amp;Lvl&amp;&amp; + 1 as &amp;&amp;Lvl&amp;&amp;
+        from &amp;&amp;OrganizationItem&amp;&amp; oit
+        inner join t_Rec on t_Rec.&amp;&amp;Id&amp;&amp; = oit.&amp;&amp;ParentItem&amp;&amp; and oit.&amp;&amp;IsDeleted&amp;&amp;=0
+        )
+
+        select t_Rec.&amp;&amp;Id&amp;&amp; as &amp;&amp;OrgItemId&amp;&amp;, cast(t_Rec.&amp;&amp;Lvl&amp;&amp; as bigint) as &amp;&amp;Lvl&amp;&amp;
+        from t_Rec
+        
+        $$
+        language sql;
+      </text>
+    </procedure>
+
+    <procedure name="GetUserChiefsHierarchy">
+      <mappings>
+        <hibernate-mapping xmlns="urn:nhibernate-mapping-2.2">
+          <resultset name="ChiefsHierarchyResultSet">
+            <return-scalar column="StartItemId" type="System.Int64"/>
+            <return-scalar column="OrgItemId" type="System.Int64"/>
+            <return-scalar column="Lvl" type="System.Int64"/>
+            <return-scalar column="UserId" type="System.Int64"/>
+          </resultset>
+          <sql-query name="GetUserChiefsHierarchy" resultset-ref="ChiefsHierarchyResultSet">
+            <query-param name="StartUserId" type="System.Int64" />
+            select * from GetUserChiefsHierarchy(:StartUserId)
+          </sql-query>
+        </hibernate-mapping>
+      </mappings>
+      <text>
+create or replace function GetUserChiefsHierarchy(&amp;&amp;StartUserId&amp;&amp; bigint)
+returns table (
+	&amp;&amp;StartItemId&amp;&amp; bigint,
+        &amp;&amp;OrgItemId&amp;&amp; bigint,
+        &amp;&amp;Lvl&amp;&amp; bigint,
+        &amp;&amp;UserId&amp;&amp; bigint
+        )
+        
+as
+$$
+
+select us.&amp;&amp;OrgItemId&amp;&amp; as &amp;&amp;StartItemId&amp;&amp;, oih.* 
+from &amp;&amp;UserSecuritySetCache&amp;&amp; us
+left join GetOrgItemHierarchy(us.&amp;&amp;OrgItemId&amp;&amp;) oih on 1=1
+left join &amp;&amp;OrganizationItem&amp;&amp; oi on oi.&amp;&amp;Id&amp;&amp; = us.&amp;&amp;OrgItemId&amp;&amp;
+left join &amp;&amp;OrganizationItem&amp;&amp; oi1 on oi1.&amp;&amp;Id&amp;&amp; = oih.&amp;&amp;OrgItemId&amp;&amp;
+where us.&amp;&amp;UserId&amp;&amp; = $1
+and us.&amp;&amp;UserCount&amp;&amp; != -1
+and us.&amp;&amp;OrgItemId&amp;&amp; is not null
+and oi.&amp;&amp;ItemType&amp;&amp; in (1,2)
+and oi1.&amp;&amp;ItemType&amp;&amp; in (1)
+$$
+language sql;
+      </text>
+    </procedure>
+    
+    <procedure name="OrgStructTree">
+      <mappings>
+        <hibernate-mapping xmlns="urn:nhibernate-mapping-2.2">
+          <resultset name="OrgStructTreeResultSet">
+            <return-scalar column="Id" type="System.Int64"/>
+            <return-scalar column="ItemType" type="System.Int32"/>
+            <return-scalar column="Name" type="System.String"/>
+            <return-scalar column="ParentItemId" type="System.Int64"/>
+            <return-scalar column="Uid" type="System.Guid"/>
+          </resultset>
+          <sql-query name="ORGSTRUCTTREE" resultset-ref="OrgStructTreeResultSet">
+            select &amp;&amp;Id&amp;&amp;, &amp;&amp;ItemType&amp;&amp;, &amp;&amp;Name&amp;&amp;, &amp;&amp;ParentItem&amp;&amp; &amp;&amp;ParentItemId&amp;&amp;, &amp;&amp;Uid&amp;&amp;
+            from OrgStructTree()
+          </sql-query>
+        </hibernate-mapping>
+      </mappings>
+      <text>
+create or replace function OrgStructTree()
+returns table(
+    &amp;&amp;Id&amp;&amp; bigint,
+    &amp;&amp;ItemType&amp;&amp; int,
+    &amp;&amp;Name&amp;&amp; text,
+    &amp;&amp;ParentItem&amp;&amp; bigint,
+    &amp;&amp;Uid&amp;&amp; uuid)
+
+as
+$$
+    select oi.&amp;&amp;Id&amp;&amp;, oi.&amp;&amp;ItemType&amp;&amp;, oi.&amp;&amp;Name&amp;&amp; as &amp;&amp;Name&amp;&amp;, oi.&amp;&amp;ParentItem&amp;&amp;, oi.&amp;&amp;Uid&amp;&amp;
+    from &amp;&amp;OrganizationItem&amp;&amp; oi
+    where oi.&amp;&amp;IsDeleted&amp;&amp;=0
+$$
+language sql;
+      </text>
+    </procedure>
+
+    <procedure name="GetUsersIdByWorkers">
+      <mappings>
+        <hibernate-mapping xmlns="urn:nhibernate-mapping-2.2">
+          <sql-query name="GetUsersIdByWorkers">
+select &amp;&amp;UserId&amp;&amp; 
+from &amp;&amp;UserSecuritySetCache&amp;&amp;
+where &amp;&amp;GroupId&amp;&amp; in (:groupId)
+
+union
+
+select oid.&amp;&amp;UserId&amp;&amp; 
+from &amp;&amp;OrganizationItem&amp;&amp; oid
+where oid.&amp;&amp;UserId&amp;&amp; is not null and oid.&amp;&amp;Id&amp;&amp; in (:orgItemId)
+
+union 
+
+select oiu.&amp;&amp;UserId&amp;&amp; 
+from &amp;&amp;OrganizationItem&amp;&amp; oi
+inner join &amp;&amp;OrganizationItemUsers&amp;&amp; oiu on oiu.&amp;&amp;OrganizationItemId&amp;&amp;=oi.&amp;&amp;Id&amp;&amp;
+where oiu.&amp;&amp;UserId&amp;&amp; is not null and oi.&amp;&amp;Id&amp;&amp; in (:orgItemId)
+          </sql-query>
+        </hibernate-mapping>
+      </mappings>
+    </procedure>
+
+    <procedure name="GetDepartmentUsers">
+      <text>
+        <![CDATA[
+-- список пользователей для элемента оргструктуры
+create or replace function GetDepartmentUsers(DepartmentId bigint)
+returns table (
+  &&UserId&& bigint  
+)
+as
+$$
+
+    -- для отдела все поддерево, для должности и группы только сам элемент
+    with recursive AllOrganizationItems
+    as
+    (
+        -- отделы где является непосредственным начальником
+        select oi.&&Id&&, oi.&&UserId&&, oi.&&ItemType&& 
+        from &&OrganizationItem&& oi
+	where oi.&&Id&& = $1
+	
+        union all
+        
+        -- подчиненные отделы
+        select oi.&&Id&&, oi.&&UserId&&, aoi.&&ItemType&& 
+        from &&OrganizationItem&& oi
+        inner join AllOrganizationItems aoi on oi.&&ParentItem&& = aoi.&&Id&& and aoi.&&ItemType&& = 0
+    )
+    
+    -- начальники всех отделов
+    select aoi.&&UserId&& 
+    from AllOrganizationItems aoi 
+    where aoi.&&UserId&& is not null
+    
+    union 
+    
+    select oim.&&UserId&& 
+    from AllOrganizationItems aoi
+    inner join &&OrganizationItemUsers&& oim on oim.&&OrganizationItemId&& = aoi.&&Id&&
+    
+$$
+language sql;
+]]>
+      </text>
+    </procedure>
+
+    <procedure name="GetOrganizationItemUsers">
+      <text>
+-- список подчиненных для пользователя
+create or replace function GetOrganizationItemUsers
+(    
+    &amp;&amp;OrganizationItemId&amp;&amp; bigint
+)
+returns table (
+    &amp;&amp;UserId&amp;&amp; bigint
+)
+as
+$$
+    -- для должностей возвращаем пользователей назначенных на должности
+  select oi.&amp;&amp;UserId&amp;&amp; from &amp;&amp;OrganizationItem&amp;&amp; oi 
+  where oi.&amp;&amp;ItemType&amp;&amp; = 1 and oi.&amp;&amp;Id&amp;&amp; = $1 and oi.&amp;&amp;UserId&amp;&amp; is not null
+  union
+  select GetDepartmentUsers.&amp;&amp;UserId&amp;&amp; from &amp;&amp;OrganizationItem&amp;&amp; oi
+  left join GetDepartmentUsers(oi.&amp;&amp;Id&amp;&amp;) on 1=1
+  where (oi.&amp;&amp;ItemTyp&amp;&amp;e = 0 or oi.&amp;&amp;ItemType&amp;&amp; = 2) and oi.&amp;&amp;Id&amp;&amp; = $1
+    and GetDepartmentUsers.&amp;&amp;UserId&amp;&amp; is not null
+  
+$$
+language sql;
+      </text>
+    </procedure>
+
+    <procedure name="GetGroupUsers">
+      <text>
+create or replace function GetGroupUsers(&amp;&amp;GroupId&amp;&amp; bigint)
+returns table (&amp;&amp;UserId&amp;&amp; bigint)
+
+as
+$$
+
+
+    with recursive AllGroups(&amp;&amp;GroupId&amp;&amp;)
+    as
+    (
+        select g.&amp;&amp;Id&amp;&amp; as &amp;&amp;GroupId&amp;&amp; from &amp;&amp;UserGroup&amp;&amp; g
+        where g.&amp;&amp;Id&amp;&amp; = $1 and g.&amp;&amp;Uid&amp;&amp; != '97D7E638-F957-4964-B991-2B1AEED59163'
+        union all
+        select gm.&amp;&amp;ChildId&amp;&amp; as &amp;&amp;GroupId&amp;&amp; from UserGroup_Groups_Map gm
+        inner join AllGroups ag on ag.&amp;&amp;GroupId&amp;&amp; = gm.&amp;&amp;ParentId&amp;&amp;
+    )
+    
+    select ugm.&amp;&amp;UserId&amp;&amp; as &amp;&amp;UserId &amp;&amp;
+    from AllGroups ag
+    inner join UserGroup_User_Map ugm on ugm.&amp;&amp;GroupId&amp;&amp; = ag.&amp;&amp;GroupId&amp;&amp;
+    
+    union
+    
+    select GetOrganizationItemUsers.&amp;&amp;UserId&amp;&amp; as &amp;&amp;UserId&amp;&amp;
+    from AllGroups ag
+    inner join UserGroup_OrgItem_Map oim on oim.&amp;&amp;GroupId&amp;&amp; = ag.&amp;&amp;GroupId&amp;&amp;
+    left join GetOrganizationItemUsers(oim.&amp;&amp;OrgItemId&amp;&amp;) on 1=1
+
+    union 
+
+    select u.&amp;&amp;Id&amp;&amp; as &amp;&amp;UserId &amp;&amp;
+    from &amp;&amp;User&amp;&amp; u 
+    where u.&amp;&amp;Status&amp;&amp; = 0 and
+	exists (select &amp;&amp;Id&amp;&amp; 
+		from &amp;&amp;UserGroup&amp;&amp; 
+		where &amp;&amp;Id&amp;&amp; = $1 and &amp;&amp;Uid&amp;&amp; = '97D7E638-F957-4964-B991-2B1AEED59163')
+  
+$$
+language sql;
+      </text>      
+    </procedure>
+
+    <procedure name="GetGroupsForUsers">
+      <text>
+
+create or replace function GetGroupsForUsers(&amp;&amp;UserId&amp;&amp; bigint)
+returns table (&amp;&amp;GroupId&amp;&amp; bigint)
+
+as
+$$
+
+    select &amp;&amp;GroupId&amp;&amp; 
+    from &amp;&amp;UserSecuritySetCache&amp;&amp;
+    where &amp;&amp;UserId&amp;&amp; = $1 and &amp;&amp;GroupId&amp;&amp; > 0
+    
+$$
+language sql;
+
+      </text>
+    </procedure>
+
+    <procedure name="GetUserChief">
+      <text>
+-- список начальников для порльзователя
+create or replace function GetUserChief(&amp;&amp;Uid&amp;&amp; bigint)
+returns table (&amp;&amp;UserId&amp;&amp; bigint)
+
+as
+$$
+
+with recursive AllOrganizationItems
+    as
+    (
+        -- прямые начальники и отделы в кторых находится пользователль
+
+        -- должности пользователя
+        select oi.&amp;&amp;ParentItem&amp;&amp; as &amp;&amp;Id&amp;&amp; from &amp;&amp;OrganizationItem&amp;&amp; oi 
+            where oi.&amp;&amp;UserId&amp;&amp; = $1 and oi.&amp;&amp;ParentItem&amp;&amp; is not null
+        union
+        -- отделы в которых состоит польователь
+            select poi.&amp;&amp;ParentItem&amp;&amp; as &amp;&amp;Id&amp;&amp; from &amp;&amp;OrganizationItemUsers&amp;&amp; ioum
+            inner join &amp;&amp;OrganizationItem&amp;&amp; poi on poi.&amp;&amp;Id&amp;&amp; = ioum.&amp;&amp;OrganizationItemId&amp;&amp;
+            where ioum.&amp;&amp;UserId&amp;&amp; = $1 and poi.&amp;&amp;ParentItem&amp;&amp; is not null
+
+        union all
+        -- начальники начальников и вышестоящие отделы
+        select coi.&amp;&amp;Id&amp;&amp; from &amp;&amp;OrganizationItem&amp;&amp; oi
+        inner join AllOrganizationItems aoi on aoi.&amp;&amp;Id&amp;&amp; = oi.&amp;&amp;Id&amp;&amp;
+        inner join &amp;&amp;OrganizationItem&amp;&amp; coi on coi.&amp;&amp;Id&amp;&amp; = oi.&amp;&amp;ParentItem&amp;&amp;
+    )
+    
+    select oi.&amp;&amp;UserId&amp;&amp; from AllOrganizationItems aoi
+    inner join &amp;&amp;OrganizationItem&amp;&amp; oi on aoi.&amp;&amp;Id&amp;&amp; = oi.&amp;&amp;Id&amp;&amp;
+    where oi.&amp;&amp;UserId&amp;&amp; is not null
+
+$$
+language sql;
+      </text>
+    </procedure>        
+
+    <procedure name="GetUserSubordinate">
+      <text>
+        <![CDATA[
+-- список подчиненных для пользователя
+create or replace function GetUserSubordinate(&&Uid&& bigint)
+returns table (&&UserId&& bigint)
+
+as
+$$
+
+    -- отделы подчиненные пользователю
+    with recursive AllOrganizationItems
+    as
+    (
+        -- отделы где является непосредственным начальником
+        select oi.&&Id&&, oi.&&UserId&&, 1 &&Flag&& from &&OrganizationItem&& oi 
+            where oi.&&UserId&& = $1
+        union select oi.&&Id&&, oiu.&&UserId&&, 0 from &&OrganizationItem&& oi
+         left join &&OrganizationItemUsers&& oiu on oiu.&&OrganizationItemId&&=oi.&&Id&&
+            where oiu.&&UserId&& = $1
+        union all
+        -- подчиненные отделы
+        select oi.&&Id&&, oi.&&UserId&&, 1 from &&OrganizationItem&& oi
+        inner join AllOrganizationItems aoi on oi.&&ParentItem&& = aoi.&&Id&&
+    )
+    
+    -- начальники всех отделов
+    select aoi.&&UserId&& from AllOrganizationItems aoi where aoi.&&UserId&& != $1
+    union 
+    select oim.&&UserId&& from AllOrganizationItems aoi
+    inner join &&OrganizationItemUsers&& oim on oim.&&OrganizationItemId&& = aoi.&&Id&& and aoi.&&Flag&& = 1
+    where oim.&&UserId&& != $1
+
+$$
+language sql;
+        ]]>
+      </text>
+    </procedure>
+
+    <procedure name="FillUserSecuritySetCacheTest">
+      <mappings>
+        <hibernate-mapping xmlns="urn:nhibernate-mapping-2.2">
+          <sql-query name="ExecFillUserSecuritySetCacheTest" >
+            select FillUserSecuritySetCacheTest()
+          </sql-query>
+        </hibernate-mapping>
+      </mappings>
+      <text>
+        <![CDATA[
+create or replace function FillUserSecuritySetCacheTest()
+returns void
+
+as
+$$
+
+$$
+language sql;
+    ]]>
+      </text>
+    </procedure>
+
+    <procedure name="SplitString">
+      <text>
+        <![CDATA[
+create or replace function SplitString(
+          &&Delimited&& text,
+          &&Delimiter&& varchar(100))
+returns table (&&Val&& text)
+
+as
+$$
+
+declare 
+p_Elems text[]; 
+
+begin
+
+	p_Elems := string_to_array($1, $2);
+	return query select p_Elems[s] from generate_series(1,array_upper(p_Elems, 1)) as s;
+ 
+end;
+
+$$ 
+language plpgsql;
+    ]]>
+      </text>
+    </procedure>
+
+    <procedure name="GetOrgItemsChilds">
+      <text>
+        <![CDATA[
+        create or replace function GetOrgItemsChilds(&&StartItemIds&& text)
+        returns table (&&OrgItemId&& bigint)
+        as
+        $$
+        select ussc1.&&OrgItemId&& as OrgItemId from &&UserSecuritySetCache&& ussc
+        inner join SplitString($1, ',') ss on cast(ss.&&Val&& as bigint) = ussc.&&OrgItemId&& and ussc.&&UserCount&& > 0
+        inner join &&UserSecuritySetCache&& ussc1 on ussc1.&&UserId&& = ussc.&&UserId&&
+        where ussc1.&&OrgItemId&& is not null
+        group by ussc1.&&OrgItemId&&
+        $$
+        language sql;
+        ]]>
+      </text>
+    </procedure>
+
+    <procedure name="GetDepartments">
+      <text>
+        <![CDATA[
+-- список вхождений элементов оргструктуры в отделы
+create or replace function GetDepartments()
+returns table (&&Id&& bigint, &&UserId&& bigint, &&DepartmentId&& bigint)
+
+as
+$$
+
+  -- для отделов все поддерево, для должностей и групп только сами элементы
+  with recursive AllOrganizationItems
+  as
+  (
+    -- все элементы оргструктуры
+    select oi.&&Id&&, oi.&&UserId&&, oi.&&ItemType&&, oi.&&Id&& &&DepartmentId&& from &&OrganizationItem&& oi
+    union all
+    -- подчиненные элементы оргструктуры для родительского отдела
+    select oi.&&Id&&, oi.&&UserId&&, aoi.&&ItemType&&, aoi.&&DepartmentId&& from &&OrganizationItem&& oi
+    inner join AllOrganizationItems aoi on oi.&&ParentItem&& = aoi.&&Id&& and aoi.&&ItemType&&=0
+  )
+  select &&Id&&, &&UserId&&, &&DepartmentId&& from AllOrganizationItems
+  
+$$
+language sql;
+]]>
+      </text>
+    </procedure>
+
+    <procedure name="GetDepartmentsUsers">
+      <text>
+        <![CDATA[
+-- список пользователей для элементов оргструктуры
+create or replace function GetDepartmentsUsers()
+returns table (&&Id&& bigint, &&UserId&& bigint, &&UserCount&& int)
+
+as
+$$
+
+  with AllOrganizationItems
+  as (select * from GetDepartments())
+
+select &&Id&&, &&UserId&&, cast(&&UserCount&& as int) &&UserCount&& from
+(
+  select &&Id&&, &&UserId&&, count(*) &&UserCount&& from
+  (
+    -- начальники отделов
+    select aoi.DepartmentId &&Id&&, aoi.&&UserId&&, aoi.&&DepartmentId&& oiId from AllOrganizationItems aoi where aoi.&&UserId&& is not null
+    union all
+    -- сотрудники отделов
+    select aoi.&&DepartmentId&&, oim.&&UserId&&, aoi.&&Id&& from AllOrganizationItems aoi
+    inner join &&OrganizationItemUsers&& oim on oim.&&OrganizationItemId&& = aoi.&&Id&&
+  ) s
+  group by &&Id&&, &&UserId&&
+)  si
+$$
+language sql;
+]]>
+      </text>
+    </procedure>
+
+    <procedure name="GetGroups">
+      <text>
+        <![CDATA[
+-- список вхождения групп в группы
+create or replace function GetGroups()
+returns table(&&ParentGroupId&& bigint, &&ChildGroupId&& bigint)
+
+as
+$$
+
+  with recursive AllGroups
+  as
+  (
+    select g.&&Id&& &&ParentGroupId&&, g.&&Id&& &&ChildGroupId&& from &&UserGroup&& g
+    union all
+    select gm.&&ChildId&&, ag.&&ChildGroupId&& from UserGroup_Groups_Map gm
+    inner join AllGroups ag on ag.&&ParentGroupId&& = gm.&&ParentId&&
+  )
+  
+  select &&ParentGroupId&&, &&ChildGroupId&& from AllGroups
+  
+$$
+language sql;
+]]>
+      </text>
+    </procedure>
+
+    <procedure name="GetGroupsUsers">
+      <text>
+        <![CDATA[
+-- список пользователей для группы (с количеством вхождений в группу)
+create or replace function GetGroupsUsers()
+returns table (&&GroupId&& bigint, &&UserId&& bigint, &&UserCount&& int)
+
+as
+$$
+
+  with AllGroups
+  as (select * from GetGroups())
+
+  select &&GroupId&&, &&UserId&&, cast(&&UserCount&& as int) &&UserCount&& 
+  from (
+  select &&GroupId&&, &&UserId&&, sum(&&UserCount&&) &&UserCount&& from
+  (
+    select ag.&&ParentGroupId&& gId, null oiId, ag.&&ChildGroupId&& as &&GroupId&&, ugm.&&UserId&& as &&UserId&&, 1 &&UserCount&& from AllGroups ag
+    inner join UserGroup_User_Map ugm on ugm.&&GroupId&& = ag.&&ParentGroupId&&
+    union
+    select ag.&&ParentGroupId&&, oim.&amp;&amp;OrgItemId&amp;&amp;, ag.&&ChildGroupId&&, oi.&&UserId&&, oi.&&UserCount&& from AllGroups ag
+    inner join UserGroup_OrgItem_Map oim on oim.&&GroupId&& = ag.&&ParentGroupId&&
+    inner join &&UserSecuritySetCacheTemp&& oi on oim.&amp;&amp;OrgItemId&amp;&amp; = oi.&amp;&amp;OrgItemId&amp;&amp; and oi.&&Subordinate&& = 0
+  ) s
+  group by &&GroupId&&, &&UserId&&
+  ) si
+  
+$$
+language sql;
+]]>
+      </text>
+    </procedure>
+
+    <procedure name="FillUserSecuritySetCache">
+      <mappings>
+        <hibernate-mapping xmlns="urn:nhibernate-mapping-2.2">
+          <sql-query name="ExecFillUserSecuritySetCache" >
+            select FillUserSecuritySetCache()
+          </sql-query>
+        </hibernate-mapping>
+      </mappings>
+      <text>
+        <![CDATA[
+create or replace function FillUserSecuritySetCache()
+returns void
+
+as
+$$
+
+  -- маска которая оставляет только биты типа
+declare
+v_TypeMask bigint = 9151314442816847872; -- побитовый сдвиг влево 1111111 на 56 разрядов (2 ^ 56) 1111111[0]55
+v_UserMask bigint = 72057594037927936; -- побитовый сдвиг влево 1 на 56 разрядов (2 ^ 56) 1[0]55
+v_GroupMask bigint = 144115188075855872; -- побитовый сдвиг влево 10 на 56 разрядов (2 ^ 56) 10[0]55
+v_OrganizationItemMask bigint = 216172782113783808; -- побитовый сдвиг влево 11 на 56 разрядов (2 ^ 56) 11[0]55
+
+begin
+
+  -- удаляем из кэша старые записи
+  delete from &&UserSecuritySetCacheTemp&&;
+
+
+  -- начальники пользователей
+  insert into &&UserSecuritySetCacheTemp&& (&&SetId&&, &&UserId&&, &&SubordinateUserId&&, &&Subordinate&&, &&UserCount&&)
+  select &&SetId&&, &&UserId&&, &&SubordinateUserId&&, min(&&Subordinate&&), -1 from
+  (
+    select (u.&&Id&& | v_UserMask) as &&SetId&&, u.&&Id&& as &&UserId&&, u.&&Id&& as &&SubordinateUserId&&, 0 as &&Subordinate&& from &&User&& u
+    union
+    select (s.&&UserId&& | v_UserMask), u.&&Id&&, s.&&UserId&&, 1 from &&User&& u
+    left join GetUserSubordinate(u.&&Id&&) s on 1 = 1
+    where s.&&UserId&& is not null
+  ) s group by &&SetId&&, &&UserId&&, &&SubordinateUserId&&;
+
+
+  -- подразделения
+  insert into &&UserSecuritySetCacheTemp&& (&&SetId&&, &&UserId&&, &&OrgItemId&&, &&Subordinate&&, &&UserCount&&)
+  with &&DepartmentUsers&& as (
+    select &&Id&&, &&UserId&&, &&UserCount&& from GetDepartmentsUsers()
+  )
+  select (&&Id&& | v_OrganizationItemMask), &&UserId&&, &&Id&&, min(&&Subordinate&&), max(&&UserCount&&) from
+  (
+    select &&Id&&, &&UserId&&, &&UserCount&&, 0 as &&Subordinate&& from &&DepartmentUsers&&
+    union
+    select gu.&&Id&&, ussc.&&UserId&&, -1, 1 from &&DepartmentUsers&& gu 
+    inner join &&UserSecuritySetCacheTemp&& ussc on ussc.&&SubordinateUserId&& = gu.&&UserId&&
+  ) s group by &&Id&&, &&UserId&&;
+
+
+  -- группы 
+  insert into &&UserSecuritySetCacheTemp&& (&&SetId&&, &&UserId&&, &&GroupId&&, &&Subordinate&&, &&UserCount&&)
+  with GroupUsers as (
+    select &&GroupId&& &&Id&&, &&UserId&&, &&UserCount&& from GetGroupsUsers()
+  )
+  select (&&Id&& | v_GroupMask), &&UserId&&, max(&&GroupId&&), min(&&Subordinate&&), max(&&UserCount&&) from 
+  (
+    select &&Id&&, &&Id&& &&GroupId&&, &&UserId&&, &&UserCount&&, 0 as &&Subordinate&& from GroupUsers
+    union
+    select gu.&&Id&&, null, ussc.&&UserId&&, -1, 1 from GroupUsers gu 
+    inner join &&UserSecuritySetCacheTemp&& ussc on ussc.&&SubordinateUserId&& = gu.&&UserId&&
+  ) s group by &&Id&&, &&UserId&&;
+
+
+  -- переносим данные из кэша в боевую таблицу
+  delete from &amp;&amp;UserSecuritySetCache&amp;&amp; where not exists(select &&SetId&& from &&UserSecuritySetCacheTemp&& t where t.&&SetId&&=&&UserSecuritySetCache&&.&&SetId&& and t.&&UserId&&=&&UserSecuritySetCache&&.&&UserId&& and t.&&Subordinate&&=&&UserSecuritySetCache&&.&&Subordinate&& and t.&&UserCount&&=&&UserSecuritySetCache&&.&&UserCount&&);
+  insert into &&UserSecuritySetCache&& (&&SetId&&, &&UserId&&, &&SubordinateUserId&&, &&Subordinate&&, &&GroupId&&, &&OrgItemId&&, &&UserCount&&) select t.&&SetId&&, t.&&UserId&&, t.&&SubordinateUserId&&, t.&&Subordinate&&, t.&&GroupId&&, t.&amp;&amp;OrgItemId&amp;&amp;, t.&&UserCount&& from &&UserSecuritySetCacheTemp&& t left join &&UserSecuritySetCache&& c on t.&&SetId&&=c.&&SetId&& and t.&&UserId&&=c.&&UserId&& and t.&&Subordinate&&=c.&&Subordinate&& and t.&&UserCount&&=c.&&UserCount&& where c.&&SetId&& is null;
+
+end;
+
+$$ 
+language plpgsql;
+]]>
+      </text>
+    </procedure>
+
+    <procedure name="UpdateUserSecuritySetCache">
+      <mappings>
+        <hibernate-mapping xmlns="urn:nhibernate-mapping-2.2">
+          <sql-query name="ExecUpdateUserSecuritySetCache" >
+            <query-param name="UpdateData" type="System.String" />
+            <query-param name="AuditUid" type="System.Guid" />
+            select UpdateUserSecuritySetCache(:UpdateData, :AuditUid)
+          </sql-query>
+        </hibernate-mapping>
+      </mappings>
+      <text>
+        <![CDATA[
+create or replace function UpdateUserSecuritySetCache(
+  &&UpdateData&& text,
+  &&AuditUid&& uuid)
+returns void
+
+as
+$$
+
+  -- маска которая оставляет только биты типа
+  declare
+  v_TypeMask bigint = 9151314442816847872; -- 1111111[0]55
+  v_UserMask bigint = 72057594037927936; -- побитовый сдвиг влево 1 на 56 разрядов (2 ^ 56) 1[0]55
+  v_GroupMask bigint = 144115188075855872; -- побитовый сдвиг влево 10 на 56 разрядов (2 ^ 56) 10[0]55
+  v_OrganizationItemMask bigint = 216172782113783808; -- побитовый сдвиг влево 11 на 56 разрядов (2 ^ 56) 11[0]55
+
+  v_RefreshUsers int = 0;
+  v_Separator int;
+  v_ItemData text;
+  v_AddUsersData text;
+  v_RemoveUsersData text;
+  v_AddOrgItemsData text;
+  v_RemoveOrgItemsData text;
+  v_AddGroupsData text;
+  v_RemoveGroupsData text;
+  v_ItemId bigint;
+  v_SubItemId bigint;
+  v_IsSubordinate int = 0;
+
+begin
+
+  delete from &&UUSSCGroupData&&;
+  delete from &&UUSSCOrgItemData&&;
+
+  -- парсим строку, записываем все во временную таблицу
+  while (position(';' in $1) > 0) 
+  loop
+    v_Separator = position(';' in $1);
+    v_ItemData = substring($1 from 1 for v_Separator - 1);
+    UpdateData = substring($1 from v_Separator + 1);
+
+    v_Separator = position(':' in v_ItemData);
+    if (v_Separator > 0) then
+	    begin
+	      -- Данные для группы или элемента оргструктуры
+	      v_ItemId = cast(substring(v_ItemData from 1 for v_Separator - 1) as bigint);
+	      v_ItemData = substring(v_ItemData from v_Separator + 1);
+	  
+	      v_Separator = position(':' in v_ItemData);
+	      v_AddUsersData = substring(v_ItemData from 1 for v_Separator - 1);
+	      v_ItemData = substring(v_ItemData from v_Separator + 1);
+	  
+	      v_Separator = position(':' in v_ItemData);
+	      if (v_Separator > 0) then
+		      begin
+			-- Данные для группы
+		  
+			v_RemoveUsersData = substring(v_ItemData from 1 for v_Separator - 1);
+			v_ItemData = substring(v_ItemData from v_Separator + 1);
+		  
+			v_Separator = position(':' in v_ItemData);
+			v_AddOrgItemsData = substring(v_ItemData from 1 for v_Separator - 1);
+			v_ItemData = substring(v_ItemData from v_Separator + 1);
+		  
+			v_Separator = position(':' in v_ItemData);
+			v_RemoveOrgItemsData = substring(v_ItemData from 1 for v_Separator - 1);
+			v_ItemData = substring(v_ItemData from v_Separator + 1);
+		  
+			v_Separator = position(':' in v_ItemData);
+			v_AddGroupsData = substring(v_ItemData from 1 for v_Separator - 1);
+			v_RemoveGroupsData = substring(v_ItemData from v_Separator + 1);
+		  
+			while (position(',' in v_AddUsersData) > 0)
+			loop
+			  v_Separator = position(',' in v_AddUsersData);
+			  v_SubItemId = cast(substring(v_AddUsersData from 1 for v_Separator - 1) as bigint);
+			  v_AddUsersData = substring(v_AddUsersData from v_Separator + 1);
+			  insert into &&UUSSCGroupData&&(&&Id&&, &&UserId&&, &&AddCount&&) values(v_ItemId, v_SubItemId, 1);
+			end loop;
+		  
+			while (position(',' in v_RemoveUsersData) > 0)
+			loop
+			  v_Separator = position(',' in v_RemoveUsersData);
+			  v_SubItemId = cast(substring(v_RemoveUsersData from 1 for v_Separator - 1) as bigint);
+			  v_RemoveUsersData = substring(v_RemoveUsersData from v_Separator + 1);
+			  insert into &&UUSSCGroupData&&(&&Id&&, &&UserId&&, &&AddCount&&) values(v_ItemId, v_SubItemId, -1);
+			end loop;
+		  
+			while (position(',' in v_AddOrgItemsData) > 0)
+			loop
+			  v_Separator = position(',' in v_AddOrgItemsData);
+			  v_SubItemId = cast(substring(v_AddOrgItemsData from 1 for v_Separator - 1) as bigint);
+			  v_AddOrgItemsData = substring(v_AddOrgItemsData from v_Separator + 1);
+			  insert into &&UUSSCGroupData&&(&&Id&&, &&OrgItemId&&, &&AddCount&&) values(v_ItemId, v_SubItemId, 1);
+			end loop;
+		  
+			while (position(',' in v_RemoveOrgItemsData) > 0)
+			loop
+			  v_Separator = position(',' in v_RemoveOrgItemsData);
+			  v_SubItemId = cast(substring(v_RemoveOrgItemsData from 1 for v_Separator - 1) as bigint);
+			  v_RemoveOrgItemsData = substring(v_RemoveOrgItemsData from v_Separator + 1);
+			  insert into &&UUSSCGroupData&&(&&Id&&, &&OrgItemId&&, &&AddCount&&) values(v_ItemId, v_SubItemId, -1);
+			end loop;
+		  
+			while (position(',' in v_AddGroupsData) > 0)
+			loop
+			  v_Separator = position(',' in v_AddGroupsData);
+			  v_SubItemId = cast(substring(v_AddGroupsData from 1 for v_Separator - 1) as bigint);
+			  v_AddGroupsData = substring(v_AddGroupsData from v_Separator + 1);
+			  insert into &&UUSSCGroupData&&(&&Id&&, &&GroupId&&, &&AddCount&&) values(v_ItemId, v_SubItemId, 1);
+			end loop;
+		  
+			while (position(',' in v_RemoveGroupsData) > 0)
+			loop
+			  v_Separator = position(',' in v_RemoveGroupsData);
+			  v_SubItemId = cast(substring(v_RemoveGroupsData from 1 for v_Separator - 1) as bigint);
+			  v_RemoveGroupsData = substring(v_RemoveGroupsData from v_Separator + 1);
+			  insert into &&UUSSCGroupData&&(&&Id&&, &&GroupId&&, &&AddCount&&) values(v_ItemId, v_SubItemId, -1);
+			end loop;
+		      end;
+	      else
+		      begin
+			-- Данные для элемента оргструктуры
+		  
+			v_RemoveUsersData = substring(v_ItemData from v_Separator + 1);
+		  
+			while (position(',' in v_AddUsersData) > 0)
+			loop
+			  v_Separator = position(',' in v_AddUsersData);
+			  v_SubItemId = cast(substring(v_AddUsersData from 1 for v_Separator - 1) as bigint);
+			  v_AddUsersData = substring(v_AddUsersData from v_Separator + 1);
+			  insert into &&UUSSCOrgItemData&&(&&Id&&, &&UserId&&, &&AddCount&&) values(v_ItemId, v_SubItemId, 1);
+			end loop;
+		  
+			while (position(',' in v_RemoveUsersData) > 0)
+			loop
+			  v_Separator = position(',' in v_RemoveUsersData);
+			  v_SubItemId = cast(substring(v_RemoveUsersData from 1 for v_Separator - 1) as bigint);
+			  v_RemoveUsersData = substring(v_RemoveUsersData from v_Separator + 1);
+			  insert into &&UUSSCOrgItemData&&(&&Id&&, &&UserId&&, &&AddCount&&) values(v_ItemId, v_SubItemId, -1);
+			end loop;
+		      end;
+	      end if;
+	    end;
+    else
+	    begin
+	      -- Нужно обновить данные по пользователям
+	      v_RefreshUsers = 1;
+	    end;
+    end if;
+  end loop;
+
+  -- удаляем из кэша старые записи
+  delete from &&UserSecuritySetCacheTemp&&;
+
+  if (exists(select &&Id&& from &&UUSSCOrgItemData&&)) then
+	  begin
+	    -- рекурсивное добавление данных для содержащих отделов
+	    insert into &&UUSSCOrgItemData&&(&&Id&&, &&UserId&&, &&AddCount&&)
+	    select g.&&DepartmentId&&, d.&&UserId&&, d.&&AddCount&& from &&UUSSCOrgItemData&& d
+	    inner join (select * from GetDepartments() where &&Id&&<>&&DepartmentId&&) g on g.&&Id&&=d.&&Id&&;
+
+
+	    -- начальники пользователей
+	    insert into &&UserSecuritySetCacheTemp&& (&&SetId&&, &&UserId&&, &&SubordinateUserId&&, &&Subordinate&&, &&UserCount&&)
+	    select &&SetId&&, &&UserId&&, &&SubordinateUserId&&, min(&&Subordinate&&), -1 from
+	    (
+	      select (u.&&Id&& | v_UserMask) as &&SetId&&, u.&&Id&& as &&UserId&&, u.&&Id&& as &&SubordinateUserId&&, 0 as &&Subordinate&& from &&User&& u
+	      union
+	      select (s.&&UserId&& | v_UserMask), u.&&Id&&, s.&&UserId&&, 1 from &&User&& u
+	      left join GetUserSubordinate(u.&&Id&&) s on 1=1
+	      where s.&&UserId&& is not null
+	    ) s group by &&SetId&&, &&UserId&&, &&SubordinateUserId&&;
+
+
+	    -- дублируем текущие записи об элементах орг структуры (без учета подчиненных пользователей)
+	    insert into &&UserSecuritySetCacheTemp&& (&&SetId&&, &&UserId&&, &&SubordinateUserId&&, &&Subordinate&&, &&GroupId&&, &&OrgItemId&&, &&UserCount&&)
+	    select &&SetId&&, &&UserId&&, &&SubordinateUserId&&, &&Subordinate&&, t.&&GroupId&&, &&OrgItemId&&, &&UserCount&&
+	    from &&UserSecuritySetCache&& t
+	    where t.&&OrgItemId&& in (select &&Id&& from &&UUSSCOrgItemData&&) and t.&&Subordinate&&=0;
+
+	    -- добавляем тех пользователей, которых нет в таблице
+	    insert into &&UserSecuritySetCacheTemp&& (&&SetId&&, &&UserId&&, &&OrgItemId&&, &&Subordinate&&, &&UserCount&&)
+	    select (d.&&Id&& | v_OrganizationItemMask), d.&&UserId&&, d.&&Id&&, 0, 0
+	    from &&UUSSCOrgItemData&& d
+	    left join &&UserSecuritySetCacheTemp&& t on t.&&OrgItemId&&=d.&&Id&& and t.&&UserId&&=d.&&UserId&&
+	    where d.&&UserId&& is not null and t.&&OrgItemId&& is null
+	    group by d.&&Id&&, d.&&UserId&&;
+
+	    -- изменяем количество ссылок на пользователей
+	    update &&UserSecuritySetCacheTemp&& t
+	    set &&UserCoun&&t=&&UserCount&&+(select sum(&&AddCount&&) from &&UUSSCOrgItemData&& where &&Id&&=t.&&OrgItemId&& and &&UserId&&=t.&&UserId&&)
+	    where exists(select &&Id&& from &&UUSSCOrgItemData&& where &&Id&&=t.&&OrgItemId&& and &&UserId&&=t.&&UserId&&);
+
+
+	    -- переводим изменения по элементам оргстуктуры в изменения по группам
+	    insert into &&UUSSCGroupData&&(&&Id&&, &&UserId&&, &&AddCount&&)
+	    select m.&&GroupId&&, d.&&UserId&&, d.&&AddCount&& from &&UUSSCOrgItemData&& d
+	    left join UserGroup_OrgItem_Map m on m.&&OrgItemId&&=d.&&Id&&
+	    where m.&&GroupId&& is not null;
+	  end;
+  else 
+	if (v_RefreshUsers = 1) then
+		begin
+			-- начальники пользователей
+			insert into &&UserSecuritySetCacheTemp&& (&&SetId&&, &&UserId&&, &&SubordinateUserId&&, &&Subordinate&&, &&UserCount&&)
+			select &&SetId&&, &&UserId&&, &&SubordinateUserId&&, min(&&Subordinate&&), -1 from
+			(
+			select (u.&&Id&& | v_UserMask) as &&SetId&&, u.&&Id&& as &&UserId&&, u.&&Id&& as &&SubordinateUserId&&, 0 as &&Subordinate&& from &&User&& u
+			union
+			select (s.&&UserId&& | v_UserMask), u.&&Id&&, s.&&UserId&&, 1 from &&User&& u
+			left join GetUserSubordinate(u.&&Id&&) s on 1=1
+			where s.&&UserId&& is not null
+			) s group by &&SetId&&, &&UserId&&, &&SubordinateUserId&&;
+		end;
+	end if;
+ end if;
+
+  -- переводим идентификаторы элементов оргструктуры в идентификаторы пользователей
+  insert into &&UUSSCGroupData&&(&&Id&&, &&UserId&&, &&AddCount&&)
+  select d.&&Id&&, c.&&UserId&&, d.&&AddCount&& from &&UUSSCGroupData&& d
+  inner join &&UserSecuritySetCache&& c on c.&&OrgItemId&& = d.&&OrgItemId&& and c.&&Subordinate&&=0;
+
+  -- переводим идентификаторы групп в идентификаторы пользователей
+  insert into &&UUSSCGroupData&&(&&Id&&, &&UserId&&, &&AddCount&&)
+  select d.&&Id&&, c.&&UserId&&, d.&&AddCount&& * c.&&UserCount&& from &&UUSSCGroupData&& d
+  inner join &&UserSecuritySetCache&& c on c.&&GroupId&& = d.&&GroupId&& and c.&&Subordinate&&=0;
+
+  -- рекурсивное добавление данных для родительских групп
+  insert into &&UUSSCGroupData&&(&&Id&&, &&UserId&&, &&AddCount&&)
+  select g.&&ChildGroupId&&, d.&&UserId&&, d.&&AddCount&& from &&UUSSCGroupData&& d
+  inner join (select * from GetGroups() where &&ChildGroupId&&<>&&ParentGroupId&&) g on g.&&ParentGroupId&&=d.&&Id&&;
+
+
+  -- дублируем текущие записи о группах (без учета подчиненных пользователей)
+  insert into &&UserSecuritySetCacheTemp&& (&&SetId&&, &&UserId&&, &&SubordinateUserId&&, &&Subordinate&&, &&GroupId&&, &&OrgItemId&&, &&UserCount&&)
+  select &&SetId&&, &&UserId&&, &&SubordinateUserId&&, &&Subordinate&&, t.&&GroupId&&, &&OrgItemId&&, &&UserCount&&
+  from &&UserSecuritySetCache&& t
+  where t.&&GroupId&& in (select &&Id&& from &&UUSSCGroupData&&) and t.&&Subordinate&&=0;
+
+  -- добавляем тех пользователей, которых нет в таблице
+  insert into &&UserSecuritySetCacheTemp&& (&&SetId&&, &&UserId&&, &&GroupId&&, &&Subordinate&&, &&UserCount&&)
+  select (d.&&Id&& | v_GroupMask), d.&&UserId&&, d.&&Id&&, 0, 0
+  from &&UUSSCGroupData&& d
+  left join &&UserSecuritySetCacheTemp&& t on t.&&GroupId&&=d.&&Id&& and t.&&UserId&&=d.&&UserId&&
+  where d.&&UserId&& is not null and t.&&GroupId&& is null
+  group by d.&&Id&&, d.&&UserId&&;
+
+  -- изменяем количество ссылок на пользователей
+  update &&UserSecuritySetCacheTemp&& t
+  set &&UserCount&&=&&UserCount&&+(select sum(&&AddCount&&) from &&UUSSCGroupData&& where &&Id&&=t.&&GroupId&& and &&UserId&&=t.&&UserId&&)
+  where exists(select &&Id&& from &&UUSSCGroupData&& where &&Id&&=t.&&GroupId&& and &&UserId&&=t.&&UserId&&);
+
+  -- удаляем записи без ссылок
+  delete from &&UserSecuritySetCacheTemp&& where &&UserCount&&<=0 and &&SubordinateUserId&& is null;
+
+
+  -- переносим данные из кэша в боевую таблицу
+  if (exists(select &&Id&& from &&UUSSCOrgItemData&&)) then
+	  begin
+	    insert into &&UserSecuritySetCacheTemp&& (&&SetId&&, &&UserId&&, &&GroupId&&, &&OrgItemId&&, &&Subordinate&&, &&UserCount&&)
+	    -- добавляем записи подчиненных пользователей для измененных данных (подчинения берем из временной таблицы, в ней актуальные данные)
+	    select t.&&SetId&&, ussc.&&UserId&&, cast(null as bigint), t.&&OrgItemId&&, 1, -1 from &&UserSecuritySetCacheTemp&& t
+	    inner join &&UserSecuritySetCacheTemp&& ussc on ussc.&&SubordinateUserId&& = t.&&UserId&&
+	    left join &&UserSecuritySetCacheTemp&& st on st.&&SetId&& = t.&&SetId&& and st.&&UserId&& = ussc.&&UserId&&
+	    where st.&&SetId&& is null and t.&&SubordinateUserId&& is null
+	    union
+	    -- добавляем записи подчиненных пользователей для данных, которые не меняются (подчинения берем из временной таблицы, в ней актуальные данные)
+	    select t.&&SetId&&, ussc.&&UserId&&, null, t.&&OrgItemId&&, 1, -1 from &&UserSecuritySetCache&& t
+	    inner join &&UserSecuritySetCacheTemp&& ussc on ussc.&&SubordinateUserId&& = t.&&UserId&&
+	    left join &&UserSecuritySetCache&& st on st.&&SetId&& = t.&&SetId&& and st.&&UserId&& = ussc.&&UserId&& and st.&&Subordinate&&=0
+	    left join &&UUSSCOrgItemData&& oid on t.&&OrgItemId&&=oid.&&Id&&
+	    left join &&UUSSCGroupData&& gd on t.&&GroupId&&=gd.&&Id&&
+	    where t.&&Subordinate&&=0 and st.&&SetId&& is null and oid.&&Id&& is null and gd.&&Id&& is null and t.&&SubordinateUserId&& is null;
+	    
+	    v_IsSubordinate = 2;    
+	  end;
+  else 
+	if (v_RefreshUsers = 1) then
+		begin
+			insert into &&UserSecuritySetCacheTemp&& (&&SetId&&, &&UserId&&, &&GroupId&&, &&OrgItemId&&, &&Subordinate&&, &&UserCount&&)
+			-- добавляем записи подчиненных пользователей для измененных данных (подчинения берем из временной таблицы, в ней актуальные данные)
+			select t.&&SetId&&, ussc.&&UserId&&, cast(null as bigint), t.&&OrgItemId&&, 1, -1 from &&UserSecuritySetCacheTemp&& t
+			inner join &&UserSecuritySetCacheTemp&& ussc on ussc.&&SubordinateUserId&& = t.&&UserId&&
+			left join &&UserSecuritySetCacheTemp&& st on st.&&SetId&& = t.&&SetId&& and st.&&UserId&& = ussc.&&UserId&&
+			where st.&&SetId&& is null and t.&&SubordinateUserId&& is null
+			union
+			-- добавляем записи подчиненных пользователей для данных, которые не меняются (подчинения берем из временной таблицы, в ней актуальные данные)
+			select t.&&SetId&&, ussc.&&UserId&&, null, t.&&OrgItemId&&, 1, -1 from &&UserSecuritySetCache&& t
+			inner join &&UserSecuritySetCacheTemp&& ussc on ussc.&&SubordinateUserId&& = t.&&UserId&&
+			left join &&UserSecuritySetCache&& st on st.&&SetId&& = t.&&SetId&& and st.&&UserId&& = ussc.&&UserId&& and st.&&Subordinate&&=0
+			left join &&UUSSCOrgItemData&& oid on t.&&OrgItemId&&=oid.&&Id&&
+			left join &&UUSSCGroupData&& gd on t.&&GroupId&&=gd.&&Id&&
+			where t.&&Subordinate&&=0 and st.&&SetId&& is null and oid.&&Id&& is null and gd.&&Id&& is null and t.&&SubordinateUserId&& is null;
+
+			v_IsSubordinate = 1;    
+		end;
+	  else
+		  begin
+		    -- добавляем записи подчиненных пользователей (подчинения берем из основной таблице, они не меняются в текущей итерации)
+		    insert into &&UserSecuritySetCacheTemp&& (&&SetId&&, &&UserId&&, &&GroupId&&, &&OrgItemId&&, &&Subordinate&&, &&UserCount&&)
+		    select distinct t.&&SetId&&, ussc.&&UserId&&, cast(null as bigint), t.&&OrgItemId&&, 1, -1 from &&UserSecuritySetCacheTemp&& t
+		    inner join &&UserSecuritySetCache&& ussc on ussc.&&SubordinateUserId&& = t.&&UserId&&
+		    left join &&UserSecuritySetCacheTemp&& st on st.&&SetId&& = t.&&SetId&& and st.&&UserId&& = ussc.&&UserId&&
+		    where st.&&SetId&& is null;
+		  end;
+	  end if;
+  end if;
+  
+  insert into &&HistoryUserSecuritySetCache&&(&&Id&&, &&UserId&&, &&OrgItemId&&, &&GroupId&&, &&SetId&&, &&Uid&&, &&AddCount&&)
+  select g.&&Id&&, g.&&UserId&&, g.&&OrgItemId&&, g.&&GroupId&&, g.&&SetId&&, $2, g.&&AddCount&&
+  from &&UUSSCGroupData&& g
+  left join &&UserSecuritySetCacheTemp&& c     
+  on c.&&SetId&& = g.&&SetId&& and c.&&UserId&& = g.&&UserId&&
+  where (g.&&UserId&& is not null or g.&&OrgItemId&& is not null or g.&&GroupId&& is not null) 
+            and (coalesce(c.&&UserCount&&, g.&&AddCount&&) - g.&&AddCount&& = 0 or G.&&UserId&& is null);
+  
+  if (v_IsSubordinate > 0) then
+	  begin
+	    -- удаляем из основной таблицы все данные по подчинениям по элементам оргструктуры и группам
+	    delete from &&UserSecuritySetCache&& where &&Subordinate&&=1;
+
+	    -- удаляем начальников пользователей (эти данные есть во временной таблице)
+	    delete from &&UserSecuritySetCache&& where (&&SetId&& & v_TypeMask)=v_UserMask;
+	    
+	    if (v_IsSubordinate > 1) then
+		    begin
+			-- удаляем данные по измененным элементам оргструктуры
+			update &&UUSSCOrgItemData&& set &&SetId&&=(&&Id&& | v_OrganizationItemMask);
+			delete from &&UserSecuritySetCache&& where &&SetId&& in (select &&SetId&& from &&UUSSCOrgItemData&& t);
+		    end;
+	    end if;
+	  end;
+  end if;
+  
+  -- удаляем данные по измененным группам
+  update &&UUSSCGroupData&& set &&SetId&&=(&&Id&& | v_GroupMask);
+  
+  delete from &&UserSecuritySetCache&& where &&SetId&& in (select &&SetId&& from &&UUSSCGroupData&& t);
+  -- добавляем все, что есть во временной таблице (предварительно все лишние данные были удалены)
+  insert into &&UserSecuritySetCache&& (&&SetId&&, &&UserId&&, &&SubordinateUserId&&, &&Subordinate&&, &&GroupId&&, &&OrgItemId&&, &&UserCount&&) select &&SetId&&, &&UserId&&, &&SubordinateUserId&&, &&Subordinate&&, &&GroupId&&, &&OrgItemId&&, &&UserCount&& from &&UserSecuritySetCacheTemp&& t;
+  
+  insert into &&HistoryUserSecuritySetCache&&(&&Uid&&)
+  values($2);
+
+end;
+
+$$ 
+language plpgsql;
+]]>
+      </text>
+    </procedure>
+
+    <procedure name="GetUsersByGlobalPermission">
+      <mappings>
+        <hibernate-mapping xmlns="urn:nhibernate-mapping-2.2">
+          <sql-query name="GetUsersByGlobalPermission" >
+            <query-param name="PermissionId" type="System.Guid" />
+              select u.&amp;&amp;UserId&amp;&amp;
+              from &amp;&amp;GroupPermissions&amp;&amp; gp
+              inner join lateral GetGroupUsers(gp.&amp;&amp;GroupId&amp;&amp;) u on 1 = 1
+              where &amp;&amp;PermissionId&amp;&amp; = :PermissionId
+          </sql-query>
+        </hibernate-mapping>
+      </mappings>
+    </procedure>
+    
+    <procedure name="UpsertActiveUserSession">
+      <mappings>
+        <hibernate-mapping xmlns="urn:nhibernate-mapping-2.2">
+          <sql-query name="ExecUpsertActiveUserSession" >
+            <query-param name="TicketUidParam" type="System.Guid" />
+            <query-param name="SessionIdParam" type="System.String" />
+            <query-param name="StatusParam" type="System.Int32" />
+            <query-param name="ExpirationParam" type="System.DateTime" />
+            <query-param name="UserIdParam" type="System.Int64" />
+            <query-param name="RemoteAddressParam" type="System.String" />
+            <query-param name="CreationDateParam" type="System.DateTime" />
+            <query-param name="LastActionDateParam" type="System.DateTime" />
+            <query-param name="LastPingDateParam" type="System.DateTime" />
+            <query-param name="LastActionInfoParam" type="System.String" />
+            <query-param name="CreationIsCurrent" type="System.Boolean" />
+            <query-param name="LastActionIsCurrent" type="System.Boolean" />
+            <query-param name="LastPingIsCurrent" type="System.Boolean" />
+            select UpsertActiveUserSession(:TicketUidParam, :SessionIdParam, :StatusParam, :ExpirationParam, :UserIdParam, :RemoteAddressParam, :CreationDateParam, :LastActionDateParam, :LastPingDateParam, :LastActionInfoParam, :CreationIsCurrent, :LastActionIsCurrent, :LastPingIsCurrent)
+          </sql-query>
+        </hibernate-mapping>
+      </mappings>
+      <text>
+        <![CDATA[
+create or replace function UpsertActiveUserSession
+(
+  &&TicketUidParam&& uuid,
+  &&SessionIdParam&& character varying(255),
+  &&StatusParam&& integer, 
+  &&ExpirationParam&& timestamp(4) without time zone,
+  &&UserIdParam&& bigint, 
+  &&RemoteAddressParam&& character varying(255), 
+  &&CreationDateParam&& timestamp(4) without time zone, 
+  &&LastActionDateParam&& timestamp(4) without time zone, 
+  &&LastPingDateParam&& timestamp(4) without time zone, 
+  &&LastActionInfoParam&& text,
+  &&CreationIsCurrent&& SMALLINT,
+  &&LastActionIsCurrent&& SMALLINT,
+  &&LastPingIsCurrent&& SMALLINT
+)
+returns void
+AS
+$$
+begin
+if (&&SessionIdParam&& is not null and &&SessionIdParam&& <> '')
+then
+    delete from &&ActiveUserSession&& 
+    where &&SessionId&& = &&SessionIdParam&&
+    and &&TicketUid&& <> &&TicketUid&& ;
+end if;
+
+if (&&CreationIsCurrent&& <> 0)
+then
+    &&CreationDateParam&& := CURRENT_TIMESTAMP ;
+end if;
+if (&&LastActionIsCurrent&& <> 0)
+then
+    &&LastActionDateParam&& := CURRENT_TIMESTAMP ;
+end if;
+if (&&LastPingIsCurrent&& <> 0)
+then
+    &&LastPingDateParam&& := CURRENT_TIMESTAMP ;
+end if;
+
+insert into &&ActiveUserSession&& (&&TicketUid&&, &&Status&&, &&Expiration&&, &&SessionId&&, &&UserId&&, &&RemoteAddress&&, &&CreationDate&&, &&LastActionDate&&, &&LastPingDate&&, &&LastActionInfo&&)
+  values (&&TicketUidParam&&, &&StatusParam&&, &&ExpirationParam&&, &&SessionIdParam&&, &&UserIdParam&&, &&RemoteAddressParam&&, &&CreationDateParam&&, &&LastActionDateParam&&, &&LastPingDateParam&&, &&LastActionInfoParam&&)
+on conflict (&&Ticketuid&&) 
+  do update set 
+    &&TicketUid&& = &&TicketUidParam&&,
+    &&Status&& = &&StatusParam&&,
+    &&Expiration&& = &&ExpirationParam&&,
+    &&SessionId&& = &&SessionIdParam&&,
+    &&UserId&& = &&UserIdParam&&,
+    &&RemoteAddress&& = &&RemoteAddressParam&&,
+    &&CreationDate&& = &&CreationDateParam&&,
+    &&LastActionDate&& = &&LastActionDateParam&&,
+    &&LastPingDate&& = &&LastPingDateParam&&,
+    &&LastActionInfo&& = &&LastActionInfoParam&& ;
+end;
+$$
+language plpgsql;
+]]>
+      </text>
+    </procedure>
+
+  </procedures>
+
+  <methods>
+  </methods>
+
+  <indexes>
+    <index name="IX_USSC_SetId_UserId" tableName="UserSecuritySetCache" columns="UserId,SetId" />
+    <index name="IX_ORGANIZATIONITEM_N2" tableName="OrganizationItem" columns="Id,ParentItem" />
+    <index name="IX_Absence_N1" tableName="Absence" columns="Status,User,EndDate" />
+    <index name="IX_Replacement_N1" tableName="Replacement" columns="EndDate" />
+    <index name="IX_Replacement_N2" tableName="Replacement" columns="Status" />
+    <index name="IX_User_N1" tableName="User" columns="Status" />
+    <index name="IX_User_UserName" tableName="User" columns="UserName" />
+    <index name="IX_UserSecuritySetCache_N1" tableName="UserSecuritySetCache" columns="SubordinateUserId" />
+    <index name="IX_USP_ForcedChangePassword" tableName="UserSecurityProfile" columns="ForcedChangePassword" />
+    <index name="IX_USP_DisallowLogon" tableName="UserSecurityProfile" columns="DisallowLogon" />
+    <index name="IX_M_PCS_SessionToken" tableName="PublicClientSession" columns="SessionToken" />
+	<index name="IX_M_PCS_AuthToken" tableName="PublicClientSession" columns="AuthToken" />
+  </indexes>
+  
+</root>

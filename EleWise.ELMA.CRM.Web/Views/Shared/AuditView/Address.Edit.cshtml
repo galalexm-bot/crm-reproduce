@@ -1,0 +1,41 @@
+﻿@using EleWise.ELMA
+@using EleWise.ELMA.Common.Models
+@model EditedAddressHistoryModel
+
+@{
+    var changedCount = Model.ChangedProperties != null ? Model.ChangedProperties.Count : 0;
+    var routes = "";
+    var name = "";
+    var displayName = "";
+    var slavePropName = "";
+    if (Model.SlaveObject != null)
+    {
+        displayName = Model.SlaveObject.ObjectDispalyName;
+        name = Model.SlaveObject.Object.ToString();
+        routes = Url.Entity(Model.SlaveObject.Object);
+        slavePropName = Model.SlavePropertyName;
+    }
+}
+
+
+@if (Model.OldEntity != null && Model.NewEntity != null && changedCount > 0)
+{
+    <div class="history-type-action history-item-ext">
+         @if (Model.SlaveObject != null)
+         {
+        <div>
+            <a href="@routes">@name</a><b>@slavePropName</b>
+        </div>
+         }
+        <div class="history-action-editvalues">
+            <div class="history-action-short-values">
+                @SR.T("Всего изменено свойств"): <b>@changedCount</b>
+            </div>
+            <div class="history-action-all-values">
+                @Html.DisplayChanges(Model.OldEntity, Model.NewEntity)
+            </div>
+            <div class="history-action-arrow up"></div>
+            <div class="history-action-arrow down"></div>
+        </div>
+    </div>
+}

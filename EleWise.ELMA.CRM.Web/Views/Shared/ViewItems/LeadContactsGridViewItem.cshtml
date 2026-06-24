@@ -1,0 +1,8 @@
+﻿@model ILead
+@using EleWise.ELMA.CRM.Models
+@using EleWise.ELMA.CRM.Web
+
+@if (Model != null)
+{
+    @Html.Action("GridTable", "LeadContact", new { area = CRMAreaRegistration.AREA_NAME, LeadId = Model.Id, GridId = "LeadContacts_" + Model.Id }) 
+}

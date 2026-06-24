@@ -1,0 +1,53 @@
+﻿@model GridDataFilter<IMarketingBase>
+@using EleWise.ELMA
+@using EleWise.ELMA.CRM
+@using EleWise.ELMA.CRM.Models
+@using EleWise.ELMA.BPM.Web.Common.Models
+@using EleWise.ELMA.BPM.Web.Common.Extensions
+@using EleWise.ELMA.CRM.Web
+@using EleWise.ELMA.Model.Services
+
+@{
+    Html.Title(SR.T("Маркетинговые мероприятия"));
+    var typeUid = InterfaceActivator.UID<IMarketingBase>();
+    Html.RenderInZone("FilterModelLinkZone", d => Html.CurrentSearchLinkButton(typeUid));
+}
+
+@{ 
+    bool canAdd = CRMPermissionProvider.CheckAny(new[] { CRMPermissionProvider.CRMFullAccessPermission, CRMPermissionProvider.MarketingFullAccessPermission });
+} 
+
+@(Html.Toolbar().Group("toolbar-group-1")
+        .ToolbarButton(new ActionToolbarItem("toolbar-action-Add")
+        {
+            Text = SR.Add,
+            IsMainAction = true,
+            Visible = canAdd,
+            Items = new ActionItemList {
+                new ActionToolbarItem("toolbar-action-AddGroup")
+                {
+                    Text = SR.T("Группу"),
+                    Url = Url.Action("Create", "MarketingActivity", new { area = CRMAreaRegistration.AREA_NAME, typeUid = InterfaceActivator.UID<IMarketingGroup>() })
+                },
+                new ActionToolbarItem("toolbar-action-AddActivity")
+                {
+                    Text = SR.T("Мероприятие"),
+                    Url = Url.Action("Create", "MarketingActivity", new { area = CRMAreaRegistration.AREA_NAME, typeUid = InterfaceActivator.UID<IMarketingActivity>() })
+                },
+                new ActionToolbarItem("toolbar-action-AddEffect")
+                {
+                    Text = SR.T("Воздействие"),
+                    Url = Url.Action("Create", "MarketingActivity", new { area = CRMAreaRegistration.AREA_NAME, typeUid = InterfaceActivator.UID<IMarketingEffect>() })
+                },
+            }
+        })
+ )
+        
+@Html.FilterEditButton(new FilterEditButtonModel {
+    FilterId = Convert.ToInt64(Request["FilterId"]),
+    Area = RouteProvider.AreaName,
+    ControllerName = "MarketingActivity",
+    BackUrl = Request.RawUrl
+}) 
+
+@(Html.Partial("Grid"))

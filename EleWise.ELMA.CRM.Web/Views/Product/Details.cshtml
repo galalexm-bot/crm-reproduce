@@ -1,0 +1,18 @@
+﻿@model EleWise.ELMA.CRM.Web.Models.ProductViewModel
+@using EleWise.ELMA
+@using EleWise.ELMA.CRM.Web
+@using EleWise.ELMA.Web.Content
+@using ViewType = EleWise.ELMA.Model.Views.ViewType
+
+@{
+    Html.Header(SR.T("Информация о продукте"));
+}
+
+@(Html.Toolbar()
+    .Group("toolbar-group-1")
+        .ToolbarLink(SR.Back, "#back.svg", "javascript:history.back(-1);", "button open-link t-link"))
+
+@using (Html.ElmaForm())
+{
+    @Html.Partial("DetailsForm")
+}

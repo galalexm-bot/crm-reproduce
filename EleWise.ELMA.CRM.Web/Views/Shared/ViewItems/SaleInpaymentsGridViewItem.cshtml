@@ -1,0 +1,8 @@
+﻿@model ISale
+@using EleWise.ELMA.CRM.Models
+@using EleWise.ELMA.CRM.Web
+
+@if (Model != null)
+{
+    @Html.Action("Inpayments", "Inpayment", new { area = CRMAreaRegistration.AREA_NAME, SaleId = Model.Id })
+}

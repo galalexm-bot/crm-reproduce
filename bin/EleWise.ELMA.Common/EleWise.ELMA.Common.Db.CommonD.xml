@@ -1,0 +1,57 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<root uid="{95ACC540-78BE-4EF2-95E9-801AD51B6649}">
+
+  <methods>
+    <method name="FillBudgetIncomeReference" />
+    <method name="FillBudgetExpenseReference" />
+    <method name="UpdateFiltersPerms" />
+    <method name="FixFiltersTypes" />
+    <method name="SetDefaultSettingsToFilter" />
+    <method ExecuteTime="OnTablesCreated" name="ConvertBlobStoreHolderKey1" />
+    <method ExecuteTime="OnTablesDeleted" name="ConvertBlobStoreHolderKey2" />
+    <method name="CreateUnitMeasures1" />
+    <method name="WatchEntityFieldConvert" ExecuteTime="OnTablesDeleted" />
+    <method name="UpdateBudgetReferenceUids" TransformationInVersion="3.x" />
+    <method name="UpdateBudgetReferenceIsDeleted" TransformationInVersion="3.x" />
+    <method ExecuteTime="OnTablesDeleted" name="DeleteBlobStoreHolderKeyDups" />
+    <method name="ConvertWatchesColumns" ExecuteTime="OnTablesDeleted" />
+    <method name="DeleteSystemMetadataItemWithHeaders" TransformationInVersion="3.15.13" />
+    <method name="DeleteMetadataDublicateSystemProperties" TransformationInVersion="4.0.17" />
+	<method name="FixUpdateIdFieldFSFileForObject" ExecuteTime="OnComplete" />
+  </methods>
+
+  <indexes>
+    <index name="IX_EAH_ObjUid_ObjId" tableName="EntityActionHistory" columns="ActionObjectUid, ActionObjectId, ActionDate, UnitOfWorkUid" />
+    <index name="IX_EAH_ObjUidId_ActUid" tableName="EntityActionHistory" columns="ActionObjectUid, ActionObjectId, ActionTypeUid, ActionDate" />
+    <index name="IX_EAH_ObjUId" tableName="EntityActionHistory" columns="ActionObjectUid, ActionDate" />
+    <index name="IX_EAH_ObjTypeUId" tableName="EntityActionHistory" columns="ActionObjectUid, ActionObjectId" />
+    <index name="IX_EAH_ObjUid_UOWUId" tableName="EntityActionHistory" columns="UnitOfWorkUid, ActionObjectUid, ActionDate" />
+    <index name="IX_EAH_ObjUOWUId_ActUid" tableName="EntityActionHistory" columns="UnitOfWorkUid, ActionObjectUid, ActionTypeUid, ActionDate" />
+    <index name="IX_EAH_ObjUOWActUid_ObjId" tableName="EntityActionHistory" columns="UnitOfWorkUid, ActionObjectUid, ActionTypeUid, ActionObjectId, ActionDate" />
+    <index name="IX_EAH_UOWUid" tableName="EntityActionHistory" columns="UnitOfWorkUid, ActionDate" />
+    <index name="IX_EAH_ActionDate" tableName="EntityActionHistory" columns="ActionDate" />
+    <index name="IX_EAH_AOUid_ATUid_AOId_ADate" tableName="EntityActionHistory" columns= "ActionObjectUid, ActionTypeUid, ActionObjectId, ActionDate"  />
+    <index name="IX_EMH_ObjActDate" tableName="EntityModelHistory" columns="ObjectTypeUid, ActionTypeUid, CreationDate" />
+    <index name="IX_EMH_ObjActUid" tableName="EntityModelHistory" columns="ObjectTypeUid, ActionTypeUid" />
+    <index name="IX_EMH_ObjDate" tableName="EntityModelHistory" columns="ObjectTypeUid, CreationDate" />
+    <index name="IX_EMH_ObjTypeUid" tableName="EntityModelHistory" columns="ObjectTypeUid, ObjectUid" />
+    <index name="IX_EMH_ObjTypeId" tableName="EntityModelHistory" columns="ObjectTypeUid, ObjectId" />
+    <index name="IX_EMH_CreationDate" tableName="EntityModelHistory" columns="CreationDate" />
+    <index name="IX_BlobStoreHolder_Key" tableName="BlobStoreHolder" columns="Key" />
+    <index name="IX_Watch_TUEI" tableName="Watch" columns="TypeUid, EntityId" />
+    <index name="IX_Watch_PTUPEI" tableName="Watch" columns="ParentTypeUid, ParentEntityId" />
+    <index name="IX_Reminder_PR" tableName="Reminder" columns="Posted, RemindDate" />
+    <index name="IX_PropertyProfile_CT" tableName="PropertyProfile" columns="CatalogType" />
+    <index name="IX_PapperPin_TUE" tableName="PaperPin" columns="TypeUid, User, EntityId" />
+    <index name="IX_LOInfo_ObjectType" tableName="LastObjectInfo" columns="ObjectType" />
+    <index name="IX_LOInfo_RealObjectType" tableName="LastObjectInfo" columns="RealObjectType" />
+    <index name="IX_LOInfo_User_ObjectType" tableName="LastObjectInfo" columns="User, ObjectType" />
+    <index name="IX_FilterPermission_PSec" tableName="FilterPermission" columns="PermissionId, UserSecuritySetCacheId" />
+    <index name="IX_FilterFolderCode" tableName="FilterFolder" columns="Code" />
+    <index name="IX_FilterFolderObTCd" tableName="FilterFolder" columns="ObjectsType, FilterType, Code" />
+    <index name="IX_FilterDefaultCode" tableName="FilterDefault" columns="Code" />
+    <index name="IX_FilterDefaultObCd" tableName="FilterDefault" columns="ObjectsType, Code" />
+    <index name="UX_CatalogProfile" unique="true" tableName="CatalogProfile" columns="CatalogType" />
+  </indexes>
+  
+</root>

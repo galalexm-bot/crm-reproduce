@@ -1,0 +1,6 @@
+D:\Prostor\ELMA\Reproduce\bin\EleWise.ELMA.Security\obj\Debug\net48\EleWise.ELMA.Security.csproj.AssemblyReference.cache
+D:\Prostor\ELMA\Reproduce\bin\EleWise.ELMA.Security\obj\Debug\net48\aR3nbf8dQp2feLmk31.lSfgApatkdx.resources
+D:\Prostor\ELMA\Reproduce\bin\EleWise.ELMA.Security\obj\Debug\net48\EleWise.ELMA.Security.Properti.resources
+D:\Prostor\ELMA\Reproduce\bin\EleWise.ELMA.Security\obj\Debug\net48\EleWise.ELMA.Security.csproj.GenerateResource.cache
+D:\Prostor\ELMA\Reproduce\bin\EleWise.ELMA.Security\obj\Debug\net48\EleWise.ELMA.Security.GeneratedMSBuildEditorConfig.editorconfig
+D:\Prostor\ELMA\Reproduce\bin\EleWise.ELMA.Security\obj\Debug\net48\EleWise.ELMA.Security.csproj.CoreCompileInputs.cache

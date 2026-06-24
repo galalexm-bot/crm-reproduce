@@ -1,0 +1,16 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+
+<root uid="{012F4169-8DE4-46F8-84D6-CC18FDB7FE15}">
+  
+  <methods>
+    <method name="AddDefaultPeriodicities" />
+  </methods>
+
+  <scripts>
+  </scripts>
+
+  <indexes>
+    <index name="IX_Periodicity_Order" tableName="Periodicity" columns="Order" />
+  </indexes>
+
+</root>

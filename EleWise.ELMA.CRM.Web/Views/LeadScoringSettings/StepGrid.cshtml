@@ -1,0 +1,39 @@
+﻿@using EleWise.ELMA.CRM.Web
+@using EleWise.ELMA;
+@using EleWise.ELMA.CRM.Web.Models
+
+@model GridData<LeadStepScoringModel>
+
+<div class="base-element-margin-bottom">
+    <h3 class="bold_text">@SR.T("Пороговые значения скоринга")</h3>
+    @Html.InfoPanel(SR.T("При разных уровнях «похожести» можно задать разные реакции системы. При небольшом уровне «похожести» информационное сообщение можно выводить допустим желтым цветом, при большом – уже красным."))
+</div>
+
+<div class="base-element-margin-bottom">
+@(Html.DynamicGrid("LeadStepScoringGrid", Model)
+    .Columns(c =>
+    {
+        c.For(m => m.PercentValue).Template(x => MvcHtmlString.Create(string.Format(">={0}%", x.PercentValue)));
+        c.For(m => m.Color);
+        c.For(m => MvcHtmlString.Create(Html.ImageLink("#edit.svg", null, Url.Action("EditStep", "LeadScoringSettings", new { area = CRMAreaRegistration.AREA_NAME, id = m.Entity.Id }), null, null, SR.Edit, true).ToString())
+                ).Width(30).NotSortable();
+    })
+    .Customizable(false))
+</div>
+<script type="text/javascript">
+    function deleteLeadStep(i) {
+        jConfirm('@(SR.T("Вы действительно хотите удалить пороговое значение?"))', '@(SR.T("Удаление"))', function (r) {
+            if (r) {
+                $.ajax({
+                    url: '@(Url.Action("DeleteStep", "LeadScoringSettings", new { area = CRMAreaRegistration.AREA_NAME }))/' + i,
+                    type: "POST",
+                    dataType: 'html',
+                    cache: false,
+                    success: function() {
+                         window.reloadPage();
+                    }
+                });
+            }
+        });
+    }
+</script>

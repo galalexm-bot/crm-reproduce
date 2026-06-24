@@ -1,0 +1,274 @@
+﻿@model CalendarModel
+@using System.Globalization
+@using EleWise.ELMA
+@using EleWise.ELMA.CRM.Enums
+@using EleWise.ELMA.CRM.Web.Models.SalesPlan
+@using EleWise.ELMA.Helpers
+
+<script type="text/javascript">
+    function navigateToPrevPeriod() {
+        $.ajax({
+            type: 'POST',
+            url: '@(Url.Action("CalendarPrev"))',
+            data: ({ startDate: $("#startDate").val() }),
+            success: function (data) {
+                $("#calendar-place-holder").html(data);
+            }
+        });
+    }
+    function navigateToNextPeriod() {
+        $.ajax({
+            type: 'POST',
+            url: '@(Url.Action("CalendarNext"))',
+            data: ({ startDate: $("#startDate").val() }),
+            success: function (data) {
+                $("#calendar-place-holder").html(data);
+            }
+        });
+    }
+
+    $(function () {
+        $("[data-id^='p-container-']").draggable({
+            accept: "[data-id^='week-']",
+            helper: 'clone'
+        });
+        $("[data-sale-id^='s-container-']").draggable({
+            accept: "[data-id^='week-']",
+            helper: 'clone'
+        });
+        $("[data-id^='week-']").droppable({
+            accept: function (item) {
+                var fromDate = parseInt($(this).attr("data-date-from"));
+                var toDate = parseInt($(this).attr("data-date-to"));
+                var dragContainerDate = parseInt($(item).attr("data-container-date"));
+                return !(dragContainerDate >= fromDate && dragContainerDate <= toDate); 
+            },
+            drop: function (event, ui) {
+                var drop = $(this);
+                var drag = $(ui.draggable);
+                
+                //$("#droppedWeek").val($(drop).attr("data-id").replace(/week-/g, ""));
+                $("#droppedWeekFromDate").val($(drop).attr("data-date-from"));
+                $("#droppedWeekFirstDay").val($(drop).attr("data-day-id"));
+                $("#droppedWeekLastDay").val($(drop).attr("data-lastday-id"));
+                
+                var droppedWeekStartDate = $(drop).attr("data-start-date");
+                $.ajax({
+                    type: 'POST',
+                    url: '@(Url.Action("WeekDays"))',
+                    data: ({ startDate: droppedWeekStartDate }),
+                    success: function (data) {
+                        $("#days-container").html(data);
+                        $("#form - container").hide();
+                        if($(drag).attr("data-sale-id") != null) {
+                            $("#draggedSaleId").val($(drag).attr("data-sale-id").replace(/s-container-/g, ""));
+                            @(Html.OpenPopup("CreatePayment", "onMovePaymentPopupOpen()"));
+                        }
+                        else {
+                            $("#draggedPaymentId").val($(drag).attr("data-id").replace(/p-container-/g, ""));
+                            @(Html.OpenPopup("MovePayment", "onMovePaymentPopupOpen()"));
+                            /*jConfirm("@(EleWise.ELMA.SR.T("Переместить платеж?"))", "@(EleWise.ELMA.SR.T("Подтверждение"))", 
+                                function(r) {
+                                    if(r)
+                                        $(drop).append(drag);
+                                });
+                            */    
+                        }
+                    }
+                });
+            },
+            hoverClass: 'week-container-hover',
+            tolerance: 'pointer'
+        });
+    });
+</script>
+
+<input id="startDate" type="hidden" value="@Model.Months.First().Weeks.First().FirstDay.ToString()"></input>
+<table class="fc-header" style="width:100%;margin-top:20px;">
+    <tr>
+        <td class="fc-header-left"> 
+            <span class="fc-button fc-button-prev fc-state-default fc-corner-left fc-corner-right" onclick="navigateToPrevPeriod();">
+                <span class="fc-button-inner">
+                    <span class="fc-button-content"></span>
+                </span>
+            </span>
+            <span class="fc-header-space"></span>
+            <span class="fc-header-title">
+                <h2>
+                    @(Model.Months.First().Name + (Model.Months.Count > 1 ? " - " + Model.Months.Last().Name : string.Empty) + " ")
+                    <span style="font-size:12px;">@SR.T("{0:yyyy} г.", Model.Months.Last().Weeks.First().FirstDay)</span>
+                </h2>
+            </span>
+            <span class="fc-header-space"></span>
+            <span class="fc-button fc-button-next fc-state-default fc-corner-left fc-corner-right" onclick="navigateToNextPeriod();">
+                <span class="fc-button-inner">
+                    <span class="fc-button-content"></span>
+                </span>
+            </span>
+        </td>
+    </tr>
+</table>
+
+
+<table class="expired-payment">
+    <tr>
+        <td class="week"></td>
+        <td>
+            @*@foreach (var m in Model.ExpiredPayments)
+            {
+                @Html.Partial("Payment", m)
+            }*@
+        </td>
+    </tr>
+    
+</table>
+
+@foreach (var m in Model.Months)
+{
+    using (Html.CollapsiblePanel(new EleWise.ELMA.Web.Mvc.Models.Panels.CollapsiblePanel
+    {
+        Id = "Month" + m.Weeks[1].FirstDay.ToShortDateString().Replace(".", string.Empty),
+        Expanded = true,
+        SaveState = true,
+        Header = "<div class=\"month-name\"><span class=\"month\">" + m.Name + "</span></div>"
+    }))
+    {
+        <div class="week-container">
+            <table class="week">
+                @foreach (var w in m.Weeks)
+                {
+                    <tr class="week @(w.LastDay < DateTime.Today ? "week-past" : string.Empty)">
+                        <td class="week">
+                            <span>@w.FirstDay.ToCurrentFullFormatNotYear() - @w.LastDay.ToCurrentFullFormatNotYear()</span>
+                            <div>@w.Number.ToString()</div>
+                        </td>
+                        <td data-id="@("week-" + w.Number)" data-start-date="@(w.FirstDay)" data-day-id="@((int)w.FirstDay.DayOfWeek)" data-lastday-id="@((int)w.LastDay.DayOfWeek)" data-date-from="@w.FirstDay.ToString("yyyyMMdd")" data-date-to="@w.LastDay.ToString("yyyyMMdd")">
+                            @if (w.Payments.Count == 0)
+                            { 
+                                <div></div>
+                            }
+                            @foreach (var p in w.Payments)
+                            {
+                                @Html.Partial("Payment", p)
+                            }
+                        </td>
+                    </tr>
+                }
+            </table>
+        </div>
+    }
+}
+
+<input id="draggedPaymentId" type="hidden"/>
+<input id="draggedSaleId" type="hidden"/>
+
+<input id="droppedWeekFromDate" type="hidden"/>
+<input id="droppedWeekFirstDay" type="hidden"/>
+<input id="droppedWeekLastDay" type="hidden"/>
+<input id="dayNum" type="hidden"/>
+
+<script type="text/javascript">
+    function onMovePaymentPopupOpen() {
+        $("[id^='day-num-']").show();
+        $("[id^='create-day-num-']").show();
+        $("#createPaymentTbl").hide();
+        $("#paymentName").hide();
+        $("#paymentSum").hide();
+        $("#createPaymentBtn").hide();
+        
+        var firstdayNum = parseInt($("#droppedWeekFirstDay").val());
+        var lastdayNum = parseInt($("#droppedWeekLastDay").val()) == 0 ? 7 : parseInt($("#droppedWeekLastDay").val());
+        var dateStr = $("#droppedWeekFromDate").val();
+        $("[id^='day-num-']").each(function (index) { $("span", $(this)).html(" " + (parseInt(dateStr.substring(6, 8)) + firstdayNum - 1 + index) + '.' + dateStr.substring(4, 6)) });
+        $("[id^='day-num-']").filter(function (index) { return parseInt(this.id.replace(/day-num-/g, "")) < firstdayNum }).hide();
+        $("[id^='day-num-']").filter(function (index) { return parseInt(this.id.replace(/day-num-/g, "")) > lastdayNum }).hide();
+        $("[id^='create-day-num-']").each(function (index) { $("span", $(this)).html(" " + (parseInt(dateStr.substring(6, 8)) + firstdayNum - 1 + index) + '.' + dateStr.substring(4, 6)) });
+        $("[id^='create-day-num-']").filter(function (index) { return parseInt(this.id.replace(/day-num-/g, "")) < firstdayNum }).hide();
+        $("[id^='create-day-num-']").filter(function (index) { return parseInt(this.id.replace(/day-num-/g, "")) > lastdayNum }).hide();
+    }
+    
+    function movePayment(dayNum) {
+        var id = $("#draggedPaymentId").val();
+        var dateStr = $("#droppedWeekFromDate").val();
+        $.ajax({
+            type: 'POST',
+            url: '@(Url.Action("Move", "SalesPlan"))',
+            data: "id=" + id + "&date=" + dateStr + "&dayNum=" + dayNum,
+            success: function (data) {
+                window.navigateToUrl("@(Request.RawUrl)");
+            },
+            dataType: "json"
+        });
+    }
+
+    function showForm(date) {
+        $("#days-container").hide();
+        $("#form-container").show();
+        $("#Entity_PaymentDate").val(date);
+        $("#Entity_Sale_Id").val($("#draggedSaleId").val());
+        /*$("[id^='create-day-num-']").hide();
+        $("#createPaymentTbl").show();
+        $("#paymentName").show();
+        $("#paymentSum").show();
+        $("#createPaymentBtn").show();
+        $("#dayNum").val(dayNum);
+        */
+    }
+
+    function onPaymentCreated() {
+        @Html.ClosePopup("CreatePayment")
+        $.ajax({
+            type: 'POST',
+            url: '@(Url.Action("SalesPlan"))',
+            success: function (data) {
+                $("#salesplan-container").html(data);
+            }
+        });
+    }
+
+    function savePayment() {
+        var id = $("#draggedSaleId").val();
+        var dateStr = $("#droppedWeekFromDate").val();
+        var name = $("#paymentName").val();
+        var sum = $("#paymentSum").val();
+        var dayNum = $("#dayNum").val();
+        $.ajax({
+            type: 'POST',
+            url: '@(Url.Action("CreatePayment", "SalesPlan"))',
+            data: "id=" + id + "&date=" + dateStr + "&dayNum=" + dayNum + "&name=" + name + "&sum=" + sum,
+            success: function (data) {
+                window.navigateToUrl("@(Request.RawUrl)");
+            },
+            dataType: "json"
+        });
+    }
+</script>
+
+@(Html.PopupWindow("MovePayment", EleWise.ELMA.SR.T("Выберите день недели"),
+    @<text>
+        <a id="day-num-1" href="javascript:void()" class="link-button" onclick="movePayment(1)">@EleWise.ELMA.SR.T("Пн")<span></span></a>
+        <a id="day-num-2" href="javascript:void()" class="link-button" onclick="movePayment(2)">@EleWise.ELMA.SR.T("Вт")<span></span></a>
+        <a id="day-num-3" href="javascript:void()" class="link-button" onclick="movePayment(3)">@EleWise.ELMA.SR.T("Ср")<span></span></a>
+        <a id="day-num-4" href="javascript:void()" class="link-button" onclick="movePayment(4)">@EleWise.ELMA.SR.T("Чт")<span></span></a>
+        <div class="popup-buttons">
+            <input type="button" value="@EleWise.ELMA.SR.T("Отмена")" onclick="@Html.ClosePopup("MovePayment")" />
+        </div>
+    </text>
+, 300)
+)
+
+@(Html.PopupWindow("CreatePayment", EleWise.ELMA.SR.T("Добавление платежа"),
+    @<text>
+        @*<a id="create-day-num-1" href="javascript:void()" class="link-button" onclick="showCreatePaymentForm(1)">@EleWise.ELMA.SR.T("Пн")<span></span></a>
+        <a id="create-day-num-2" href="javascript:void()" class="link-button" onclick="showCreatePaymentForm(2)">@EleWise.ELMA.SR.T("Вт")<span></span></a>
+        <a id="create-day-num-3" href="javascript:void()" class="link-button" onclick="showCreatePaymentForm(3)">@EleWise.ELMA.SR.T("Ср")<span></span></a>
+        <a id="create-day-num-4" href="javascript:void()" class="link-button" onclick="showCreatePaymentForm(4)">@EleWise.ELMA.SR.T("Чт")<span></span></a>*@
+        
+        <div id="days-container"></div>
+        <div id="form-container" style="display:none">
+            @Html.Partial("Payment/Create", new PaymentModel())
+        </div>
+    </text>
+, 600)
+)
+

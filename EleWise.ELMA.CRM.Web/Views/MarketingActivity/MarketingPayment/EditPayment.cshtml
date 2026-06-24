@@ -1,0 +1,25 @@
+﻿@using EleWise.ELMA
+@using EleWise.ELMA.CRM.Web
+
+@model EleWise.ELMA.CRM.Models.IMarketingPayment
+
+@{
+    Html.Header(SR.T("Редактирование платежа"));
+
+    Html.Toolbar().Group("toolbar-group-1")
+        .ToolbarSubmit(SR.Save, "#save.svg")
+        .ToolbarButton(new ActionToolbarItem("CancelEditPayment")
+                           {
+                               Text = SR.Cancel,
+                               IconUrl = "#close_outline.svg",
+                               Url = Url.Action("Details", "MarketingActivity", new { area = CRMAreaRegistration.AREA_NAME, id = Model.MarketingObjectBase.Id }),
+                           });
+
+}
+
+<div class="general-form-container">
+    @using (Html.ElmaForm(routeValues: new { action = "SavePayment", controller = "MarketingActivity", area = CRMAreaRegistration.AREA_NAME }))
+    {
+        @Html.Partial("MarketingPayment/PaymentForm")
+    }
+</div>

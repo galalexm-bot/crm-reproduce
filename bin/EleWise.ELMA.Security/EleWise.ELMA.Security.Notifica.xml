@@ -1,0 +1,30 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<Notifications description="Оповещения о пользователях">
+  
+  <Notification Name="LogonBlock">
+    <Filter>
+      <Event>IEntityActionHandler.ActionExecuted</Event>
+      <Object>EleWise.ELMA.Security.Models.User</Object>
+      <Action>LogonBlock</Action>
+    </Filter>
+    <RecipientSet>
+      <User>{$Recepients}</User>
+    </RecipientSet>
+    <URL>
+      /Security/User/Profile/{$New.Id}
+    </URL>
+    <Subject>
+      {$UserShortName}
+    </Subject>
+    <ObjectId>{$New.Id}</ObjectId>
+    <ShortMessage>
+      {SR('Достигнут лимит попыток неудачного входа. Заблокирован вход пользователя в систему.')}
+    </ShortMessage>
+    <FullMessage>
+      {SR('Достигнут лимит попыток неудачного входа. Заблокирован вход пользователя в систему.')}
+      {SR('Логин: ')} {$New.UserName}
+      {SR('Пользователь: ')} {$New.FullName}
+    </FullMessage>
+  </Notification>
+  
+</Notifications>

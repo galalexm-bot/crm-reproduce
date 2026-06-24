@@ -1,0 +1,6 @@
+﻿@model EleWise.ELMA.CRM.Models.IEmail
+
+@if (Model != null)
+{
+    <a href='mailto:@Model.EmailString'>@Model.EmailString</a>
+}

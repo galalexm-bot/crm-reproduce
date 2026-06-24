@@ -1,0 +1,31 @@
+﻿@using EleWise.ELMA;
+@using EleWise.ELMA.CRM.Web
+@using EleWise.ELMA.CRM.Web.Models;
+
+@model LeadStepScoringModel
+
+@{
+    Html.Header(SR.T("{0} - {1}", SR.T("Шаг скоринга"), SR.T("Редактирование записи")));
+
+    Html.Toolbar().Group("toolbar-group-1")
+        .ToolbarSubmit(SR.Save, "#save.svg")
+        .ToolbarButton(new ActionToolbarItem("CancelEditEditScoring")
+                           {
+                               Text = SR.Cancel,
+                               IconUrl = "#close_outline.svg",
+                               Url = Url.Action("Index", "LeadScoringSettings", new { area = CRMAreaRegistration.AREA_NAME }),
+                           });
+
+}
+<div class="general-form-container">
+@using (Html.ElmaForm(routeValues: new { action = "SaveStep", controller = "LeadScoringSettings", area = CRMAreaRegistration.AREA_NAME }))
+{
+    using (Html.TableForm(EleWise.ELMA.Model.Views.ViewType.Edit))
+    {
+        @Html.HiddenFor(m => m.Entity.Id)
+        @Html.EditableProperty(m => m.PercentValue)
+        @Html.EditableProperty(m => m.Color)
+
+    }
+}
+</div>

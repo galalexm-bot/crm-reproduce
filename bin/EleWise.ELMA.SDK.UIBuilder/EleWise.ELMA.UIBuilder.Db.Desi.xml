@@ -1,0 +1,9 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root uid="{7DC69871-D1A0-493F-9004-8A2DDFF8B207}">
+
+    <methods>
+        <method name="RemoveDesignerModules" TransformationInVersion="" />
+        <method name="CheckAndUpdateWrongModuleHeaders" TransformationInVersion="" />
+    </methods>
+
+</root>

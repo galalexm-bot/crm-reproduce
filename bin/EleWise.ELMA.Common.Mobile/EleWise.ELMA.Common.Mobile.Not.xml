@@ -1,0 +1,95 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<Notifications description="Оповещения о событиях календаря для APNS">
+
+  <Default>
+    <Channels>APNS</Channels>
+    <Filter>
+      <Event>IEntityActionHandler.ActionExecuted</Event>
+      <Object>EleWise.ELMA.Calendar.Models.CalendarEvent</Object>
+    </Filter>
+    <RecipientSet Name="ConfirmParticipation">
+      <ConfirmParticipationRecipient>{$New}</ConfirmParticipationRecipient>
+    </RecipientSet>
+    <RecipientSet>
+      <User>{$New.CreationAuthor}</User>
+      <ParticipantRecipients>{$New}</ParticipantRecipients>
+      <InformToRecipients>{$New}</InformToRecipients>
+    </RecipientSet>
+    <ObjectId>{$New.Id}</ObjectId>
+  </Default>
+
+  <Notification Name="Edit">
+    <Filter>
+      <Action>Edit</Action>
+    </Filter>
+    <Subject>
+      ({SR('Событие изменено')}{If {$RecipientSet}='ConfirmParticipation'}. {SR('Необходимо подтверждение участия')}{end if}) {$New.Subject}
+    </Subject>
+  </Notification>
+
+  <Notification Name="Create">
+    <Filter>
+      <Action>Create</Action>
+      <Condition>
+        {$New.TemplateEvent}=NULL
+      </Condition>
+    </Filter>
+    <Subject>
+      ({SR('Новое событие')}{If {$RecipientSet}='ConfirmParticipation'}. {SR('Необходимо подтверждение участия')}{end if}) {$New.Subject}
+    </Subject>
+  </Notification>
+
+  <Notification Name="Complete">
+    <Filter>
+      <Action>Complete</Action>
+    </Filter>
+    <Subject>
+      ({SR('Событие завершено')}) {$New.Subject}
+    </Subject>
+  </Notification>
+
+  <Notification Name="Delete">
+    <Filter>
+      <Action>Delete</Action>
+    </Filter>
+    <Subject>
+      ({SR('Событие удалено')}) {$New.Subject}
+    </Subject>
+  </Notification>
+
+  <Notification Name="ChangeTime">
+    <Filter>
+      <Action>ChangeTime</Action>
+    </Filter>
+    <Subject>
+      ({SR('Изменено время события')}{If {$RecipientSet}='ConfirmParticipation'}. {SR('Необходимо подтверждение участия')}{end if}) {$New.Subject}
+    </Subject>
+  </Notification>
+
+  <Notification Name="RemindCalendarEvent">
+    <Filter>
+      <Action>Remind</Action>
+      <Condition>
+        ({$New.Completed}=false)
+      </Condition>
+    </Filter>
+    <RecipientSet Name="ConfirmParticipation" Clear="true">
+    </RecipientSet>
+    <RecipientSet Clear="true">
+      <User>{$Reminder.CreationAuthor}</User>
+    </RecipientSet>
+    <Subject>
+      ({SR('Напоминание о событии в календаре.')}) {SR('Через')} {GetReminderTimeSpan({$Reminder})} {$New.Subject}
+    </Subject>
+  </Notification>
+
+  <Notification Name="AddComment">
+    <Filter>
+      <Action>AddComment</Action>
+    </Filter>
+    <Subject>
+      ({SR('Добавлен комментарий')}) {$New.Subject}
+    </Subject>
+  </Notification>
+
+</Notifications>

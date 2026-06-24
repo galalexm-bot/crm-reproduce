@@ -1,0 +1,74 @@
+﻿@using EleWise.ELMA.CRM.Web.Extensions;
+@using EleWise.ELMA.ComponentModel;
+@using EleWise.ELMA;
+@using EleWise.ELMA.Web.Mvc.Models.Buttons
+@using EleWise.ELMA.Web.Mvc.Models.Trees
+@using ContentHtmlExtensions = EleWise.ELMA.BPM.Web.Content.Extensions.HtmlExtensions
+@{
+    ContentHtmlExtensions.HeaderBreadcrumbsInZone(Html, SR.T("Права доступа к полям и свойствам"));
+
+    <div class="base-element-margin-bottom">
+        @Html.InfoPanel(SR.T("Внимание! При выборе значения \"ВСЕ СВОЙСТВА\" не ограничивается доступ ко всем свойствам, а, наоборот, предоставляется доступ ко всем свойствам указанным ролям, игнорируя все остальные настройки доступа к свойствам. (Подробнее см. в справке)"))
+    </div>
+
+    var links = ComponentManager.Current.GetExtensionPoints<ICrmModuleSettingsItemProvider>()
+        .SelectMany(p => p.GetObjects(Html.Url()))
+        .OrderBy(l => l.Order)
+        .Where(x => !String.IsNullOrEmpty(x.Category))
+        .ToList();
+
+    var categories = links
+        .Select(x => x.Category)
+        .Distinct();
+
+    var categoriesTree = categories.Where(c => links.Any(l => l.Category.Equals(c)))
+       .Select(a => {
+           var cloneCategory = a;
+
+           return new TreeMenuNode
+           {
+               expanded = true,
+               text = a,
+               children = links.Where(x => x.Category.Equals(cloneCategory)).Select(b =>
+               {
+
+                   var list = new List<TreeMenuNode>();
+                   foreach (var inheritor in b.Inheritors)
+                   {
+                       var inheritorDesc = new Dictionary<string, object>(1);
+                       inheritorDesc.Add("tooltiptext", MvcHtmlString.Create(inheritor.Description));
+                       list.Add(new TreeMenuNode
+                       {
+                           text = inheritor.Text,
+                           icon = b.Image,
+                           href = b.Url
+                       });
+                   }
+
+                   var desc = new Dictionary<string, object>(1);
+                   desc.Add("tooltiptext", MvcHtmlString.Create(b.Description));
+                   return new TreeMenuNode
+                   {
+                       text = b.Text,
+                       expanded = true,
+                       children = list,
+                       icon = b.Image,
+                       href = b.Url,
+                       HtmlAttributes = desc
+                   };
+               }).ToList()
+           };
+       })
+.ToList();
+
+    var tree = new TreeModel
+    {
+        Id = "crmSettings",
+        Children = categoriesTree
+    };
+
+}
+
+<div class="general-form-container">
+    @Html.Tree(tree)
+</div>

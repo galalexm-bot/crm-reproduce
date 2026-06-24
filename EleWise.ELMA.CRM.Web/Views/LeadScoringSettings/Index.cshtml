@@ -1,0 +1,16 @@
+﻿@using EleWise.ELMA
+@using ContentHtmlExtensions = EleWise.ELMA.BPM.Web.Content.Extensions.HtmlExtensions
+
+@{
+    ContentHtmlExtensions.HeaderBreadcrumbsInZone(Html, SR.T("Таблица скоринга"));
+    Html.Toolbar();
+}
+
+<div class="scoring-container general-form-container">
+@Html.Action("Grid")
+
+@Html.Action("StepGrid")
+
+@Html.Partial("SettingsProperty")
+
+</div>

@@ -1,0 +1,47 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<root uid="{C6F73167-7F7C-435C-AA27-D91BD15DFF22}">
+  
+  <methods>
+    <method name="CreateMetadataRootFolder" />
+    <method name="CreateMetadataRecycle" />
+    <method name="CreateDocumentHeads" ExecuteTime="OnComplete" />
+    <method name="CreateDefaultFolders" />    
+    <method name="CreateDocumentMetadataProfiles" />
+    <method name="CreateAccessToAllDocumentsGroup" />
+    <method name="CreateLifeCycleStatuses1" />
+    <method name="UpdateDocumentMetadataProfiles" />
+    <method name="CreateArchiveFolder" />
+    <method name="UpdateDmsPermissionUids" />
+    <method name="UpdateFilterDocumentFolderTypeGridState" />
+    <method name="AddManagerAccessToPermissions" />
+    <method name="DeleteDublicateFavoriteFolders" />
+    <method name="CreateDefaultHistoryProfile" />
+    <method name="CreateDefaultActionsProfile" />
+    <method name="FullRecreateSendableCache" />
+    <method name="UpdateIconDocumentFolders1" />
+    <method name="UpdateDocumentVersionEncrypt" />
+    <method name="ClearDmsObjectPermissionsByGroups" />
+    <method name="FixOldInheariteDmsObjectPermissions" AlwaysExecute="true" />
+    <method name="AddCreateDocumentAccessToPermissions" />
+    <method name="CopySendData" AlwaysExecute="true" ExecuteTime="OnTablesDeleting" />
+    <method name="SetMyDocumentFolder" />
+    <method name="FillDmsObjectRelation" />
+    <method name="UpdateHasChildFolders" />
+    <method name="CreateDmsObjectRelationTable" ExecuteTime="OnTablesCreated" />
+    <method name="CreateDmsObjectTreeNodeStateTable" ExecuteTime="OnTablesDeleting" />
+    <method name="CreateMyDocumentsAndFavoritesFolders1" />
+    <method name="CreateDmsObjectPermissionUpdateQueueItemTable" ExecuteTime="OnTablesCreated"/>
+	<method name="CopyTaskDocumentAttachments" TransformationInVersion="3.15.52" />
+  </methods>
+
+  <indexes>
+    <!-- Вешаем уникальный индекс на Uid типа документа -->
+    <index name="DTU_Unique" unique="true" tableName="DocumentMetadataHead" columns="DocumentTypeUid" />
+    <index name="IX_DocumentMetadataProfile_DT" tableName="DocumentMetadataProfile" columns="DocumentType" />
+    <index name="IX_LifeCycle_DT" tableName="LifeCycle" columns="DocumentType" />
+    <index name="IX_DocumentSendStatusCache_SS" tableName="DocumentSendStatusCache" columns="SendStatus" />
+    <index name="IX_DocumentSendStatusCache_SD" tableName="DocumentSendStatusCache" columns="SendDate" />
+    <index name="IX_DMSOBJECT_N1" tableName="DmsObject" columns="IsDeleted, IsArchived, Folder" />
+  </indexes>
+   
+</root>

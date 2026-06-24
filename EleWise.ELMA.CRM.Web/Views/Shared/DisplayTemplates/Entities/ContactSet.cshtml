@@ -1,0 +1,14 @@
+﻿@using System.Collections
+@using EleWise.ELMA.Model.Views
+@inherits EleWise.ELMA.Web.Mvc.Views.Inputs.InputControl<IEnumerable>
+
+@if (Model != null && Model.GetEnumerator().MoveNext())
+{
+    @MvcHtmlString.Create(string.Join(ViewAttributes.ViewStyle == ModelViewStyle.GridDisplay ? ", " : "", Model
+        .Cast<object>()
+        .Select(item => string.Format(ViewAttributes.ViewStyle == ModelViewStyle.GridDisplay ? "{0}" : "<div>{0}</div>", Html.Partial("DisplayTemplates/Entities/Contact", item).ToString().Trim()))))
+}
+else if (ViewAttributes.ViewStyle != ModelViewStyle.GridDisplay)
+{
+    <span class="comment3">@EleWise.ELMA.SR.T("Не выбрано")</span>
+}

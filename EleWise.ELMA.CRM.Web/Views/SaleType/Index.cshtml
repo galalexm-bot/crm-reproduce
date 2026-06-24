@@ -1,0 +1,12 @@
+﻿@using EleWise.ELMA;
+@using EleWise.ELMA.BPM.Web.Common
+@using EleWise.ELMA.CRM.Web.Controllers
+@using ContentHtmlExtensions = EleWise.ELMA.BPM.Web.Content.Extensions.HtmlExtensions
+@{
+    ContentHtmlExtensions.HeaderBreadcrumbsInZone(Html, SR.T("Тип сделки"));
+    Html.Toolbar()
+        .IfHasPermission<EleWise.ELMA.CRM.Models.ISaleType>(EleWise.ELMA.Security.Services.CommonPermissions.Create, g => g
+            .Group("toolbar-group-1").ToolbarAction<SaleTypeController>(a => a.Add(), SR.T("Создать"), "#add.svg", "toolbar-action-Create"));
+}
+
+@Html.Action("Grid")

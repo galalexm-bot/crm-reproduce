@@ -1,0 +1,8 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<root uid="{DE737F38-4F53-4B0A-988B-8723E4A41D5A}">
+  
+	<methods>
+    <method name="CreateHistoryUpdateQueueItemTable" ExecuteTime="OnTablesCreated" AlwaysExecute="true"/>
+  </methods>
+  
+</root>

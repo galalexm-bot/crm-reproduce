@@ -1,0 +1,174 @@
+﻿@using EleWise.ELMA;
+@using EleWise.ELMA.CRM.Web
+@using CommonHtmlExtensions = EleWise.ELMA.BPM.Web.Common.Extensions.HtmlExtensions
+@model EleWise.ELMA.CRM.Web.Models.SaleFunnelEditModel
+
+@{
+    var gridId = "SaleStagesGrid";
+    var popupId = "AddStagePopup";
+
+    Html.Title(SR.T("Воронка продаж"));
+    var indexUrl = Url.Action("Index", "SaleFunnel", new {area = CRMAreaRegistration.AREA_NAME});
+
+    Html.Toolbar().Group("toolbar-group-1")
+        .ToolbarSubmit(SR.Save, "#save.svg", itemUid: "ToolbarSubmitEditCatalogItem")
+        .ToolbarButton(new ActionToolbarItem("CancelAddCatalogRecord")
+                           {
+                               Text = SR.Cancel,
+                               IconUrl = "#close_outline.svg",
+                               Url = indexUrl,
+                           });
+
+    var JsonDataId = ViewData.TemplateInfo.GetFullHtmlFieldName("JsonData");
+
+    var button = Html.Button().Url(indexUrl).Text(SR.T("Воронка продаж"));
+    Html.RenderInZone("Header", d => CommonHtmlExtensions.GetCatalogHeaderEditBreadcrumbs(Html, button, Model.Entity.IsNew()));
+}
+<div class="general-form-container">
+@using (Html.ElmaForm(routeValues: new { action = "Save", controller = "SaleFunnel", area = CRMAreaRegistration.AREA_NAME }))
+{
+    @Html.HiddenFor(m => m.Entity.Id)
+
+    using (Html.TableForm(EleWise.ELMA.Model.Views.ViewType.Edit))
+    {
+        @Html.EditableProperty(m => m.Entity.Name)
+        <tr class="full-row">
+            <td colspan="3">
+                <h3 class="bold_text">@Html.Caption(m => m.Entity.SaleStages, a => a.Required = true)</h3>
+                <div id="SaleStagesGrid">
+                    @Html.Partial("SaleStagesGrid", Model.Entity.SaleStages, new ViewDataDictionary {{"GridId", gridId}})
+                </div>
+                <div class="base-element-margin-top">
+                    @Html.ImageButton(UIIcons.Add, SR.T("Добавить стадию"), "addStage()", text: SR.T("Добавить стадию"))
+                </div>
+                @Html.ValidationMessageFor(m => m.JsonData)
+            </td>
+        </tr>
+    }
+}
+</div>
+@(Html.PopupWindow(popupId, SR.T("Добавить стадию"), Url.Action("EditStage", "SaleFunnel", new {area = CRMAreaRegistration.AREA_NAME})))
+
+<script type="text/javascript">
+    $(function () {
+        jQuery.validator.addMethod("needStage", function() {
+            var data = JSON.parse($('#@JsonDataId').val());
+            return data !== undefined && data.length > 0;
+        });
+
+        elma.ValidationRulesManager.addRule('@(Html.IDFor(m => m.JsonData))', 'add', {
+            needStage: true,
+            messages: {
+                needStage: '@SR.T("Необходимо добавить хотя бы одну стадию")'
+            }
+        });
+    });
+
+    function addStage() {
+        refreshPopup('@popupId', '@Url.Action("EditStage", "SaleFunnel", new {area = CRMAreaRegistration.AREA_NAME})', null, '@SR.T("Добавление стадии")');
+    }
+
+    function editStage(e) {
+        var tr = $(e.target || e.srcElement).closest("tr");
+        var stageId = tr.find('td:first').attr('stageId');
+        var postData = [];
+        postData["Id"] = stageId;
+        postData["JsonData"] = $('#@JsonDataId').val();
+        refreshPopup('@popupId', '@Url.Action("EditStage", "SaleFunnel", new {area = CRMAreaRegistration.AREA_NAME})', $.extend({}, postData), '@SR.T("Редактирование стадии")');
+    }
+
+    function saveStage(form) {
+        if (!$(form).valid())
+            return;
+        var fields = $(form).serializeArray();
+        var dataFilter = [];
+        dataFilter["stagesJsonData"] = $("#@JsonDataId").val();
+        $.each(fields, $.proxy(function (_, field) {
+            dataFilter[field.name] = field.value;
+        }, this));
+        $.ajax({
+                url: "@(Url.Action("SaveStage", "SaleFunnel", new { area = CRMAreaRegistration.AREA_NAME }))",
+                data: $.extend({ }, dataFilter),
+                type: "POST",
+                success: function(data) {
+                    closeWindow('AddStagePopup');
+                    $('#SaleStagesGrid').html(data);
+                }
+            });
+    }
+
+    function moveStage(e, direction) {
+        var el = $(e.target || e.srcElement).closest("tr");
+        var stageId = el.find("td:first").attr('stageId');
+        var prevEl = el.prev();
+        var nextEl = el.next();
+        if (direction == 'up' && prevEl.is('tr'))
+            prevEl.before(el);
+        else if (direction == 'down' && nextEl.is('tr'))
+            nextEl.after(el);
+
+        var data = JSON.parse($('#@JsonDataId').val());
+        if (data.length == 0)
+            return;
+        
+        var minOrder = data[0].GlobalOrder * 1;
+        var maxOrder = data[0].GlobalOrder * 1;
+        for (var i = 0; i < data.length; i++) {
+            if (data[i].GlobalOrder < minOrder)
+                minOrder = data[i].GlobalOrder * 1;
+            if (data[i].GlobalOrder > maxOrder)
+                maxOrder = data[i].GlobalOrder * 1;
+        }
+        for (var i = 0; i < data.length; i++) {
+            if (data[i].Id == stageId) {
+                var dir = 0;
+                if (direction == 'down' && data[i].GlobalOrder < maxOrder) {
+                    dir = 1;
+                } else if (direction == 'up' && data[i].GlobalOrder > minOrder) {
+                    dir = -1;
+                }
+
+                if (dir !== 0) {
+                    var dx = maxOrder - minOrder + 1;
+                    var swapIndex = -1;
+                    for (var j = 0; j < data.length; j++) {
+                        var testDx = (data[j].GlobalOrder - data[i].GlobalOrder) * dir;
+                        if (testDx > 0 && testDx < dx) {
+                            dx = testDx;
+                            swapIndex = j;
+                        }
+                    }
+                    if (swapIndex >= 0) {
+                        var globalOrder = data[swapIndex].GlobalOrder;
+                        data[swapIndex].GlobalOrder = data[i].GlobalOrder;
+                        data[i].GlobalOrder = globalOrder;
+                        $('#@JsonDataId').val(JSON.stringify(data));
+                    }
+                }
+                break;
+            }
+        }        
+        
+    }
+        
+    function deleteStage(e) {
+        var tr = $(e.target || e.srcElement).closest("tr");
+        jConfirm('Вы действительно хотите удалить стадию "'+$.trim(tr.find('td:eq(2)').text())+'"?', '@SR.T("Удаление")', function(a) {
+            if (a) {
+                var stageId = tr.find('td:first').attr('stageId');
+                var data = JSON.parse($('#@JsonDataId').val());
+                data = jQuery.grep(data, function(value) {
+                    return value.Id != stageId;
+                });
+                $('#@JsonDataId').val(JSON.stringify(data));
+                var tbody = tr.closest('tbody');
+                tr.remove();
+
+                if (tbody.children("tr").length === 0) {
+                    tbody.append('<tr class="t-no-data"><td colspan="5">@SR.T("Нет данных для отображения")</td></tr>');
+                }
+            }
+        });
+    }
+
+</script>

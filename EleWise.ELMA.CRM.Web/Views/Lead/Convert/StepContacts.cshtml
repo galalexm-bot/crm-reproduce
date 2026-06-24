@@ -1,0 +1,30 @@
+﻿@model EleWise.ELMA.CRM.Web.Models.LeadConvertModel
+@using EleWise.ELMA.CRM.Extensions
+@using EleWise.ELMA.CRM.Models
+
+@* форма нужна для валидации. не удалять. *@
+<form />
+
+@for (int i = 0; i < Model.Contacts.Count; i++)
+{
+    IContact contact = Model.Contacts[i];
+    <div style="display: inline-block; width: 50%; margin: -1px;">
+        @Html.BuildFormForModel(contact, EleWise.ELMA.Model.Views.ViewType.Display,
+            b =>
+                {
+                    b.HideAllProperties();
+
+                    b.PropertyRow(m => m.Name).ValueTemplate(c => MvcHtmlString.Create(String.Format("<b>{0}</b>", HttpUtility.HtmlEncode(c.Name))));
+                    b.PropertyRow(m => m.Department);
+                    b.PropertyRow(m => m.Position);
+                    b.PropertyRow(m => m.Type);
+                    b.PropertyRow(m => m.Priority);
+                    b.PropertyRow(m => m.Site).ValueTemplate(x => x.Site != null ? Html.Partial("DisplayTemplates/Uri", x.Site) : MvcHtmlString.Empty);
+                    b.PropertyRow(m => m.Email);
+                    b.PropertyRow(m => m.Icq);
+                    b.PropertyRow(m => m.Skype);
+                    b.PropertyRow(m => m.Phone);
+                    b.PropertyRow(m => m.Birthday).ValueTemplate(c => c.BirthDate());
+                })
+    </div>
+}

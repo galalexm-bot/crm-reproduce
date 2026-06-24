@@ -1,0 +1,21 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <AssemblyName>EleWise.ELMA.Extensions.FirebirdExternal</AssemblyName>
+    <GenerateAssemblyInfo>False</GenerateAssemblyInfo>
+    <TargetFramework>net48</TargetFramework>
+  </PropertyGroup>
+  <PropertyGroup>
+    <LangVersion>Preview</LangVersion>
+    <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
+  </PropertyGroup>
+  <PropertyGroup />
+  <ItemGroup />
+  <ItemGroup>
+    <Reference Include="EleWise.ELMA.SDK">
+      <HintPath>..\..\EleWise.ELMA.SDK.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Data" />
+    <Reference Include="FirebirdSql.Data.FirebirdClient" />
+    <Reference Include="System.Core" />
+  </ItemGroup>
+</Project>

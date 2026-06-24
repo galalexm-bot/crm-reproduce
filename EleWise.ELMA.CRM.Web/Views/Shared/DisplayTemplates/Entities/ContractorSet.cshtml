@@ -1,0 +1,8 @@
+﻿@model IEnumerable<EleWise.ELMA.CRM.Models.IContractor>
+@if (Model != null)
+{
+    foreach (var item in Model)
+    {
+        <div>@Html.Partial("DisplayTemplates/Entities/Contractor", item)</div>
+    }
+}

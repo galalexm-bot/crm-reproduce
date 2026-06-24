@@ -1,0 +1,20 @@
+﻿@using EleWise.ELMA
+@using EleWise.ELMA.CRM.Models
+@model EleWise.ELMA.CRM.Web.Models.ContractorEditedPropertiesModel
+
+@Html.DisplayChanges(
+Model.OldEntity,
+Model.NewEntity,
+Model.BaseProperties,
+true,
+    (propertyName, oldEntity, newEntity) =>
+    {
+        switch (propertyName)
+        {
+            case "CategoriesHash":
+                return MvcHtmlString.Create("");
+            default:
+                return null;
+        }
+    }
+                                )

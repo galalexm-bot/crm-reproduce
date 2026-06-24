@@ -1,0 +1,50 @@
+﻿@using EleWise.ELMA.Model.Views
+@using EleWise.ELMA.Web.Mvc.Html.Forms
+@using EleWise.ELMA
+@model EleWise.ELMA.CRM.Models.IInpayment
+
+@using (Html.ElmaForm())
+{
+    @Html.ValidationSummary(false)
+    if (!Model.IsNew())
+    {
+        @Html.HiddenFor(m => m.Id)
+    }
+    @(Html.CollapsiblePanel()
+               .Id(ViewData.TemplateInfo.GetFullHtmlFieldId("InpaymentGeneralInfo"))
+               .Header(SR.T("О поступлении")).SaveState(false)
+               .Class("separator-gray").Expanded(true)
+               .Content(@<text>
+                                @Html.TableFormStart(EleWise.ELMA.Model.Views.ViewType.Edit)
+                                    @Html.BuildFormForModel(Model, Model.IsNew() ? EleWise.ELMA.Model.Views.ViewType.Create : EleWise.ELMA.Model.Views.ViewType.Edit,
+                                        b =>
+                                            {
+                                                b.HideForm();
+                                                b.HideAllProperties();
+                                                b.LayoutConfig<DefaultFormLayout>(l => { l.RenderTable = false; });
+
+                                                b.PropertyRow(m => m.Name).Order(1);
+                                                b.PropertyRow(m => m.Sale).Order(2);
+                                                //b.PropertyRow(m => m.Contractor).EditorTemplate(x => Html.DisplayValue(x.Contractor)).Order(3);
+                                                b.PropertyRow(m => m.Date).Order(4);
+                                                b.PropertyRow(m => m.Sum).Order(5);
+                                                b.PropertyRow(m => m.Invoice).Order(6);
+                                                if (Model.IsNew())
+                                                {
+                                                    b.PropertyRow(m => m.Status).EditorAttributes(a => a.Html.style = new HtmlStyle {width = "167px"}).Order(7);
+                                                }
+                                                b.PropertyRow(m => m.CreationAuthor).EditorTemplate(x => Html.Display(y => y.CreationAuthor, a => a.ViewStyle = ModelViewStyle.Display)).Order(8);
+                                                b.PropertyRow(m => m.Responsible).Order(9);
+                                            })
+                                 @Html.TableFormEnd()
+                         </text>).Render())
+    @(Html.CollapsiblePanel()
+               .Id(ViewData.TemplateInfo.GetFullHtmlFieldId("Comment"))
+               .Header(SR.T("Описание")).SaveState(false)
+               .Class("separator-gray").Expanded(true)
+               .Content(@<text>
+                                 @Html.TableFormStart(EleWise.ELMA.Model.Views.ViewType.Edit)
+                                     @Html.EditableProperty(m => m.Comment)
+                                 @Html.TableFormEnd()
+                         </text>).Render())
+}

@@ -1,0 +1,112 @@
+﻿@using EleWise.ELMA
+@using EleWise.ELMA.BPM.Web.Common.Extensions
+@using EleWise.ELMA.CRM
+@using EleWise.ELMA.CRM.Models
+@using EleWise.ELMA.BPM.Web.Common.Models
+@using EleWise.ELMA.Security
+@using EleWise.ELMA.Services
+@using EleWise.ELMA.Web.Mvc.Models.ActionItems.Menu
+@using EleWise.ELMA.Web.Mvc.Models.Buttons
+@using EleWise.ELMA.Web.Mvc.Models.Panels
+@using EleWise.ELMA.CRM.Web.Extensions
+@using EleWise.ELMA.CRM.Web.Menu
+@model GridDataFilter<ISale>
+
+<script type="text/javascript" src="@Url.Content("~/Scripts/Elma/Elma.Grids.ObjectSelectColumn.js")"></script>
+
+@{
+    var checkedMenu = new ActionMenu("checkedobject_menu")
+    {
+        Items = {
+                new ActionMenuItem("btnSelectContacts") {
+                Text = SR.T("Выбрать все сделки"),
+                Click = "SelectAll($('#ObjectSelectCheckbox'))"
+                }
+        }
+    };
+
+    var saleTotalsAjaxPanelId = "saleTotalsCustomAjaxPanel";
+    var saleTotalsAjaxPanel = new AjaxPanel
+    {
+        Id = saleTotalsAjaxPanelId,
+        Url = Url.Action("SummaryTable"),
+        Content = MvcHtmlString.Create("<span>" + @SR.T("Пожалуйста, подождите...") + "</span>"),
+    };
+}
+
+@Html.Partial("Filter/FilterModel", Model.DataFilter.Builder()
+    .SubmitText(EleWise.ELMA.SR.T("Найти сделки"))
+    .GridAction(Url.Action("Grid"))
+    .ApplayFilterScript("FilterByForm()")
+    .FilterUrl(Url.Action("Index") + "?FilterId=")
+    .ShowOnlyMyProperty("ShowOnlyMy")
+    .FilterMenuItemCode(CRMMenuItems.SALES_MENU)
+    .Header(EleWise.ELMA.SR.T("Сделки"))
+    .Model,
+    new ViewDataDictionary { TemplateInfo = new TemplateInfo { HtmlFieldPrefix = "DataFilter" } })
+
+@Html.ActionMenu(checkedMenu)
+
+<div class="table-form-columns-wrapper table-form-column-count-2">
+    <div class="table-form-column">
+        @using (Html.CollapsiblePanel(new CollapsiblePanel
+        {
+            Id = "salesVolumeByCurrencies",
+            Expanded = false,
+            Header = SR.T("Общая сумма объёма продаж по валютам"),
+            Class = "separator-yellow",
+            SaveState = false,
+            LoadMode = DynamicLoadMode.Client
+        }))
+        {
+            using (Html.AjaxPanel(saleTotalsAjaxPanel))
+            {
+            }
+        }
+    </div>
+    <div class="table-form-column"></div>
+</div>
+
+@(Html.FilterDynamicGrid(Model)
+    .WithDefaultSettings()
+    .Columns(c =>
+    {
+        c.For(m => Html.ModernCheckBox(false).Name("objectid").Value(m.Id))
+            .Header(Html.SmartCheckbox(new SmartCheckBox
+            {
+                Menu = checkedMenu,
+                Id = "ObjectSelectCheckbox",
+                DefaultScript = "ToggleCheckbox(this)"
+            }).ToString()).NotSortable().NotResizable().Width(50).Order(int.MinValue + 1);
+        c.For(m => m.Name).Link(m => Url.Action("Details", "Sale", new { id = m.Id }));
+        c.For(m => m.SaleStage).Template(m => m.SaleStage != null ? Html.Partial("DisplayTemplates/Entities/SaleStage", m.SaleStage) : MvcHtmlString.Empty).Width(180);
+        c.For(m => m.StatusChangeComment).Template(m => m.StatusChangeComment != null ? m.StatusChangeComment.Text : null);
+        c.For(m => m.StageChangeComment).Template(m => m.StageChangeComment != null ? m.StageChangeComment.Text : null);
+        c.For(m => m.PreviousStage).Template(m => m.PreviousStage != null ? MvcHtmlString.Create(m.PreviousStage.Name) : MvcHtmlString.Empty);
+        c.For(m => m.NextRelationship).Visible(false).Template(m => Html.NextRelationshipLink(m.NextRelationship));
+    })
+    .DefaultColumns()
+    .Resizeable(true)
+    .ExportExcel(Locator.GetServiceNotNull<ISecurityService>().HasPermission(CRMPermissionProvider.CRMExportPermission), SR.T("Сделки"))
+    .Action("Grid"))
+
+<script type="text/javascript">
+    function FilterByForm() {
+        applyFilterGrid('@(Model.GridId)', 'filteringGridForm');
+
+        var container = $('#@(saleTotalsAjaxPanelId)');
+        container.attr("loaded", "0");
+        container.attr("loading", "0");
+        loadSummaryTable();
+    }
+
+    function loadSummaryTable() {
+        var postData = elma.dynamics.getPostData('#filteringGridForm', {});
+        elma.dynamics.loadOnce('@(saleTotalsAjaxPanelId)', postData);
+    }
+
+    $(document).ready(function () {
+        $('#@(saleTotalsAjaxPanelId)').show();
+        loadSummaryTable();
+    });
+</script>

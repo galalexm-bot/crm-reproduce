@@ -1,0 +1,21 @@
+﻿@using EleWise.ELMA
+@using EleWise.ELMA.CRM.Models.BillingInformation
+@using EleWise.ELMA.CRM.Web
+@inherits EleWise.ELMA.Web.Mvc.Views.Inputs.InputControl<IEnumerable<IPaymentCard>, EleWise.ELMA.Model.Types.Settings.EntitySettings>
+@{
+    string tableId = string.Format("Bind{0}Table", Guid.NewGuid().ToString("N"));
+}
+
+@(Html.DynamicGrid(tableId, new GridData<IPaymentCard>
+{
+    Count = Model.Count(),
+    DataSource = Model,
+    IsPageable = false
+})
+.Sortable(false)
+.Customizable(false)
+.Columns(c =>
+{
+    c.For(row => row.Name).Template(ba => Html.Partial("DisplayTemplates/Entity", ba));
+    c.DefaultColumns(true);
+}))

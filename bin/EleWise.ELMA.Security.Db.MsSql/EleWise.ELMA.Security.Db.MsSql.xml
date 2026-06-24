@@ -1,0 +1,1144 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<root uid="{74E94DFF-D8C8-4423-A23A-62C8F9EA8BBF}" provider="SqlServer">
+
+  <procedures>
+    
+    <procedure name="GetOrgItemHierarchy">
+      <text>
+CREATE FUNCTION GetOrgItemHierarchy
+(	
+	@StartItemId bigint
+)
+RETURNS TABLE 
+AS
+RETURN 
+(
+  --построение дерева оргструктуры по иерархии вверх
+	with Rec as
+  (
+    select oi.id, oi.parentitem, 0 as lvl
+    from organizationitem oi
+    where oi.IsDeleted=0 and oi.id = @StartItemId
+    union all
+    select oit.id, oit.parentitem, Rec.lvl + 1 as lvl
+    from organizationitem oit
+    inner join Rec on Rec.ParentItem = oit.id and oit.IsDeleted=0
+  )
+  select Rec.Id as OrgItemId, Rec.lvl as Lvl, us.UserId from Rec
+  left join UserSecuritySetCache us on rec.Id = us.OrgItemId
+  where Rec.Id != @StartItemId 
+  and us.usercount != -1
+  and us.orgitemid is not null
+)
+      </text>
+    </procedure>
+
+    <procedure name="GetOrgItemChilds">
+      <text>
+        <![CDATA[ 
+CREATE FUNCTION GetOrgItemChilds
+(
+  @StartItemId bigint
+)
+RETURNS TABLE
+AS
+RETURN
+(
+  --построение дерева оргструктуры по иерархии вниз
+  with Rec as
+  (
+    select oi.id, oi.parentitem, 0 as lvl
+    from organizationitem oi
+    where oi.IsDeleted=0 and oi.id = @StartItemId
+    union all
+    select oit.id, oit.parentitem, Rec.lvl + 1 as lvl
+    from organizationitem oit
+    inner join Rec on Rec.Id = oit.parentitem and oit.IsDeleted=0
+  )
+  select Rec.Id as OrgItemId, Rec.lvl as Lvl
+  from Rec
+)
+        ]]>
+      </text>
+    </procedure>
+    
+    <procedure name="GetUserChiefsHierarchy">
+      <mappings>
+        <hibernate-mapping xmlns="urn:nhibernate-mapping-2.2">
+          <resultset name="ChiefsHierarchyResultSet">
+            <return-scalar column="StartItemId" type="System.Int64"/>
+            <return-scalar column="OrgItemId" type="System.Int64"/>
+            <return-scalar column="Lvl" type="System.Int64"/>
+            <return-scalar column="UserId" type="System.Int64"/>
+          </resultset>
+          <sql-query name="GetUserChiefsHierarchy" resultset-ref="ChiefsHierarchyResultSet">
+            <query-param name="StartUserId" type="System.Int64" />
+            select * from GetUserChiefsHierarchy(:StartUserId)
+          </sql-query>
+        </hibernate-mapping>
+      </mappings>
+      <text>
+CREATE FUNCTION GetUserChiefsHierarchy
+(	
+	@StartUserId bigint
+)
+RETURNS TABLE 
+AS
+RETURN 
+(
+  --получить начальников пользователя в порядке иерархии
+	select us.OrgItemId as StartItemId, oih.* from UserSecuritySetCache us
+	cross apply GetOrgItemHierarchy(us.OrgItemId) oih
+  left join &amp;&amp;OrganizationItem&amp;&amp; oi on oi.&amp;&amp;Id&amp;&amp; = us.&amp;&amp;OrgItemId&amp;&amp;
+  left join &amp;&amp;OrganizationItem&amp;&amp; oi1 on oi1.&amp;&amp;Id&amp;&amp; = oih.&amp;&amp;OrgItemId&amp;&amp;
+	where us.userid = @StartUserId
+	and us.usercount != -1
+	and us.orgitemid is not null
+  and oi.&amp;&amp;ItemType&amp;&amp; in (1,2)
+  and oi1.&amp;&amp;ItemType&amp;&amp; in (1)
+)
+      </text>
+    </procedure>
+
+    <procedure name="OrgStructTree">
+      <mappings>
+        <hibernate-mapping xmlns="urn:nhibernate-mapping-2.2">
+          <resultset name="OrgStructTreeResultSet">
+            <return-scalar column="Id" type="System.Int64"/>
+            <return-scalar column="ItemType" type="System.Int32"/>
+            <return-scalar column="Name" type="System.String"/>
+            <return-scalar column="ParentItemId" type="System.Int64"/>
+            <return-scalar column="Uid" type="System.Guid"/>
+          </resultset>
+          <sql-query name="ORGSTRUCTTREE" resultset-ref="OrgStructTreeResultSet">
+            select Id, ItemType, Name, ISNULL(ParentItem, 0) AS ParentItemId, Uid
+            from ORGSTRUCTTREE()
+          </sql-query>
+        </hibernate-mapping>
+      </mappings>
+      <text>
+create function ORGSTRUCTTREE()
+returns  TABLE 
+as
+return
+(
+    select oi.id, oi.itemtype, oi.name, oi.parentitem, oi.uid
+    from organizationitem oi
+    where oi.IsDeleted=0
+)
+      </text>
+    </procedure>
+
+    <procedure name="GetUsersIdByWorkers">
+      <mappings>
+        <hibernate-mapping xmlns="urn:nhibernate-mapping-2.2">
+          <sql-query name="GetUsersIdByWorkers">
+select UserId from UserSecuritySetCache
+where GroupId in (:groupId)
+union
+select oid.UserId from OrganizationItem oid
+where oid.UserId is not null
+and oid.Id in (:orgItemId)
+union select oiu.UserId from OrganizationItem oi
+inner join OrganizationItemUsers oiu on oiu.OrganizationItemId=oi.Id
+where oiu.UserId is not null
+and oi.Id in (:orgItemId)
+          </sql-query>
+        </hibernate-mapping>
+      </mappings>
+    </procedure>
+
+    <procedure name="FillUserSecuritySetCacheTest">
+      <mappings>
+        <hibernate-mapping xmlns="urn:nhibernate-mapping-2.2">
+          <sql-query name="ExecFillUserSecuritySetCacheTest" >
+            exec FillUserSecuritySetCacheTest
+          </sql-query>
+        </hibernate-mapping>
+      </mappings>
+      <text>
+  <![CDATA[
+CREATE PROCEDURE FillUserSecuritySetCacheTest 
+AS
+BEGIN
+	SET NOCOUNT ON;
+	
+	declare @typemask bigint, @usermask bigint, @groupmask bigint, @organizationitemmask bigint;
+	-- маска которая оставляет только биты типа
+	set @typemask = 9151314442816847872; -- 1111111[0]55
+	-- маска начальников пользователя
+	set @usermask = 72057594037927936; -- побитовый сдвиг влево 1 на 56 разрядов (2 ^ 56) 1[0]55
+	-- маска группы
+	set @groupmask = 144115188075855872; -- побитовый сдвиг влево 10 на 56 разрядов (2 ^ 56) 10[0]55	
+	-- маска отдела
+	set @organizationitemmask = 216172782113783808; -- побитовый сдвиг влево 11 на 56 разрядов (2 ^ 56) 11[0]55	
+
+
+	-- начальники пользователей
+	-- удаляем из кеша старые записи
+	delete from UserSecuritySetCacheTestTemp
+
+	insert into UserSecuritySetCacheTestTemp (SetId, UserId, SubordinateUserId, Subordinate)
+  select SetId, UserId, SubordinateUserId, min(Subordinate) as Subordinate from
+  (
+	select (u.Id | @usermask) as SetId, u.Id as UserId, u.Id as SubordinateUserId, 0 as Subordinate from [User] u
+	union
+	select (s.UserId | @usermask), u.Id, s.UserId, 1 from [user] u 
+		cross apply [GetUserSubordinate](u.Id) s
+  ) s group by SetId, UserId, SubordinateUserId
+		
+	-- группы 
+
+	;with GroupUsers as (select ug.Id, gs.UserId as UserId, 0 as Subordinate from [UserGroup] ug 
+		cross apply [GetGroupUsers](ug.Id) gs)	
+	insert into UserSecuritySetCacheTestTemp (SetId, UserId, GroupId, Subordinate)
+	select (s.Id|@groupmask), s.UserId, case when Min(s.Subordinate)=0 then s.Id end, Min(s.Subordinate) as Subordinate from 
+	(select * from GroupUsers
+	 union
+	 select gu.Id, ussc.UserId, 1 from GroupUsers gu 
+	 inner join UserSecuritySetCacheTestTemp ussc on ussc.SubordinateUserId = gu.UserId
+	 ) s group by s.Id, s.UserId
+	
+	-- подразделения
+
+	;with DepartmentUsers (Id, UserId, Subordinate) as (
+		select oi.Id, s.UserId, 0 as Subordinate from [OrganizationItem] oi
+		cross apply [GetDepartmentUsers](oi.Id) s	
+		)
+	insert into UserSecuritySetCacheTestTemp (SetId, UserId, Subordinate)
+	select (s.Id|@organizationitemmask), s.UserId, Min(s.Subordinate) from 
+	(select * from DepartmentUsers 
+	 union
+	 select gu.Id, ussc.UserId, 1 from DepartmentUsers  gu 
+	 inner join UserSecuritySetCacheTestTemp ussc on ussc.SubordinateUserId = gu.UserId
+	 ) s group by Id, UserId
+	
+	delete from UserSecuritySetCacheTest where not exists(select SetId from UserSecuritySetCacheTestTemp t where t.SetId=UserSecuritySetCacheTest.SetId and t.UserId=UserSecuritySetCacheTest.UserId and t.SubordinateUserId=UserSecuritySetCacheTest.SubordinateUserId and t.Subordinate=UserSecuritySetCacheTest.Subordinate and t.GroupId=UserSecuritySetCacheTest.GroupId);
+	insert into UserSecuritySetCacheTest (SetId, UserId, SubordinateUserId, Subordinate,GroupId) select t.SetId, t.UserId, t.SubordinateUserId, t.Subordinate, t.GroupId from UserSecuritySetCacheTestTemp t left join UserSecuritySetCacheTest c on t.SetId=c.SetId and t.UserId=c.UserId and t.SubordinateUserId=c.SubordinateUserId and t.Subordinate=c.Subordinate and t.GroupId=c.GroupId where c.SetId is null;
+
+END
+    ]]>
+      </text>
+    </procedure>
+
+    <procedure name="GetDepartmentUsers">
+      <text>
+        <![CDATA[
+-- список пользователей для элемента оргструктуры
+CREATE FUNCTION [GetDepartmentUsers] 
+(	
+	@DepartmentId bigint
+)
+RETURNS TABLE
+AS
+RETURN
+(
+
+	-- для отдела все поддерево, для должности и группы только сам элемент
+	WITH AllOrganizationItems(Id, UserId, ItemType)
+	AS
+	(
+	    -- отделы где является непосредственным начальником
+	    select oi.Id, oi.[UserId], oi.ItemType from OrganizationItem oi with (nolock) 
+			where oi.Id = @DepartmentId
+		UNION ALL
+		-- подчиненные отделы
+		select oi.Id, oi.[UserId], aoi.ItemType from OrganizationItem oi with (nolock)
+		INNER JOIN AllOrganizationItems aoi ON oi.ParentItem = aoi.Id and aoi.ItemType=0
+	)
+	
+	-- начальники всех отделов
+	select aoi.[UserId] from AllOrganizationItems aoi where aoi.[UserId] is not null
+	union 
+	select oim.[UserId] from AllOrganizationItems aoi
+	INNER JOIN OrganizationItemUsers oim with (nolock) on oim.OrganizationItemId = aoi.Id
+)
+        ]]>
+      </text>
+    </procedure>
+
+    <procedure name="GetOrganizationItemUsers">
+      <text>
+        <![CDATA[
+-- список подчиненных для пользователя
+CREATE FUNCTION [GetOrganizationItemUsers] 
+(	
+	@OrganizationItemId bigint
+)
+RETURNS TABLE
+AS
+RETURN
+(
+
+	-- для долджностей возврящаем пользователей назначенных на должности
+  select oi.UserId  from OrganizationItem oi with (nolock) 
+  where oi.ItemType = 1 and oi.Id = @OrganizationItemId and oi.UserId is not null
+  union 
+  select s.UserId  from OrganizationItem oi with (nolock) 
+  cross apply [GetDepartmentUsers](oi.Id) s
+  where (oi.ItemType = 0 or oi.ItemType = 2) and oi.Id = @OrganizationItemId
+ 
+)
+        ]]>
+      </text>
+    </procedure>
+
+    <procedure name="GetGroupUsers">
+      <text>
+        <![CDATA[
+CREATE FUNCTION [GetGroupUsers] 
+(	
+	@GroupId bigint
+)
+RETURNS TABLE
+AS
+RETURN
+(
+	WITH AllGroups(GroupId)
+	AS
+	(
+		select g.Id as GroupId from UserGroup g with (nolock)
+		where g.Id = @GroupId and g.Uid != '97D7E638-F957-4964-B991-2B1AEED59163'
+		union all
+		select gm.ChildId as GroupId from UserGroup_Groups_Map gm with (nolock)
+		INNER JOIN AllGroups ag on ag.GroupId = gm.ParentId
+	)
+	select distinct s.UserId from
+	(
+		select ugm.UserId as UserId from AllGroups ag
+		inner join  UserGroup_User_Map ugm with (nolock) on ugm.GroupId = ag.GroupId
+		union
+		select du.UserId as UserId from AllGroups ag
+		inner join  UserGroup_OrgItem_Map oim with (nolock) on oim.GroupId = ag.GroupId
+		cross apply GetOrganizationItemUsers(oim.OrgItemId) du
+		union 
+		select u.Id from [User] u with (nolock)
+		where u.[Status] = 0 and 
+			exists (select top 1 Id  from UserGroup with (nolock)
+				where Id = @GroupId and Uid = '97D7E638-F957-4964-B991-2B1AEED59163')
+	)s
+)
+        ]]>
+      </text>
+    </procedure>
+
+    <procedure name="GetGroupsForUsers">
+      <text>
+        <![CDATA[
+CREATE FUNCTION [GetGroupsForUsers] 
+(
+  @UserId bigint
+)
+RETURNS TABLE
+AS
+RETURN
+(
+  select GroupId from UserSecuritySetCache
+  where UserId = @UserId and GroupId > 0
+)
+        ]]>
+      </text>
+    </procedure>
+
+    <procedure name="GetUserChief">
+      <text>
+-- список начальников для порльзователя
+CREATE FUNCTION [GetUserChief] 
+(	
+	@UserId bigint
+)
+RETURNS TABLE
+AS
+RETURN
+(
+	WITH AllOrganizationItems(Id)
+	AS
+	(
+	    -- прямые начальники и отделы в кторых находится пользователль
+	    (
+	    -- должности пользователя
+	    select oi.ParentItem as id from OrganizationItem oi 
+			where oi.[UserId] = @UserId and oi.ParentItem IS NOT NULL
+	    UNION
+	    -- отделы в которых состоит польователь
+			(select poi.ParentItem as id from OrganizationItemUsers ioum 
+			INNER JOIN OrganizationItem poi on poi.Id = ioum.OrganizationItemId
+			where ioum.UserId = @UserId and poi.ParentItem IS NOT NULL)
+	    ) 
+		UNION ALL
+		-- начальники начальников и вышестоящие отделы
+		select coi.Id from OrganizationItem oi
+		INNER JOIN AllOrganizationItems aoi ON aoi.Id = oi.Id
+		INNER JOIN OrganizationItem coi ON coi.Id = oi.ParentItem
+	)
+	
+	select oi.[UserId] from AllOrganizationItems aoi
+	INNER JOIN OrganizationItem oi on aoi.Id = oi.Id
+	where oi.[UserId] IS NOT NULL
+)
+ 
+      </text>
+    </procedure>    
+
+    <procedure name="GetUserSubordinate">
+      <text>
+        <![CDATA[
+-- список подчиненных для пользователя
+CREATE FUNCTION [GetUserSubordinate] 
+(
+	@UserId bigint
+)
+RETURNS TABLE
+AS
+RETURN
+(
+  -- отделы подчиненные пользователю
+  WITH AllOrganizationItems(Id, UserId, flag)
+  AS
+  (
+    -- отделы где является непосредственным начальником
+    select oi.Id, oi.UserId, 1 Flag from OrganizationItem oi with (nolock)
+        where oi.UserId = @UserId 
+    UNION select oi.Id, oiu.UserId, 0 from OrganizationItem oi with (nolock)
+      left join OrganizationItemUsers oiu with (nolock) on oiu.OrganizationItemId=oi.Id
+        where oiu.UserId = @UserId 
+    UNION ALL
+    -- подчиненные отделы
+    select oi.Id, oi.UserId, 1 from OrganizationItem oi with (nolock)
+    INNER JOIN AllOrganizationItems aoi ON oi.ParentItem = aoi.Id
+  )
+
+-- начальники всех отделов
+  select aoi.[UserId] from AllOrganizationItems aoi where aoi.[UserId] != @UserId 
+  union 
+  select oim.[UserId] from AllOrganizationItems aoi
+  INNER JOIN OrganizationItemUsers oim with (nolock) on oim.OrganizationItemId = aoi.Id and aoi.flag = 1
+  where oim.[UserId] != @UserId 
+)
+        ]]>
+      </text>
+    </procedure>
+
+    <procedure name="SplitString">
+      <text>
+    <![CDATA[
+        CREATE FUNCTION SplitString(
+          @delimited NVARCHAR(MAX),
+          @delimiter NVARCHAR(100)
+        ) RETURNS @t TABLE (val NVARCHAR(MAX))
+        AS
+        BEGIN
+        DECLARE @xml XML
+        SET @xml = N'<t>' + REPLACE(@delimited,@delimiter,'</t><t>') + '</t>'
+
+        INSERT INTO @t(val)
+        SELECT  r.value('.','varchar(MAX)') as item
+        FROM  @xml.nodes('/t') as records(r)
+        RETURN
+        END
+    ]]>
+      </text>
+    </procedure>
+
+    <procedure name="GetOrgItemsChilds">
+      <text>
+        <![CDATA[ 
+        CREATE FUNCTION GetOrgItemsChilds
+        (
+          @StartItemIds NVARCHAR(MAX)
+        )
+        RETURNS TABLE
+        AS
+        RETURN
+        (
+        select ussc1.OrgItemId as OrgItemId from UserSecuritySetCache ussc
+        inner join SplitString(@StartItemIds, ',') ss on cast(ss.val as bigint) = ussc.OrgItemId and ussc.UserCount > 0
+        inner join UserSecuritySetCache ussc1 on ussc1.UserId = ussc.UserId
+        where ussc1.OrgItemId is not null
+        group by ussc1.OrgItemId
+        )
+        ]]>
+      </text>
+    </procedure>
+
+    <procedure name="GetDepartments">
+      <text>
+        <![CDATA[
+-- список вхождений элементов оргструктуры в отделы
+CREATE FUNCTION GetDepartments()
+RETURNS TABLE
+AS
+RETURN
+(
+  -- для отделов все поддерево, для должностей и групп только сами элементы
+  WITH AllOrganizationItems
+  AS
+  (
+    -- все элементы оргструктуры
+    select oi.Id, oi.UserId, oi.ItemType, oi.Id DepartmentId from OrganizationItem oi with (nolock)
+    UNION ALL
+    -- подчиненные элементы оргструктуры для родительского отдела
+    select oi.Id, oi.UserId, aoi.ItemType, aoi.DepartmentId from OrganizationItem oi with (nolock)
+    INNER JOIN AllOrganizationItems aoi ON oi.ParentItem = aoi.Id and aoi.ItemType=0
+  )
+  select Id, UserId, DepartmentId from AllOrganizationItems
+)
+]]>
+      </text>
+    </procedure>
+
+    <procedure name="GetDepartmentsUsers">
+      <text>
+        <![CDATA[
+-- список пользователей для элементов оргструктуры
+CREATE FUNCTION GetDepartmentsUsers()
+RETURNS TABLE
+AS
+RETURN
+(
+  WITH AllOrganizationItems
+  AS (select * from GetDepartments())
+
+  select Id, UserId, COUNT(*) UserCount from
+  (
+    -- начальники отделов
+    select aoi.DepartmentId Id, aoi.UserId, aoi.DepartmentId oiId from AllOrganizationItems aoi where aoi.UserId is not null
+    union all
+    -- сотрудники отделов
+    select aoi.DepartmentId, oim.UserId, aoi.Id from AllOrganizationItems aoi
+    INNER JOIN OrganizationItemUsers oim with (nolock) on oim.OrganizationItemId = aoi.Id
+  )s
+  group by Id, UserId
+)
+]]>
+      </text>
+    </procedure>
+
+    <procedure name="GetGroups">
+      <text>
+        <![CDATA[
+-- список вхождения групп в группы
+CREATE FUNCTION GetGroups()
+RETURNS TABLE
+AS
+RETURN
+(
+  WITH AllGroups(ParentGroupId, ChildGroupId)
+  AS
+  (
+    select g.Id ParentGroupId, g.Id ChildGroupId from UserGroup g with (nolock)
+    union all
+    select gm.ChildId, ag.ChildGroupId from UserGroup_Groups_Map gm with (nolock)
+    INNER JOIN AllGroups ag on ag.ParentGroupId = gm.ParentId
+  )
+  select ParentGroupId, ChildGroupId from AllGroups
+)
+]]>
+      </text>
+    </procedure>
+
+    <procedure name="GetGroupsUsers">
+      <text>
+        <![CDATA[
+-- список пользователей для группы (с количеством вхождений в группу)
+CREATE FUNCTION GetGroupsUsers()
+RETURNS TABLE
+AS
+RETURN
+(
+  WITH AllGroups
+  AS (select * from GetGroups())
+  select GroupId, UserId, SUM(UserCount) UserCount from
+  (
+    select ag.ParentGroupId gId, null oiId, ag.ChildGroupId as GroupId, ugm.UserId as UserId, 1 UserCount from AllGroups ag
+    inner join UserGroup_User_Map ugm with (nolock) on ugm.GroupId = ag.ParentGroupId
+    union
+    select ag.ParentGroupId, oim.OrgItemId, ag.ChildGroupId, oi.UserId, oi.UserCount from AllGroups ag
+    inner join UserGroup_OrgItem_Map oim with (nolock) on oim.GroupId = ag.ParentGroupId
+    inner join UserSecuritySetCacheTemp oi with (nolock) on oim.OrgItemId = oi.OrgItemId and oi.Subordinate=0
+  )s
+  group by GroupId, UserId
+)
+]]>
+      </text>
+    </procedure>
+
+    <procedure name="FillUserSecuritySetCache">
+      <mappings>
+        <hibernate-mapping xmlns="urn:nhibernate-mapping-2.2">
+          <sql-query name="ExecFillUserSecuritySetCache" >
+            exec FillUserSecuritySetCache
+          </sql-query>
+        </hibernate-mapping>
+      </mappings>
+      <text>
+        <![CDATA[
+CREATE PROCEDURE FillUserSecuritySetCache
+AS
+BEGIN
+  SET NOCOUNT ON;
+
+  declare @typemask bigint, @usermask bigint, @groupmask bigint, @organizationitemmask bigint;
+  -- маска которая оставляет только биты типа
+  set @typemask = 9151314442816847872; -- побитовый сдвиг влево 1111111 на 56 разрядов (2 ^ 56) 1111111[0]55
+  -- маска начальников пользователя
+  set @usermask = 72057594037927936; -- побитовый сдвиг влево 1 на 56 разрядов (2 ^ 56) 1[0]55
+  -- маска группы
+  set @groupmask = 144115188075855872; -- побитовый сдвиг влево 10 на 56 разрядов (2 ^ 56) 10[0]55
+  -- маска отдела
+  set @organizationitemmask = 216172782113783808; -- побитовый сдвиг влево 11 на 56 разрядов (2 ^ 56) 11[0]55
+
+
+  -- удаляем из кэша старые записи
+  delete from UserSecuritySetCacheTemp;
+
+
+  -- начальники пользователей
+  insert into UserSecuritySetCacheTemp (SetId, UserId, SubordinateUserId, Subordinate, UserCount)
+  select SetId, UserId, SubordinateUserId, Min(Subordinate), -1 from
+  (
+    select (u.Id | @usermask) as SetId, u.Id as UserId, u.Id as SubordinateUserId, 0 as Subordinate from [User] u
+    union
+    select (s.UserId | @usermask), u.Id, s.UserId, 1 from [user] u 
+    cross apply [GetUserSubordinate](u.Id) s
+  ) s group by SetId, UserId, SubordinateUserId;
+
+
+  -- подразделения
+  with DepartmentUsers as (
+    select Id, UserId, UserCount from GetDepartmentsUsers()
+  )
+  insert into UserSecuritySetCacheTemp (SetId, UserId, OrgItemId, Subordinate, UserCount)
+  select (Id|@organizationitemmask), UserId, Id, Min(Subordinate), Max(UserCount) from
+  (
+    select Id, UserId, UserCount, 0 as Subordinate from DepartmentUsers
+    union
+    select gu.Id, ussc.UserId, -1, 1 from DepartmentUsers  gu 
+    inner join UserSecuritySetCacheTemp ussc on ussc.SubordinateUserId = gu.UserId
+  ) s group by Id, UserId;
+
+
+  -- группы 
+  with GroupUsers as (
+    select GroupId Id, UserId, UserCount from GetGroupsUsers()
+  )
+  insert into UserSecuritySetCacheTemp (SetId, UserId, GroupId, Subordinate, UserCount)
+  select (Id|@groupmask), UserId, Max(GroupId), Min(Subordinate), Max(UserCount) from 
+  (
+    select Id, Id GroupId, UserId, UserCount, 0 as Subordinate from GroupUsers
+    union
+    select gu.Id, null, ussc.UserId, -1, 1 from GroupUsers gu 
+    inner join UserSecuritySetCacheTemp ussc on ussc.SubordinateUserId = gu.UserId
+  ) s group by Id, UserId;
+
+
+  -- переносим данные из кэша в боевую таблицу
+  delete from UserSecuritySetCache where not exists(select SetId from UserSecuritySetCacheTemp t where t.SetId=UserSecuritySetCache.SetId and t.UserId=UserSecuritySetCache.UserId and t.Subordinate=UserSecuritySetCache.Subordinate and t.UserCount=UserSecuritySetCache.UserCount);
+  insert into UserSecuritySetCache (SetId, UserId, SubordinateUserId, Subordinate, GroupId, OrgItemId, UserCount) select t.SetId, t.UserId, t.SubordinateUserId, t.Subordinate, t.GroupId, t.OrgItemId, t.UserCount from UserSecuritySetCacheTemp t left join UserSecuritySetCache c on t.SetId=c.SetId and t.UserId=c.UserId and t.Subordinate=c.Subordinate and t.UserCount=c.UserCount where c.SetId is null;
+
+END
+]]>
+      </text>
+    </procedure>
+
+    <procedure name="UpdateUserSecuritySetCache">
+      <mappings>
+        <hibernate-mapping xmlns="urn:nhibernate-mapping-2.2">
+          <sql-query name="ExecUpdateUserSecuritySetCache" >
+            <query-param name="UpdateData" type="System.String" />
+            <query-param name="AuditUid" type="System.Guid" />
+            exec UpdateUserSecuritySetCache :UpdateData, :AuditUid
+          </sql-query>
+        </hibernate-mapping>
+      </mappings>
+      <text>
+        <![CDATA[
+CREATE PROCEDURE [UpdateUserSecuritySetCache]
+  @UpdateData varchar(max),
+  @AuditUid uniqueidentifier
+AS
+BEGIN
+  SET NOCOUNT ON;
+
+  declare @typemask bigint, @usermask bigint, @groupmask bigint, @organizationitemmask bigint;
+  -- маска которая оставляет только биты типа
+  set @typemask = 9151314442816847872; -- побитовый сдвиг влево 1111111 на 56 разрядов (2 ^ 56) 1111111[0]55
+  -- маска начальников пользователя
+  set @usermask = 72057594037927936; -- побитовый сдвиг влево 1 на 56 разрядов (2 ^ 56) 1[0]55
+  -- маска группы
+  set @groupmask = 144115188075855872; -- побитовый сдвиг влево 10 на 56 разрядов (2 ^ 56) 10[0]55
+  -- маска отдела
+  set @organizationitemmask = 216172782113783808; -- побитовый сдвиг влево 11 на 56 разрядов (2 ^ 56) 11[0]55
+
+  declare @refreshUsers bit;
+  declare @separator int;
+  declare @itemData nvarchar(max);
+  declare @addUsersData nvarchar(max);
+  declare @removeUsersData nvarchar(max);
+  declare @addOrgItemsData nvarchar(max);
+  declare @removeOrgItemsData nvarchar(max);
+  declare @addGroupsData nvarchar(max);
+  declare @removeGroupsData nvarchar(max);
+  declare @itemId bigint;
+  declare @subItemId bigint;
+
+  delete from UUSSCGroupData;
+  delete from UUSSCOrgItemData;
+
+  set @refreshUsers = 0;
+
+  -- парсим строку, записываем все во временную таблицу
+  while patindex('%;%', @UpdateData) > 0
+  begin
+    set @separator = patindex('%;%', @UpdateData);
+    set @itemData = left(@UpdateData, @separator - 1);
+    set @UpdateData = stuff(@UpdateData, 1, @separator, '');
+
+    set @separator = patindex('%:%', @itemData);
+    if (@separator > 0)
+    begin
+      -- Данные для группы или элемента оргструктуры
+      set @itemId = cast(left(@itemData, @separator - 1) as bigint);
+      set @itemData = stuff(@itemData, 1, @separator, '');
+
+      set @separator = patindex('%:%', @itemData);
+      set @addUsersData = left(@itemData, @separator - 1);
+      set @itemData = stuff(@itemData, 1, @separator, '');
+
+      set @separator = patindex('%:%', @itemData);
+      if (@separator > 0)
+      begin
+        -- Данные для группы
+
+        set @removeUsersData = left(@itemData, @separator - 1);
+        set @itemData = stuff(@itemData, 1, @separator, '');
+
+        set @separator = patindex('%:%', @itemData);
+        set @addOrgItemsData = left(@itemData, @separator - 1);
+        set @itemData = stuff(@itemData, 1, @separator, '');
+
+        set @separator = patindex('%:%', @itemData);
+        set @removeOrgItemsData = left(@itemData, @separator - 1);
+        set @itemData = stuff(@itemData, 1, @separator, '');
+
+        set @separator = patindex('%:%', @itemData);
+        set @addGroupsData = left(@itemData, @separator - 1);
+        set @removeGroupsData = stuff(@itemData, 1, @separator, '');
+
+        while patindex('%,%', @addUsersData) > 0
+        begin
+          set @separator = patindex('%,%', @addUsersData);
+          set @subItemId = cast(left(@addUsersData, @separator - 1) as bigint);
+          set @addUsersData = stuff(@addUsersData, 1, @separator, '');
+          insert into UUSSCGroupData(Id, UserId, AddCount) values(@itemId, @subItemId, 1);
+        end
+
+        while patindex('%,%', @removeUsersData) > 0
+        begin
+          set @separator = patindex('%,%', @removeUsersData);
+          set @subItemId = cast(left(@removeUsersData, @separator - 1) as bigint);
+          set @removeUsersData = stuff(@removeUsersData, 1, @separator, '');
+          insert into UUSSCGroupData(Id, UserId, AddCount) values(@itemId, @subItemId, -1);
+        end
+
+        while patindex('%,%', @addOrgItemsData) > 0
+        begin
+          set @separator = patindex('%,%', @addOrgItemsData);
+          set @subItemId = cast(left(@addOrgItemsData, @separator - 1) as bigint);
+          set @addOrgItemsData = stuff(@addOrgItemsData, 1, @separator, '');
+          insert into UUSSCGroupData(Id, OrgItemId, AddCount) values(@itemId, @subItemId, 1);
+        end
+
+        while patindex('%,%', @removeOrgItemsData) > 0
+        begin
+          set @separator = patindex('%,%', @removeOrgItemsData);
+          set @subItemId = cast(left(@removeOrgItemsData, @separator - 1) as bigint);
+          set @removeOrgItemsData = stuff(@removeOrgItemsData, 1, @separator, '');
+          insert into UUSSCGroupData(Id, OrgItemId, AddCount) values(@itemId, @subItemId, -1);
+        end
+
+        while patindex('%,%', @addGroupsData) > 0
+        begin
+          set @separator = patindex('%,%', @addGroupsData);
+          set @subItemId = cast(left(@addGroupsData, @separator - 1) as bigint);
+          set @addGroupsData = stuff(@addGroupsData, 1, @separator, '');
+          insert into UUSSCGroupData(Id, GroupId, AddCount) values(@itemId, @subItemId, 1);
+        end
+
+        while patindex('%,%', @removeGroupsData) > 0
+        begin
+          set @separator = patindex('%,%', @removeGroupsData);
+          set @subItemId = cast(left(@removeGroupsData, @separator - 1) as bigint);
+          set @removeGroupsData = stuff(@removeGroupsData, 1, @separator, '');
+          insert into UUSSCGroupData(Id, GroupId, AddCount) values(@itemId, @subItemId, -1);
+        end
+      end
+      else
+      begin
+        -- Данные для элемента оргструктуры
+
+        set @removeUsersData = stuff(@itemData, 1, @separator, '');
+
+        while patindex('%,%', @addUsersData) > 0
+        begin
+          set @separator = patindex('%,%', @addUsersData);
+          set @subItemId = cast(left(@addUsersData, @separator - 1) as bigint);
+          set @addUsersData = stuff(@addUsersData, 1, @separator, '');
+          insert into UUSSCOrgItemData(Id, UserId, AddCount) values(@itemId, @subItemId, 1);
+        end
+
+        while patindex('%,%', @removeUsersData) > 0
+        begin
+          set @separator = patindex('%,%', @removeUsersData);
+          set @subItemId = cast(left(@removeUsersData, @separator - 1) as bigint);
+          set @removeUsersData = stuff(@removeUsersData, 1, @separator, '');
+          insert into UUSSCOrgItemData(Id, UserId, AddCount) values(@itemId, @subItemId, -1);
+        end
+      end
+    end
+    else
+    begin
+      -- Нужно обновить данные по пользователям
+      set @refreshUsers = 1;
+    end
+  end
+
+  -- удаляем из кэша старые записи
+  delete from UserSecuritySetCacheTemp;
+
+  if (exists(select Id from UUSSCOrgItemData))
+  begin
+    -- рекурсивное добавление данных для содержащих отделов
+    insert into UUSSCOrgItemData(Id, UserId, AddCount)
+    select g.DepartmentId, d.UserId, d.AddCount from UUSSCOrgItemData d
+    inner join (select * from GetDepartments() where Id<>DepartmentId) g on g.Id=d.Id;
+
+
+    -- начальники пользователей
+    insert into UserSecuritySetCacheTemp (SetId, UserId, SubordinateUserId, Subordinate, UserCount)
+    select SetId, UserId, SubordinateUserId, Min(Subordinate), -1 from
+    (
+      select (u.Id | @usermask) as SetId, u.Id as UserId, u.Id as SubordinateUserId, 0 as Subordinate from [User] u
+      union
+      select (s.UserId | @usermask), u.Id, s.UserId, 1 from [user] u 
+      cross apply [GetUserSubordinate](u.Id) s
+    ) s group by SetId, UserId, SubordinateUserId;
+
+
+    -- дублируем текущие записи об элементах орг структуры (без учета подчиненных пользователей)
+    insert into UserSecuritySetCacheTemp (SetId, UserId, SubordinateUserId, Subordinate, GroupId, OrgItemId, UserCount)
+    select SetId, UserId, SubordinateUserId, Subordinate, t.GroupId, OrgItemId, UserCount
+    from UserSecuritySetCache t
+    where t.OrgItemId in (select Id from UUSSCOrgItemData) and t.Subordinate=0;
+
+    -- добавляем тех пользователей, которых нет в таблице
+    insert into UserSecuritySetCacheTemp (SetId, UserId, OrgItemId, Subordinate, UserCount)
+    select (d.Id|@organizationitemmask), d.UserId, d.Id, 0, 0
+    from UUSSCOrgItemData d
+    left join UserSecuritySetCacheTemp t on t.OrgItemId=d.Id and t.UserId=d.UserId
+    where d.UserId is not null and t.OrgItemId is null
+    group by d.Id, d.UserId;
+
+    -- изменяем количество ссылок на пользователей
+    update UserSecuritySetCacheTemp
+    set UserCount=UserCount+d.AddCount
+    from UserSecuritySetCacheTemp t
+    inner join (select Id, UserId, SUM(AddCount) AddCount from UUSSCOrgItemData group by Id, UserId) d on t.OrgItemId=d.Id and t.UserId=d.UserId;
+
+
+    -- переводим изменения по элементам оргстуктуры в изменения по группам
+    insert into UUSSCGroupData(Id, UserId, AddCount)
+    select m.GroupId, d.UserId, d.AddCount from UUSSCOrgItemData d
+    left join UserGroup_OrgItem_Map m on m.OrgItemId=d.Id
+    where m.GroupId is not null;
+  end
+  else if (@refreshUsers = 1)
+  begin
+    -- начальники пользователей
+    insert into UserSecuritySetCacheTemp (SetId, UserId, SubordinateUserId, Subordinate, UserCount)
+    select SetId, UserId, SubordinateUserId, Min(Subordinate), -1 from
+    (
+      select (u.Id | @usermask) as SetId, u.Id as UserId, u.Id as SubordinateUserId, 0 as Subordinate from [User] u
+      union
+      select (s.UserId | @usermask), u.Id, s.UserId, 1 from [user] u 
+      cross apply [GetUserSubordinate](u.Id) s
+    ) s group by SetId, UserId, SubordinateUserId;
+  end
+
+  -- переводим идентификаторы элементов оргструктуры в идентификаторы пользователей
+  insert into UUSSCGroupData(Id, UserId, AddCount)
+  select d.Id, c.UserId, d.AddCount from UUSSCGroupData d
+  inner join UserSecuritySetCache c on c.OrgItemId = d.OrgItemId and c.Subordinate=0;
+
+  -- переводим идентификаторы групп в идентификаторы пользователей
+  insert into UUSSCGroupData(Id, UserId, AddCount)
+  select d.Id, c.UserId, d.AddCount * c.UserCount from UUSSCGroupData d
+  inner join UserSecuritySetCache c on c.GroupId = d.GroupId and c.Subordinate=0;
+
+  -- рекурсивное добавление данных для родительских групп
+  insert into UUSSCGroupData(Id, UserId, AddCount)
+  select g.ChildGroupId, d.UserId, d.AddCount from UUSSCGroupData d
+  inner join (select * from GetGroups() where ChildGroupId<>ParentGroupId) g on g.ParentGroupId=d.Id;
+
+
+  -- дублируем текущие записи о группах (без учета подчиненных пользователей)
+  insert into UserSecuritySetCacheTemp (SetId, UserId, SubordinateUserId, Subordinate, GroupId, OrgItemId, UserCount)
+  select SetId, UserId, SubordinateUserId, Subordinate, t.GroupId, OrgItemId, UserCount
+  from UserSecuritySetCache t
+  where t.GroupId in (select Id from UUSSCGroupData) and t.Subordinate=0;
+
+  -- добавляем тех пользователей, которых нет в таблице
+  insert into UserSecuritySetCacheTemp (SetId, UserId, GroupId, Subordinate, UserCount)
+  select (d.Id|@groupmask), d.UserId, d.Id, 0, 0
+  from UUSSCGroupData d
+  left join UserSecuritySetCacheTemp t on t.GroupId=d.Id and t.UserId=d.UserId
+  where d.UserId is not null and t.GroupId is null
+  group by d.Id, d.UserId;
+
+  -- изменяем количество ссылок на пользователей
+  update UserSecuritySetCacheTemp
+  set UserCount=UserCount+d.AddCount
+  from UserSecuritySetCacheTemp t
+  inner join (select Id, UserId, SUM(AddCount) AddCount from UUSSCGroupData group by Id, UserId) d on t.GroupId=d.Id and t.UserId=d.UserId;
+
+  -- удаляем записи без ссылок
+  delete from UserSecuritySetCacheTemp where UserCount<=0 and SubordinateUserId is null;
+
+  DECLARE @IsSubordinate int;
+  
+  SET @IsSubordinate = 0;
+  -- переносим данные из кэша в боевую таблицу
+  if (exists(select Id from UUSSCOrgItemData))
+  begin
+    insert into UserSecuritySetCacheTemp (SetId, UserId, GroupId, OrgItemId, Subordinate, UserCount)
+    -- добавляем записи подчиненных пользователей для измененных данных (подчинения берем из временной таблицы, в ней актуальные данные)
+    select t.SetId, ussc.UserId, null, t.OrgItemId, 1, -1 from UserSecuritySetCacheTemp t
+    inner join UserSecuritySetCacheTemp ussc on ussc.SubordinateUserId = t.UserId
+    left join UserSecuritySetCacheTemp st on st.SetId = t.SetId and st.UserId = ussc.UserId
+    where st.SetId is null and t.SubordinateUserId is null
+    union
+    -- добавляем записи подчиненных пользователей для данных, которые не меняются (подчинения берем из временной таблицы, в ней актуальные данные)
+    select t.SetId, ussc.UserId, null, t.OrgItemId, 1, -1 from UserSecuritySetCache t
+    inner join UserSecuritySetCacheTemp ussc on ussc.SubordinateUserId = t.UserId
+    left join UserSecuritySetCache st on st.SetId = t.SetId and st.UserId = ussc.UserId and st.Subordinate=0
+    left join UUSSCOrgItemData oid on t.OrgItemId=oid.Id
+    left join UUSSCGroupData gd on t.GroupId=gd.Id
+    where t.Subordinate=0 and st.SetId is null and oid.Id is null and gd.Id is null and t.SubordinateUserId is null;
+
+	  SET @IsSubordinate = 2;
+    
+  end
+  else if (@refreshUsers = 1)
+  begin
+    insert into UserSecuritySetCacheTemp (SetId, UserId, GroupId, OrgItemId, Subordinate, UserCount)
+    -- добавляем записи подчиненных пользователей для измененных данных (подчинения берем из временной таблицы, в ней актуальные данные)
+    select t.SetId, ussc.UserId, null, t.OrgItemId, 1, -1 from UserSecuritySetCacheTemp t
+    inner join UserSecuritySetCacheTemp ussc on ussc.SubordinateUserId = t.UserId
+    left join UserSecuritySetCacheTemp st on st.SetId = t.SetId and st.UserId = ussc.UserId
+    where st.SetId is null and t.SubordinateUserId is null
+    union
+    -- добавляем записи подчиненных пользователей для данных, которые не меняются (подчинения берем из временной таблицы, в ней актуальные данные)
+    select t.SetId, ussc.UserId, null, t.OrgItemId, 1, -1 from UserSecuritySetCache t
+    inner join UserSecuritySetCacheTemp ussc on ussc.SubordinateUserId = t.UserId
+    left join UserSecuritySetCache st on st.SetId = t.SetId and st.UserId = ussc.UserId and st.Subordinate=0
+    left join UUSSCOrgItemData oid on t.OrgItemId=oid.Id
+    left join UUSSCGroupData gd on t.GroupId=gd.Id
+    where t.Subordinate=0 and st.SetId is null and oid.Id is null and gd.Id is null and t.SubordinateUserId is null;
+
+	  SET @IsSubordinate = 1;
+    
+  end
+  else
+  begin
+    -- добавляем записи подчиненных пользователей (подчинения берем из основной таблице, они не меняются в текущей итерации)
+    insert into UserSecuritySetCacheTemp (SetId, UserId, GroupId, OrgItemId, Subordinate, UserCount)
+    select distinct t.SetId, ussc.UserId, null, t.OrgItemId, 1, -1 from UserSecuritySetCacheTemp t
+    inner join UserSecuritySetCache ussc on ussc.SubordinateUserId = t.UserId
+    left join UserSecuritySetCacheTemp st on st.SetId = t.SetId and st.UserId = ussc.UserId
+    where st.SetId is null;
+  end
+  
+  -- удаляем данные по измененным группам
+  update UUSSCGroupData set SetId=Id|@groupmask;
+  
+  -- сохраняем изменения пользователей в группах для аудита
+  INSERT INTO HistoryUserSecuritySetCache(Id, UserId, OrgItemId, GroupId, SetId, [Uid], AddCount)
+  SELECT g.Id, g.UserId, g.OrgItemId, g.GroupId, g.SetId, @AuditUid, AddCount
+  FROM UUSSCGroupData g
+  LEFT JOIN UserSecuritySetCacheTemp c	 
+  ON c.SetId = g.SetId AND c.UserId = g.UserId
+  WHERE (g.UserId IS NOT NULL OR g.OrgItemId IS NOT NULL OR g.GroupId IS NOT NULL) 
+			AND (ISNULL(c.UserCount, g.AddCount) - g.AddCount = 0 or G.UserId IS NULL)
+			
+  IF @IsSubordinate > 0
+  BEGIN
+	-- удаляем из основной таблицы все данные по подчинениям по элементам оргструктуры и группам
+    delete from UserSecuritySetCache where Subordinate=1;
+    
+    -- удаляем начальников пользователей (эти данные есть во временной табилце)
+    delete from UserSecuritySetCache where SetId&@typemask=@usermask;
+    
+    IF @IsSubordinate > 1
+    BEGIN
+		-- удаляем данные по измененным элементам оргструктуры
+		update UUSSCOrgItemData set SetId=Id|@organizationitemmask;
+		delete from UserSecuritySetCache where SetId in (select SetId from UUSSCOrgItemData t);
+    END
+  END
+
+  delete from UserSecuritySetCache where SetId in (select SetId from UUSSCGroupData t);
+  		
+  -- добавляем все, что есть во временной таблице (предварительно все лишние данные были удалены)
+  insert into UserSecuritySetCache (SetId, UserId, SubordinateUserId, Subordinate, GroupId, OrgItemId, UserCount) select SetId, UserId, SubordinateUserId, Subordinate, GroupId, OrgItemId, UserCount from UserSecuritySetCacheTemp t;
+
+  INSERT INTO HistoryUserSecuritySetCache(Uid)
+  VALUES(@AuditUid);
+END
+
+]]>
+      </text>
+    </procedure>
+
+    <procedure name="GetUsersByGlobalPermission">
+      <mappings>
+        <hibernate-mapping xmlns="urn:nhibernate-mapping-2.2">
+          <sql-query name="GetUsersByGlobalPermission" >
+            <query-param name="PermissionId" type="System.Guid" />
+              select u.UserId
+              from GroupPermissions gp
+              cross apply GetGroupUsers(gp.GroupId) u
+              where PermissionId = :PermissionId
+          </sql-query>
+        </hibernate-mapping>
+      </mappings>
+    </procedure>
+    
+    <procedure name="UpsertActiveUserSession">
+      <mappings>
+        <hibernate-mapping xmlns="urn:nhibernate-mapping-2.2">
+          <sql-query name="ExecUpsertActiveUserSession" >
+            <query-param name="TicketUidParam" type="System.Guid" />
+            <query-param name="SessionIdParam" type="System.String" />
+            <query-param name="StatusParam" type="System.Int32" />
+            <query-param name="ExpirationParam" type="System.DateTime" />
+            <query-param name="UserIdParam" type="System.Int64" />
+            <query-param name="RemoteAddressParam" type="System.String" />
+            <query-param name="CreationDateParam" type="System.DateTime" />
+            <query-param name="LastActionDateParam" type="System.DateTime" />
+            <query-param name="LastPingDateParam" type="System.DateTime" />
+            <query-param name="LastActionInfoParam" type="System.String" />
+            <query-param name="CreationIsCurrent" type="System.Boolean" />
+            <query-param name="LastActionIsCurrent" type="System.Boolean" />
+            <query-param name="LastPingIsCurrent" type="System.Boolean" />
+            exec UpsertActiveUserSession :TicketUidParam, :SessionIdParam, :StatusParam, :ExpirationParam, :UserIdParam, :RemoteAddressParam, :CreationDateParam, :LastActionDateParam, :LastPingDateParam, :LastActionInfoParam, :CreationIsCurrent, :LastActionIsCurrent, :LastPingIsCurrent
+          </sql-query>
+        </hibernate-mapping>
+      </mappings>
+      <text>
+        <![CDATA[
+CREATE PROCEDURE UpsertActiveUserSession
+(
+  @TicketUidParam [uniqueidentifier],
+  @SessionIdParam [nvarchar](255),
+  @StatusParam [int], 
+  @ExpirationParam [datetime],
+  @UserIdParam [bigint], 
+  @RemoteAddressParam [nvarchar](255), 
+  @CreationDateParam [datetime], 
+  @LastActionDateParam [datetime], 
+  @LastPingDateParam [datetime], 
+  @LastActionInfoParam [nvarchar](max),
+  @CreationIsCurrent [bit],
+  @LastActionIsCurrent [bit],
+  @LastPingIsCurrent [bit]
+)
+AS
+BEGIN
+
+if @SessionIdParam is not null and @SessionIdParam <> ''
+begin
+    delete from ActiveUserSession
+    where TicketUid <> @TicketUidParam and SessionId = @SessionIdParam
+end
+if @CreationIsCurrent <> 0
+begin
+    set @CreationDateParam = CURRENT_TIMESTAMP
+end
+if @LastActionIsCurrent <> 0
+begin
+    set @LastActionDateParam = CURRENT_TIMESTAMP
+end
+if @LastPingIsCurrent <> 0
+begin
+    set @LastPingDateParam = CURRENT_TIMESTAMP
+end
+
+;with upsertTable as
+(
+  select * from ActiveUserSession
+)
+merge upsertTable target
+using (select @TicketUidParam TicketUid, @SessionIdParam SessionId) source
+on (target.TicketUid = source.TicketUid)
+  when matched then update set
+    target.TicketUid = @TicketUidParam,
+    target.Status = @StatusParam,
+    target.Expiration = @ExpirationParam,
+    target.SessionId = @SessionIdParam,
+    target.UserId = @UserIdParam,
+    target.RemoteAddress = @RemoteAddressParam,
+    target.CreationDate = @CreationDateParam,
+    target.LastActionDate = @LastActionDateParam,
+    target.LastPingDate = @LastPingDateParam,
+    target.LastActionInfo = @LastActionInfoParam
+when not matched then
+  insert (TicketUid, Status, Expiration, SessionId, UserId, RemoteAddress, CreationDate, LastActionDate, LastPingDate, LastActionInfo)
+  values (@TicketUidParam, @StatusParam, @ExpirationParam, @SessionIdParam, @UserIdParam, @RemoteAddressParam, @CreationDateParam, @LastActionDateParam, @LastPingDateParam, @LastActionInfoParam);
+
+END
+]]>
+      </text>
+    </procedure>
+
+  </procedures>
+
+  <scripts>
+
+    <script ExecuteTime="OnComplete" name="UpdateAbsencesDate">
+        <text>
+          UPDATE [Absence]
+          SET [Absence].StartDate = DATEADD(SECOND, 10, [Absence].StartDate), [Absence].EndDate = DATEADD(SECOND, 86390,[Absence].EndDate)
+        </text>
+     </script>
+
+  </scripts>
+
+  <methods>
+  </methods>
+
+  <indexes>
+    <index name="IX_UserSecuritySetCache_SetId_inc_UserId" tableName="UserSecuritySetCache">
+      <text>
+        CREATE NONCLUSTERED INDEX [IX_UserSecuritySetCache_SetId_inc_UserId]
+        ON [UserSecuritySetCache] ([SetId])  INCLUDE  ([UserId])
+      </text>
+    </index>
+    <index name="IX_USSC_SetId_UserId" tableName="UserSecuritySetCache">
+      <text>
+        CREATE CLUSTERED INDEX [IX_USSC_SetId_UserId]
+        ON [UserSecuritySetCache] ([UserId], [SetId])
+      </text>
+    </index>
+    <index name="IX_User_UserName" tableName="User" columns="UserName" />
+    <index name="IX_USP_ForcedChangePassword" tableName="UserSecurityProfile" columns="ForcedChangePassword" />
+    <index name="IX_USP_DisallowLogon" tableName="UserSecurityProfile" columns="DisallowLogon" />
+    <index name="IX_User_N1" tableName="User" columns="Status" />
+    <index name="IX_ORGANIZATIONITEM_N2" tableName="ORGANIZATIONITEM" columns="Id,PARENTITEM" />
+    <index name="IX_Absence_N1" tableName="Absence" columns="Status,User,EndDate" />
+    <index name="IX_Replacement_N1" tableName="Replacement" columns="EndDate" />
+    <index name="IX_Replacement_N2" tableName="Replacement" columns="Status" />
+    <index name="IX_M_PCS_SessionToken" tableName="PublicClientSession" columns="SessionToken" />
+    <index name="IX_M_PCS_AuthToken" tableName="PublicClientSession" columns="AuthToken" />
+  </indexes>
+  
+</root>

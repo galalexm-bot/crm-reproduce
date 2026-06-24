@@ -1,0 +1,15 @@
+﻿@model IEnumerable<EleWise.ELMA.CRM.Models.IEmail>
+@using EleWise.ELMA.Extensions
+
+@{
+    var first = true;
+    foreach (var email in Model.EmptyIfNull())
+    {
+        if (!first)
+        {
+            @:, 
+        }
+        @Html.Partial("DisplayTemplates/Entities/Email", email)
+        first = false;
+    }
+}

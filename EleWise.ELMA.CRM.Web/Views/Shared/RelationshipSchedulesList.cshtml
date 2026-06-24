@@ -1,0 +1,24 @@
+﻿@using EleWise.ELMA
+@using EleWise.ELMA.Web.Mvc.Models.Panels
+@model EleWise.ELMA.CRM.Models.IRelationship
+
+@{
+    var icon = "#calendar.svg";
+    var iconText = ""; //SR.T("Подтвержено");
+}
+
+@if (Model.Schedules.Any())
+{
+    using (Html.CollapsiblePanel(new CollapsiblePanel {Id = "eventSchedules", Expanded = true, Header = SR.T("Общие календари") + " (" + Model.Schedules.Count() + ")", Class = "brickTitle", LoadMode = DynamicLoadMode.Client}))
+    {
+        <table style="width: 100%; margin: 5px 0 15px 15px;">
+            @foreach (var sc in Model.Schedules)
+            {
+                <tr>
+                    <td style="width: 20px; white-space: nowrap">@(Html.Image(icon, iconText))</td>
+                    <td>@Html.Partial("Shared/DisplayTemplates/Entities/Schedule", sc)
+                </tr>
+            }
+        </table>
+    }
+}

@@ -1,0 +1,142 @@
+﻿@using EleWise.ELMA
+@using EleWise.ELMA.CRM.Models
+@using EleWise.ELMA.CRM.Web.Models
+@using EleWise.ELMA.Model.Services
+@model IEnumerable<ISaleProduct>
+
+@{
+    var popupId = "AddProductPopup";
+    var gridId = "SaleProductsGrid_" + Guid.NewGuid();
+    var popupPrefix = "NewProduct";
+    var idAttrName = "saleProductId";
+    var jsonDataId = ViewData.TemplateInfo.GetFullHtmlFieldId("JsonData");
+
+    var vals = Model.Select(item => String.Format("{{\"Id\":{0},\"ProductId\":\"{1}\",\"ProductName\":\"{2}\",\"Quantity\":\"{3}\"}}", item.Id, item.Product.Id, item.Product.Name, item.Quantity)).ToList();
+}  
+
+<input type="hidden" id="@(jsonDataId)" value="[@(String.Join(",", vals))]" />
+
+<div id="@(gridId)_hiddens"></div>
+
+<div id="@(gridId)">
+    <table class="t-grid">
+        <colgroup>
+            <col style="width: 48px" />
+            <col style="width: 400px" />
+            <col style="width: 90px" />
+        </colgroup>
+        <thead class="t-grid-header">
+            <th class="t-header" scope="col"></th>
+            <th class="t-header" scope="col">@SR.T("Продукт")</th>
+            <th class="t-header" scope="col">@SR.T("Количество")</th>
+        </thead>
+        <tbody>
+            @{
+                if (Model.Any())
+                {
+                    foreach (var item in Model)
+                    {
+                        <tr @(idAttrName)="@(item.Id)">
+                            <td>@(MvcHtmlString.Create(Html.ImageLink("#edit.svg", null, "javascript:void(0)", null, new {style = "margin-right: 5px", onclick = "editProduct(event)"}, SR.T("Редактировать"), true).ToString()
+                                                    + Html.ImageLink("#delete.svg", null, "javascript:void(0)", null, new {onclick = "deleteProduct(event)"}, SR.T("Удалить"), true).ToString()))</td>
+                            <td><span class="display-string">@item.Product.Name</span></td>
+                            <td style="text-align: center">@item.Quantity</td>
+                        </tr>
+                    }
+                }
+                else
+                {
+                    <tr class="t-no-data">
+                        <td colspan="999">@SR.T("Нет данных для отображения")</td>
+                    </tr>
+                }
+            }
+        </tbody>
+    </table>   
+</div>
+
+<div style="height: 6px;"></div>
+
+@Html.ImageButton("#add_outline.svg", SR.T("Добавить продукт"), "addProduct();", text: SR.T("Добавить продукт"))
+
+@{ Html.RegisterContent("SaleProductEditorPopup", (d) => Html.PopupWindow(popupId, SR.T("Добавить стадию"), @<text>
+        @Html.Partial("SaleProductEditor/AddSaleProductPopup", new AddSaleProductPopupViewModel()
+        {
+            Id = popupId + "_Form",
+            PopupId = popupId,
+            GridId = gridId,
+            PopupPrefix = popupPrefix,
+            JsonDataId = jsonDataId,
+            IdAttributeName = idAttrName,
+            Entity = InterfaceActivator.Create<ISaleProduct>()
+        }, new ViewDataDictionary { TemplateInfo = new TemplateInfo { HtmlFieldPrefix = popupPrefix } })
+        </text>, width: 500));
+}
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        var data = JSON.parse($('#@(jsonDataId)').val());
+        rebuildHiddenInputs(data);
+    });
+
+    function addProduct() {
+        var popup = $('#@(popupId)');
+
+        popup.find('.t-window-titlebar > .t-window-title').text('@SR.T("Добавление продукта")');
+        popup.find('#@(popupPrefix)_Entity_Id').val(0);
+        popup.find('#@(popupPrefix)_Entity_Product_Id').data('tComboBox').clearSelect();
+        popup.find('#@(popupPrefix)_Entity_Quantity').data('tTextBox').val = 1;
+        popup.find('#@(popupPrefix)_Entity_Quantity').val(1);
+        popup.find('#@(popupPrefix)_Entity_Quantity').prev().text('1');
+        openWindow('@(popupId)');
+    }
+
+    function editProduct(e) {
+        var popup = $('#@(popupId)');
+        popup.find('.t-window-titlebar > .t-window-title').text('@SR.T("Редактирование продукта")');
+        var tr = $(e.target || e.srcElement).parent().parent().parent();
+        var productId = tr.attr('@(idAttrName)');
+        var data = JSON.parse($('#@(jsonDataId)').val());
+        for (var i = 0; i < data.length; i++) {
+            if (data[i].Id == productId) {
+                popup.find('#@(popupPrefix)_Entity_Id').val(productId);
+                popup.find('#@(popupPrefix)_Entity_Product_Id').data('tComboBox').reloadSelect(data[i].ProductId);
+                popup.find('#@(popupPrefix)_Entity_Quantity').data('tTextBox').val = data[i].Quantity;
+                popup.find('#@(popupPrefix)_Entity_Quantity').val(data[i].Quantity);
+                popup.find('#@(popupPrefix)_Entity_Quantity').prev().text(data[i].Quantity);
+                
+                openWindow('@(popupId)');
+                break;
+            }
+        }
+    }
+    
+    function deleteProduct(e) {
+        var tr = $(e.target || e.srcElement).parent().parent().parent();
+        jConfirm('Вы действительно хотите удалить продукт "' + $.trim(tr.find('td:eq(1)').text()) + '"?', '@SR.T("Удаление")', function (a) {
+            if (a) {
+                var productId = tr.attr('@(idAttrName)');
+                var data = JSON.parse($('#@(jsonDataId)').val());
+                data = jQuery.grep(data, function (value) {
+                    return value.Id != productId;
+                });
+                rebuildHiddenInputs(data);
+                $('#@(jsonDataId)').val(JSON.stringify(data));
+                tr.remove();
+                if ($('#@(gridId) > table > tbody > tr').length == 0) {
+                    $('<tr class="t-no-data"><td colspan="999">@SR.T("Нет данных для отображения")</td></tr>').appendTo($('#@(gridId) > table > tbody'));
+                }
+            }
+        });
+        
+    }
+    
+    function rebuildHiddenInputs(data) {
+        $('#@(gridId)_hiddens').children().remove();
+
+        for (var i = 0; i < data.length; i++) {
+            $('#@(gridId)_hiddens').append("<input type='hidden' id='@(ViewData.TemplateInfo.GetFullHtmlFieldId(""))_" + data[i].Id + "_Product_Id' name='@(ViewData.TemplateInfo.GetFullHtmlFieldName(""))[" + i + "].Product.Id' value='" + data[i].ProductId + "' />");
+            $('#@(gridId)_hiddens').append("<input type='hidden' id='@(ViewData.TemplateInfo.GetFullHtmlFieldId(""))_" + data[i].Id + "_Quantity' name='@(ViewData.TemplateInfo.GetFullHtmlFieldName(""))[" + i + "].Quantity' value='" + data[i].Quantity + "' />");
+        }
+    }
+</script>

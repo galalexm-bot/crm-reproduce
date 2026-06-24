@@ -1,0 +1,157 @@
+﻿@model ContactModel
+@using EleWise.ELMA
+@using EleWise.ELMA.CRM.Web
+@using EleWise.ELMA.CRM.Web.Code
+@using EleWise.ELMA.CRM.Web.Controllers
+@using EleWise.ELMA.CRM.Web.Models
+@using EleWise.ELMA.BPM.Web.Common.Extensions
+@using EleWise.ELMA.BPM.Web.Common.Mvc.html
+@using EleWise.ELMA.BPM.Web.Common.Models
+@using EleWise.ELMA.CRM.Models
+@using EleWise.ELMA.CRM
+@using EleWise.ELMA.Extensions
+@using EleWise.ELMA.Security
+@using EleWise.ELMA.Services
+@using EleWise.ELMA.Security.Services
+@using EleWise.ELMA.Web.Content
+
+@{
+    var metadata = EleWise.ELMA.Model.Metadata.MetadataLoader.LoadMetadata(Model.Entity.GetType());
+
+    Html.LabeledHeader(Model.Entity.Name, Model.Entity);
+    var commentTip = string.Format("<b>{0}</b><br>{1}", SR.T("Добавить новый комментарий"), SR.T("Перейти к странице создания комментария"));
+    var editTip = string.Format("<b>{0}</b><br>{1}", SR.T("Изменить атрибуты контакта"), SR.T("Перейти к странице редактирования контакта"));
+    var delTip = string.Format("<b>{0}</b><br>{1}", SR.T("Удалить контакт"), SR.T("Текущий контакт будет удален. Действие требует подтверждения."));
+    var attachTip = string.Format("<b>{0}</b><br>{1}", SR.T("Прикрепить документ"), SR.T("Добавить документы или файлы данному контакту"));
+
+    var service = Locator.GetServiceNotNull<ISecurityService>();
+    var createElementpermission = service.HasPermission(CRMPermissionProvider.CRMContactCreateElementPermission, Model.Entity) || service.HasPermission(CRMPermissionProvider.CRMFullAccessPermission);
+
+    bool canEdit = service.HasPermission(CRMPermissionProvider.EditContactPermission, Model.Entity) || service.HasPermission(CRMPermissionProvider.CRMContactFullAccessPermission, Model.Entity) || service.HasPermission(CRMPermissionProvider.CRMFullAccessPermission);
+    bool canDelete = CRMPermissionProvider.CheckAny(new[] { CRMPermissionProvider.CRMFullAccessPermission, CRMPermissionProvider.CRMDeletePermission });
+
+    var addList = new List<ActionToolbarItem>();
+    var list = new List<EleWise.ELMA.Web.Mvc.ExtensionPoints.ActionItems.IActionItem>();
+    list.Add(new ActionToolbarItem("toolbar-action-CreateTask") { Text = SR.T("Задачу"), IconUrl = "#create.svg", Url = Html.Url().Action("Create", "Task", new { area = CRMAreaRegistration.AREA_NAME, id = Model.Entity.Id, typeUid = metadata.Uid }), ToolTip = SR.T("Создать задачу по данному физическому лицу") });
+    var createRelationships = createElementpermission;// Locator.GetServiceNotNull<ISecurityService>().HasPermission(RelationshipModel<IRelationship>.RelationshipEditPermission, Model.Entity);
+    if (createRelationships)
+    {
+        list.AddRange(EleWise.ELMA.CRM.Web.UIExtensions.ToolbarCreateRelationshipsToActionsList(Html, new { ContactId = Model.Entity.Id }, true));
+    }
+
+    if (canEdit)
+    {
+        list.Add(new ActionToolbarItem("toolbar-click-AttachDocument") { Text = SR.T("Документ"), IconUrl = "#add.svg", Click = Html.OpenPopup("AddAttachmentPopup").ToString(), ToolTip = attachTip });
+    }
+    addList.Add(new ActionToolbarSeparator());
+    if (canDelete)
+    {
+        addList.Add(new ActionToolbarItem("Contact_delete_btn") { Text = SR.Delete, ToolTip = delTip, IconUrl = Url.Image("#basket.svg"), Click = "ContactDelete();" });
+    }
+    addList.Add(new ActionToolbarSeparator("Contact_delete_separator"));
+    addList.Add(new ActionToolbarItem("Contact_add_comment_btn") { Text = SR.T("Добавить комментарий"), IconUrl = "#comment_outline.svg", Click = Html.AddComment("AddCommentPopup"), ToolTip = commentTip });
+}
+@if (Model.LockEditPermission)
+{
+    <div class="note" style="margin-bottom: 10px;">
+        <div style="padding: 10px;">
+            @Html.Raw(SR.T("Производится перерасчет разрешений. Изменение заблокировано. Пожалуйста попробуйте позже."))
+        </div>
+    </div>
+}
+
+@(Html.Toolbar()
+            .AdditionalButton(a =>
+            {
+                addList.ForEach(b => a.Add(b));
+            })
+            .Group(ToolbarGroupUids.FrequentlyUsedButtonsGroupUid)
+                .If(canEdit, b => b
+                    .ToolbarButton(new ActionToolbarItem("Contractor_edit_btn")
+                    {
+                        Text = SR.Edit,
+                        ToolTip = editTip,
+                        IconUrl = "#edit.svg",
+                        Url = Url.Action<ContactController>(c => c.Edit(Model.Entity.Id))
+                    }))
+            .Group("toolbar-group-2")
+                .If(list.Any(), b => b
+                    .ToolbarButton(new ActionToolbarItem("toolbar-button-Actions")
+                    {
+                        Text = SR.T("Добавить"),
+                        IconUrl = "#poruch.svg",
+                        Items = new ActionItemList(list)
+                    }))
+            .Group("toolbar-group-3")
+            .Group("makecalltoolbar"))
+
+@Html.ExtensionZone("StartRouteExtensionZone")
+
+@(Html.AddCommentPopup(new CommentWithAttachments
+{
+    ShowAttachment = false,
+    PopupId = "AddCommentPopup",
+    ObjectId = Model.Entity.Id,
+    ObjectTypeUid = metadata.Uid,
+    AddCommentActionUid = ContactActions.AddCommentGuid,
+    RedirectUrl = Url.Action("Details", "Contact", new { area = CRMAreaRegistration.AREA_NAME, id = Model.Entity.Id, tabIndex = 1 })
+    /*var tab = $('div.t-state-active', $('#ContactViewInfo')).attr("id").split("").reverse()[0] - 1;*/
+}))
+
+@(Html.Partial("Attachment/Create", new CrmAttachment
+{
+    PopupId = "AddAttachmentPopup",
+    EntityId = Model.Entity.Id,
+    EntityTypeUid = metadata.Uid,
+    RedirectUrl = Url.Action("Details", "Contact", new { area = CRMAreaRegistration.AREA_NAME, id = Model.Entity.Id, tabIndex = 4 })
+}))
+
+@if (true/*Model.Entity.IsAvailableDelete*/)
+{
+    using (Html.ELMAForm("Delete", "Contact", new { area = CRMAreaRegistration.AREA_NAME, id = Model.Entity.Id }, FormMethod.Get, new { id = "ContactDeleteForm" }))
+    {
+    }
+	
+    <script type="text/javascript">
+        function ContactDelete() {
+            jConfirm('@SR.T("Вы действительно хотите удалить контакт?")', '@SR.T("Подтверждение удаления")', function (r) {
+                if (r) {
+                    $('#ContactDeleteForm').submit();
+                }
+            });
+        }
+    </script>
+}
+
+@using (Html.LabeledContainer(SR.T("Контакт")))
+{
+if (DirectoryMapVirtualPathProvider.AnyConfigFile("~/Modules/EleWise.ELMA.CRM.Web/Views/Contact/TasksTab.cshtml", "~/Modules/EleWise.ELMA.CRM.Web/Views/Contact/TasksTab.cshtml"))
+{
+    @Html.Partial("TabView", Model)
+}
+else
+{
+    using (Html.ElmaDynamicForm("ContactDynamicForm", Model.Entity.Uid))
+    {
+        var formViewItem = Model.View;
+        @Html.DynamicFormSettings(Model.DynamicFormSettings)
+        if (formViewItem != null)
+        {
+            if (metadata != null)
+            {
+                @Html.Hidden("Entity.TypeUid", metadata.Uid)
+            }
+            if (Model.Entity.Id != null)
+            {
+                @Html.HiddenFor(m => m.Entity.Id)
+            }
+            @Html.FormViewItem(formViewItem, m => m.Entity, new ActionRoute("AsyncViewItem", "Contact", new {area = CRMAreaRegistration.AREA_NAME, id = Model.Entity.Id, viewType = Model.ViewType, formUid = Model.FormUid }), Model.ViewType,
+                Model.ItemType,
+                EntityObjectViewItemProvider.UID, Model.ViewItemId,
+                Model.DynamicFormSettings != null ? Model.DynamicFormSettings.DynamicFormsProviderUid : Guid.Empty,
+                Model.DynamicFormSettings != null ? Model.DynamicFormSettings.DynamicFormsProviderData : null,
+                Model.FormId)
+        }
+    }
+}
+}

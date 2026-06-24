@@ -1,0 +1,31 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <AssemblyName>EleWise.ELMA.FileProvider.Distributed</AssemblyName>
+    <GenerateAssemblyInfo>False</GenerateAssemblyInfo>
+    <TargetFramework>net48</TargetFramework>
+  </PropertyGroup>
+  <PropertyGroup>
+    <LangVersion>Preview</LangVersion>
+    <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
+  </PropertyGroup>
+  <PropertyGroup>
+    <RootNamespace />
+  </PropertyGroup>
+  <ItemGroup>
+    <None Remove="EleWise.ELMA.FileProvider.Dist.xml" />
+    <EmbeddedResource Include="EleWise.ELMA.FileProvider.Dist.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="EleWise.ELMA.SDK">
+      <HintPath>..\EleWise.ELMA.SDK.dll</HintPath>
+    </Reference>
+    <Reference Include="Autofac" />
+    <Reference Include="System.ServiceModel" />
+    <Reference Include="System.Web" />
+    <Reference Include="System.Core" />
+    <Reference Include="NHibernate" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Configuration" />
+    <Reference Include="Newtonsoft.Json" />
+  </ItemGroup>
+</Project>

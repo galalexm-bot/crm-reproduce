@@ -1,0 +1,8 @@
+﻿@model GridData<EleWise.ELMA.CRM.Models.ISale>
+
+@(Html.DynamicGrid("SalesOfContractorGrid1", Model).Columns(c =>
+{
+    c.For(m => m.Name).Link(m => Url.Action("Details", "Sale", new { id = m.Id }));
+}).Action("SalesOfContractor").EnableCustomize(true)
+)
+

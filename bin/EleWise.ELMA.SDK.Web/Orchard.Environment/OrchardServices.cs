@@ -1,0 +1,37 @@
+using System;
+using Orchard.ContentManagement;
+using Orchard.Data;
+using Orchard.DisplayManagement;
+using Orchard.Security;
+using Orchard.UI.Notify;
+
+namespace Orchard.Environment;
+
+public class OrchardServices : IOrchardServices, IDependency
+{
+	private readonly Lazy<IShapeFactory> _shapeFactory;
+
+	private readonly IWorkContextAccessor _workContextAccessor;
+
+	public IContentManager ContentManager { get; private set; }
+
+	public ITransactionManager TransactionManager { get; private set; }
+
+	public IAuthorizer Authorizer { get; private set; }
+
+	public INotifier Notifier { get; private set; }
+
+	public dynamic New => _shapeFactory.Value;
+
+	public WorkContext WorkContext => _workContextAccessor.GetContext();
+
+	public OrchardServices(IContentManager contentManager, ITransactionManager transactionManager, IAuthorizer authorizer, INotifier notifier, Lazy<IShapeFactory> shapeFactory, IWorkContextAccessor workContextAccessor)
+	{
+		_shapeFactory = shapeFactory;
+		_workContextAccessor = workContextAccessor;
+		ContentManager = contentManager;
+		TransactionManager = transactionManager;
+		Authorizer = authorizer;
+		Notifier = notifier;
+	}
+}

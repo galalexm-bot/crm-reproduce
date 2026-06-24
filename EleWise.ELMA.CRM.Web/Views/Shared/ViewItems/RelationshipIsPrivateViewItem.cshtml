@@ -1,0 +1,16 @@
+﻿@inherits ViewItemControl<RelationshipIsPrivateViewItem, RelationshipModel, IRelationship>
+@using EleWise.ELMA.CRM.Models
+@using EleWise.ELMA.CRM.ViewItems
+@using EleWise.ELMA.CRM.Web.Models
+@using EleWise.ELMA.Model.Views
+@using EleWise.ELMA.Web.Mvc.Views.ViewItem
+@using ViewType = EleWise.ELMA.Model.Views.ViewType
+
+@{
+    var model = OriginalModel as RelationshipModel;
+}
+@if (model!=null && model.IsPrivateActivate)
+{
+    @Html.EditableProperty(m => m.IsPrivate)
+ 
+}

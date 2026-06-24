@@ -1,0 +1,12 @@
+﻿@model CrmSettings
+@using EleWise.ELMA.CRM.Components
+
+@Html.TableFormStart(a => a.Attributes(x => x.@class = "settings_table").ViewType(EleWise.ELMA.Model.Views.ViewType.Display))
+    @Html.Property(m => m.Tasks_AllowSelectEntity)
+    @Html.Property(m => m.TasksGrid_ShowCompleted)
+    @Html.Property(m => m.LeadSearchDublicate)
+    @Html.Property(m => m.DefaultSaleCurrency)
+    @Html.Property(m => m.DefaultSaleType)
+    @Html.Property(m => m.DefaultLeadStatus)
+    @Html.Property(m => m.RelationshipEditPermissionCheck)
+@Html.TableFormEnd()

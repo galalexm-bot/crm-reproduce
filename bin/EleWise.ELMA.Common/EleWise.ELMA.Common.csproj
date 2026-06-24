@@ -1,0 +1,75 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <AssemblyName>EleWise.ELMA.Common</AssemblyName>
+    <GenerateAssemblyInfo>False</GenerateAssemblyInfo>
+    <TargetFramework>net48</TargetFramework>
+  </PropertyGroup>
+  <PropertyGroup>
+    <LangVersion>Preview</LangVersion>
+    <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
+  </PropertyGroup>
+  <PropertyGroup>
+    <RootNamespace />
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Remove="EleWise.ELMA.Common.Models.Cat.cs" />
+    <Compile Remove="EleWise.ELMA.Common.Models.Fil.cs" />
+    <Compile Remove="EleWise.ELMA.Common.Models.Pro.cs" />
+    <Compile Remove="EleWise.ELMA.Common.Resources..cs" />
+    <Compile Remove="EleWise.ELMA.Common.Resources..cs" />
+    <None Remove="EleWise.ELMA.Common.Models.Bud.xml" />
+    <None Remove="EleWise.ELMA.Common.Db.CommonD.xml" />
+    <None Remove="EleWise.ELMA.Common.Models.Bud.xml" />
+    <None Remove="EleWise.ELMA.Common.Models.Bud.xml" />
+    <None Remove="EleWise.ELMA.Common.Models.Bud.xml" />
+    <None Remove="EleWise.ELMA.Common.Models.Bud.xml" />
+    <None Remove="EleWise.ELMA.Common.Models.Bud.xml" />
+    <EmbeddedResource Include="EleWise.ELMA.Common.Models.Cat.cs" />
+    <EmbeddedResource Include="EleWise.ELMA.Common.Models.Fil.cs" />
+    <EmbeddedResource Include="EleWise.ELMA.Common.Models.Pro.cs" />
+    <EmbeddedResource Include="EleWise.ELMA.Common.Resources..cs" />
+    <EmbeddedResource Include="EleWise.ELMA.Common.Resources..cs" />
+    <EmbeddedResource Include="EleWise.ELMA.Common.Models.Bud.xml" />
+    <EmbeddedResource Include="EleWise.ELMA.Common.Db.CommonD.xml" />
+    <EmbeddedResource Include="EleWise.ELMA.Common.Models.Bud.xml" />
+    <EmbeddedResource Include="EleWise.ELMA.Common.Models.Bud.xml" />
+    <EmbeddedResource Include="EleWise.ELMA.Common.Models.Bud.xml" />
+    <EmbeddedResource Include="EleWise.ELMA.Common.Models.Bud.xml" />
+    <EmbeddedResource Include="EleWise.ELMA.Common.Models.Bud.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="Aspose.Cells">
+      <HintPath>..\..\..\bin\Aspose.Cells.dll</HintPath>
+    </Reference>
+    <Reference Include="AutoMapper">
+      <HintPath>..\..\..\bin\AutoMapper.dll</HintPath>
+    </Reference>
+    <Reference Include="EleWise.ELMA.SDK">
+      <HintPath>..\EleWise.ELMA.SDK.dll</HintPath>
+    </Reference>
+    <Reference Include="EleWise.ELMA.Security">
+      <HintPath>..\EleWise.ELMA.Security.dll</HintPath>
+    </Reference>
+    <Reference Include="Iesi.Collections">
+      <HintPath>..\..\..\bin\Iesi.Collections.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json">
+      <HintPath>..\..\..\bin\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="NHibernate">
+      <HintPath>..\..\..\bin\NHibernate.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Core" />
+    <Reference Include="EleWise.TemplateGenerator.Merged">
+      <HintPath>..\EleWise.TemplateGenerator.Merged.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Data" />
+    <Reference Include="System.Threading.Tasks.Extensions" />
+    <Reference Include="System.Xml" />
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.Configuration" />
+    <Reference Include="EleWise.ELMA.SDK.Web">
+      <HintPath>..\EleWise.ELMA.SDK.Web.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+</Project>

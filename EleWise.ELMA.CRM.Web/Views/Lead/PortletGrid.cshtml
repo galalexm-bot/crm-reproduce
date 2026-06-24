@@ -1,0 +1,18 @@
+﻿@using System.ComponentModel
+@using EleWise.ELMA.BPM.Web.Common.Extensions
+@using EleWise.ELMA.CRM.Models
+@using EleWise.ELMA.BPM.Web.Common.Models
+@model GridDataFilter<ILead>
+
+@(Html.FilterDynamicGrid(Model)
+    .Columns(c =>
+    {
+        c.For(m => m.Name).Link(m => Url.Action("Details", "Lead", new { id = m.Id }));
+        c.For(m => m.Status);
+        if (Model.DataFilter == null || !((ILeadFilter)Model.DataFilter.Filter).ShowOnlyMy)
+        {
+            c.For(m => m.Responsible);
+        }
+        c.For(m => m.NextRelationship);
+})
+    .Action("PortletGrid").Customizable(false).DefaultSortExpression("CreationDate").DefaultSortDirection(ListSortDirection.Descending))

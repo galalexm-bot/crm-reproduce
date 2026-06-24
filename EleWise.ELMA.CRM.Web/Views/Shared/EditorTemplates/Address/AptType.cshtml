@@ -1,0 +1,41 @@
+﻿@model AppartmentType?
+@using EleWise.ELMA.CRM.Models
+@using EleWise.ELMA.Model.Common
+@using EleWise.ELMA.Web.Mvc.Models.ActionItems.Menu
+@using EleWise.ELMA.Web.Mvc.Enums
+
+@{
+    var uid = "_" + Guid.NewGuid().ToStringId();
+    var switchButtonId = "AppartmentSwitchButton" + uid;
+}
+
+@(Html.Button()
+    .AsSwitcher()
+    .AsLink()
+    .NoBorder()
+    .Uid(switchButtonId)
+    .CustomAttributes(new Dictionary<string, object> { { "id", switchButtonId } })
+    .Buttons(b =>
+    {
+        foreach (var value in Enum.GetValues(typeof(AppartmentType)).Cast<AppartmentType>())
+        {
+            b.Button(btn =>
+            {
+                btn.Uid(value.ToString());
+                btn.Text(ModelHelper.GetEnumDisplayName(value));
+                if (Model != null && value == Model)
+                {
+                    btn.Checked(true);
+                }
+            });
+        }
+    })
+    .Click($"changeAppartmentType{uid}(this)"))
+
+<script>
+    function changeAppartmentType@(uid)(sender) {
+        var itemId = sender.getSelectedMenuItemId('#@switchButtonId');
+        $('[name="@Html.GetFullHtmlFieldName("")"]').val(itemId);
+        addrGenerateAddress('#@switchButtonId');
+    }
+</script>

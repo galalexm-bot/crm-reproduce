@@ -1,0 +1,39 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <AssemblyName>EleWise.ELMA.Workflow.UIBuilder</AssemblyName>
+    <GenerateAssemblyInfo>False</GenerateAssemblyInfo>
+    <TargetFramework>net48</TargetFramework>
+  </PropertyGroup>
+  <PropertyGroup>
+    <LangVersion>Preview</LangVersion>
+    <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
+  </PropertyGroup>
+  <PropertyGroup>
+    <RootNamespace />
+  </PropertyGroup>
+  <ItemGroup>
+    <None Remove="EleWise.ELMA.Workflow.UIBuilde.xml" />
+    <EmbeddedResource Include="EleWise.ELMA.Workflow.UIBuilde.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="EleWise.ELMA.SDK">
+      <HintPath>..\EleWise.ELMA.SDK.dll</HintPath>
+    </Reference>
+    <Reference Include="EleWise.ELMA.Workflow">
+      <HintPath>..\EleWise.ELMA.Workflow.dll</HintPath>
+    </Reference>
+    <Reference Include="EleWise.ELMA.SDK.UIBuilder">
+      <HintPath>..\EleWise.ELMA.SDK.UIBuilder.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Core" />
+    <Reference Include="NHibernate" />
+    <Reference Include="Microsoft.CodeAnalysis" />
+    <Reference Include="Iesi.Collections" />
+    <Reference Include="EleWise.ELMA.SDK.UIBuilder.Analyzers">
+      <HintPath>..\EleWise.ELMA.SDK.UIBuilder.Analyzers.dll</HintPath>
+    </Reference>
+    <Reference Include="EleWise.ELMA.SDK.Analyzers">
+      <HintPath>..\EleWise.ELMA.SDK.Analyzers.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+</Project>

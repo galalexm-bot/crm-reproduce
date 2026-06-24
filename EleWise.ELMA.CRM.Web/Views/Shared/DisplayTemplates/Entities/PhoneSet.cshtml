@@ -1,0 +1,17 @@
+﻿@model IEnumerable<EleWise.ELMA.CRM.Models.IPhone>
+@using EleWise.ELMA.Extensions
+
+<div>
+@{
+    var first = true;
+    foreach (var phone in Model.EmptyIfNull())
+    {
+        if (!first)
+        {
+            <span class="base-element-margin-right">,</span> 
+        }
+        @Html.Partial("DisplayTemplates/Entities/Phone", phone)
+        first = false;
+    }
+}
+</div>

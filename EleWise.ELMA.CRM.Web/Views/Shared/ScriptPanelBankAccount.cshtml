@@ -1,0 +1,72 @@
+﻿@using EleWise.ELMA
+@using EleWise.ELMA.CRM.Models.BillingInformation
+@using EleWise.ELMA.Model.Services
+@using EleWise.ELMA.Model.Views
+@inherits EleWise.ELMA.Web.Mvc.Views.ViewItem.ViewItemControl<PanelViewItem, object, IBankAccount>
+@{
+    var unique = Guid.NewGuid().ToString("N");
+    var bankDet = InterfaceActivator.PropertyUid<IBankAccount>(m => m.BankDetails);
+    var number = InterfaceActivator.PropertyUid<IBankAccount>(m => m.AccountNumber);
+    var name = InterfaceActivator.PropertyUid<IBankAccount>(m => m.Name);
+    var list = new List<Guid> { bankDet, number, name };
+
+    var form = ViewItem.FormViewItem;
+    var addScript = false;
+    foreach (var property in form.GetAllProperties())
+    {
+        list.Remove(property.PropertyUid);
+        if (list.Count == 0)
+        {
+            addScript = true;
+            break;
+        }
+    }
+
+    if (addScript)
+    {
+        <script>
+            $(document).ready(function () {
+                $('#@(Html.IDFor(m => m.BankDetails))_Id').bind("valueChange", function () {
+                    BankDetailsAndAccNumberOnChange@(unique)('@(Html.IDFor(m => m.BankDetails))', '@(Html.IDFor(m => m.AccountNumber))', '@(Html.IDFor(m => m.Name))', '@(Html.IDFor(m => m.Currency))');
+                });
+
+                $('#@(Html.IDFor(m => m.AccountNumber))').change(function () {
+                    BankDetailsAndAccNumberOnChange@(unique)('@(Html.IDFor(m => m.BankDetails))', '@(Html.IDFor(m => m.AccountNumber))', '@(Html.IDFor(m => m.Name))', '@(Html.IDFor(m => m.Currency))');
+                });
+
+                $('#@(Html.IDFor(m => m.Currency))_Id').bind("valueChange", function () {
+                    BankDetailsAndAccNumberOnChange@(unique)('@(Html.IDFor(m => m.BankDetails))', '@(Html.IDFor(m => m.AccountNumber))', '@(Html.IDFor(m => m.Name))', '@(Html.IDFor(m => m.Currency))');
+                });
+
+                $('#@(Html.IDFor(m => m.Name))').attr("placeholder", '@SR.T("Наименование заполняется автоматически")');
+            });
+
+            function BankDetailsAndAccNumberOnChange@(unique)(bankDet, number, name, cur) {
+                var bankDetCombo = $('#' + bankDet + '_Id').data('tComboBox');
+                if (bankDetCombo != undefined) {
+                    var bankDetVal = bankDetCombo.text();
+                    var accVal = $('#' + number).val();
+                    var nameInput = $('#' + name);
+                    var currency = $('#' + cur + '_Id').data('tComboBox');
+                    if (currency != undefined) {
+                        var currencyVal = currency.text();
+
+                        if (bankDetVal == '' && accVal == '') {
+                            nameInput.val('');
+                        } else if (currencyVal != '') {
+                            nameInput.val(jQuery.format('@SR.T("№ {0} в {1}, {2}")')(accVal, bankDetVal, currencyVal));
+                        } else {
+                            nameInput.val(jQuery.format('@SR.T("№ {0} в {1}")')(accVal, bankDetVal));
+                        }
+                    } else {
+                        if (bankDetVal == '' && accVal == '') {
+                            nameInput.val('');
+                        } else {
+                            nameInput.val(jQuery.format('@SR.T("№ {0} в {1}")')(accVal, bankDetVal));
+                        }
+                    }
+                }
+            }
+        </script>
+    }
+}

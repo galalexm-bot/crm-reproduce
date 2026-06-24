@@ -1,0 +1,286 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<root uid="{57BE382D-A06C-4EF5-9496-AF2EE27756A2}" provider="SqlServer">
+
+    <methods>
+        <method ExecuteTime="OnComplete" name="AddTablePartsUid" TransformationInVersion="3.15.15"/>
+    </methods>
+
+  <scripts>
+    <script ExecuteTime="OnComplete" AlwaysExecute="false" name="DeleteMetadataByType" TransformationInVersion="3.15.7">
+      <text>
+        <![CDATA[
+          begin
+            create table #existidToDelteTable(&&metadataId&& bigint, &&metadataHeaderId&& bigint)
+            insert into #existidToDelteTable(&&metadataId&&, &&metadataHeaderId&&) select &&Id&&, &&Header&& from &&MetadataItem&& where cast(&&Metadata&& as varchar(max)) like 'EleWise.ELMA.Model.Metadata.TablePartMetadata%'
+            update &&MetadataItem&& set &&Header&& = null
+            where &&Id&& in (select &&metadataId&& from &&#existidToDelteTable&&)
+  
+            delete from &&MetadataItemHeader&& 
+            where &&Id&& in (select &&metadataHeaderId&& from &&#existidToDelteTable&&)
+    
+            delete from &&MetadataItem&&
+            where &&Id&& in (select &&metadataId&& from &&#existidToDelteTable&&)
+            drop table #existidToDelteTable
+          end;
+        ]]>
+      </text>
+    </script>
+  </scripts>
+  <procedures>
+    
+    <procedure name="CreateInstancePermission">
+      <mappings>
+        <hibernate-mapping xmlns="urn:nhibernate-mapping-2.2">
+          <sql-query name="CreateInstancePermission" >
+            <query-param name="tableName" type="System.String" />
+            <query-param name="tablePermissionName" type="System.String" />
+            <query-param name="sequenceName" type="System.String" />
+            <query-param name="editProfilePermission" type="System.Guid" />
+            <query-param name="viewProfilePermission" type="System.Guid" />
+            <query-param name="editInstPerm" type="System.Guid" />
+            <query-param name="viewInstPerm" type="System.Guid" />
+            <query-param name="fullPermission" type="System.Guid" />
+            <query-param name="fullInstPermission" type="System.Guid" />
+            <query-param name="catalogUid" type="System.Guid" />
+            <query-param name="groupRoleType" type="System.Guid" />
+            <query-param name="recalculateAll" type="System.Boolean" />
+            exec CreateInstancePermission @tableName = :tableName, @tablePermissionName = :tablePermissionName, @sequenceName = :sequenceName, @editProfilePermission = :editProfilePermission,
+            @viewProfilePermission = :viewProfilePermission, @fullPermission = :fullPermission, @fullInstPermission = :fullInstPermission, @editInstPerm = :editInstPerm, @viewInstPerm = :viewInstPerm, @catalogUid = :catalogUid, @groupRoleType = :groupRoleType, @recalculateAll = :recalculateAll
+          </sql-query>
+        </hibernate-mapping>
+      </mappings>
+      <text>
+        <![CDATA[
+create Procedure [CreateInstancePermission](@tableName varchar(500), @tablePermissionName varchar(500), @sequenceName varchar(500), @editProfilePermission uniqueidentifier, 
+@viewProfilePermission uniqueidentifier, @fullPermission uniqueidentifier, @fullInstPermission uniqueidentifier, @editInstPerm uniqueidentifier, @viewInstPerm uniqueidentifier, @catalogUid uniqueidentifier, @groupRoleType uniqueidentifier, @recalculateAll bit) 
+as
+begin
+DECLARE
+@existIdSql nvarchar(max),
+@insertSQl nvarchar(max),
+@selectFromTableSql nvarchar(max), 
+@selectFromFullAccessTableSql nvarchar(max), 
+@permissionParamDefinition nvarchar(max),
+@tableParamDefinition nvarchar(max),
+@entityRecordId bigint,
+
+@PermissionId uniqueidentifier,
+@UserSecuritySetCacheId bigint,
+@PermissionRole uniqueidentifier,
+@permissionRecordUser bigint, 
+@OrganizationItemPosition bigint,
+@permissionRecordGroup bigint, 
+@OrganizationItem bigint
+create table #existIdTable(catalogId bigint)
+begin
+
+set @tableParamDefinition = N'';
+if (@recalculateAll = 1)
+  set @existIdSql = 'delete from ' + @tablePermissionName + ' where &&Parent&& in (select &&Id&& from ' + @tableName + ')';
+else
+begin
+  set @existIdSql = N'insert into #existIdTable(catalogId) select &&Parent&& from ' + @tablePermissionName
+end;  
+EXECUTE sp_executesql @existIdSql, @tableParamDefinition
+
+declare @insCounter bigint, @insStartId bigint, @insEndId bigint, @insFullAccessCounter bigint;
+set @selectFromTableSql = (N'select @insCounterOut = Count(1) from ' + @tableName)
+SET @permissionParamDefinition = N' @insCounterOut bigint OUTPUT'; 
+EXECUTE sp_executesql @selectFromTableSql, @permissionParamDefinition, @insCounterOut = @insCounter OUTPUT;
+
+--fullAccessPermission
+declare tableFullAccessCursor CURSOR for
+select ussc.&&SetId&&, ussc.&&GroupId &&
+from &&UserSecuritySetCache&& ussc
+inner join &&GroupPermissions&& gp on ussc.&&GroupId&& = gp.&&GroupId&&
+where &&PermissionId&& = @fullPermission
+group by ussc.&&SetId&&, ussc.&&GroupId&&
+open tableFullAccessCursor
+fetch next from tableFullAccessCursor
+into @UserSecuritySetCacheId, @permissionRecordGroup
+  WHILE @@FETCH_STATUS = 0
+  begin
+    EXECUTE [G_GenId] @tablePermissionName, @insCounter, @insStartId out, @insEndId out;
+    set @insertSQl = 'insert into ' + @tablePermissionName + ' (&&UserSecuritySetCacheId&&, &&Id&&, &&Parent&&, &&PermissionId&&, &&Group&&, &&PermissionRole&&, &&Uid&&) 
+      select @ussc, @insStartIdSql + ROW_NUMBER() over (order by (SELECT 1)) - 1, &&Id&&, @permissionId, @groupId, @groupRoleTypeSql, NEWID() from ' + @tableName + '
+       where not Id in (select &&catalogId&& from #existIdTable)';
+    set @permissionParamDefinition = N'@insStartIdSql bigint, @ussc bigint, @permissionId uniqueidentifier, @groupId bigint, @groupRoleTypeSql uniqueidentifier';
+    execute sp_executesql @insertSQl, @permissionParamDefinition, @ussc = @UserSecuritySetCacheId, @insStartIdSql = @insStartId,  @permissionId = @fullInstPermission, @groupId = @permissionRecordGroup, @groupRoleTypeSql = @groupRoleType
+    
+    fetch next from tableFullAccessCursor
+    into @UserSecuritySetCacheId, @permissionRecordGroup
+  end;  
+CLOSE tableFullAccessCursor
+DEALLOCATE tableFullAccessCursor
+
+--edit/view permission
+declare tableCursor CURSOR for
+select case ca.PermissionId
+          when @editProfilePermission then @editInstPerm 
+          when @viewProfilePermission then @viewInstPerm
+        end, &&UserSecuritySetCacheId&&, &&PermissionRole&&, &&User&&, &&OrganizationItemPosition&&, &&Group&&, &&OrganizationItem&&
+  from &&CatalogAccess&& ca
+  join &&CatalogProfile&& cp on cp.&&Id&& = ca.&&CatalogProfile&&
+  where cp.&&CatalogType&& = @catalogUid and &&PermissionId&& in (@editProfilePermission, @viewProfilePermission)
+OPEN tableCursor
+FETCH NEXT FROM tableCursor
+INTO @PermissionId, @UserSecuritySetCacheId, @PermissionRole, @permissionRecordUser, @OrganizationItemPosition, @permissionRecordGroup, @OrganizationItem 
+
+  WHILE @@FETCH_STATUS = 0
+  begin
+  
+    EXECUTE [G_GenId] @tablePermissionName, @insCounter, @insStartId out, @insEndId out;
+    set @insertSQl = 'insert into ' + @tablePermissionName + '(&&Id&&, &&Parent&&, &&PermissionId&&, &&UserSecuritySetCacheId&&, &&PermissionRole&&, &&User&&, &&OrganizationItemPosition&&, &&Group&&, &&OrganizationItem&&, &&Uid&&) 
+      select @insStartIdSql + ROW_NUMBER() over (order by (SELECT 1)) - 1, &&Id&&, @1, @2, @3, @4, @5, @6, @7, NEWID()
+      from ' + @tableName + ' where not &&Id&& in (select &&catalogId&& from #existIdTable)';
+    set @permissionParamDefinition = N'@insStartIdSql bigint, @1 uniqueidentifier, @2 bigint, @3 uniqueidentifier, @4 bigint, @5 bigint, @6 bigint, @7 bigint'
+    execute sp_executesql @insertSQl, @permissionParamDefinition, @insStartIdSql = @insStartId,  @1 = @PermissionId, @2 = @UserSecuritySetCacheId, @3 = @PermissionRole,
+      @4 = @permissionRecordUser, @5 = @OrganizationItemPosition, @6 = @permissionRecordGroup, @7 = @OrganizationItem;
+
+    EXECUTE [G_GenId] @tablePermissionName, @insCounter, @insStartId out, @insEndId out;
+      BEGIN
+        EXECUTE [G_GenId] @tablePermissionName, @insCounter, @insStartId out, @insEndId out;
+        execute sp_executesql @insertSQl, @permissionParamDefinition, @insStartIdSql = @insStartId,  @1 = @viewInstPerm, @2 = @UserSecuritySetCacheId, @3 = @PermissionRole,
+          @4 = @permissionRecordUser, @5 = @OrganizationItemPosition, @6 = @permissionRecordGroup, @7 = @OrganizationItem;
+      END
+
+    FETCH NEXT FROM tableCursor
+    INTO @PermissionId, @UserSecuritySetCacheId, @PermissionRole, @permissionRecordUser, @OrganizationItemPosition, @permissionRecordGroup, @OrganizationItem  
+    end;
+CLOSE tableCursor
+DEALLOCATE tableCursor
+end;
+end;
+]]>
+      </text>
+    </procedure>
+
+    <procedure name="CreateInstancePermissionInh">
+      <mappings>
+        <hibernate-mapping xmlns="urn:nhibernate-mapping-2.2">
+          <sql-query name="CreateInstancePermissionInh" >
+            <query-param name="tableName" type="System.String" />
+            <query-param name="tableNamePermissionName" type="System.String" />
+            <query-param name="sequenceName" type="System.String" />
+            <query-param name="editProfilePermission" type="System.Guid" />
+            <query-param name="viewProfilePermission" type="System.Guid" />
+            <query-param name="editInstPerm" type="System.Guid" />
+            <query-param name="viewInstPerm" type="System.Guid" />
+            <query-param name="fullPermission" type="System.Guid" />
+            <query-param name="fullInstPermission" type="System.Guid" />
+            <query-param name="catalogUid" type="System.Guid" />
+            <query-param name="catalogTypeUid" type="System.Guid" />
+            <query-param name="groupRoleType" type="System.Guid" />
+            <query-param name="recalculateAll" type="System.Boolean" />
+            exec CreateInstancePermissionInh @tableName = :tableName, @tablePermissionName = :tablePermissionName, @sequenceName = :sequenceName, @editProfilePermission = :editProfilePermission, @viewProfilePermission = :viewProfilePermission,
+            @fullPermission = :fullPermission, @fullInstPermission = :fullInstPermission, @editInstPerm = :editInstPerm, @viewInstPerm = :viewInstPerm, @catalogUid = :catalogUid, @groupRoleType = :groupRoleType, @recalculateAll = :recalculateAll, @catalogTypeUid = :catalogTypeUid
+          </sql-query>
+        </hibernate-mapping>
+      </mappings>
+      <text>
+        <![CDATA[
+create Procedure [CreateInstancePermissionInh](@tableName varchar(500), @tablePermissionName varchar(500), @sequenceName varchar(500), @editProfilePermission uniqueidentifier, @viewProfilePermission uniqueidentifier,
+@fullPermission uniqueidentifier, @fullInstPermission uniqueidentifier, @editInstPerm uniqueidentifier, @viewInstPerm uniqueidentifier, @catalogUid uniqueidentifier, @groupRoleType uniqueidentifier, @recalculateAll bit, @catalogTypeUid uniqueidentifier)
+as
+begin
+DECLARE
+@existIdSql nvarchar(max),
+@insertSQl nvarchar(max),
+@selectFromTableSql nvarchar(max),
+@selectFromFullAccessTableSql nvarchar(max),
+@permissionParamDefinition nvarchar(max),
+@tableParamDefinition nvarchar(max),
+@entityRecordId bigint,
+
+@PermissionId uniqueidentifier,
+@UserSecuritySetCacheId bigint,
+@PermissionRole uniqueidentifier,
+@permissionRecordUser bigint,
+@OrganizationItemPosition bigint,
+@permissionRecordGroup bigint,
+@OrganizationItem bigint
+create table #existIdTable(catalogId bigint)
+begin
+
+set @tableParamDefinition = N'';
+if (@recalculateAll = 1)
+  set @existIdSql = 'delete from ' + @tablePermissionName + ' where &&Parent&& in (select &&Id&& from ' + @tableName + ')';
+else
+begin
+  set @existIdSql = N'insert into #existIdTable(&&catalogId&&) select &&Parent&& from ' + @tablePermissionName
+end;
+EXECUTE sp_executesql @existIdSql, @tableParamDefinition
+
+declare @insCounter bigint, @insStartId bigint, @insEndId bigint, @insFullAccessCounter bigint;
+set @selectFromTableSql = (N'select @insCounterOut = Count(1) from ' + @tableName)
+SET @permissionParamDefinition = N' @insCounterOut bigint OUTPUT';
+EXECUTE sp_executesql @selectFromTableSql, @permissionParamDefinition, @insCounterOut = @insCounter OUTPUT;
+
+--fullAccessPermission
+declare tableFullAccessCursor CURSOR for
+select ussc.&&SetId&&, ussc.&&GroupId&&
+from &&UserSecuritySetCache&& ussc
+inner join &&GroupPermissions&& gp on ussc.&&GroupId&& = gp.&&GroupId&&
+where &&PermissionId&& = @fullPermission
+group by  ussc.&&SetId&&, ussc.&&GroupId&&
+open tableFullAccessCursor
+fetch next from tableFullAccessCursor
+into @UserSecuritySetCacheId, @permissionRecordGroup
+  WHILE @@FETCH_STATUS = 0
+  begin
+    EXECUTE [G_GenId] @tablePermissionName, @insCounter, @insStartId out, @insEndId out;
+    set @insertSQl = 'insert into ' + @tablePermissionName + ' (&&UserSecuritySetCacheId&&, &&Id&&, &&Parent&&, &&PermissionId&&, &&Group&&, &&PermissionRole&&, &&Uid&&)
+      select @ussc, @insStartIdSql + ROW_NUMBER() over (order by (SELECT 1)) - 1, &&Id&&, @permissionId, @groupId, @groupRoleTypeSql, NEWID() from ' + @tableName + ' where  &&TypeUid&& = @typeUidSql and not &&Id&& in (select &&catalogId&& from #existIdTable)';
+    set @permissionParamDefinition = N'@insStartIdSql bigint, @ussc bigint, @permissionId uniqueidentifier, @groupId bigint, @groupRoleTypeSql uniqueidentifier, @typeUidSql uniqueidentifier';
+    execute sp_executesql @insertSQl, @permissionParamDefinition, @ussc = @UserSecuritySetCacheId, @insStartIdSql = @insStartId,  @permissionId = @fullInstPermission, @groupId = @permissionRecordGroup, @groupRoleTypeSql = @groupRoleType, @typeUidSql = @catalogTypeUid;
+    
+    fetch next from tableFullAccessCursor
+    into @UserSecuritySetCacheId, @permissionRecordGroup
+  end;
+CLOSE tableFullAccessCursor
+DEALLOCATE tableFullAccessCursor
+
+--edit/view permission
+declare tableCursor CURSOR for
+select case ca.&&PermissionId&&
+          when @editProfilePermission then @editInstPerm
+          when @viewProfilePermission then @viewInstPerm
+        end, &&UserSecuritySetCacheId&&, &&PermissionRole&&, &&User&&, &&OrganizationItemPosition&&, &&Group&&, &&OrganizationItem&&
+  from &&CatalogAccess&& ca
+  join &&CatalogProfile&& cp on cp.&&Id&& = ca.&&CatalogProfile&&
+  where cp.&&CatalogType&& = @catalogUid and &&PermissionId&& in (@editProfilePermission, @viewProfilePermission)
+OPEN tableCursor
+FETCH NEXT FROM tableCursor
+INTO @PermissionId, @UserSecuritySetCacheId, @PermissionRole, @permissionRecordUser, @OrganizationItemPosition, @permissionRecordGroup, @OrganizationItem
+
+  WHILE @@FETCH_STATUS = 0
+  begin
+  
+    EXECUTE [G_GenId] @tablePermissionName, @insCounter, @insStartId out, @insEndId out;
+    set @insertSQl = 'insert into ' + @tablePermissionName + '(&&Id&&, &&Parent&&, &&PermissionId&&, &&UserSecuritySetCacheId&&, &&PermissionRole&&, &&User&&, &&OrganizationItemPosition&&, &&Group&&, &&OrganizationItem&&, &&Uid&&)
+      select @insStartIdSql + ROW_NUMBER() over (order by (SELECT 1)) - 1, &&Id&&, @1, @2, @3, @4, @5, @6, @7, NEWID()
+      from ' + @tableName + ' where &&TypeUid&& = @typeUidSql and not &&Id&& in (select &&catalogId&& from #existIdTable)';
+    set @permissionParamDefinition = N'@insStartIdSql bigint, @1 uniqueidentifier, @2 bigint, @3 uniqueidentifier, @4 bigint, @5 bigint, @6 bigint, @7 bigint, @typeUidSql uniqueidentifier'
+    execute sp_executesql @insertSQl, @permissionParamDefinition, @insStartIdSql = @insStartId,  @1 = @PermissionId, @2 = @UserSecuritySetCacheId, @3 = @PermissionRole,
+      @4 = @permissionRecordUser, @5 = @OrganizationItemPosition, @6 = @permissionRecordGroup, @7 = @OrganizationItem, @typeUidSql = @catalogTypeUid;
+
+    IF @PermissionId = @editInstPerm
+    BEGIN
+      EXECUTE [G_GenId] @tablePermissionName, @insCounter, @insStartId out, @insEndId out;
+      execute sp_executesql @insertSQl, @permissionParamDefinition, @insStartIdSql = @insStartId,  @1 = @viewInstPerm, @2 = @UserSecuritySetCacheId, @3 = @PermissionRole,
+        @4 = @permissionRecordUser, @5 = @OrganizationItemPosition, @6 = @permissionRecordGroup, @7 = @OrganizationItem, @typeUidSql = @catalogTypeUid;
+    END
+
+    FETCH NEXT FROM tableCursor
+    INTO @PermissionId, @UserSecuritySetCacheId, @PermissionRole, @permissionRecordUser, @OrganizationItemPosition, @permissionRecordGroup, @OrganizationItem
+    end;
+CLOSE tableCursor
+DEALLOCATE tableCursor
+end;
+end;
+]]>
+      </text>
+    </procedure>
+
+  </procedures>
+</root>

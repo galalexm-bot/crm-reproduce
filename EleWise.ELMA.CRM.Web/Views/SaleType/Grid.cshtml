@@ -1,0 +1,36 @@
+﻿@using EleWise.ELMA.CRM.Extensions
+@using EleWise.ELMA.CRM.Models;
+@using EleWise.ELMA.CRM.Web
+@using EleWise.ELMA;
+@model GridData<ISaleType>
+
+@(Html.DynamicGrid("SaleTypeGrid", Model, Guid.Empty)
+                .Columns(c =>
+                            {
+                                c.For(m => m.Name);
+                                c.For(m => m.SaleFunnel);
+                                c.For(m => 
+                                    !m.UsedInSales() 
+                                        ? MvcHtmlString.Create(Html.ImageLink("#edit.svg", null, Url.Action("Edit", "SaleType", new { area = CRMAreaRegistration.AREA_NAME, id = m.Id }),  null, null, SR.Edit, true).ToString()
+                                                        +Html.ImageLink("#delete.svg", null, "javascript:void(0)",  null, new { onclick = "deleteSaleFunnel("+m.Id+",'"+m.Name+"')"}, SR.Delete, true).ToString())
+
+                                        : MvcHtmlString.Create(Html.ImageLink("#edit.svg", null, Url.Action("Edit", "SaleType", new { area = CRMAreaRegistration.AREA_NAME, id = m.Id }),  null, null, SR.Edit, true).ToString())
+                                        ).Width(52).NotSortable();
+                            })
+           .Customizable(false))
+           
+<script type="text/javascript">
+    function deleteSaleFunnel(i, name) {
+        jConfirm('@(SR.T("Вы действительно хотите удалить тип сделки"))'+' "'+name+'" ?', '@(SR.T("Удаление"))', function (r) {
+            if (r) {
+                $.ajax({
+                    url: '@(Url.Action("Delete", "SaleType", new { area = CRMAreaRegistration.AREA_NAME }))/' + i,
+                    type: "POST",
+                    dataType: 'html',
+                    cache: false,
+                    success: function () { window.reloadPage(); }
+                });
+            }
+        });
+    }
+</script>

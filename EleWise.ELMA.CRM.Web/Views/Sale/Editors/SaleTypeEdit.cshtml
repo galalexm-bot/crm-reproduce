@@ -1,0 +1,70 @@
+﻿@model ISaleType
+@using EleWise.ELMA
+@using EleWise.ELMA.Model.Metadata
+@using EleWise.ELMA.CRM.Models
+@using EleWise.ELMA.Web.Mvc.Models.Boxes
+
+@{
+    var dictionary = new Dictionary<string, string>();
+    dictionary.Add(Model.Id.ToString(), Model.Name);
+    var selectedEntities = dictionary;
+    var inputId = "Entity_SaleType_Id";
+    var metadata = (ClassMetadata) EleWise.ELMA.Model.Metadata.MetadataLoader.LoadMetadata(typeof (ISaleType));
+    var uid = metadata.Uid;
+    var popupUrl = Url.Action("PopupEntity", "Entity", new { area = "EleWise.ELMA.BPM.Web.Common", uid = uid, inputId = inputId, multiselect = false });
+    var attributes = new HtmlAttributes();
+    attributes.style.width = "100%";
+}
+
+<tr>
+    <td class="captionCell">@metadata.DisplayName</td>
+    <td>
+        <div style="width:250px" class="t-entity-input">
+            <table border="0" cellpadding="0" cellspacing="0" style="width: 100%">
+            <tr>
+                <td>
+                    @(Html.Telerik().ComboBox()
+                          .Name("Entity.SaleType.Id")
+                          .AutoFill(true)
+                                  .DataBinding(binding => binding.Ajax().Select("Select", "Entity", new { area = "EleWise.ELMA.BPM.Web.Common", uid = uid }))
+                          .Filterable(filtering =>
+                          {
+                              filtering.FilterMode(AutoCompleteFilterMode.Contains);
+                              filtering.MinimumChars(1);
+                          })
+                          .ClientEvents(events => events.OnChange("saleTypeOnChange"))
+                          .SelectedValue(selectedEntities)
+                          .HighlightFirstMatch(true)
+                          .HtmlAttributes(attributes)
+                    )
+                    
+                    <input type="hidden" class="Entity.SaleType.Id_json" id="@(ViewData.TemplateInfo.GetFullHtmlFieldId(""))_validate" name="@(ViewData.TemplateInfo.GetFullHtmlFieldName(""))_validate" value='@(selectedEntities == null || selectedEntities.Count == 0 ? MvcHtmlString.Empty : selectedEntities.Select(n => new { id = n.Key, text = n.Value }).ToArray().ToJson())' />
+                    @if (ViewData.TemplateInfo.GetFullHtmlFieldName("") != Model.Name)
+                    {
+                        <input type="hidden" class="deleted autocompliteValidateField " id="@(ViewData.TemplateInfo.GetFullHtmlFieldId(""))" name="@(ViewData.TemplateInfo.GetFullHtmlFieldName(""))" />
+                    }
+                    @{
+                        Html.RenderInZone("EndZone", @<text>
+                        <script type="text/javascript" type="text/javascript">
+                        //<![CDATA[
+                            jQuery(document).ready(function () {
+                                 elma.ValidationRulesManager.add('@(ViewData.TemplateInfo.GetFullHtmlFieldId(""))');
+                                 elma.ValidationRulesManager.executeMove();
+                                //moveValidateRules("@(ViewData.TemplateInfo.GetFullHtmlFieldId(""))");
+                            });
+                        //]]>
+                        </script>
+                        </text>);
+                    }
+                </td>
+                <td style="padding-left:2px !important;width:20px; vertical-align: middle;">
+                    @Html.Image(Url.Image("#search.svg"), SR.T("Поиск"), new { onclick = "openEntitySelectPopup('" + inputId + "', '" + popupUrl + "')", @class = "pointer" })
+                </td>
+            </tr>      
+            </table>
+        </div>
+        @Html.PopupWindow("EntityPopup" + inputId, SR.T("Выберите элементы"), popupUrl, 570)    
+    </td>
+</tr>
+
+

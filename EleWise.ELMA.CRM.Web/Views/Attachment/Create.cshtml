@@ -1,0 +1,16 @@
+﻿@model EleWise.ELMA.CRM.Web.Models.CrmAttachment
+@using EleWise.ELMA;
+@using EleWise.ELMA.CRM.Web
+
+@(Html.AdaptivePopupWindow(Model.PopupId, SR.T("Прикрепить документ"),
+       Url.Action("AddAttachmentPopup", "Attachment", 
+            new { 
+                area = CRMAreaRegistration.AREA_NAME,
+                PopupId = Model.PopupId,
+                RedirectUrl = Model.RedirectUrl,
+                PostAction = Model.PostAction,
+                PostController = Model.PostController,
+                PostArea = Model.PostArea,
+                EntityId = Model.EntityId,
+                EntityTypeUid = Model.EntityTypeUid,
+            }), UIWindowSize.M))

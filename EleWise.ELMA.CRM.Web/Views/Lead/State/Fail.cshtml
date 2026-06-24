@@ -1,0 +1,31 @@
+﻿@using EleWise.ELMA.CRM.Web.Models
+@using EleWise.ELMA.CRM.Web
+@using EleWise.ELMA
+@using EleWise.ELMA.Model.Types.Settings
+@model EleWise.ELMA.CRM.Web.Models.LeadFailModel
+    @using (Html.ELMAForm("Fail", "Lead", new { area = CRMAreaRegistration.AREA_NAME }))
+    {
+        @Html.Hidden("Id")
+
+        using (Html.TableForm(EleWise.ELMA.Model.Views.ViewType.Edit))
+        {
+            @Html.EditableProperty(m => m.Comment, a => { 
+                a.Name = SR.T("Комментарий");
+                a.Required = true;
+                a.TypeSettings = new TextSettings() { MultiLine = true };
+                a.Required = true;
+            })
+            if (Model.ShowConvert)
+            {
+            <tr>
+                <td colspan="2" class="captionCell">
+                    @Html.ModernCheckBoxFor(m => m.Convert, true, true).LabelText(SR.T("Создать карточку контрагента"))
+                </td>
+            </tr>
+            }
+        }
+        <div class="popup-buttons">
+            <input type="submit" class="confirm" value="@SR.T("Неуспех")" />
+            <input type="button" value="@SR.Cancel" onclick="@Html.ClosePopup("LeadFail")" />
+        </div>
+    }

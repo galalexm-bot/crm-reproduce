@@ -1,0 +1,70 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <AssemblyName>EleWise.ELMA.SDK.Web</AssemblyName>
+    <GenerateAssemblyInfo>False</GenerateAssemblyInfo>
+    <TargetFramework>net48</TargetFramework>
+  </PropertyGroup>
+  <PropertyGroup>
+    <LangVersion>Preview</LangVersion>
+    <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
+  </PropertyGroup>
+  <PropertyGroup />
+  <ItemGroup />
+  <ItemGroup>
+    <Reference Include="EleWise.ELMA.SDK">
+      <HintPath>..\EleWise.ELMA.SDK.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Core" />
+    <Reference Include="System.Web" />
+    <Reference Include="System.Web.Mvc" />
+    <Reference Include="System.Web.Http" />
+    <Reference Include="Autofac" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.ServiceModel" />
+    <Reference Include="System.ServiceModel.Activation" />
+    <Reference Include="System.Web.WebPages" />
+    <Reference Include="Newtonsoft.Json" />
+    <Reference Include="System.Web.ApplicationServices" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="Owin" />
+    <Reference Include="Microsoft.Owin" />
+    <Reference Include="System.Web.WebPages.Razor" />
+    <Reference Include="System.Web.Razor" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
+    <Reference Include="System.Xml" />
+    <Reference Include="System.Configuration" />
+    <Reference Include="Castle.Core" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="NHibernate" />
+    <Reference Include="System.Data" />
+    <Reference Include="ICSharpCode.SharpZipLib" />
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.Web.Services" />
+    <Reference Include="System.ServiceModel.Web" />
+    <Reference Include="System.IdentityModel" />
+    <Reference Include="EleWise.ELMA.Packaging">
+      <HintPath>..\EleWise.ELMA.Packaging.dll</HintPath>
+    </Reference>
+    <Reference Include="EleWise.ELMA.WebCompiler">
+      <HintPath>..\EleWise.ELMA.WebCompiler.dll</HintPath>
+    </Reference>
+    <Reference Include="dotless.Core" />
+    <Reference Include="Iesi.Collections" />
+    <Reference Include="Aspose.Cells" />
+    <Reference Include="Telerik.Web.Mvc" />
+    <Reference Include="System.Web.Extensions" />
+    <Reference Include="EleWise.TemplateGenerator.Merged">
+      <HintPath>..\EleWise.TemplateGenerator.Merged.dll</HintPath>
+    </Reference>
+    <Reference Include="System.ComponentModel.Composition" />
+    <Reference Include="EleWise.ELMA.CAB">
+      <HintPath>..\EleWise.ELMA.CAB.dll</HintPath>
+    </Reference>
+    <Reference Include="NuGet.Core" />
+    <Reference Include="Microsoft.AspNet.SignalR.Core" />
+    <Reference Include="System.Web.Http.WebHost" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="System.Web.Helpers" />
+    <Reference Include="Microsoft.Owin.Host.SystemWeb" />
+  </ItemGroup>
+</Project>

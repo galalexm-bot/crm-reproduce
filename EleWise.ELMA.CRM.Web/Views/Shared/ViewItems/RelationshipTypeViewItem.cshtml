@@ -1,0 +1,19 @@
+﻿@inherits ViewItemControl<RelationshipTypeViewItem>
+@using EleWise.ELMA.CRM.ViewItems
+@using EleWise.ELMA.Model.Metadata
+@using EleWise.ELMA.Web.Mvc.Views.ViewItem
+
+@if (ViewItem != null)
+{
+    var modelType = Model.GetType();
+    var metadata = (ClassMetadata) MetadataLoader.LoadMetadata(modelType);
+
+    <tr>
+        <td class="captionCell">
+            @ViewItem.Attributes.Name
+        </td>
+        <td>
+            @metadata.DisplayName
+        </td>
+    </tr>
+}

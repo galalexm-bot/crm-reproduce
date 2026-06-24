@@ -1,0 +1,183 @@
+using System;
+using EleWise.ELMA.ComponentModel;
+using EleWise.ELMA.Model.Attributes;
+using EleWise.ELMA.Model.Entities;
+using EleWise.ELMA.Model.Metadata;
+using EleWise.ELMA.Model.Types.Settings;
+using EleWise.ELMA.Model.Types.Validation;
+using EleWise.ELMA.Model.Views;
+using EleWise.ELMA.Security.Models;
+using EleWise.ELMA.Security.Types.Settings;
+
+namespace EleWise.ELMA.Common.Models;
+
+[MetadataType(typeof(EntityMetadata))]
+[Uid("055dc00e-fc9e-4da2-ad68-f22a5bb5eb30")]
+[DisplayName(typeof(__Resources_IEntityActionHistory), "DisplayName")]
+[Description(typeof(__Resources_IEntityActionHistory), "Description")]
+[DisplayFormat(null)]
+[ShowInTypeTree(false)]
+[TableView("<?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<TableView xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\">\r\n  <Uid>aba09de8-1b4e-404e-b803-4825219954c0</Uid>\r\n  <ViewType>List</ViewType>\r\n  <Customizable>false</Customizable>\r\n  <ShowHeader>false</ShowHeader>\r\n  <Sortable>false</Sortable>\r\n</TableView>")]
+[Entity("EntityActionHistory")]
+[IdType("d90a59af-7e47-48c5-8c4c-dad04834e6e3")]
+[ShowInCatalogList(false)]
+[EntityMetadataType(EntityMetadataType.Interface)]
+[Filterable]
+[ImplementationUid("703b3e7b-9241-4da8-84d8-4dc70077d0f7")]
+[CacheEntity]
+[FilterType(typeof(IEntityActionHistoryFilter))]
+public interface IEntityActionHistory : IEntity<long>, IEntity, IIdentified
+{
+	[Uid("80559824-c990-45a5-9d16-c6213d88fa2b")]
+	[NotNull]
+	[SystemProperty]
+	[Property("eb6e8ddc-fafe-4e0e-9018-1a7667012579")]
+	[GuidSettings(FieldName = "Uid")]
+	[DisplayName(typeof(__Resources_IEntityActionHistory), "P_Uid_DisplayName")]
+	[View(ViewType = ViewType.All, ItemType = ItemType.Default, Visibility = Visibility.Hidden, ReadOnly = true)]
+	[EntityProperty]
+	Guid Uid { get; set; }
+
+	[Uid("e75a9ec4-162e-47c2-93c7-7d8dd113ee89")]
+	[Order(2)]
+	[Required(true)]
+	[Property("72ed98ca-f260-4671-9bcd-ff1d80235f47", "cfdeb03c-35e9-45e7-aad8-037d83888f73")]
+	[EntityUserSettings(FieldName = "CreationAuthor")]
+	[RequiredField]
+	[DisplayName(typeof(__Resources_IEntityActionHistory), "P_CreationAuthor_DisplayName")]
+	[Sortable(false)]
+	[PropertyHandler("b05ac6bd-eb8b-474a-a796-b53831a9967e")]
+	[View(ViewType = ViewType.Create, ItemType = ItemType.Default, Visibility = Visibility.Hidden, ReadOnly = false)]
+	[View(ViewType = ViewType.Edit, ItemType = ItemType.Default, Visibility = Visibility.Hidden, ReadOnly = true)]
+	[View(ViewType = ViewType.Display, ItemType = ItemType.Default, Visibility = Visibility.Hidden, ReadOnly = true)]
+	[View(ViewType = ViewType.List, ItemType = ItemType.Default, Visibility = Visibility.Hidden, ReadOnly = false)]
+	[Filterable]
+	[EntityProperty]
+	IUser CreationAuthor { get; set; }
+
+	[Uid("ce45a903-eca7-4ff8-ba30-1af2003b0099")]
+	[Order(3)]
+	[CanBeNull]
+	[Property("eb6e8ddc-fafe-4e0e-9018-1a7667012579")]
+	[GuidSettings(FieldName = "SessionUid")]
+	[DisplayName(typeof(__Resources_IEntityActionHistory), "P_SessionUid_DisplayName")]
+	[Sortable(false)]
+	[View(ViewType = ViewType.Create, ItemType = ItemType.Default, Visibility = Visibility.Hidden, ReadOnly = false)]
+	[View(ViewType = ViewType.Edit, ItemType = ItemType.Default, Visibility = Visibility.Hidden, ReadOnly = false)]
+	[View(ViewType = ViewType.Display, ItemType = ItemType.Default, Visibility = Visibility.Hidden, ReadOnly = true)]
+	[View(ViewType = ViewType.List, ItemType = ItemType.Default, Visibility = Visibility.ForceHidden, ReadOnly = false)]
+	[EntityProperty]
+	Guid? SessionUid { get; set; }
+
+	[Uid("aa5ba929-cc2f-426f-aaf5-766fb3de1b0d")]
+	[Order(1)]
+	[NotNull]
+	[Required(true)]
+	[Property("dac9211e-e02b-47cd-8868-89a3bfc0f749")]
+	[DateTimeSettings(FieldName = "ActionDate")]
+	[RequiredField]
+	[DisplayName(typeof(__Resources_IEntityActionHistory), "P_ActionDate_DisplayName")]
+	[Sortable(false)]
+	[View(ViewType = ViewType.Create, ItemType = ItemType.Default, Visibility = Visibility.Hidden, ReadOnly = false)]
+	[View(ViewType = ViewType.Edit, ItemType = ItemType.Default, Visibility = Visibility.Hidden, ReadOnly = false)]
+	[View(ViewType = ViewType.Display, ItemType = ItemType.Default, Visibility = Visibility.Visible, ReadOnly = true)]
+	[View(ViewType = ViewType.List, ItemType = ItemType.Default, Visibility = Visibility.Visible, ReadOnly = false)]
+	[Filterable]
+	[EntityProperty]
+	DateTime ActionDate { get; set; }
+
+	[Uid("4c152dc0-2a02-4d18-930c-549adc761fd5")]
+	[Order(6)]
+	[NotNull]
+	[Required(true)]
+	[Property("eb6e8ddc-fafe-4e0e-9018-1a7667012579")]
+	[GuidSettings(FieldName = "ActionObjectUid")]
+	[RequiredField]
+	[DisplayName(typeof(__Resources_IEntityActionHistory), "P_ActionObjectUid_DisplayName")]
+	[Sortable(false)]
+	[View(ViewType = ViewType.Create, ItemType = ItemType.Default, Visibility = Visibility.Hidden, ReadOnly = false)]
+	[View(ViewType = ViewType.Edit, ItemType = ItemType.Default, Visibility = Visibility.Hidden, ReadOnly = false)]
+	[View(ViewType = ViewType.Display, ItemType = ItemType.Default, Visibility = Visibility.Hidden, ReadOnly = true)]
+	[View(ViewType = ViewType.List, ItemType = ItemType.Default, Visibility = Visibility.ForceHidden, ReadOnly = false)]
+	[Filterable]
+	[EntityProperty]
+	Guid ActionObjectUid { get; set; }
+
+	[Uid("9f7515c2-c48b-4a88-b18e-60480e9def59")]
+	[Order(7)]
+	[NotNull]
+	[Required(true)]
+	[Property("eb6e8ddc-fafe-4e0e-9018-1a7667012579")]
+	[GuidSettings(FieldName = "ActionTypeUid")]
+	[RequiredField]
+	[DisplayName(typeof(__Resources_IEntityActionHistory), "P_ActionTypeUid_DisplayName")]
+	[Sortable(false)]
+	[View(ViewType = ViewType.Create, ItemType = ItemType.Default, Visibility = Visibility.Hidden, ReadOnly = false)]
+	[View(ViewType = ViewType.Edit, ItemType = ItemType.Default, Visibility = Visibility.Hidden, ReadOnly = false)]
+	[View(ViewType = ViewType.Display, ItemType = ItemType.Default, Visibility = Visibility.Hidden, ReadOnly = true)]
+	[View(ViewType = ViewType.List, ItemType = ItemType.Default, Visibility = Visibility.ForceHidden, ReadOnly = false)]
+	[Filterable]
+	[EntityProperty]
+	Guid ActionTypeUid { get; set; }
+
+	[Uid("c6c37082-9e48-4845-852c-b37837cc93cf")]
+	[Order(8)]
+	[Property("1911b22d-0ce2-4743-832f-6a44cb0357fe")]
+	[BlobSettings(FieldName = "AdditionalData")]
+	[DisplayName(typeof(__Resources_IEntityActionHistory), "P_AdditionalData_DisplayName")]
+	[Sortable(false)]
+	[View(ViewType = ViewType.Create, ItemType = ItemType.Default, Visibility = Visibility.Hidden, ReadOnly = false)]
+	[View(ViewType = ViewType.Edit, ItemType = ItemType.Default, Visibility = Visibility.Hidden, ReadOnly = false)]
+	[View(ViewType = ViewType.Display, ItemType = ItemType.Default, Visibility = Visibility.Hidden, ReadOnly = true)]
+	[View(ViewType = ViewType.List, ItemType = ItemType.Default, Visibility = Visibility.ForceHidden, ReadOnly = false)]
+	[EntityProperty]
+	byte[] AdditionalData { get; set; }
+
+	[Uid("3b31cb7c-129b-447b-9a90-a01c598255f1")]
+	[Order(5)]
+	[CanBeNull]
+	[Property("d90a59af-7e47-48c5-8c4c-dad04834e6e3")]
+	[Int64Settings(RangeInFilter = false, FieldName = "ActionObjectId")]
+	[DisplayName(typeof(__Resources_IEntityActionHistory), "P_ActionObjectId_DisplayName")]
+	[Sortable(false)]
+	[View(ViewType = ViewType.Create, ItemType = ItemType.Default, Visibility = Visibility.Hidden, ReadOnly = false)]
+	[View(ViewType = ViewType.Edit, ItemType = ItemType.Default, Visibility = Visibility.Hidden, ReadOnly = false)]
+	[View(ViewType = ViewType.Display, ItemType = ItemType.Default, Visibility = Visibility.Hidden, ReadOnly = true)]
+	[View(ViewType = ViewType.List, ItemType = ItemType.Default, Visibility = Visibility.ForceHidden, ReadOnly = false)]
+	[Filterable]
+	[EntityProperty]
+	long? ActionObjectId { get; set; }
+
+	[Uid("743f65ad-feaf-433c-bc5d-7a2d01406539")]
+	[Order(4)]
+	[NotNull]
+	[Required(true)]
+	[Property("eb6e8ddc-fafe-4e0e-9018-1a7667012579")]
+	[GuidSettings(FieldName = "UnitOfWorkUid")]
+	[RequiredField]
+	[DisplayName(typeof(__Resources_IEntityActionHistory), "P_UnitOfWorkUid_DisplayName")]
+	[Sortable(false)]
+	[View(ViewType = ViewType.Create, ItemType = ItemType.Default, Visibility = Visibility.Hidden, ReadOnly = false)]
+	[View(ViewType = ViewType.Edit, ItemType = ItemType.Default, Visibility = Visibility.Hidden, ReadOnly = false)]
+	[View(ViewType = ViewType.Display, ItemType = ItemType.Default, Visibility = Visibility.Hidden, ReadOnly = true)]
+	[View(ViewType = ViewType.List, ItemType = ItemType.Default, Visibility = Visibility.ForceHidden, ReadOnly = false)]
+	[Filterable]
+	[EntityProperty]
+	Guid UnitOfWorkUid { get; set; }
+
+	[Uid("7c633b7e-42f6-4104-98de-79e306b823ca")]
+	[Order(9)]
+	[NotNull]
+	[Required(true)]
+	[Property("eb6e8ddc-fafe-4e0e-9018-1a7667012579")]
+	[GuidSettings(FieldName = "EventArgsUid")]
+	[RequiredField]
+	[DisplayName(typeof(__Resources_IEntityActionHistory), "P_EventArgsUid_DisplayName")]
+	[Sortable(false)]
+	[View(ViewType = ViewType.Create, ItemType = ItemType.Default, Visibility = Visibility.Hidden, ReadOnly = false)]
+	[View(ViewType = ViewType.Edit, ItemType = ItemType.Default, Visibility = Visibility.Hidden, ReadOnly = false)]
+	[View(ViewType = ViewType.Display, ItemType = ItemType.Default, Visibility = Visibility.Hidden, ReadOnly = true)]
+	[View(ViewType = ViewType.List, ItemType = ItemType.Default, Visibility = Visibility.ForceHidden, ReadOnly = false)]
+	[EntityProperty]
+	Guid EventArgsUid { get; set; }
+}

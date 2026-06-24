@@ -1,0 +1,54 @@
+﻿@using EleWise.ELMA
+@using EleWise.ELMA.Model.Services
+@using EleWise.ELMA.Model.Views
+@using EleWise.ELMA.CRM.Models.BillingInformation
+@inherits EleWise.ELMA.Web.Mvc.Views.ViewItem.ViewItemControl<PanelViewItem, object, IBankDetailsSWIFT>
+@{
+    var unique = Guid.NewGuid().ToString("N");
+    var bank = InterfaceActivator.PropertyUid<IBankDetails>(m => m.Bank);
+    var swift = InterfaceActivator.PropertyUid<IBankDetailsSWIFT>(m => m.SWIFTCode);
+    var name = InterfaceActivator.PropertyUid<IBankDetails>(m => m.Name);
+    var list = new List<Guid> { bank, swift, name };
+
+    var form = ViewItem.FormViewItem;
+    var addScript = false;
+    foreach (var property in form.GetAllProperties())
+    {
+        list.Remove(property.PropertyUid);
+        if (list.Count == 0)
+        {
+            addScript = true;
+            break;
+        }
+    }
+
+    if (addScript)
+    {
+        <script type="text/javascript">
+            $(document).ready(function () {
+                $('#@(Html.IDFor(m => m.Name))').attr("placeholder", '@SR.T("Наименование заполняется автоматически")');
+
+                $('#@(Html.IDFor(m => m.Bank))_Id').bind("valueChange", function () {
+                    changeBDS@(unique)('@(Html.IDFor(p=>p.Bank))', '@(Html.IDFor(p=>p.SWIFTCode))', '@(Html.IDFor(p=>p.Name))');
+                });
+
+                $('#@(Html.IDFor(m => m.SWIFTCode))').change(function () {
+                    changeBDS@(unique)('@(Html.IDFor(p=>p.Bank))', '@(Html.IDFor(p=>p.SWIFTCode))', '@(Html.IDFor(p=>p.Name))');
+                });
+            });
+
+            function changeBDS@(unique)(bank, swift, name) {
+                var valBankCombo = $('#' + bank + '_Id').data('tComboBox');
+                if (valBankCombo != undefined) {
+                    var valBank = valBankCombo.text();
+                    var valSwift = $('#' + swift).val();
+                    if (valBank == '' && valSwift == '') {
+                        $('#' + name).val('');
+                    } else {
+                        $('#' + name).val(jQuery.format('@SR.T("{0} (SWIFT {1})")')(valBank, valSwift));
+                    }
+                }
+            }
+        </script>
+    }
+}

@@ -1,0 +1,24 @@
+﻿@model EleWise.ELMA.CRM.Web.Models.SaleModel
+@using EleWise.ELMA           
+@using EleWise.ELMA.Web.Mvc.Html.Forms
+@using ViewType = EleWise.ELMA.Model.Views.ViewType;
+@{
+    var isEditing = Model.View.ViewType == ViewType.Create || Model.View.ViewType == ViewType.Edit || Model.View.ViewType == ViewType.Custom;
+    var formId = ((string)ViewData["FormId"]) ?? HtmlExtensions.GLOBALFORMID;
+    if (Model.DynamicFormSettings != null)
+    {
+        Model.DynamicFormSettings.FormId = formId;
+    }
+}
+
+@using (Html.ElmaForm(formId, confirmOnClose: isEditing))
+{
+    @Html.Partial("Sale/SaleEditForm")
+}
+
+<script type="text/javascript">
+    function saleTypeOnChange(item) 
+    {
+        //item.value;
+    }
+</script>

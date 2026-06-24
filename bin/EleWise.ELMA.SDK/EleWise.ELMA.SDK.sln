@@ -1,0 +1,37 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.33423.256
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EleWise.ELMA.SDK", "EleWise.ELMA.SDK.csproj", "{0749FF49-90D4-4B93-B5C2-55D9DA1BEE05}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EleWise.ELMA.CodeGeneration.CS", "..\EleWise.ELMA.CodeGeneration.CSharp\EleWise.ELMA.CodeGeneration.CS.csproj", "{728FE108-FA59-47EB-B7F6-F41B5B2F5875}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EleWise.ELMA.CRM", "..\EleWise.ELMA.CRM\EleWise.ELMA.CRM.csproj", "{C15B63F8-5476-43A2-BFBD-B7A29E1E7248}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{0749FF49-90D4-4B93-B5C2-55D9DA1BEE05}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0749FF49-90D4-4B93-B5C2-55D9DA1BEE05}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0749FF49-90D4-4B93-B5C2-55D9DA1BEE05}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0749FF49-90D4-4B93-B5C2-55D9DA1BEE05}.Release|Any CPU.Build.0 = Release|Any CPU
+		{728FE108-FA59-47EB-B7F6-F41B5B2F5875}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{728FE108-FA59-47EB-B7F6-F41B5B2F5875}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{728FE108-FA59-47EB-B7F6-F41B5B2F5875}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{728FE108-FA59-47EB-B7F6-F41B5B2F5875}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C15B63F8-5476-43A2-BFBD-B7A29E1E7248}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C15B63F8-5476-43A2-BFBD-B7A29E1E7248}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C15B63F8-5476-43A2-BFBD-B7A29E1E7248}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C15B63F8-5476-43A2-BFBD-B7A29E1E7248}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {F5875B28-61E3-4426-9FFC-8F510F025522}
+	EndGlobalSection
+EndGlobal

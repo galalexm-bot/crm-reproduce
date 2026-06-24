@@ -1,0 +1,17 @@
+﻿@model RelationshipModel
+@using EleWise.ELMA
+@using EleWise.ELMA.BPM.Web.Common.Extensions
+@using EleWise.ELMA.BPM.Web.Common.Models
+@using EleWise.ELMA.CRM.Models
+@using EleWise.ELMA.Model.Metadata
+@using EleWise.ELMA.CRM.Web.Models
+@using EleWise.ELMA.CRM.Web.Controllers
+@using EleWise.ELMA.CRM.Web
+
+
+@{
+    var metadataForm = (EntityMetadata) MetadataLoader.LoadMetadata(Model.Entity.GetType());
+    var formTypeContent = metadataForm.DefaultForms.GetForm(new Guid("691b0c55-ba74-4b83-b139-82faf2033e73"));
+}
+@Html.InfoPanel(SR.T("Автор отметил данное событие как конфиденциальное, вам доступна только основная информация."))
+@Html.FormViewItem(formTypeContent, m => m.Entity, null, EleWise.ELMA.Model.Views.ViewType.Display)

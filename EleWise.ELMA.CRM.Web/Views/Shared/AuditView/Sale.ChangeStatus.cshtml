@@ -1,0 +1,13 @@
+﻿@using EleWise.ELMA.Web.Mvc.Models.History
+@model EleWise.ELMA.CRM.Models.SaleChangesHistoryModel
+@if (Model.OldEntity != null && Model.NewEntity != null)
+{
+<div class="history-type-action history-item-ext">
+    <div class="history-action-editvalues">
+        <table style="width: 100%;">
+        @Html.DisplayChanges(m => m.OldEntity.SaleStatus, m => m.NewEntity.SaleStatus)
+        @Html.DisplayChanges(m => m.OldEntity.ShortStatus, m => m.NewEntity.ShortStatus)
+        </table>
+    </div>
+</div>
+}

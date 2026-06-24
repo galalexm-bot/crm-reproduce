@@ -1,0 +1,28 @@
+﻿@inherits DynamicViewControl<LeadConvertModel>
+@using EleWise.ELMA.CRM.Web
+@using EleWise.ELMA.CRM.Web.Models
+@using EleWise.ELMA
+@using EleWise.ELMA.Web.Mvc.Models.Wizard
+
+@(Wizard("LeadConvert").Items(w =>
+{
+    w.Add(new WizardItem())
+        .Text(SR.T("Параметры конвертации"))
+        .Selected(true)
+        .PostNext(true)
+        .Content(@<text>
+                      @Html.Partial("Convert/StepConvertInit")
+                  </text>);
+    w.Add(new WizardItem())
+        .Text(SR.T("О клиенте"))
+        .PostNext(true)
+        .Url(Url.Action("PrepareContractorData", "Lead", new { area = RouteProvider.AreaName }));
+    w.Add(new WizardItem())
+        .Text(SR.T("Контакты"))
+        .PostNext(true)
+        .Url(Url.Action("PrepareContactsData", "Lead", new { area = RouteProvider.AreaName }));
+    w.Add(new WizardItem())
+        .Text(Model.ConvertTypes.FirstOrDefault(i => i.Selected).Text)
+        .Url(Url.Action("PrepareSaleRelData", "Lead", new { area = RouteProvider.AreaName }));
+}).Url(Url.Action("Convert", "Lead", new { area = RouteProvider.AreaName })).Render()
+)

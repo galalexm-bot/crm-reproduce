@@ -1,0 +1,251 @@
+using System;
+using EleWise.ELMA.ComponentModel;
+using EleWise.ELMA.Model.Attributes;
+using EleWise.ELMA.Model.Entities;
+using EleWise.ELMA.Model.Metadata;
+using EleWise.ELMA.Model.Types.Settings;
+using EleWise.ELMA.Model.Views;
+using EleWise.ELMA.Security.Models;
+using EleWise.ELMA.Security.Types.Settings;
+using Iesi.Collections.Generic;
+
+namespace EleWise.ELMA.CRM.Models;
+
+[MetadataType(typeof(EntityMetadata))]
+[Uid("da990874-07aa-4ee2-9571-de3cdf199a16")]
+[DisplayName(typeof(__Resources_ILeadContact), "DisplayName")]
+[AllowCreateHeirs(true)]
+[DisplayFormat(null)]
+[TitleProperty("8f56e18c-4b0d-45a6-aedb-f3b90e9fc6ce")]
+[InterfaceImplementation("EleWise.ELMA.Model.Entities.ISoftDeletable")]
+[Image(typeof(ILeadContact), "vCard", 16, ImageFormatType.IconPack, false)]
+[TableView("<?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<TableView xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\">\r\n  <Uid>925da68e-9a31-4ead-9947-a43850d36e12</Uid>\r\n  <ViewType>List</ViewType>\r\n</TableView>")]
+[Entity("LeadContact")]
+[IdType("d90a59af-7e47-48c5-8c4c-dad04834e6e3")]
+[ShowInCatalogList(false)]
+[EntityMetadataType(EntityMetadataType.Interface)]
+[Filterable]
+[ImplementationUid("30620bef-7d89-438a-856c-40546e2d573c")]
+[FilterType(typeof(ILeadContactFilter))]
+public interface ILeadContact : IEntity<long>, IEntity, IIdentified, ISoftDeletable, IInheritable
+{
+	[Uid("d44e9f95-9ae7-4589-a81d-b52ab370f1a7")]
+	[NotNull]
+	[SystemProperty]
+	[Property("eb6e8ddc-fafe-4e0e-9018-1a7667012579")]
+	[GuidSettings(FieldName = "Uid")]
+	[DisplayName(typeof(__Resources_ILeadContact), "P_Uid_DisplayName")]
+	[View(ViewType = ViewType.All, ItemType = ItemType.Default, Visibility = Visibility.Hidden, ReadOnly = true)]
+	[EntityProperty]
+	Guid Uid { get; set; }
+
+	[Uid("bc8d145d-45a3-422e-85d4-d3cf10d767ad")]
+	[Order(2)]
+	[Property("9b9aac17-22bb-425c-aa93-9c02c5146965")]
+	[StringSettings(FieldName = "Surname")]
+	[DisplayName(typeof(__Resources_ILeadContact), "P_Surname_DisplayName")]
+	[View(ViewType = ViewType.Create, ItemType = ItemType.Default, Visibility = Visibility.Visible, ReadOnly = false)]
+	[View(ViewType = ViewType.Edit, ItemType = ItemType.Default, Visibility = Visibility.Visible, ReadOnly = false)]
+	[View(ViewType = ViewType.Display, ItemType = ItemType.Default, Visibility = Visibility.Visible, ReadOnly = true)]
+	[View(ViewType = ViewType.List, ItemType = ItemType.Default, Visibility = Visibility.Hidden, ReadOnly = false)]
+	[FastSearch(true)]
+	[EntityProperty]
+	string Surname { get; set; }
+
+	[Uid("704b959b-b7bb-45bf-9a84-b0360b50f78d")]
+	[Order(3)]
+	[Property("9b9aac17-22bb-425c-aa93-9c02c5146965")]
+	[StringSettings(FieldName = "Firstname")]
+	[DisplayName(typeof(__Resources_ILeadContact), "P_Firstname_DisplayName")]
+	[View(ViewType = ViewType.Create, ItemType = ItemType.Default, Visibility = Visibility.Visible, ReadOnly = false)]
+	[View(ViewType = ViewType.Edit, ItemType = ItemType.Default, Visibility = Visibility.Visible, ReadOnly = false)]
+	[View(ViewType = ViewType.Display, ItemType = ItemType.Default, Visibility = Visibility.Visible, ReadOnly = true)]
+	[View(ViewType = ViewType.List, ItemType = ItemType.Default, Visibility = Visibility.Hidden, ReadOnly = false)]
+	[FastSearch(true)]
+	[EntityProperty]
+	string Firstname { get; set; }
+
+	[Uid("7d5491ba-23c9-4a1f-8cd0-fa022758d502")]
+	[Order(4)]
+	[Property("9b9aac17-22bb-425c-aa93-9c02c5146965")]
+	[StringSettings(FieldName = "Middlename")]
+	[DisplayName(typeof(__Resources_ILeadContact), "P_Middlename_DisplayName")]
+	[View(ViewType = ViewType.Create, ItemType = ItemType.Default, Visibility = Visibility.Visible, ReadOnly = false)]
+	[View(ViewType = ViewType.Edit, ItemType = ItemType.Default, Visibility = Visibility.Visible, ReadOnly = false)]
+	[View(ViewType = ViewType.Display, ItemType = ItemType.Default, Visibility = Visibility.Visible, ReadOnly = true)]
+	[View(ViewType = ViewType.List, ItemType = ItemType.Default, Visibility = Visibility.Hidden, ReadOnly = false)]
+	[FastSearch(true)]
+	[EntityProperty]
+	string Middlename { get; set; }
+
+	[Uid("f68aa5fb-b24b-4016-a24a-90197cac5744")]
+	[Order(5)]
+	[Property("9b9aac17-22bb-425c-aa93-9c02c5146965")]
+	[StringSettings(FieldName = "Position")]
+	[DisplayName(typeof(__Resources_ILeadContact), "P_Position_DisplayName")]
+	[View(ViewType = ViewType.Create, ItemType = ItemType.Default, Visibility = Visibility.Visible, ReadOnly = false)]
+	[View(ViewType = ViewType.Edit, ItemType = ItemType.Default, Visibility = Visibility.Visible, ReadOnly = false)]
+	[View(ViewType = ViewType.Display, ItemType = ItemType.Default, Visibility = Visibility.Visible, ReadOnly = true)]
+	[View(ViewType = ViewType.List, ItemType = ItemType.Default, Visibility = Visibility.Visible, ReadOnly = false)]
+	[EntityProperty]
+	string Position { get; set; }
+
+	[Uid("5bf98f8b-ff33-40d6-b9b9-5bc54934000d")]
+	[Order(6)]
+	[CanBeNull]
+	[Property("d90a59af-7e47-48c5-8c4c-dad04834e6e3")]
+	[Int64Settings(FieldName = "ICQ")]
+	[DisplayName(typeof(__Resources_ILeadContact), "P_ICQ_DisplayName")]
+	[View(ViewType = ViewType.Create, ItemType = ItemType.Default, Visibility = Visibility.Visible, ReadOnly = false)]
+	[View(ViewType = ViewType.Edit, ItemType = ItemType.Default, Visibility = Visibility.Visible, ReadOnly = false)]
+	[View(ViewType = ViewType.Display, ItemType = ItemType.Default, Visibility = Visibility.Visible, ReadOnly = true)]
+	[View(ViewType = ViewType.List, ItemType = ItemType.Default, Visibility = Visibility.Hidden, ReadOnly = false)]
+	[EntityProperty]
+	long? ICQ { get; set; }
+
+	[Uid("0876dbe1-a552-46a7-b2f1-0e4ccb8b2246")]
+	[Order(7)]
+	[Property("9b9aac17-22bb-425c-aa93-9c02c5146965")]
+	[StringSettings(FieldName = "Skype")]
+	[DisplayName(typeof(__Resources_ILeadContact), "P_Skype_DisplayName")]
+	[View(ViewType = ViewType.Create, ItemType = ItemType.Default, Visibility = Visibility.Visible, ReadOnly = false)]
+	[View(ViewType = ViewType.Edit, ItemType = ItemType.Default, Visibility = Visibility.Visible, ReadOnly = false)]
+	[View(ViewType = ViewType.Display, ItemType = ItemType.Default, Visibility = Visibility.Visible, ReadOnly = true)]
+	[View(ViewType = ViewType.List, ItemType = ItemType.Default, Visibility = Visibility.Hidden, ReadOnly = false)]
+	[EntityProperty]
+	string Skype { get; set; }
+
+	[Uid("82f9753c-f2dd-4a00-9e54-c830913445da")]
+	[Order(8)]
+	[Property("72ed98ca-f260-4671-9bcd-ff1d80235f47", "64b8e9c4-2fa1-4c51-9596-b2df478b72c5")]
+	[EntitySettings(RelationType = RelationType.ManyToMany, RelationTableName = "LeadContact_Email", ParentColumnName = "LeadContact", ChildColumnName = "Email", CascadeMode = CascadeMode.SaveUpdate)]
+	[DisplayName(typeof(__Resources_ILeadContact), "P_Email_DisplayName")]
+	[View(ViewType = ViewType.Create, ItemType = ItemType.Default, Visibility = Visibility.Visible, ReadOnly = false)]
+	[View(ViewType = ViewType.Edit, ItemType = ItemType.Default, Visibility = Visibility.Visible, ReadOnly = false)]
+	[View(ViewType = ViewType.Display, ItemType = ItemType.Default, Visibility = Visibility.Visible, ReadOnly = true)]
+	[View(ViewType = ViewType.List, ItemType = ItemType.Default, Visibility = Visibility.Hidden, ReadOnly = false)]
+	[EntityProperty]
+	ISet<IEmail> Email { get; set; }
+
+	[Uid("7e36f871-abf3-4e1e-bf48-6e5d66dd6340")]
+	[Order(9)]
+	[Property("72ed98ca-f260-4671-9bcd-ff1d80235f47", "687a394e-d1d6-47e8-b930-ffe5547776e1")]
+	[EntitySettings(RelationType = RelationType.ManyToMany, RelationTableName = "LeadContact_Phone", ParentColumnName = "LeadContact", ChildColumnName = "Phone", CascadeMode = CascadeMode.SaveUpdate)]
+	[DisplayName(typeof(__Resources_ILeadContact), "P_Phone_DisplayName")]
+	[View(ViewType = ViewType.Create, ItemType = ItemType.Default, Visibility = Visibility.Visible, ReadOnly = false)]
+	[View(ViewType = ViewType.Edit, ItemType = ItemType.Default, Visibility = Visibility.Visible, ReadOnly = false)]
+	[View(ViewType = ViewType.Display, ItemType = ItemType.Default, Visibility = Visibility.Visible, ReadOnly = true)]
+	[View(ViewType = ViewType.List, ItemType = ItemType.Default, Visibility = Visibility.Hidden, ReadOnly = false)]
+	[EntityProperty]
+	ISet<IPhone> Phone { get; set; }
+
+	[Uid("7f37df9c-64d2-4020-a0cb-b0532a7897f8")]
+	[Order(10)]
+	[Property("72ed98ca-f260-4671-9bcd-ff1d80235f47", "7af9ad76-a111-466b-8b57-3b76b5504182")]
+	[EntitySettings(FieldName = "Lead")]
+	[DisplayName(typeof(__Resources_ILeadContact), "P_Lead_DisplayName")]
+	[View(ViewType = ViewType.Create, ItemType = ItemType.Default, Visibility = Visibility.Visible, ReadOnly = false)]
+	[View(ViewType = ViewType.Edit, ItemType = ItemType.Default, Visibility = Visibility.Visible, ReadOnly = false)]
+	[View(ViewType = ViewType.Display, ItemType = ItemType.Default, Visibility = Visibility.Visible, ReadOnly = true)]
+	[View(ViewType = ViewType.List, ItemType = ItemType.Default, Visibility = Visibility.ForceHidden, ReadOnly = false)]
+	[Filterable]
+	[EntityProperty]
+	ILead Lead { get; set; }
+
+	[Uid("8f56e18c-4b0d-45a6-aedb-f3b90e9fc6ce")]
+	[Order(1)]
+	[Property("9b9aac17-22bb-425c-aa93-9c02c5146965")]
+	[StringSettings(FieldName = "Name")]
+	[DisplayName(typeof(__Resources_ILeadContact), "P_Name_DisplayName")]
+	[View(ViewType = ViewType.Create, ItemType = ItemType.Default, Visibility = Visibility.Hidden, ReadOnly = false)]
+	[View(ViewType = ViewType.Edit, ItemType = ItemType.Default, Visibility = Visibility.Hidden, ReadOnly = false)]
+	[View(ViewType = ViewType.Display, ItemType = ItemType.Default, Visibility = Visibility.Visible, ReadOnly = true)]
+	[View(ViewType = ViewType.List, ItemType = ItemType.Default, Visibility = Visibility.Visible, ReadOnly = false)]
+	[FastSearch(true)]
+	[EntityProperty]
+	string Name { get; set; }
+
+	[Uid("950d7802-9d8a-454a-a718-a64ffdf5a7ef")]
+	[Order(11)]
+	[NotNull]
+	[Property("9cd56a40-6192-4d8a-840c-c4bd4dfb88eb")]
+	[BoolSettings(FieldName = "IsDeleted")]
+	[DisplayName(typeof(__Resources_ILeadContact), "P_IsDeleted_DisplayName")]
+	[View(ViewType = ViewType.Create, ItemType = ItemType.Default, Visibility = Visibility.Visible, ReadOnly = false)]
+	[View(ViewType = ViewType.Edit, ItemType = ItemType.Default, Visibility = Visibility.Visible, ReadOnly = false)]
+	[View(ViewType = ViewType.Display, ItemType = ItemType.Default, Visibility = Visibility.Visible, ReadOnly = true)]
+	[View(ViewType = ViewType.List, ItemType = ItemType.Default, Visibility = Visibility.Hidden, ReadOnly = false)]
+	[EntityProperty]
+	new bool IsDeleted { get; set; }
+
+	[Uid("ad9da74f-369b-4662-815e-92a3089dbc62")]
+	[Order(12)]
+	[NotNull]
+	[Property("9cd56a40-6192-4d8a-840c-c4bd4dfb88eb")]
+	[BoolSettings(FieldName = "HardDelete")]
+	[DisplayName(typeof(__Resources_ILeadContact), "P_HardDelete_DisplayName")]
+	[View(ViewType = ViewType.Create, ItemType = ItemType.Default, Visibility = Visibility.Hidden, ReadOnly = false)]
+	[View(ViewType = ViewType.Edit, ItemType = ItemType.Default, Visibility = Visibility.Hidden, ReadOnly = false)]
+	[View(ViewType = ViewType.Display, ItemType = ItemType.Default, Visibility = Visibility.Hidden, ReadOnly = true)]
+	[View(ViewType = ViewType.List, ItemType = ItemType.Default, Visibility = Visibility.ForceHidden, ReadOnly = false)]
+	[EntityProperty]
+	new bool HardDelete { get; set; }
+
+	[Uid("767d38fa-9e08-40c6-aaf8-d2f00ab1e0d4")]
+	[Order(13)]
+	[NotNull]
+	[Property("dac9211e-e02b-47cd-8868-89a3bfc0f749")]
+	[DateTimeSettings(SetCurrentDate = true, FieldName = "CreationDate")]
+	[DisplayName(typeof(__Resources_ILeadContact), "P_CreationDate_DisplayName")]
+	[PropertyHandler("d0c00d8a-e003-427d-9942-f52cfb77b0f0")]
+	[View(ViewType = ViewType.Create, ItemType = ItemType.Default, Visibility = Visibility.Hidden, ReadOnly = false)]
+	[View(ViewType = ViewType.Edit, ItemType = ItemType.Default, Visibility = Visibility.Hidden, ReadOnly = true)]
+	[View(ViewType = ViewType.Display, ItemType = ItemType.Default, Visibility = Visibility.Visible, ReadOnly = true)]
+	[View(ViewType = ViewType.List, ItemType = ItemType.Default, Visibility = Visibility.Hidden, ReadOnly = false)]
+	[Filterable]
+	[EntityProperty]
+	DateTime CreationDate { get; set; }
+
+	[Uid("7e487caa-76a5-4720-a340-69233fe0d2db")]
+	[Order(14)]
+	[Property("72ed98ca-f260-4671-9bcd-ff1d80235f47", "cfdeb03c-35e9-45e7-aad8-037d83888f73")]
+	[EntityUserSettings(FieldName = "CreationAuthor")]
+	[DisplayName(typeof(__Resources_ILeadContact), "P_CreationAuthor_DisplayName")]
+	[PropertyHandler("b05ac6bd-eb8b-474a-a796-b53831a9967e")]
+	[View(ViewType = ViewType.Create, ItemType = ItemType.Default, Visibility = Visibility.Hidden, ReadOnly = false)]
+	[View(ViewType = ViewType.Edit, ItemType = ItemType.Default, Visibility = Visibility.Hidden, ReadOnly = true)]
+	[View(ViewType = ViewType.Display, ItemType = ItemType.Default, Visibility = Visibility.Visible, ReadOnly = true)]
+	[View(ViewType = ViewType.List, ItemType = ItemType.Default, Visibility = Visibility.Hidden, ReadOnly = false)]
+	[Filterable]
+	[EntityProperty]
+	IUser CreationAuthor { get; set; }
+
+	[Uid("de00d70e-28d0-4bff-a605-5605574d29da")]
+	[Order(15)]
+	[CanBeNull]
+	[Property("dac9211e-e02b-47cd-8868-89a3bfc0f749")]
+	[DateTimeSettings(FieldName = "ChangeDate")]
+	[DisplayName(typeof(__Resources_ILeadContact), "P_ChangeDate_DisplayName")]
+	[PropertyHandler("12a6c5c4-12f8-4b2e-b7ea-5438974a2d25")]
+	[View(ViewType = ViewType.Create, ItemType = ItemType.Default, Visibility = Visibility.Hidden, ReadOnly = false)]
+	[View(ViewType = ViewType.Edit, ItemType = ItemType.Default, Visibility = Visibility.Hidden, ReadOnly = true)]
+	[View(ViewType = ViewType.Display, ItemType = ItemType.Default, Visibility = Visibility.Visible, ReadOnly = true)]
+	[View(ViewType = ViewType.List, ItemType = ItemType.Default, Visibility = Visibility.Hidden, ReadOnly = false)]
+	[Filterable]
+	[EntityProperty]
+	DateTime? ChangeDate { get; set; }
+
+	[Uid("9b13c2e9-c7f1-4762-9e73-167c1d7a36e7")]
+	[Order(16)]
+	[Property("72ed98ca-f260-4671-9bcd-ff1d80235f47", "cfdeb03c-35e9-45e7-aad8-037d83888f73")]
+	[EntityUserSettings(FieldName = "ChangeAuthor")]
+	[DisplayName(typeof(__Resources_ILeadContact), "P_ChangeAuthor_DisplayName")]
+	[PropertyHandler("d152e660-1ee9-4b5f-a614-df280e5b3f98")]
+	[View(ViewType = ViewType.Create, ItemType = ItemType.Default, Visibility = Visibility.Hidden, ReadOnly = false)]
+	[View(ViewType = ViewType.Edit, ItemType = ItemType.Default, Visibility = Visibility.Hidden, ReadOnly = true)]
+	[View(ViewType = ViewType.Display, ItemType = ItemType.Default, Visibility = Visibility.Visible, ReadOnly = true)]
+	[View(ViewType = ViewType.List, ItemType = ItemType.Default, Visibility = Visibility.Hidden, ReadOnly = false)]
+	[Filterable]
+	[EntityProperty]
+	IUser ChangeAuthor { get; set; }
+}

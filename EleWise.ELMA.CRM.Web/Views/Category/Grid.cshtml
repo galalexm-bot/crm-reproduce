@@ -1,0 +1,34 @@
+﻿@using EleWise.ELMA
+@using EleWise.ELMA.CRM.Managers
+@using EleWise.ELMA.CRM.Web
+@model GridData<EleWise.ELMA.CRM.Models.ICategory>
+@{
+    var NoCategoryUid = CategoryManager.NoCategoryUid;
+}
+
+@(Html.DynamicGrid("CategoryIndexGrid1", Model).Columns(c =>
+{
+    c.For(m => m.Name).Header(SR.T("Название"));
+    c.For(m => MvcHtmlString.Create(Html.ImageButton(UIIcons.Edit)
+            .Attributes(new { tooltiptext = SR.T("Редактировать категорию") })
+            .Url(Url.Action("Edit", "Category", new { area = RouteProvider.AreaName, id = m.Id }))
+            .ToHtmlString()
+        ))
+        .Header(String.Empty)
+        .Order(int.MaxValue)
+        .NotSortable()
+        .Width(30);
+     c.For(m => m.Uid != NoCategoryUid ? MvcHtmlString.Create(Html.ImageButton(UIIcons.Remove)
+            .Attributes(new { tooltiptext = SR.T("Удалить категорию") })
+            .Click("onDeleteCategoryClick(" + m.Id + ");")
+            .ToHtmlString()
+        )   
+        : null)
+        .Header(String.Empty)
+        .Order(int.MaxValue)
+        .NotSortable()
+        .Width(30);
+})
+.EnableCustomize(false)
+.Action("Grid")
+)

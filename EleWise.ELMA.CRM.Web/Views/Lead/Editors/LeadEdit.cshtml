@@ -1,0 +1,12 @@
+﻿@model EleWise.ELMA.CRM.Web.Models.LeadModel
+@using ViewType = EleWise.ELMA.Model.Views.ViewType;
+@{
+    var isEditing = Model.View.ViewType == ViewType.Create || Model.View.ViewType == ViewType.Edit || Model.View.ViewType == ViewType.Custom;
+}
+@using (Html.ElmaForm(confirmOnClose: isEditing))
+{
+    @Html.Partial("Lead/LeadEditFields")
+
+    @Html.Partial("DeleteCategoriesDialog")
+}
+

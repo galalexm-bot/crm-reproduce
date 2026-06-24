@@ -1,0 +1,22 @@
+﻿@using EleWise.ELMA.Web.Content
+@using EleWise.ELMA.CRM.Web
+@using EleWise.ELMA.Extensions
+
+@model EleWise.ELMA.CRM.Web.Models.PaymentCardModel
+@{
+    var oldPrefix = Html.ViewData.TemplateInfo.HtmlFieldPrefix;
+    ViewData.TemplateInfo.HtmlFieldPrefix = Model.Prefix;
+
+    using (Html.ElmaDynamicForm("PaymentCardDynamicForm", Model.Entity.Uid))
+    {
+        @Html.DynamicFormSettings(Model.DynamicFormSettings)
+
+        @Html.FormViewItem(Model.View, m => m.Entity, new ActionRoute("AsyncViewItem", Model.PostController, new { area = CRMAreaRegistration.AREA_NAME, id = Model.Entity.Id, viewType = Model.ViewType }), Model.ViewType,
+            Model.ItemType,
+            EntityObjectViewItemProvider.UID, Model.ViewItemId,
+            Model.DynamicFormSettings != null ? Model.DynamicFormSettings.DynamicFormsProviderUid : Guid.Empty,
+            Model.DynamicFormSettings != null ? Model.DynamicFormSettings.DynamicFormsProviderData : null,
+            Model.FormId)
+    }
+    Html.ViewData.TemplateInfo.HtmlFieldPrefix = oldPrefix;
+}

@@ -1,0 +1,3 @@
+﻿@using EleWise.ELMA
+@model DateTime
+@(Model.ToClientDateTime().ToShortDateString() + " (" + @SR.T("точное время будет указано позднее") + ")")

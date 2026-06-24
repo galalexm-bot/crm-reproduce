@@ -1,0 +1,124 @@
+﻿@model DublicateLeadModel
+@using EleWise.ELMA.CRM.Web.Models.Lead
+@using EleWise.ELMA
+@using EleWise.ELMA.Model.Types.Settings
+@using EleWise.ELMA.Model.Common
+
+@{ 
+    var switchButtonId = "DublicateLeadLinkSwitchButton";
+}
+
+@using (Html.ELMAForm("Dublicate", "Lead", FormMethod.Post, new { id = "leadDublicateForm" }))
+{
+    var toggleLink = ViewData.TemplateInfo.GetFullHtmlFieldId("DublicateLeadToggleLink");
+    var contractorDiv = ViewData.TemplateInfo.GetFullHtmlFieldId("ContractorDiv");
+    var leadDiv = ViewData.TemplateInfo.GetFullHtmlFieldId("LeadDiv");
+    var saleDiv = ViewData.TemplateInfo.GetFullHtmlFieldId("SaleDiv");
+
+
+    <script type="text/javascript">
+        function @(toggleLink)(value) {
+            $('[name="@Html.GetFullHtmlFieldName("Link")"]').val(value);
+            switch (value)
+            {
+                case 'Lead':
+                    elma.display('@(contractorDiv)', false);
+                    elma.display('@(leadDiv)', true);
+                    elma.display('@(saleDiv)', false);
+                    elma.ValidationRulesManager.disible('@(ViewData.TemplateInfo.GetFullHtmlFieldId("Contractor"))', '@(ViewData.TemplateInfo.GetFullHtmlFieldId("Contractor"))_Id');
+                    elma.ValidationRulesManager.enable('@(ViewData.TemplateInfo.GetFullHtmlFieldId("Lead"))', '@(ViewData.TemplateInfo.GetFullHtmlFieldId("Lead"))_Id');
+                    elma.ValidationRulesManager.disible('@(ViewData.TemplateInfo.GetFullHtmlFieldId("Sale"))', '@(ViewData.TemplateInfo.GetFullHtmlFieldId("Sale"))_Id');
+                    break;
+                case 'Sale':
+                    elma.display('@(contractorDiv)', false);
+                    elma.display('@(leadDiv)', false);
+                    elma.display('@(saleDiv)', true);
+                    elma.ValidationRulesManager.disible('@(ViewData.TemplateInfo.GetFullHtmlFieldId("Contractor"))', '@(ViewData.TemplateInfo.GetFullHtmlFieldId("Contractor"))_Id');
+                    elma.ValidationRulesManager.disible('@(ViewData.TemplateInfo.GetFullHtmlFieldId("Lead"))', '@(ViewData.TemplateInfo.GetFullHtmlFieldId("Lead"))_Id');
+                    elma.ValidationRulesManager.enable('@(ViewData.TemplateInfo.GetFullHtmlFieldId("Sale"))', '@(ViewData.TemplateInfo.GetFullHtmlFieldId("Sale"))_Id');
+                    break;
+                    //case 'Contractor': // default
+                default:
+                    elma.display('@(contractorDiv)', true);
+                    elma.display('@(leadDiv)', false);
+                    elma.display('@(saleDiv)', false);
+                    elma.ValidationRulesManager.enable('@(ViewData.TemplateInfo.GetFullHtmlFieldId("Contractor"))', '@(ViewData.TemplateInfo.GetFullHtmlFieldId("Contractor"))_Id');
+                    elma.ValidationRulesManager.disible('@(ViewData.TemplateInfo.GetFullHtmlFieldId("Lead"))', '@(ViewData.TemplateInfo.GetFullHtmlFieldId("Lead"))_Id');
+                    elma.ValidationRulesManager.disible('@(ViewData.TemplateInfo.GetFullHtmlFieldId("Sale"))', '@(ViewData.TemplateInfo.GetFullHtmlFieldId("Sale"))_Id');
+                    break;
+            }
+        }
+    </script>
+
+    @Html.HiddenFor(m => m.ThisLead.Id)
+
+    <div class="base-element-margin-bottom">
+        @SR.T("Выберите контрагента, возможность или сделку, которая является дублем данного потенциального клиента:")
+    </div>
+
+    using (Html.TableForm(EleWise.ELMA.Model.Views.ViewType.Edit))
+    {
+        <tr>
+            <td class="caption-property-cell captionCell">
+                @(Html.Button()
+                    .AsSwitcher()
+                    .AsLink()
+                    .NoBorder()
+                    .CustomAttributes(new Dictionary<string, object> { { "id", switchButtonId }, { "class", "as-caption-button"} })
+                    .Buttons(b =>
+                    {
+                        foreach (var value in Enum.GetValues(typeof(DublicateLeadLink)).Cast<DublicateLeadLink>())
+                        {
+                            b.Button(btn =>
+                            {
+                                btn.Uid(value.ToString());
+                                btn.Text(ModelHelper.GetEnumDisplayName(value));
+                                btn.Checked(value == Model.Link);
+                            });
+                        }
+                    })
+                    .Click(string.Format("{0}(this.getSelectedMenuItemId('#{1}'))", toggleLink, switchButtonId)))
+                @Html.HiddenFor(m => m.Link)
+            </td>
+            <td>
+                <div id="@(contractorDiv)">@Html.Editor(m => m.Contractor, a => a.TypeSettingsAction = settings => ((EntitySettings)settings).HideCreator = true)</div>
+                <div id="@(leadDiv)">@Html.Editor(m => m.Lead, a =>
+                                    {
+                                        a.TypeSettingsAction = settings =>
+                                                                   {
+                                                                       var entitySettings = (EntitySettings) settings;
+                                                                       entitySettings.FilterQuery = string.Format("not Id={0}", Model.ThisLead.Id);
+                                                                       entitySettings.HideCreator = true;
+                                                                   };
+                                    })</div>
+                <div id="@(saleDiv)">@Html.Editor(m => m.Sale, a => a.TypeSettingsAction = settings => ((EntitySettings)settings).HideCreator = true)</div>
+            </td>
+        </tr>
+        if (Model.ThisLead.Contacts != null && Model.ThisLead.Contacts.Count > 0)
+        {
+        <tr>
+            <td colspan="2" class="captionCell">
+                @(Html.ModernCheckBoxFor(m => m.CopyContacts, true, true)
+                    .Checked(true)
+                    .LabelHtml(Html.Caption("CopyContacts").ToHtmlString()))
+            </td>
+        </tr>
+        }
+        else
+        {
+            @Html.Hidden(ViewData.TemplateInfo.GetFullHtmlFieldName("CopyContacts"), false)
+        }
+        @Html.EditableProperty(m => m.Comment)
+    }
+
+    <div class="popup-buttons">
+        <input type="submit" class="confirm" value="@SR.Save" />
+        <input type="button" value="@SR.Cancel" onclick="@Html.ClosePopup("DublicatePopup")" />
+    </div>
+
+    <script type="text/javascript">
+	    $(document).ready(function() {
+            @(toggleLink)('@Model.Link');
+	    });
+    </script>
+}

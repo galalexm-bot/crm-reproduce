@@ -1,0 +1,51 @@
+﻿@model GridData<IMarketingActivity>
+@using EleWise.ELMA.CRM.Models
+@using EleWise.ELMA
+@using EleWise.ELMA.Web.Mvc.ExtensionPoints
+@using EleWise.ELMA.Web.Mvc.Views.ViewItem
+@{
+    const string gridId = "MarketingGroupActivitiesGrid3";
+    var tabId = (string) ViewData["TabId"];
+
+    bool isAjaxRequest = ViewContext.HttpContext.Request.IsAjaxRequest() && !FormViewItemControl.IsAsync;
+    Func<object, object> template = null;
+    if (!isAjaxRequest)
+    {
+        template = (a => Html.Partial("EffectsTemplate", a as IMarketingActivity));
+    }
+    Func<string> clientTemplate = (() => Html.Partial("EffectsClientTemplate", Model).ToHtmlString());
+}
+
+@(Html.DynamicGrid(gridId, Model).Columns(c =>
+{
+    c.For(m => m.TypeUid)
+        .Header(SR.T("Тип"))
+        .Template(m => Html.Image(Html.Url().ObjectIcon(ObjectIconFormat.x16, m), "", new { @class = "metadata-icon", tooltiptext = m.Status == MarketingObjectStatus.Active ? SR.T("Активное") : SR.T("В архиве") }))
+        .Width(30);
+    c.For(m => m.Name).Link(m => Url.Entity(m)).Width("auto");
+    c.For(m => m.Responsible);
+    c.For(m => m.CreationDate).Header(SR.T("Создано")).Width(150);
+    c.For(m => m.DirtyLeadCount).Header(SR.T("Возможности")).HtmlAttributes(new { style = "text-align: right;" });
+    c.For(m => m.CreatedSaleCount).Header(SR.T("Сделки")).HtmlAttributes(new { style = "text-align: right;" });
+    c.For(m => m.ArchiveDate).Visible(false);
+    if (isAjaxRequest)
+    {
+        c.For(m => m.MarketingEffects).Header("").Sortable(false)
+            .Template(item =>
+                          {
+                              var oldValue = ViewContext.HttpContext.EditingFormEnabled();
+                              ViewContext.HttpContext.EditingFormEnabled(true);
+                              var result = Html.Partial("EffectsTemplate", item);
+                              ViewContext.HttpContext.EditingFormEnabled(oldValue);
+                              return result;
+                          });
+    }
+    
+})
+.Customizable(false)
+.DefaultColumns(true)
+.DetailViewClientTemplate(clientTemplate)
+.DetailViewTemplate(template, true)
+.DetailViewTemplateVisible(a => (a != null) && (((IMarketingActivity)a).MarketingEffects != null) && (((IMarketingActivity)a).MarketingEffects.Any()))
+.ClientEvents(ce => ce.OnRowDataBound(w => "function (e) { if (!e.dataItem.MarketingEffects > '') e.row.cells[0].innerHTML = ''; }"))
+)

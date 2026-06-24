@@ -1,0 +1,76 @@
+﻿@using EleWise.ELMA
+@using EleWise.ELMA.CRM.Models
+@using EleWise.ELMA.Model.Services
+@using EleWise.ELMA.Web.Mvc.Html.Grids
+
+@{
+    const string leadGridId = "LeadDublicateSettingsProperty";
+    const string contractorGridId = "ContractorDublicateSettingsProperty";
+    var leadSettings = GridPersonalizationAdministration.LoadState(leadGridId, new Guid(), false);
+    if (leadSettings == null)
+    {
+        leadSettings = GridState.CreateNew(leadGridId, InterfaceActivator.TypeOf<ILead>());
+        GridPersonalizationAdministration.SaveState(leadSettings.GridId, leadSettings);
+    }
+    var contractorSettings = GridPersonalizationAdministration.LoadState("ContractorDublicateSettingsProperty", new Guid(), false);
+    if (contractorSettings == null)
+    {
+        contractorSettings = GridState.CreateNew(contractorGridId, InterfaceActivator.TypeOf<IContractor>());
+        GridPersonalizationAdministration.SaveState(contractorSettings.GridId, contractorSettings);
+    }
+}
+
+<div class="base-element-margin-bottom">
+    <h3 class="bold_text">@SR.T("Настройка отображения")</h3>
+    @Html.InfoPanel(SR.T("Настройте какие колонки должны быть показаны для сравнения Возможности с потенциальными дублями из Возможностей или Контрагентов"))
+</div>
+
+
+
+<div class="scoring-button base-element-margin-bottom">
+    @Html.Button().Text(SR.T("Настройка колонок для Возможностей")).Click("openSettingsTable('"+leadGridId+"');")
+</div>
+
+<div class="scoring-button">
+    @Html.Button().Text(SR.T("Настройка колонок для Контрагентов")).Click("openSettingsTable('"+contractorGridId+"');")
+</div>
+
+@Html.PopupWindow(
+        "gridSettings_" + leadGridId,
+        SR.T("Настройка отображения таблицы"),
+        Url.Action("Settings", "GridSettings",
+            new
+            {
+                area = "EleWise.ELMA.SDK.Web",
+                gridId = leadGridId,
+                provider = new Guid(),
+                customStateProvider = new Guid(),
+                typeName = typeof(ILead).AssemblyQualifiedName,
+                withDefaultSettings = true
+            }),
+            width: 800,
+            modal: true
+    )
+
+@Html.PopupWindow(
+        "gridSettings_" + contractorGridId,
+        SR.T("Настройка отображения таблицы"),
+        Url.Action("Settings", "GridSettings",
+            new
+            {
+                area = "EleWise.ELMA.SDK.Web",
+                gridId = contractorGridId,
+                provider = new Guid(),
+                customStateProvider = new Guid(),
+                typeName = typeof(IContractor).AssemblyQualifiedName,
+                withDefaultSettings = true
+            }),
+            width: 800,
+            modal: true
+    )
+
+<script type="text/javascript">
+    function openSettingsTable(tableId) {
+        openWindow('gridSettings_' + tableId);
+    }
+</script>

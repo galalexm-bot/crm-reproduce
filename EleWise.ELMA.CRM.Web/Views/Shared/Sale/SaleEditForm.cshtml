@@ -1,0 +1,27 @@
+﻿@model EleWise.ELMA.CRM.Web.Models.SaleModel
+@using EleWise.ELMA.CRM.Web
+@using EleWise.ELMA.Extensions
+@using EleWise.ELMA.Web.Content
+
+@Html.DynamicFormStart("SaleDynamicForm", Guid.NewGuid())
+@{    
+    var formViewItem = Model.View;
+    @Html.DynamicFormSettings(Model.DynamicFormSettings)
+
+    var metadata = EleWise.ELMA.Model.Metadata.MetadataLoader.LoadMetadata(Model.Entity.GetType());
+    if (metadata != null)
+    {
+        @Html.Hidden("Entity.TypeUid", metadata.Uid)
+    }
+    if (Model.Entity.Id != null)
+    {
+        @Html.HiddenFor(m => m.Entity.Id)
+    }
+    @Html.FormViewItem(formViewItem, m => m.Entity, new ActionRoute("AsyncViewItem", "Sale", new {area = CRMAreaRegistration.AREA_NAME, id = Model.Entity.Id, viewType = Model.ViewType, formUid = Model.FormUid }), Model.ViewType,
+        Model.ItemType,
+        EntityObjectViewItemProvider.UID, Model.ViewItemId,
+        Model.DynamicFormSettings != null ? Model.DynamicFormSettings.DynamicFormsProviderUid : Guid.Empty,
+        Model.DynamicFormSettings != null ? Model.DynamicFormSettings.DynamicFormsProviderData : null,
+        Model.FormId)
+}
+@Html.DynamicFormEnd()

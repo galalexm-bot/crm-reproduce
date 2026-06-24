@@ -1,0 +1,208 @@
+﻿@using EleWise.ELMA
+@using EleWise.ELMA.CRM
+@using EleWise.ELMA.CRM.Models
+@using EleWise.ELMA.CRM.Web
+@using EleWise.ELMA.Model.Services
+@using EleWise.ELMA.CRM.Web.Attributes
+@using EleWise.ELMA.BPM.Web.Common.Extensions
+@using EleWise.ELMA.Model.Types.Settings
+@using EleWise.ELMA.Workflow.Web.Models
+@model IGridData<IContact>
+
+@{
+    Html.Title(SR.T("Контакты"));
+    var typeUid = InterfaceActivator.UID<IContact>();
+    Html.RenderInZone("FilterModelLinkZone", d => Html.CurrentSearchLinkButton(typeUid));
+    bool canAdd = CRMPermissionProvider.CheckAny(new[] { CRMPermissionProvider.CRMFullAccessPermission, CRMPermissionProvider.CRMContactCreatePermission });
+    bool canDelete = CRMPermissionProvider.CheckAny(new[] { CRMPermissionProvider.CRMFullAccessPermission, CRMPermissionProvider.CRMDeletePermission });
+}
+
+    @(Html.Toolbar().Group("toolbar-group-1")
+            .If(canAdd, b => b.ToolbarButton(new ActionToolbarItem("toolbar-action-AddContact")
+                {
+                    IsMainAction = true,
+                    Text = SR.Create,
+                    IconUrl = "#add.svg",
+                    Url = Url.EntityAction<ContactCreateAttribute>(InterfaceActivator.UID<IContact>())
+                }))
+            .ToolbarButton(new ActionToolbarItem("toolbar-button-SelectedActions")
+                {
+                    Text = SR.T("Выбранные"),
+                    IconUrl = "#select_all.svg",
+                    Items = new ActionItemList{
+                        new ActionToolbarItem("Contacts_add")
+                            {
+                                Text = SR.T("Добавить"), IconUrl = "#add.svg",
+                                Items = new ActionItemList
+                                {
+                                    new ActionToolbarItem("Contacts_add_call_btn")
+                                    {
+                                        Text = SR.T("Звонки"), IconUrl = "#add.svg",
+                                        Click = "AddCalls();"
+                                    },
+                                    new ActionToolbarItem("Contacts_add_meeteng_btn"){Text = SR.T("Встречи"), IconUrl = "#add_meeting.svg", Click = "AddMeetings();"},
+                                    new ActionToolbarItem("Contacts_add_mail_btn"){Text = SR.T("Письма"), IconUrl = "#add_message.svg", Click = "AddMails();"},
+                                }
+                            },
+                        
+                        new ActionToolbarItem("Contacts_delete_btn")
+                        {
+                            Text = SR.T("Удалить"),
+                            IconUrl = "#basket.svg",
+                            Click = "DeleteContacts();",
+                            Visible = canDelete
+                        },
+                    }
+                })
+        )
+
+@Html.FilterEditButton(new EleWise.ELMA.BPM.Web.Common.Models.FilterEditButtonModel {        
+    FilterId = Convert.ToInt64(Request["FilterId"]),
+    Area = RouteProvider.AreaName,
+    ControllerName = "Contact",
+    BackUrl = Request.RawUrl
+}) 
+
+@Html.PopupWindow("PopUpDeleteContacts", SR.T("Подтверждение удаления"), @<text></text>)
+
+<script type="text/javascript">
+
+    function DeleteContacts()
+    {
+        var selectedContacts = GetSelectedObjects();
+         if (selectedContacts.length == 0) {
+            jAlert('@(SR.T("Нет выбранных контактов"))', '@(SR.T("Предупреждение"))');
+            return;
+        }
+        var url = '@Url.Action("DeleteGroup", "Contact", new { area = CRMAreaRegistration.AREA_NAME, popupId = "PopUpDeleteContacts" })';
+        if (selectedContacts.length > 0)
+        {
+            $.each(selectedContacts, function(i, d) {
+                url += '&contactsId=' + d;
+            });
+            var window = $('#PopUpDeleteContacts').data("tWindow");
+            window.contentUrl = url;
+            window.loaded = false;
+            @(Html.OpenPopup("PopUpDeleteContacts"))
+        }
+    }
+
+    function AddCalls()
+    {
+        var selectedContacts = GetSelectedObjects();
+         if (selectedContacts.length == 0) {
+            jAlert('@(SR.T("Нет выбранных контактов"))', '@(SR.T("Предупреждение"))');
+            return;
+        }
+        
+        if (selectedContacts.length > 0)
+        {
+            var url = '@Url.Action("CreateMany", "RelationshipCall", new { area = CRMAreaRegistration.AREA_NAME})';
+            url += "?";
+            $.each(selectedContacts, function(i, d) {
+                url += '&contactsId=' + d;
+            });
+            window.replaceUrl(url);
+        }
+    }
+        
+    function AddMeetings()
+    {
+        var selectedContacts = GetSelectedObjects();
+         if (selectedContacts.length == 0) {
+            jAlert('@(SR.T("Нет выбранных контактов"))', '@(SR.T("Предупреждение"))');
+            return;
+        }
+        
+        if (selectedContacts.length > 0)
+        {
+            var url = '@Url.Action("CreateMany", "RelationshipMeeting", new { area = CRMAreaRegistration.AREA_NAME})';
+            url += "?";
+            $.each(selectedContacts, function(i, d) {
+                url += '&contactsId=' + d;
+            });
+            window.replaceUrl(url);
+        }
+    }
+    
+    function AddMails()
+    {
+        var selectedContacts = GetSelectedObjects();
+         if (selectedContacts.length == 0) {
+            jAlert('@(SR.T("Нет выбранных контактов"))', '@(SR.T("Предупреждение"))');
+            return;
+        }
+        
+        if (selectedContacts.length > 0)
+        {
+            var url = '@Url.Action("CreateMany", "RelationshipMail", new { area = CRMAreaRegistration.AREA_NAME})';
+            url += "?";
+            $.each(selectedContacts, function(i, d) {
+                url += '&contactsId=' + d;
+            });
+            window.replaceUrl(url);
+        }
+    }
+    
+</script>
+
+@Html.Partial("Grid")
+@{
+  //  classMetadata = Locator.GetServiceNotNull<IMetadataRuntimeService>().GetMetadataList().Where(m => m is ClassMetadata && (m.Uid.ToString() == availableUid)).Cast<ClassMetadata>().Single();
+  
+  var buttonInfo = new StartRouteButtonInfo
+            {
+                ObjectType = InterfaceActivator.UID<IContact>(false),
+                
+                RelationType = RelationType.OneToMany,
+                ImageUrl = "#play.svg",
+                Caption = SR.T("Для запуска процесса введите название экземпляра процесса,<br/>выберите процесс и нажмите кнопку \"Отправить\" или Enter:"),
+                PopupId = "StartProcessByRoutePopup",
+                Name=SR.T("Запуск процесса")
+            };
+
+            var routeValues = new RouteValueDictionary {  
+                { "area", EleWise.ELMA.Workflow.Web.WorkflowRouteProvider.AreaName },
+                { "ObjectType", buttonInfo.ObjectType },
+                { "RelationType", buttonInfo.RelationType },
+                { "PopupId", buttonInfo.PopupId },                
+                { "Caption", buttonInfo.Caption },        
+                { "Name", buttonInfo.Name }
+
+};
+
+
+}
+@(Html.PopupWindow(buttonInfo.PopupId, SR.T("Запустить процесс"), Url.Action("StartRouteForm", "WorkflowInstance", routeValues)))
+<script>
+    function StartProcess() {
+        var selectedContractors = GetSelectedObjects();
+        if (selectedContractors.length == 0) {
+            jAlert('@(SR.T("Нет выбранных контактов"))', '@(SR.T("Предупреждение"))');
+            return;
+        }
+
+        if (selectedContractors.length > 0) {
+            var url = '@Url.Action("StartRouteForm", "WorkflowInstance", routeValues)';
+            url += '&PopupId=@buttonInfo.PopupId';
+            //url += '&Name=@buttonInfo.Name';
+            //url += '&Caption=@buttonInfo.Caption';
+            // url += '&RelationType=@buttonInfo.RelationType';
+
+            var i = 0;
+            $.each(selectedContractors, function (i, d) {
+                url += '&objects[' + i + ']=' + d;
+                i++;
+            });
+
+            refreshPopup('@buttonInfo.PopupId', url);
+            //id, contentUrl, postData, title, onOpenScript, onCloseScript, useReferrer, closeOnClick, closeOnEsc
+
+        }
+
+    }
+    
+
+    
+
+</script>

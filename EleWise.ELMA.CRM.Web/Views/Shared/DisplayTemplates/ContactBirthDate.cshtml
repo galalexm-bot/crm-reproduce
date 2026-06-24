@@ -1,0 +1,7 @@
+﻿@using EleWise.ELMA.CRM.Extensions
+@using EleWise.ELMA.CRM.Models
+@{
+    var contact = ViewData.ModelMetadata.GetContainerObject() as IContact;
+}
+
+@contact.BirthDate()

@@ -1,0 +1,307 @@
+﻿
+@using EleWise.ELMA
+@using EleWise.ELMA.CRM.Managers
+@using EleWise.ELMA.CRM.Models
+@using EleWise.ELMA.CRM.Web.Components
+@using EleWise.ELMA.Model.Services
+@using EleWise.ELMA.CRM.Web
+@using EleWise.ELMA.CRM.Web.Models
+@model RelationshipModel
+@{
+    var divContractorContacts = ViewData.TemplateInfo.GetFullHtmlFieldId("DivContractorContacts");
+    var divContractorSales = ViewData.TemplateInfo.GetFullHtmlFieldId("DivContractorSales");
+    var contractorContactsDiv = ViewData.TemplateInfo.GetFullHtmlFieldId("ContractorContactsDiv");
+    var contractorSalesDiv = ViewData.TemplateInfo.GetFullHtmlFieldId("ContractorSalesDiv");
+    var contractorDiv = ViewData.TemplateInfo.GetFullHtmlFieldId("ContractorDiv");
+    var leadDiv = ViewData.TemplateInfo.GetFullHtmlFieldId("LeadDiv");
+    var divLeadContacts = ViewData.TemplateInfo.GetFullHtmlFieldId("DivLeadContacts");
+    var leadContactsDiv = ViewData.TemplateInfo.GetFullHtmlFieldId("LeadContactsDiv");
+    var saleDiv = ViewData.TemplateInfo.GetFullHtmlFieldId("SaleDiv");
+    var contactDiv = ViewData.TemplateInfo.GetFullHtmlFieldId("ContactDiv");
+    var toggleLink = ViewData.TemplateInfo.GetFullHtmlFieldId("toggleLink");
+    var contractorChanged = ViewData.TemplateInfo.GetFullHtmlFieldId("contractorChanged");
+    var leadChanged = ViewData.TemplateInfo.GetFullHtmlFieldId("leadChanged");
+    var entityContractorId = ViewData.TemplateInfo.GetFullHtmlFieldId("Entity.Contractor.Id");
+    var entityLeadId = ViewData.TemplateInfo.GetFullHtmlFieldId("Entity.Lead.Id");
+
+    Html.RegisterContent(ViewData.TemplateInfo.GetFullHtmlFieldId("RelationshipLinkedEntity"),
+        @<text>
+             <script type="text/javascript">
+                 function @(toggleLink)(e) {
+                     switch (e.value) {
+                     case 'Contractor':
+                         elma.display('@contractorDiv', true);
+                         elma.display('@contractorContactsDiv', true);
+                         elma.display('@leadContactsDiv', false);
+                         elma.display('@contactDiv', false);
+                         elma.display('@leadDiv', false);
+                         elma.display('@saleDiv', false);
+                         if ($('#@ViewData.TemplateInfo.GetFullHtmlFieldId("Entity.Contractor.Id")').val())
+                             elma.display('@contractorSalesDiv', true);
+                         break;
+                     case 'Contact':
+                         elma.display('@contractorDiv', false);
+                         elma.display('@contractorContactsDiv', true);
+                         elma.display('@leadContactsDiv', false);
+                         elma.display('@contractorSalesDiv', false);
+                         elma.display('@contactDiv', true);
+                         elma.display('@leadDiv', false);
+                         elma.display('@saleDiv', false);
+                         break;
+                     case 'Lead':
+                         elma.display('@contractorDiv', false);
+                         elma.display('@contractorContactsDiv', false);
+                         elma.display('@leadContactsDiv', true);
+                         elma.display('@contractorSalesDiv', false);
+                         elma.display('@contactDiv', false);
+                         elma.display('@leadDiv', true);
+                         elma.display('@saleDiv', false);
+                         break;
+                     default:
+                         elma.display('@contractorDiv', true);
+                         elma.display('@contractorContactsDiv', true);
+                         elma.display('@leadContactsDiv', false);
+                         elma.display('@contractorSalesDiv', false);
+                         elma.display('@contactDiv', false);
+                         elma.display('@leadDiv', false);
+                         elma.display('@saleDiv', false);
+                             break;
+                     }
+                 }
+             </script>
+         </text>);
+}
+
+<tr>
+    @{
+        if (Model.LinkReadOnly)
+        {
+            if (Model.Entity.Contractor != null)
+            {
+                @Html.Property(m => m.Entity.Contractor, a => { a.ReadOnly = true; })
+            }
+            if (Model.Entity.Contact != null)
+            {
+                @Html.Property(m => m.Entity.Contact, a => { a.ReadOnly = true; })
+            }
+            if (Model.Entity.Lead != null)
+            {
+                @Html.Property(m => m.Entity.Lead, a => { a.ReadOnly = true; })
+            }
+            if (Model.Entity.Sale != null)
+            {
+                @Html.Property(m => m.Entity.Sale, a => { a.ReadOnly = true; })
+            }
+            if (Model.IsMultiCreation)
+            {
+                if (Model.Contacts != null)
+                {
+                    @Html.Property(m => m.Contacts)
+                }
+
+                if (Model.Contractors != null)
+                {
+                    @Html.Property(m => m.Contractors)
+                }
+
+                if (Model.Leads != null)
+                {
+                    @Html.Property(m => m.Leads)
+                }
+
+                if (Model.Sales != null)
+                {
+                    @Html.Property(m => m.Sales)
+                }
+            }
+        }
+        else
+        {
+            <td class="captionCell">
+                @SR.T("Кому")
+            </td>
+            <td class="to-property-container">
+                @Html.Editor(m => m.Link, a => a.Html.onchange = toggleLink)
+                <div id="@contractorDiv" class="to-contractor-container">
+                    @Html.Editor(m => m.Entity.Contractor)
+                    <div id="@contractorContactsDiv" class="contractor-contact-list-container">
+                        @{
+                            object route = null;
+                            if (Model.Link == RelationshipLink.Contractor && Model.Entity.Contractor != null)
+                            {
+                                route = new { area = CRMAreaRegistration.AREA_NAME, contractorId = Model.Entity.Contractor.Id, relationId = Model.Entity.IsNew() ? (Model.PrevRelationshipId ?? 0) : Model.Entity.Id };
+                            }
+                            using (Html.AjaxPanel(divContractorContacts, Url.Action("GetContractorContacts", "Relationship", route)))
+                            {
+                            }
+                        }
+                    </div>
+                </div>
+                <div class="to-contractor-contact-container" id="@(contactDiv)">@Html.Editor(m => m.Entity.Contact)</div>
+                <div class="to-contractor-lead-container" id="@(leadDiv)">
+                    @Html.Editor(m => m.Entity.Lead, a => a.EntityFilterProvider = ActiveLeadFilterProvider.UID)
+                    <div id="@leadContactsDiv" class="contractor-contact-list-container">
+                        @{
+                            object leadRoute = null;
+                            if (Model.Link == RelationshipLink.Lead && Model.Entity.Lead != null)
+                            {
+                                leadRoute = new { area = CRMAreaRegistration.AREA_NAME, leadId = Model.Entity.Lead.Id, relationId = Model.Entity.IsNew() ? (Model.PrevRelationshipId ?? 0) : Model.Entity.Id };
+                            }
+                            using (Html.AjaxPanel(divLeadContacts, Url.Action("GetLeadContacts", "Relationship", leadRoute)))
+                            {
+                            }
+                        }
+                    </div>
+                </div>
+            </td>
+        }
+    }
+</tr>
+@if (!Model.LinkReadOnly)
+{
+    <tr id="@contractorSalesDiv" style="display: none">
+        <td class="captionCell">@Html.Caption(m => m.Entity.Sale)</td>
+        <td>
+            @{
+                object routeNextRel = null;
+                if (Model.Link == RelationshipLink.Contractor && Model.Entity.Contractor != null)
+                {
+                    // следующее взаимоотношение (указано Model.PrevRelationshipId)
+                    routeNextRel = new
+                    {
+                        area = CRMAreaRegistration.AREA_NAME,
+                        contractorId = Model.Entity.Contractor.Id,
+                        relationId = Model.PrevRelationshipId ?? Model.Entity.Id,
+                        htmlPrefix = Html.ViewData.TemplateInfo.GetFullHtmlFieldName("Entity"),
+                    };
+                }
+                using (Html.AjaxPanel(divContractorSales, Url.Action("GetContractorSales", "Relationship", routeNextRel)))
+                {
+                }
+            }</td>
+    </tr>
+}
+@if (Model.LinkReadOnly && Model.Entity.Contractor != null && !Model.Entity.Contractor.IsNew())
+{
+    if (Model.Entity.Contractor.Contacts.Any())
+    {
+        <tr>
+            <td class="captionCell">@SR.T("Контакты")</td>
+            <td>
+                <div>
+                    @if (Model.Entity.Contractor != null)
+                    {
+                        using (Html.AjaxPanel(divContractorContacts, Url.Action("GetContractorContacts", "Relationship", new {area = CRMAreaRegistration.AREA_NAME, contractorId = Model.Entity.Contractor.Id, relationId = Model.Entity.IsNew() ? 0 : Model.Entity.Id})))
+                        {
+                        }
+                    }
+                </div>
+            </td>
+        </tr>
+    }
+    if (Model.Entity.Sale == null)
+    {
+        var saleFilter = InterfaceActivator.Create<ISaleFilter>();
+        saleFilter.Contractors.Add(Model.Entity.Contractor);
+        var saleCount = SaleManager.Instance.Count(saleFilter);
+        if (saleCount > 0)
+        {
+            @Html.EditableProperty(m => m.Entity.Sale, a =>
+            {
+                a.EntityFilterProvider = ContractorSaleFilterProvider.UID;
+                a.EntityFilterData = Model.Entity.Contractor.Id.ToString();
+            })
+        }
+    }
+}
+
+@if (Model.LinkReadOnly && Model.Entity.Lead != null && !Model.Entity.Lead.IsNew())
+{
+    if (Model.Entity.Lead.Contacts.Any())
+    {
+        <tr>
+            <td class="captionCell">@SR.T("Контакты")</td>
+            <td>
+                <div>
+                    @if (Model.Entity.Lead != null)
+                    {
+                        using (Html.AjaxPanel(divLeadContacts, Url.Action("GetLeadContacts", "Relationship", new { area = CRMAreaRegistration.AREA_NAME, leadId = Model.Entity.Lead.Id, relationId = Model.Entity.IsNew() ? 0 : Model.Entity.Id })))
+                        {
+                        }
+                    }
+                </div>
+            </td>
+        </tr>
+    }
+}
+
+@{
+    Html.RegisterContent(ViewData.TemplateInfo.GetFullHtmlFieldId("RelationshipContractorChanged"),
+      @<text>
+           <script type="text/javascript">
+               function @(contractorChanged)() {
+                   var contractorId = $("#@(entityContractorId)").val();
+                   $("#@(divContractorContacts)").attr('dynamicurl', urlForContacts + "?contractorId=" + contractorId);
+                   $("#@(divContractorContacts)").attr('loaded', 0);
+                   $("#@(divContractorContacts)").attr('loading', 0);
+                   elma.dynamics.loadOnce('@(divContractorContacts)');
+
+                   $("#@(divContractorSales)").attr('dynamicurl', urlForSales + "&contractorId=" + contractorId);
+                   $("#@(divContractorSales)").attr('loaded', 0);
+                   $("#@(divContractorSales)").attr('loading', 0);
+                   elma.dynamics.loadOnce('@(divContractorSales)', null, function() {
+                       elma.display('@contractorSalesDiv', true);
+                   });
+               }
+
+               $(document).ready(function() {
+                   var executorSelector = elma.EntitySelector.Manager.get('@(entityContractorId)');
+                   if (executorSelector != null) {
+                       executorSelector.onAddItem(@(contractorChanged));
+                       executorSelector.onRemoveItem(@(contractorChanged));
+                   }
+                   @(toggleLink)({ value: '@(Model.Link)' });
+                   if ($("#@(divContractorContacts)").attr("dynamicUrl") != undefined) {
+                       elma.dynamics.toggle('@(divContractorContacts)', null, null, null, null, null, null, { setFocus: false });
+                   }
+
+                   if ($("#@(divContractorSales)").attr("dynamicUrl") != undefined) {
+                       elma.dynamics.toggle('@(divContractorSales)', null, null, null, null, null, null, { setFocus: false });
+                   }
+			   });
+				
+               var urlForContacts = '@(Url.Action("GetContractorContacts", "Relationship", new { area = CRMAreaRegistration.AREA_NAME }))';
+               var urlForSales = '@(Url.Action("GetContractorSales", "Relationship", new { area = CRMAreaRegistration.AREA_NAME, htmlPrefix = Html.ViewData.TemplateInfo.GetFullHtmlFieldName("Entity") }))';
+           </script>
+       </text>);
+}
+
+@{ 
+    Html.RegisterContent(ViewData.TemplateInfo.GetFullHtmlFieldId("RelationshipLeadChanged"),
+      @<text>
+           <script type="text/javascript">
+               function @(leadChanged)() {
+                   var leadId = $("#@(entityLeadId)").val();
+                   $("#@(divLeadContacts)").attr('dynamicurl', urlForLeadContacts + "?leadId=" + leadId);
+                   $("#@(divLeadContacts)").attr('loaded', 0);
+                   $("#@(divLeadContacts)").attr('loading', 0);
+                   elma.dynamics.loadOnce('@(divLeadContacts)');
+               }
+
+               $(document).ready(function() {
+                   var leadExecutorSelector = elma.EntitySelector.Manager.get('@(entityLeadId)');
+                   if (leadExecutorSelector != null) {
+                       leadExecutorSelector.onAddItem(@(leadChanged));
+                       leadExecutorSelector.onRemoveItem(@(leadChanged));
+                   }
+
+                   if ($("#@(divLeadContacts)").attr("dynamicUrl") != undefined) {
+                       elma.dynamics.toggle('@(divLeadContacts)', null, null, null, null, null, null, { setFocus: false });
+                   }
+
+               });
+
+               var urlForLeadContacts = '@(Url.Action("GetLeadContacts", "Relationship", new { area = CRMAreaRegistration.AREA_NAME }))';
+           </script>
+       </text>);
+}

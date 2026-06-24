@@ -1,0 +1,68 @@
+﻿@using EleWise.ELMA.CRM.Models
+@{
+    var contact = ViewData.ModelMetadata.GetContainerObject() as IContact;
+
+    var htmlFieldPrefix = ViewData.TemplateInfo.HtmlFieldPrefix;
+    if (htmlFieldPrefix.EndsWith("Birthday"))
+    {
+        ViewData.TemplateInfo.HtmlFieldPrefix = htmlFieldPrefix.Remove(Math.Max(htmlFieldPrefix.Length - 9, 0));
+
+        var entityYear = ViewData.TemplateInfo.GetFullHtmlFieldId("Year");
+        var entityMonth = ViewData.TemplateInfo.GetFullHtmlFieldId("Month");
+        var entityDay = ViewData.TemplateInfo.GetFullHtmlFieldId("Day");
+
+        var months = new List<SelectListItem> { new SelectListItem { Text = "", Value = "", Selected = !contact.Month.HasValue } };
+        for (var i = 1; i <= 12; i++)
+        {
+            months.Add(new SelectListItem { Text = new DateTime(2000, i, 1).ToString("MMMM"), Value = i.ToString(), Selected = contact.Month == i });
+        }
+
+        var days = new List<SelectListItem> { new SelectListItem { Text = "", Value = "", Selected = !contact.Day.HasValue } };
+        var isLeapYear = !contact.Year.HasValue || contact.Year % 4 == 0;
+        var monthDays = new[] { 31, 31, isLeapYear ? 29 : 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 };
+        for (var i = 1; i <= monthDays[contact.Month ?? 0]; i++)
+        {
+            days.Add(new SelectListItem { Text = i.ToString(), Value = i.ToString(), Selected = contact.Day == i });
+        }
+
+        <script type="text/javascript">
+            function @(ViewData.TemplateInfo.GetFullHtmlFieldId("FillDay"))() {
+                elma.FillDay('@(entityYear)', '@(entityMonth)', '@(entityDay)');
+            }
+        </script>
+
+        <table>
+            <tr>
+                <td style="vertical-align: middle; padding-right: 5px;">
+                    @(Html.Telerik().DropDownList()
+                    .Name(ViewData.TemplateInfo.GetFullHtmlFieldName("Month"))
+                    .BindTo(months)
+                    .HtmlAttributes(new { style = "width:100px" })
+                    .ClientEvents(events => events.OnChange(ViewData.TemplateInfo.GetFullHtmlFieldId("FillDay"))))
+                </td>
+                <td style="vertical-align: middle; padding-right: 5px;">
+                    @(Html.Telerik().DropDownList()
+                    .Name(ViewData.TemplateInfo.GetFullHtmlFieldName("Day"))
+                    .BindTo(days)
+                    .HtmlAttributes(new { style = "width:55px" }))
+                </td>
+                <td style="vertical-align: middle; padding-right: 5px;">
+                    @(Html.Telerik().NumericTextBox()
+                    .Name(ViewData.TemplateInfo.GetFullHtmlFieldName("Year"))
+                    .Value(contact.Year)
+                    .Spinners(false)
+                    .MinValue(1)
+                    .MaxValue(9999)
+                    .DecimalDigits(0)
+                    .EmptyMessage("")
+                    .HtmlAttributes(new { style = "width:64px" })
+                                    .ClientEvents(events => events.OnChange(ViewData.TemplateInfo.GetFullHtmlFieldId("FillDay")))
+                    )
+                </td>
+            </tr>
+        </table>
+
+        ViewData.TemplateInfo.HtmlFieldPrefix = htmlFieldPrefix;
+    }
+
+}

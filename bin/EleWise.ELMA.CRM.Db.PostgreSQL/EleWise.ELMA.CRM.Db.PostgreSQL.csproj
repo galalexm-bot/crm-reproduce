@@ -1,0 +1,30 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <AssemblyName>EleWise.ELMA.CRM.Db.PostgreSQL</AssemblyName>
+    <GenerateAssemblyInfo>False</GenerateAssemblyInfo>
+    <TargetFramework>net48</TargetFramework>
+  </PropertyGroup>
+  <PropertyGroup>
+    <LangVersion>Preview</LangVersion>
+    <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
+  </PropertyGroup>
+  <PropertyGroup>
+    <RootNamespace />
+  </PropertyGroup>
+  <ItemGroup>
+    <None Remove="EleWise.ELMA.CRM.Db.PostgreSQL.xml" />
+    <EmbeddedResource Include="EleWise.ELMA.CRM.Db.PostgreSQL.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="EleWise.ELMA.SDK">
+      <HintPath>..\EleWise.ELMA.SDK.dll</HintPath>
+    </Reference>
+    <Reference Include="EleWise.ELMA.Extensions.PostgreSQL">
+      <HintPath>..\EleWise.ELMA.Extensions.PostgreSQL.dll</HintPath>
+    </Reference>
+    <Reference Include="EleWise.ELMA.CRM">
+      <HintPath>..\EleWise.ELMA.CRM.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Data" />
+  </ItemGroup>
+</Project>

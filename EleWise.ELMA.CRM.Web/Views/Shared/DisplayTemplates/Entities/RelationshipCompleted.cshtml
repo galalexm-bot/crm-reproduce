@@ -1,0 +1,9 @@
+﻿@using EleWise.ELMA.CRM.Web.Models
+@using EleWise.ELMA.Model.Views
+@using EleWise.ELMA
+@inherits EleWise.ELMA.Web.Mvc.Views.ViewItem.ViewItemControl<PropertyValueViewItem, RelationshipModel, bool?>
+
+@{
+    var st = (Model.HasValue && Model.Value) ? SR.T("Выполнено") : SR.T("Запланировано");
+    @st
+}

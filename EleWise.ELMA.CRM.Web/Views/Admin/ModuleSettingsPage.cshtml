@@ -1,0 +1,47 @@
+﻿@using EleWise.ELMA
+@using EleWise.ELMA.CRM.Web.Extensions
+@using EleWise.ELMA.ComponentModel
+@using EleWise.ELMA.CRM.Web
+@using EleWise.ELMA.Web.Mvc.Models.Buttons
+@using ContentHtmlExtensions = EleWise.ELMA.BPM.Web.Content.Extensions.HtmlExtensions
+@{
+    var title = ViewData["Title"] != null ? (string)ViewData["Title"] : "";
+    ContentHtmlExtensions.HeaderBreadcrumbsInZone(Html, title);
+}
+@(Html.Toolbar())
+<div class="settings_page">
+    @{
+
+        var links = ComponentManager.Current.GetExtensionPoints<ICrmModuleSettingsItemProvider>().SelectMany(p => p.GetItems(Html.Url())).OrderBy(l => l.Order).ToList();
+
+        var categories = links.Where(x => !String.IsNullOrEmpty(x.Category)).Select(x => x.Category).Distinct();
+
+        foreach (var item in links.Where(x => String.IsNullOrEmpty(x.Category)))
+        {
+            @Html.LinkButton(new LinkButton {
+               Href = item.Url,
+               Text = item.Text,
+               Image = item.Image,
+               Description = MvcHtmlString.Create(item.Description)
+            })
+        }
+
+        foreach (var category in categories.Where(c => links.Any(l => !String.IsNullOrEmpty(l.Category) && l.Category.Equals(c))))
+        {
+            <h3 class="base-element-margin-top bold_text">@category</h3>
+            foreach (var item in links.Where(x => !String.IsNullOrEmpty(x.Category) && x.Category.Equals(category)))
+            {
+                <div>
+                 @Html.LinkButton(new LinkButton {
+                    Href = item.Url,
+                    Text = item.Text,
+                    Image = item.Image,
+                    Description = MvcHtmlString.Create(item.Description)
+                })
+                </div>
+            }
+        }
+
+
+    }
+</div>

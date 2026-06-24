@@ -1,0 +1,116 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<root uid="{9F08F0D8-6626-42F2-9F60-FD69325CA324}">
+  
+  <methods>
+    <method ExecuteTime="OnTablesCreated" name="CreateTempTableForPermission" />
+    <method ExecuteTime="OnForeignKeysCreated" AlwaysExecute="true" name="CreateTempTableForPermissionKeys" />
+    <method name="FillContractorTypeReference" />
+    <method name="AddSystemCategory2" />
+    <method name="UpdateSalesVolume" ExecuteTime="OnTablesDeleting" />
+    <method name="CrmTaskToCrmTaskBase" ExecuteTime="OnTablesDeleting" />
+    <method name="FixWrongMarketingActivity" />
+    <method name="SaleStagesRelationshipConvert" />
+    <method name="CreateSaleFunnelReportFilters" />
+    <method name="FillSalesSaleFunnel" />
+    <method name="ZipConvert" ExecuteTime="OnTablesDeleting" />
+    <method name="SiteConvert" ExecuteTime="OnTablesDeleting" />
+    <method name="SiteConvertRevert" ExecuteTime="OnTablesDeleting" />
+    <method name="FixWrongLeadStatus" />
+    <method name="LeadContactUpdateDateAndAuthor1" />
+    <method name="MarketingActivityUpdateDateAndAuthor1" />
+    <method name="SaleUpdateDateAndAuthor1" />
+    <method name="SaleHistoryConverter" />
+    <method name="CreatePresetMarketingTypes" />
+    <method name="CreatePresetMarketingFilters4" />
+    <method name="MarketingPropertyUidRestore" ExecuteTime="OnTablesDeleting" />
+    <method name="ChangeMarketingFilterObjectType" />
+    <method name="CreateGroupUpdate" />
+    <method name="UpdateSystemUser" ExecuteTime="OnComplete" />
+    <method name="CreateDefaultColorStepScoring" />
+    <method name="CreateCreationLeadFilters" />
+    <method name="UpdateLeadDublicateStatus" />
+    <method name="CreateCalendarActionFilter" />
+    <method name="CreateMarketingStatisticActionFilter" />
+    <method name="UpdateArchiveDate" />
+    <method name="CreateMarketingFirstPayment" />
+    <method name="UpdateDateMarketingActivity" />
+    <method name="UpdateDateMarketingEffect" />
+    <method name="UpdateMarketingEffectBudgetType" />
+    <method name="CreateLeadDublicateState" />
+    <method name="AddDefaultCategoryPermission" ExecuteTime="OnComplete" />
+    <method name="ConvertMarketingTagColumns" ExecuteTime="OnTablesCreating" />
+    <method name="UpdateDuplicateCodeCountries" AlwaysExecute="true" ExecuteTime="OnTablesDeleting" TransformationInVersion=""/>
+    <method name="SetDefaultPermissionsToMarketingGroups" ExecuteTime="OnComplete" TransformationInVersion="3.13.69" />
+    <method name="MoveSalesAttachmentFromElma3" ExecuteTime="OnTablesDeleting" />
+  </methods>
+
+  <scripts>
+    <script name="FixWrongSaleProductQuantity">
+      <text>
+        update SaleProduct set Quantity = 1 where Quantity &lt; 1 or Quantity is null
+      </text>
+    </script>
+    
+    <script name="FixWrongRelationshipDoneDate">
+      <text>
+        update Relationship set DoneDate = NULL where Completed IS NULL OR Completed = 0
+      </text>
+    </script>
+
+    <script name="CountLeadsAndSales">
+      <text>
+        UPDATE MarketingBase SET
+          DirtyLeadCount = (SELECT COUNT(&amp;&amp;Id&amp;&amp;) FROM &amp;&amp;Lead&amp;&amp; WHERE MarketingActivity=MarketingBase.&amp;&amp;Id&amp;&amp;),
+          CleanLeadCount = (SELECT COUNT(&amp;&amp;Id&amp;&amp;) FROM &amp;&amp;Lead&amp;&amp; WHERE MarketingActivity=MarketingBase.&amp;&amp;Id&amp;&amp; AND IsDeleted=0 AND Status&lt;&gt;4),
+          AcceptedLeadCount = (SELECT COUNT(&amp;&amp;Id&amp;&amp;) FROM &amp;&amp;Lead&amp;&amp; WHERE MarketingActivity=MarketingBase.&amp;&amp;Id&amp;&amp; AND IsDeleted=0 AND Status in (1,2,3)),
+          QualifiedLeadCount = (SELECT COUNT(&amp;&amp;Id&amp;&amp;) FROM &amp;&amp;Lead&amp;&amp; WHERE MarketingActivity=MarketingBase.&amp;&amp;Id&amp;&amp; AND IsDeleted=0 AND Status=2),
+          CreatedSaleCount = (SELECT COUNT(&amp;&amp;Id&amp;&amp;) FROM &amp;&amp;Sale&amp;&amp; WHERE MarketingActivity=MarketingBase.&amp;&amp;Id&amp;&amp; AND IsDeleted=0),
+          PositiveSaleCount = (SELECT COUNT(&amp;&amp;Id&amp;&amp;) FROM &amp;&amp;Sale&amp;&amp; WHERE MarketingActivity=MarketingBase.&amp;&amp;Id&amp;&amp; AND IsDeleted=0 AND SaleStatus = 3),
+          NegativeSaleCount = (SELECT COUNT(&amp;&amp;Id&amp;&amp;) FROM &amp;&amp;Sale&amp;&amp; WHERE MarketingActivity=MarketingBase.&amp;&amp;Id&amp;&amp; AND IsDeleted=0 AND SaleStatus = 4),
+          Status = 0,
+          BudgetType = 0
+      </text>
+    </script>
+    
+  </scripts>
+
+  <indexes>
+    <index name="IX_RC_RelComm" tableName="Relationship_Comment" columns="Relationship,Comment" />
+    <index name="IX_LeadDublicateState_Status" tableName="LeadDublicateState" columns="Status" />
+    <index name="IX_ER_CurrenciesDate" unique="true" tableName="ExchangeCurrencyRate" columns="CurrencyEstimated, CurrencyValuation, ValuationDate" />
+    <index name="IX_Contractor_PINN" tableName="Contractor" columns="INN" />
+    <index name="IX_Phone_PS" tableName="Phone" columns="PhoneString" />
+    <index name="IX_Phone_FPS" tableName="Phone" columns="FormatedPhoneString" />
+    <index name="IX_Sale_ST" tableName="Sale" columns="SaleStatus" />
+    <index name="IX_Sale_PR" tableName="Sale" columns="Priority" />
+    <index name="IX_Relationship_COM" tableName="Relationship" columns="Completed" />
+    <index name="IX_Relationship_ED" tableName="Relationship" columns="EndDate" />
+    <index name="IX_RegCurrencyRateImp_Prov" tableName="RegularCurrencyRateImport" columns="Provider" />
+    <index name="IX_Product_IG" tableName="Product" columns="IsGroup" />
+    <index name="IX_Payment_ST" tableName="Payment" columns="PaymentStatus" />
+    <index name="IX_Payment_PD" tableName="Payment" columns="PaymentDate" />
+    <index name="IX_MarketingEffect_SD" tableName="MarketingEffect" columns="StartDate" />
+    <index name="IX_MarketingEffect_ED" tableName="MarketingEffect" columns="EndDate" />
+    <index name="IX_MarketingBase_Status" tableName="MarketingBase" columns="Status" />
+    <index name="IX_MarketingBase_BT" tableName="MarketingBase" columns="BudgetType" />
+    <index name="IX_MarketingActivity_SD" tableName="MarketingActivity" columns="StartDate" />
+    <index name="IX_MarketingActivity_ED" tableName="MarketingActivity" columns="EndDate" />
+    <index name="IX_MarketingTag_Name" tableName="MarketingTag" columns="Name" />
+    <index name="IX_MPPermission_SIdR" tableName="MarketingPersonPermission" columns="PermissionSource, PermissionId, PermissionRole" />
+    <index name="IX_Lead_Status" tableName="Lead" columns="Status" />
+    <index name="IX_Inpayment_Status" tableName="Inpayment" columns="Status" />
+    <index name="IX_Inpayment_Date" tableName="Inpayment" columns="Date" />
+    <index name="IX_Currency_CISOAL" tableName="Currency" columns="CodeISOAlphabetic" />
+    <index name="IX_Currency_CISON" tableName="Currency" columns="CodeISONumerical" />
+    <index name="IX_TemplateContractorPerm_AP" tableName="TemplateContractorPermission" columns="AddPermission" />
+    <index name="IX_TemplateContractorPerm_DP" tableName="TemplateContractorPermission" columns="DelPermission" />
+    <index name="IX_CategoryAssignMethod_ET" tableName="CategoryAssignMethod" columns="EntityId, TypeUid" />
+    <index name="IX_AddressBase_PUID" tableName="AddressBase" columns="ParentGuid" />
+    <index name="IX_AddressBase_TOFS" tableName="AddressBase" columns="TypeOfSub" />
+    <index name="IX_AddressBase_CC" tableName="AddressBase" columns="CountryCode" />
+    <index name="IX_AddressBase_ON" tableName="AddressBase" columns="ObjectName" />
+    <index name="IX_AddressBase_FN" tableName="AddressBase" columns="FullName" />
+    <index name="IX_AddressBase_SN" tableName="AddressBase" columns="ShortName" />
+  </indexes>
+  
+</root>

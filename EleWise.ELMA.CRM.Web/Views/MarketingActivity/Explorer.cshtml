@@ -1,0 +1,23 @@
+﻿@using EleWise.ELMA
+@using EleWise.ELMA.CRM.Web
+@{
+    var popupId = (string) ViewData["PopupId"];
+    var treeViewName = String.Format("{0}TreeView", popupId);
+}
+@(Html.Telerik().TreeView().Name(treeViewName)
+            .DataBinding(b => b.Ajax().Enabled(true).Select("TreeSelect", "MarketingActivity", new { area = CRMAreaRegistration.AREA_NAME }))
+            .HtmlAttributes(new { style = "height: 400px; overflow: auto;" }))
+<div class="popup-buttons">
+    <input type="button" class="confirm" value="@SR.Select" onclick="@(popupId)Selected(this)"/>
+    <input type="button" value="@SR.Cancel" onclick="closeWindow(this);"/>
+</div>
+<input type="hidden" id="@(popupId)_value" value="" />
+<script type="text/javascript">
+    function @(popupId)Selected(b)
+    {
+        var treeview = $('#@treeViewName');
+        var selectedItem = treeview.find('.t-state-selected').closest('.t-item');
+        $('#@(popupId)_value').val(treeview.data('tTreeView').getItemValue(selectedItem));
+        closeWindow(b);
+    }
+</script>

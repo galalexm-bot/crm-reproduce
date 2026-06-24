@@ -1,0 +1,25 @@
+﻿@using EleWise.ELMA
+@using EleWise.ELMA.BPM.Web.Common.Components
+@using EleWise.ELMA.CRM.Models
+@using EleWise.ELMA.Model.Services
+@model EleWise.ELMA.CRM.Web.Portlets.LeadPortletPersonalization
+           
+@using (Html.TableForm(EleWise.ELMA.Model.Views.ViewType.Edit))
+{
+    <tr>
+        <td class="captionCell">@SR.T("Фильтр для отображения")</td>
+        <td>
+            @Html.Editor(m => m.Filter, a =>
+                                          {
+                                              a.EntityFilterProvider = FilterFilterProvider.UID;
+                                              a.EntityFilterData = InterfaceActivator.UID<ILead>().ToString();
+                                          })
+        </td>
+    </tr>
+    <tr>
+        <td class="captionCell">@SR.T("Показывать только мои")</td>
+        <td>
+            @Html.Editor(m => m.ShowOnlyMy)
+        </td>
+    </tr>
+}

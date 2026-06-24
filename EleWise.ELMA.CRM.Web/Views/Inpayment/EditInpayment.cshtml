@@ -1,0 +1,106 @@
+﻿@model SaleInpaymentEditModel
+@using EleWise.ELMA.CRM.Web
+@using EleWise.ELMA.CRM.Web.Components
+@using EleWise.ELMA.CRM.Web.Models
+@using EleWise.ELMA
+
+@{
+    var formId = "EditInpaymentAjaxForm";
+}
+
+@using (Html.AjaxForm("EditInpayment", "Inpayment", new { area = RouteProvider.AreaName }, callback: "refreshInpaymentsTable();", htmlAttributes: new { id = formId }, confirmOnClose: true))
+{
+   
+    @Html.HiddenFor(m => m.Inpayment.Id)
+    @Html.HiddenFor(m => m.CloseInpaymentsPlan)
+    if (Model.Inpayment.Sale != null)
+    {
+         @Html.HiddenFor(m => m.Inpayment.Sale.Id)
+    }
+
+    using (Html.TableForm(EleWise.ELMA.Model.Views.ViewType.Edit))
+    {
+        if (Model.Inpayment.Sale == null)
+        {
+            @Html.EditableProperty(m => m.Inpayment.Sale, a => a.EntityFilterProvider = OpenSaleFilterProvider.UID)
+        }
+        @Html.EditableProperty(m => m.Inpayment.Name)
+        @Html.EditableProperty(m => m.Inpayment.Date)
+        @Html.EditableProperty(m => m.Inpayment.Sum)
+        @Html.EditableProperty(m => m.Inpayment.Invoice)
+        if (Model.Inpayment.IsNew())
+        {
+            @Html.EditableProperty(m => m.Inpayment.Status, a =>
+            {
+                a.Html.onchange = "StatusChange";
+            })
+            @Html.EditableProperty(m => m.Inpayment.ActualDate)
+        }
+        @Html.EditableProperty(m => m.Inpayment.Responsible)
+        @Html.EditableProperty(m => m.Inpayment.Comment, a => a.Html.rows = 5)
+    }
+
+    <div class="popup-buttons">
+        <input type="button" class="confirm" value="@(Model.Inpayment.IsNew() ? SR.T("Добавить") : SR.T("Сохранить"))" onclick="editInpaymentOkClick(@(Model.Inpayment.Sale != null && Model.Inpayment.Sale.InpaymentsPlanCompleted ? "1" : String.Format("0,{0}", Model.Inpayment.Sale != null ? Model.Inpayment.Sale.Id : 0)))" />
+        <input type="button" value="@SR.Cancel" onclick="@Html.ClosePopup("AddInpaymentPopup")" />
+    </div>
+}
+
+<script type="text/javascript">
+        function editInpaymentOkClick(completed, saleId) {
+            elma.openPleaseWait(true);
+            $("#@(formId)").validate();
+            if (!$("#@(formId)").valid())
+            {
+                elma.closePleaseWait(true);
+                return;
+            }
+            if (completed == 0)
+            {
+                // по saleId получить завершено планирование или нет и в зависимости от этого выдавать или не выдавать запрос подтверждения
+                if (saleId == 0) {
+                    $.ajax({
+                        url: '@(Url.Action("CheckPlanCompleted", "Inpayment", new { area = RouteProvider.AreaName }))/' + $('#@(Html.IDFor(x => x.Inpayment.Sale.Id))').val(),
+                        type: "POST",
+                        dataType: 'json',
+                        cache: false,
+                        success: function (data) {
+                            if (data.planCompleted == false) {
+                                confirmSumReplacement();
+                            } else {
+                                $("#@(formId) .confirm").prop("disabled", true);
+                                $('#@(formId)').submit();
+                            }
+                        }
+                    });
+                }
+                else {
+                    confirmSumReplacement();
+                }
+            } else {
+                $("#@(formId) .confirm").prop("disabled", true);
+                $('#@(formId)').submit();
+            }
+        }
+        
+        function confirmSumReplacement() {
+            elma.closePleaseWait(true);
+            jConfirm('@SR.T("Объем продаж по сделке будет заменен на сумму планируемых поступлений. Продолжить?")', '@SR.T("Подтверждение начала планирования")', function (r) {
+                if (r == true) {
+                    $('#@ViewData.TemplateInfo.GetFullHtmlFieldId("CloseInpaymentsPlan")').val("True");
+                    $('#@(formId)').submit();
+                    elma.openPleaseWait(true);
+                }
+            });
+        }
+    function StatusChange() {
+
+            var t = $('#Inpayment_Status').val();
+            console.log(t);
+            if (t != "Received") {
+                document.getElementById('Inpayment_ActualDate_Container').style.display = 'none';
+            } else {
+                document.getElementById('Inpayment_ActualDate_Container').style.display = '';
+            }
+        }
+</script>

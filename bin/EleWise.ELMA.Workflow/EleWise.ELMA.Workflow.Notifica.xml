@@ -1,0 +1,201 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<Notifications description="Оповещения о задачах в процессах">
+
+  <Partial Name="DefaultFullMessage">
+    {PropertyFullRow({$Comment.Text};SR('Комментарий'))}
+    {PropertyFullRow({$Attachments})}
+    {ExtensionZone('EleWise.ELMA.Tasks.Models.Task-DefaultFullMessage-AfterAttachments')}
+  </Partial>
+
+  <Partial Name="DefaultShortMessage">
+    {PropertyFullRow({$Comment.Text};'')}
+  </Partial>
+  
+  <Default>
+    <Filter>
+      <Event>IEntityActionHandler.ActionExecuted</Event>
+      <Object>EleWise.ELMA.Workflow.Models.CatalogEditTask</Object>
+    </Filter>
+    <RecipientSet>
+      <User>{$New.Executor}</User>
+    </RecipientSet>
+    <RecipientSet Name="ExecutorReplaced">
+      <User condition="{$New.ExecutorReplaced.DuplicateMessage}">{$New.ExecutorReplaced}</User>
+    </RecipientSet>
+      <URL>
+        /Workflow/WorkflowTask/CatalogEdit/{$New.Id}
+      </URL>
+    <ObjectId>{$New.Id}</ObjectId>
+  </Default>
+
+
+  <Notification Name="Create" description="Задача создана">
+    <Filter>
+      <Action>Create</Action>
+    </Filter>
+    <Subject>
+      {if {$RecipientSet}='ExecutorReplaced'}(@{$New.Executor}) {end if}({SR('Новая задача')}) '{SR({$New.Subject})}' {SR('в процессе')} {$New.WorkflowBookmark.Instance.Name} ({SR({$New.WorkflowBookmark.Instance.Process.Name})})
+    </Subject>
+    <ShortMessage>
+      {TableStart()}
+      {PropertyRow(SR({$New.Subject}))}
+      {PropertyRow({$New.Executor})}
+      {PropertyRow({$New.WorkflowBookmark.Instance})}
+      {PropertyRow({$New.WorkflowBookmark.Instance.Process})}
+      {PropertyRow({$New.EndDate})}
+      {TableEnd()}
+    </ShortMessage>
+    <FullMessage>
+      {TableStart()}
+      {PropertyRow(SR({$New.Subject}))}
+      {PropertyRow({$New.Executor})}
+      {PropertyRow({$New.WorkflowBookmark.Instance})}
+      {PropertyRow({$New.WorkflowBookmark.Instance.Process})}
+      {PropertyRow({$New.EndDate})}
+      {TableEnd()}
+    </FullMessage>
+  </Notification>
+
+  <Notification Name="Close" description="Задача закрыта">
+    <Filter>
+      <Action>Edit</Action>
+      <Condition>
+        ({$New.Status}&lt;&gt;{$Old.Status}) and
+        ({$New.Status}='WasClosed')
+      </Condition>
+    </Filter>
+    <Subject>
+      {if {$RecipientSet}='ExecutorReplaced'}(@{$New.Executor}) {end if}({SR('Задача закрыта')}) '{SR({$New.Subject})}' {SR('в процессе')} {$New.WorkflowBookmark.Instance.Name} ({SR({$New.WorkflowBookmark.Instance.Process.Name})})
+    </Subject>
+    <ShortMessage>
+      {TableStart()}
+      {PropertyRow(SR({$New.Subject}))}
+      {PropertyRow({$New.Executor})}
+      {PropertyRow({$New.WorkflowBookmark.Instance})}
+      {PropertyRow({$New.WorkflowBookmark.Instance.Process})}
+      {PropertyRow({$New.EndDate})}
+      {TableEnd()}
+    </ShortMessage>
+    <FullMessage>
+      {TableStart()}
+      {PropertyRow(SR({$New.Subject}))}
+      {PropertyRow({$New.Executor})}
+      {PropertyRow({$New.WorkflowBookmark.Instance})}
+      {PropertyRow({$New.WorkflowBookmark.Instance.Process})}
+      {PropertyRow({$New.EndDate})}
+      {TableEnd()}
+    </FullMessage>
+  </Notification>
+
+  <Notification Name="RemindTask">
+    <Filter>
+      <Action>Remind</Action>
+      <Condition>
+        ({$New.EndWorkDate}=null)
+      </Condition>
+    </Filter>
+    <RecipientSet Clear="true">
+      <User>{$Reminder.CreationAuthor}</User>
+    </RecipientSet>
+    <Subject>
+      {If {$Reminder.PropertyName}='StartDate'}
+        ({SR('Напоминание о начале задачи')}) {SR({$New.Subject})}
+      {else}
+        ({SR('Напоминание о завершении задачи')}) {SR({$New.Subject})}
+      {end if}
+    </Subject>
+    <FullMessage>
+      {If {$Reminder.PropertyName}='StartDate'}
+        {SR('Через {0} начало выполнения задачи'; GetReminderTimeSpan({$Reminder}))}.
+      {else}
+        {SR('Через {0} завершение задачи'; GetReminderTimeSpan({$Reminder}))}.
+      {end if}
+      {TableStart()}
+      {PropertyRow(SR({$New.Subject}))}
+      {PropertyRow({$New.Executor})}
+      {PropertyRow({$New.WorkflowBookmark.Instance})}
+      {PropertyRow({$New.WorkflowBookmark.Instance.Process})}
+      {PropertyRow({$New.EndDate})}
+      {TableEnd()}
+    </FullMessage>
+    <ShortMessage>
+      {If {$Reminder.PropertyName}='StartDate'}
+        {SR('Через {0} начало выполнения задачи'; GetReminderTimeSpan({$Reminder}))}.
+      {else}
+        {SR('Через {0} завершение задачи'; GetReminderTimeSpan({$Reminder}))}.
+      {end if}
+    </ShortMessage>
+  </Notification>
+
+  <Notification Name="TaskExpiration">
+    <Filter>
+      <Action>Expired</Action>
+    </Filter>
+    <RecipientSet>
+      <WorkflowTaskExpiredNotificationRecipients>{$New}</WorkflowTaskExpiredNotificationRecipients>
+    </RecipientSet>
+    <Subject>
+      ({SR('Задача просрочена')}) {SR({$Old.Subject})}
+    </Subject>
+    <FullMessage>
+      {TableStart()}
+      {PropertyRow({$New.EndDate})}
+      {PropertyRow(SR({$New.Subject}))}
+      {PropertyRow({$New.Executor})}
+      {PropertyRow({$New.WorkflowBookmark.Instance})}
+      {PropertyRow({$New.WorkflowBookmark.Instance.Process})}
+      {TableEnd()}
+    </FullMessage>
+    <ShortMessage>
+      {SR('Срок:')} {$New.EndDate}. {SR('Исполнитель:')} {$New.Executor}. {SR('Автор:')} {$New.CreationAuthor}.
+    </ShortMessage>
+      <URL>
+        /Workflow/WorkflowTask/CatalogEdit/{$New.Id}
+      </URL>
+  </Notification>
+
+  <Notification Name="AddComment">
+    <Filter>
+      <Action>AddComment</Action>
+    </Filter>
+    <RecipientSet>
+      <User>{$New.CreationAuthor}</User>
+    </RecipientSet>
+    <Subject>
+      ({SR('Добавлен комментарий')}) {SR({$New.Subject})}
+    </Subject>
+    <ShortMessage>
+      {TableStart()}
+      {Partial('DefaultShortMessage')}
+      {TableEnd()}
+    </ShortMessage>
+    <FullMessage>
+      {TableStart()}
+      {Partial('DefaultFullMessage')}
+      {TableEnd()}
+    </FullMessage>
+  </Notification>
+
+  <Notification Name="StartWork">
+    <Filter>
+      <Action>StartWork</Action>
+    </Filter>
+    <RecipientSet>
+      <User>{$New.CreationAuthor}</User>
+    </RecipientSet>
+    <Subject>
+      ({SR('Начало работы над задачей')}) {SR({$New.Subject})}
+    </Subject>
+    <ShortMessage>
+      {TableStart()}
+      {Partial('DefaultShortMessage')}
+      {TableEnd()}
+    </ShortMessage>
+    <FullMessage>
+      {TableStart()}
+      {Partial('DefaultFullMessage')}
+      {TableEnd()}
+    </FullMessage>
+  </Notification>
+
+</Notifications>

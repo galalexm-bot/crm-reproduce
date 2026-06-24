@@ -1,0 +1,10 @@
+﻿@model IAddress
+@using EleWise.ELMA.CRM.Models
+
+
+<div class="address-view">
+    <div class="heading-in-panel">
+        @ViewData.ModelMetadata.GetPropertyMetadata().DisplayName
+    </div>
+    @Html.Partial("EditorTemplates/ViewItems/LegalAddressValue")
+</div>

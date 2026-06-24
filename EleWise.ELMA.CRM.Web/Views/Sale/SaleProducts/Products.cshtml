@@ -1,0 +1,73 @@
+﻿@using EleWise.ELMA
+@using EleWise.ELMA.CRM.Web
+@using EleWise.ELMA.CRM.Web.Models
+@model SaleProductsModel
+
+@(Html.PopupWindow("ProductPopupDiv", SR.T("Продукт"),
+                        url: Url.Action("CreateProduct", "Sale",
+                        new { area = RouteProvider.AreaName, id = (long?)null })))
+
+<div id="gridContainer" autoFocus="false">
+    @Html.Partial("SaleProducts/Grid", Model.GridData, new ViewDataDictionary(ViewData) { {"ReadOnly", Model.ReadOnly} })
+</div>
+
+@if (!Model.ReadOnly){
+    @Html.ImageButton("#add.svg", SR.T("Добавить продукт"), "addProduct();", null, new { @class = "add-product-button" }, SR.T("Добавить продукт"))
+}
+
+<script type="text/javascript">
+
+    function deleteCategory(id) {
+        var gridContainer = $('#gridContainer');
+        if (id != undefined && id != null) {
+            $.ajax({
+                url: '@(Url.Action("DeleteProduct", "Sale", new { area = RouteProvider.AreaName, id = (long?)null }))?productLinkId=' + id,
+                type: "GET",
+                dataType: 'html',
+                cache: false,
+                success: function (data) {
+                    gridContainer.html(data);
+                }
+            });
+        }
+    }
+    
+    function onDeleteProductClick(id) {
+        jConfirm('@SR.T("Удалить продукт?")', '@SR.T("Удаление")', function (r) {
+            if (r == true) {
+                deleteCategory(id);
+            }
+        });
+    }
+
+    function editProduct(id)
+    {
+        refreshPopup('ProductPopupDiv', '@(Url.Action("EditProduct", "Sale", new { area = RouteProvider.AreaName }))/' + id, null, '@SR.T("Редактирование продукта")');
+    }
+
+    function addProduct()
+    {
+        refreshPopup('ProductPopupDiv', '@(Url.Action("CreateProduct", "Sale", new { area = RouteProvider.AreaName, id = (long?)null }))?saleId=@(Model.Sale.Id)', null, '@SR.T("Добавление продукта")');
+    }
+
+    function RefreshProductsTable() { 
+        RefreshProductsGrid();
+        @(Html.ClosePopup("ProductPopupDiv"))
+    }
+
+    function RefreshProductsGrid()
+    {
+        var gridContainer = $('#gridContainer');
+        $.ajax({
+                url: '@(Url.Action("ProductsGrid", "Sale", new { area = RouteProvider.AreaName, id = (long?)null }))?saleId='+@(Model.Sale.Id),
+                type: "GET",
+                dataType: 'html',
+                cache: false,
+                success: function (data) {
+                    gridContainer.html(data);
+                }
+            });
+    }
+</script>
+
+

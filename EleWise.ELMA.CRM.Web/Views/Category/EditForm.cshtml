@@ -1,0 +1,92 @@
+﻿@using EleWise.ELMA.CRM.Web.Models
+@using EleWise.ELMA     
+@using EleWise.ELMA.CRM.Web
+@model CategoryEditModel
+
+          
+@if (Model.LockEditPermission)
+{
+    <div class="base-element-margin-bottom">
+		@Html.InfoPanel(SR.T("Производится перерасчет разрешений. Изменение заблокировано. Пожалуйста попробуйте позже."))
+	</div>
+    
+}
+
+@if (Model.CheckUpdatePermission)
+{
+    <div class="base-element-margin-bottom">
+		@Html.InfoPanel(SR.T("Имеются не примененные изменения в привилегиях. Для вступления изменений в силу нужно нажать кнопку 'Пересчитать привилегии'."))
+	</div>
+
+}    
+@{
+    if (Model.Category.IsNew())
+    {
+        Html.Header(SR.T("Создать категорию"));
+    }
+    else
+    {
+        Html.Header(SR.T("Редактировать категорию"));
+       
+    }
+}
+@if (!Model.LockEditPermission)
+{
+    @(Html.Toolbar()
+        .Group("toolbar-group-1")
+        .ToolbarSubmit(SR.Save, "#save.svg", "toolbar-action-Save")
+        .ToolbarLink(SR.Cancel, "#close_outline.svg", "javascript:history.back(-1);", "toolbar-action-Cancel"));
+}
+<div class="general-form-container">
+@using (Html.ElmaForm(routeValues: new {action = "SaveCategory"}))
+{
+    @Html.ValidationSummary()
+
+    if (!Model.Category.IsNew())
+    {
+        @Html.HiddenFor(m => m.Category.Id)
+    }
+
+    using (Html.TableForm(EleWise.ELMA.Model.Views.ViewType.Edit))
+    {
+        if (Model.NoCategory)
+        {
+            <tr>
+                <td class="captionCell">
+                    @Html.Caption(m => m.Category.Name)
+                </td>
+                <td>
+                    @Html.Display(m => m.Category.Name)
+                </td>
+            </tr>
+    
+        }
+        else
+        {
+            @Html.EditableProperty(m => m.Category.Name)
+        }
+
+        if (Model.ContractorPermissionsModel != null)
+        {
+            <tr class="full-row">
+                <td colspan="3">
+                     <h3 class="bold_text base-element-margin-top">@SR.T("Шаблон привилегий для контрагентов")</h3>
+                     @Html.Partial("~/Modules/EleWise.ELMA.BPM.Web.Security/Views/PermissionManagment/EntityDependedPermissionSettings.cshtml", Model.ContractorPermissionsModel)
+                </td>
+            </tr>
+          
+        }
+        
+        if ( Model.LeadPermissionsModel!=null )
+        {
+            <tr class="full-row">
+                <td colspan="3">
+                    <h3 class="bold_text base-element-margin-top">@SR.T("Шаблон привилегий для возможностей")</h3>
+                    @Html.Partial("~/Modules/EleWise.ELMA.BPM.Web.Security/Views/PermissionManagment/EntityDependedPermissionSettings.cshtml", Model.LeadPermissionsModel)
+                </td>
+            </tr>
+        }     
+    }    
+}
+</div>
+

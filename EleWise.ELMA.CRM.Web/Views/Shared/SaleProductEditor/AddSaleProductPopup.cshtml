@@ -1,0 +1,86 @@
+﻿@model EleWise.ELMA.CRM.Web.Models.AddSaleProductPopupViewModel
+@using EleWise.ELMA
+
+@using (Html.ModelForm(Model))
+{
+    @Html.HiddenFor(m => m.Entity.Id)
+    using (Html.TableForm(EleWise.ELMA.Model.Views.ViewType.Edit))
+    {
+        @Html.EditableProperty(m => m.Entity.Product)
+        @Html.EditableProperty(m => m.Entity.Quantity)
+    }
+    <div class="popup-buttons">
+        <input type="button" class="confirm" onclick="addSaleProductOkClick()" value="@SR.T("ОК")" />
+        <input type="button" onclick="closeWindow('@(Model.PopupId)')" value="@SR.Cancel" />
+    </div>
+}
+
+<script type="text/javascript">    
+    function addSaleProductOkClick() {
+        $("#@(Model.Id)").validate();
+        if (!$("#@(Model.Id)").valid())
+            return;
+
+        var data;
+        if ($('#@(Model.JsonDataId)').val())
+            data = JSON.parse($('#@(Model.JsonDataId)').val());
+        else
+            data = [];
+        
+        var saleProduct = { };
+       
+        var productJson = JSON.parse($('#@ViewData.TemplateInfo.GetFullHtmlFieldId("Entity.Product")_validate').val());
+
+        var id = $('#@ViewData.TemplateInfo.GetFullHtmlFieldId("Entity.Id")').val();        
+        if (id == 0) {
+            var minId = 0;
+            $('#@(Model.GridId) > table > tbody > tr').each(function() {
+                var id2 = parseInt($(this).attr('@(Model.IdAttributeName)'));
+                if (id2 !== undefined) {
+                    if (id2 < minId)
+                        minId = id2;
+                }
+            });
+
+            saleProduct = {
+                Id: minId - 1,
+                ProductId: productJson.Value,
+                ProductName: productJson.Text,
+                Quantity: $('#@ViewData.TemplateInfo.GetFullHtmlFieldId("Entity.Quantity")').val()
+            };
+            data.push(saleProduct);
+        }
+        else {
+            for (var i = 0; i < data.length; i++) {
+                if (data[i].Id == id) {
+                    data[i].ProductId = productJson.Value;
+                    data[i].ProductName = productJson.Text;
+                    data[i].Quantity = $('#@ViewData.TemplateInfo.GetFullHtmlFieldId("Entity.Quantity")').val();
+                    saleProduct = data[i];
+                    break;
+                }
+            }
+        }
+        
+        $('#@(Model.JsonDataId)').val(JSON.stringify(data));
+
+        var newTr = '<tr @(Model.IdAttributeName)="'+saleProduct.Id+'">'+
+            '<td>@(MvcHtmlString.Create(Html.ImageLink("#edit.svg", null, "javascript:void(0)", null, new { style = "margin-right: 5px", onclick = "editProduct(event)" }, SR.T("Редактировать"), true).ToString()
+                                                        +Html.ImageLink("#delete.svg", null, "javascript:void(0)",  null, new { onclick = "deleteProduct(event)"}, SR.T("Удалить"), true).ToString()))</td>'+
+            '<td><span class="display-string">'+saleProduct.ProductName+'</span></td>'+
+            '<td style="text-align: center">'+saleProduct.Quantity+'</td>'+
+            '</tr>';
+        
+        if (id == 0) {
+            $('#@(Model.GridId) > table .t-no-data').remove();
+            $('#@(Model.GridId) > table > tbody').append(newTr);
+        } else {
+            var el = $('#@(Model.GridId) > table > tbody > tr[@(Model.IdAttributeName)='+id+']');
+            el.replaceWith(newTr);
+        }
+        
+        rebuildHiddenInputs(data);
+
+        closeWindow('@(Model.PopupId)');
+    }
+</script>

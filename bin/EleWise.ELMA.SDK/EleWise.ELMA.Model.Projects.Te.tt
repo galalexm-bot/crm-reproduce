@@ -1,0 +1,7 @@
+﻿<#
+	this.ClassName = "SR";
+	this.ResourceName = "{$ProjectName}";
+    this.NamespaceName = "{$ProjectName}";
+    this.DefaultResourceDir = "Resources"; 
+#>
+<#@ include file="..\Libs\Gettext\Strings.tt" #>

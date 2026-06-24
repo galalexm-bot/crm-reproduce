@@ -1,0 +1,54 @@
+﻿@model SaleFunnelReportModel
+@using EleWise.ELMA
+@using EleWise.ELMA.CRM.Models
+@using EleWise.ELMA.CRM.Web.Models
+
+@if (Model != null)
+{
+    var saleStageCount = new Dictionary<ISaleStage, int>();
+    var currentCount = 0;
+
+    if (Model.SaleFunnel == null)
+    {
+        @:Model.SaleFunnel == null
+    }
+    else
+    {
+    foreach (var saleStage in Model.SaleFunnel.SaleStages.OrderByDescending(s => s.GlobalOrder))
+    {
+        currentCount += Model.SaleFunnelReportInfo.Where(i => i.SaleStage == saleStage).Select(i => i.Count).FirstOrDefault();
+        saleStageCount[saleStage] = currentCount;
+    }
+
+    <table class="saleFunnel-table">
+        <tr class="saleFuunel-table-headers">
+            <th class="captionCell saleFunnel-stage-label">@SR.T("Стадия сделки")</th>
+            <th class="saleFunnel-barCell"></th>
+            <th class="saleFunnel-count">@SR.T("Кол-во")</th>
+            <th class="saleFunnel-fact">@SR.T("Факт")</th>
+            <th class="saleFunnel-plan">@SR.T("План")</th>
+        </tr>
+        
+        @foreach (var saleStage in Model.SaleFunnel.SaleStages.OrderBy(s => s.GlobalOrder))
+        {
+            <tr>
+                <td class="captionCell">@(saleStage.Name)</td>
+                <td class="saleFunnel-barCell">
+                    @{
+            var percen = currentCount > 0 ? (double)saleStageCount[saleStage] / currentCount * 100 : 0;
+                    }
+                    <div class="saleFunnel-bar">
+                        <div class="saleFunnel-barPlan outer-item" style="background-color: @(saleStage.Color.ColorCode); width: @string.Format("{0}%", saleStage.Shrinkage ?? 0);"><div class="inner-item"></div></div>
+                        <div class="saleFunnel-barFact outer-item" style="background-color: @(saleStage.Color.ColorCode); width: @string.Format("{0:##0}%", percen);"><div class="inner-item"></div></div>
+                    </div>
+                </td>
+                <td class="saleFunnel-count">@(saleStageCount[saleStage])</td>
+                <td class="saleFunnel-fact">@(string.Format("{0:##0.0}%", percen))</td>
+                <td class="saleFunnel-plan">@(saleStage.Shrinkage.HasValue ? string.Format("{0}%", saleStage.Shrinkage) : "")</td>
+            </tr>
+        }
+
+    </table>
+    }
+    
+}

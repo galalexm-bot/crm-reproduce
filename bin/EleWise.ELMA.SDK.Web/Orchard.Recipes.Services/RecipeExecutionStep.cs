@@ -1,0 +1,59 @@
+using System.Collections.Generic;
+using EleWise.ELMA.Logging;
+using Orchard.ContentManagement;
+using Orchard.Localization;
+using Orchard.Recipes.Models;
+
+namespace Orchard.Recipes.Services;
+
+public abstract class RecipeExecutionStep : IDependency, IRecipeExecutionStep
+{
+	private readonly RecipeExecutionLogger _logger;
+
+	public Localizer T { get; set; }
+
+	public abstract string Name { get; }
+
+	public virtual IEnumerable<string> Names
+	{
+		get
+		{
+			yield return Name;
+		}
+	}
+
+	public virtual LocalizedString DisplayName => T(Name);
+
+	public virtual LocalizedString Description => DisplayName;
+
+	protected virtual string Prefix => GetType().Name;
+
+	protected virtual ILogger Logger => _logger;
+
+	public RecipeExecutionStep(RecipeExecutionLogger logger)
+	{
+		_logger = logger;
+		_logger.ComponentType = GetType();
+		T = NullLocalizer.Instance;
+	}
+
+	public virtual dynamic BuildEditor(dynamic shapeFactory)
+	{
+		return null;
+	}
+
+	public virtual dynamic UpdateEditor(dynamic shapeFactory, IUpdateModel updater)
+	{
+		return null;
+	}
+
+	public virtual void Configure(RecipeExecutionStepConfigurationContext context)
+	{
+	}
+
+	public virtual void UpdateStep(UpdateRecipeExecutionStepContext context)
+	{
+	}
+
+	public abstract void Execute(RecipeExecutionContext context);
+}

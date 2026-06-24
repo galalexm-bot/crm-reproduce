@@ -1,0 +1,128 @@
+﻿@inherits DynamicViewControl<IInpayment>
+@using EleWise.ELMA
+@using EleWise.ELMA.BPM.Web.Common.Extensions
+@using EleWise.ELMA.CRM.Models
+@using EleWise.ELMA.Web.Mvc.Html.Forms
+@using EleWise.ELMA.BPM.Web.Security.Models
+@using EleWise.ELMA.Model.Common
+@using EleWise.ELMA.Model.Types.Settings
+@using EleWise.ELMA.Model.Views
+@using EleWise.ELMA.Web.Mvc.Models.Panels
+
+@{
+    var selectedTab = Convert.ToInt32(ViewData["SelectedTab"] ?? 0);
+
+    var statusButtonStyle = ButtonStyle.Default;
+    var statusIconUrl = "";
+    switch (Model.Status)
+    {
+        case InpaymentStatus.InPlan:
+            {
+                statusButtonStyle = ButtonStyle.Yellow;
+                statusIconUrl = "#help.svg";
+                break;
+            }
+        case InpaymentStatus.Received:
+            {
+                statusButtonStyle = ButtonStyle.Green;
+                statusIconUrl = "#complete.svg";
+                break;
+            }
+        case InpaymentStatus.Cancelled:
+            {
+                statusButtonStyle = ButtonStyle.Red;
+                statusIconUrl = "#close_outline.svg";
+                break;
+            }
+    }
+
+    var cp = new CollapsiblePanel()
+    {
+        Id = "InpaymentRightPanel",
+        Header = SR.T("Дополнительно"),
+        Expanded = true,
+        Class = "separator-gray general-info-container-right",
+        SaveState = false
+    };
+}
+
+@(TabPanel("InpaymentViewInfo").Items(tabs =>
+{
+    tabs.Add(
+        new EleWise.ELMA.Web.Mvc.Models.Selectors.TabPanelItem {
+            Text = SR.T("О поступлении"),
+            Selected = selectedTab == 0 
+        }).Content(
+        @<text>
+            <div class="general-info-container">
+                <div class="general-info-container-left">
+                    @Html.TableFormStart(EleWise.ELMA.Model.Views.ViewType.Display)
+                        <tr>
+                            <td class="captionCell">
+                                @Html.Caption(m => m.Invoice, null, true)
+                            </td>
+                            <td>
+                               @Html.Partial("DisplayTemplates/Bool", Model.Invoice)
+                            </td>
+                        </tr>
+                        @Html.Property(m => m.Sum)
+                        @Html.Property(m => m.Date)
+                        @Html.Property(m => m.ActualDate)
+                        @Html.Property(m => m.Sale)
+                        @Html.Property(m => m.Contractor)
+                        @Html.Property(m => m.Comment)
+                    @Html.TableFormEnd()
+                    @Html.EventHistory(Model, true)
+                </div>
+                @Html.CollapsiblePanelBegin(cp)
+                    <div class="brickPanel">
+                        <div class="brickTitle">@SR.T("Автор")</div>
+                        <div class="brickContent deadline">
+                            @Html.Partial("User/InfoUserPanel", new InfoUserPanel() { User = Model.CreationAuthor })
+                        </div>
+                    </div>
+                    <div class="brickPanel">
+                        <div class="brickTitle">@SR.T("Ответственный")</div>
+                        <div class="brickContent deadline">
+                            @Html.Partial("User/InfoUserPanel", new InfoUserPanel() { User = Model.Responsible })
+                        </div>
+                    </div>
+                    <div class="brickPanel">
+                        @(Html.Button()
+                            .Text(ModelHelper.GetEnumDisplayName(Model.Status))
+                            .IconUrl(statusIconUrl)
+                            .NoFill()
+                            .Style(statusButtonStyle)
+                            .Click("openPopoverWindow('InpaymentStatusPopover',this)")
+                            .Attributes(new { @class = "base-element-margin-top base-element-margin-left"})
+                            .ReadOnlyHover())
+                    </div>
+                @Html.CollapsiblePanelEnd(cp)
+            </div>
+        </text>);
+}).Render())
+
+@(Html.PopoverWindow("InpaymentStatusPopover", 
+@<text>
+    <div class="inpayment-status-info">
+        <div class="inpayment-status-date-row">
+            <div>
+                <span class="inpayment-status-text">@SR.T("Изменён")</span>
+            </div>
+            <div>    
+                @Html.Display(m => m.ChangeStatusDate, a => a.Visible = Model.ChangeStatusDate != null)
+            </div>
+        </div>
+        <div class="inpayment-status-date-row">
+            <div>
+                <span class="inpayment-status-text">@SR.T("Создан")</span>
+            </div>
+            <div>    
+                @Html.Display(m => m.CreationDate)
+            </div>
+        </div>
+        <div>    
+            @Html.Display(m => m.ChangeStatusComment, a => a.Visible = Model.ChangeStatusDate != null)
+        </div>
+    </div>
+</text>, UIWindowSize.Xxs))

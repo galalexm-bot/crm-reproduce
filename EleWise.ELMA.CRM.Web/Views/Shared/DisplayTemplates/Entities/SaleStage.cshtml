@@ -1,0 +1,41 @@
+﻿@model ISaleStage
+@using EleWise.ELMA.Model.Entities
+@using EleWise.ELMA.CRM.Models
+
+@if (Model == null)
+{
+    return;
+}
+
+@{
+    var saleFunnel = Model.SaleFunnel;
+    if (saleFunnel == null)
+    {
+        <div>@(EleWise.ELMA.SR.T("Стадия сделки удалена."))<br />@(EleWise.ELMA.SR.T("Отображение невозможно."))</div>
+        return;
+    }
+    var stages = saleFunnel.SaleStages.OrderBy(s => s.GlobalOrder).ToList();
+
+    if (stages.Count < 1)
+    {
+        return;
+    }
+}
+
+<div class="crm-sale-stage-name">
+    @Model.GetTitleOrDefault(m => m.Name)
+</div>
+
+<div class="crm-sale-stage-container">
+    @foreach (var stage in stages)
+    {
+        if (stage.GlobalOrder > Model.GlobalOrder)
+        {
+            <div class="crm-sale-stage-element"></div>
+        }
+        else
+        {
+            <div class="crm-sale-stage-element" style="background-color: @stage.Color.ColorCode"></div>
+        }
+    }
+</div>

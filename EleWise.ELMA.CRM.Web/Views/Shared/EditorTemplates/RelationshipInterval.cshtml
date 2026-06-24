@@ -1,0 +1,10 @@
+﻿@using EleWise.ELMA.Model.Types.Settings
+@model EleWise.ELMA.CRM.Web.Models.RelationshipModel
+
+@if (Model.IsMultiCreation)
+{
+    <tr id="trInterval">
+        <td class="captionCell">@Html.Caption(m => m.Interval)</td>
+        <td>@Html.Editor(m => m.Interval, a => a.TypeSettings = new DateTimeSettings {ShowDate = false})</td>
+    </tr>
+}

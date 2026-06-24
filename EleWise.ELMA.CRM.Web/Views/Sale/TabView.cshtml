@@ -1,0 +1,190 @@
+﻿@inherits DynamicViewControl<SaleModel>
+@using EleWise.ELMA
+@using EleWise.ELMA.CRM
+@using EleWise.ELMA.CRM.Managers
+@using EleWise.ELMA.CRM.Models
+@using EleWise.ELMA.CRM.Web
+@using EleWise.ELMA.CRM.Web.Models
+@using EleWise.ELMA.BPM.Web.Common.Extensions
+@using EleWise.ELMA.Model.Managers
+@using EleWise.ELMA.Model.Services
+@using EleWise.ELMA.Tasks.Managers
+@using EleWise.ELMA.Tasks.Models
+@using EleWise.ELMA.Web.Mvc.Html.Forms
+
+@{
+    var selectedTab = Convert.ToInt32(ViewData["SelectedTab"] ?? 0);
+    var tabCustompropCount = 0;
+    var hasTabView = Model.HasCustomFormViews(EleWise.ELMA.Model.Views.ViewType.Display, true);
+    var tabFormView = Model.GetCustomFormView(EleWise.ELMA.Model.Views.ViewType.Display, true);
+    var tabCustomView = !hasTabView || tabFormView.UseRazorView
+                         ? MvcHtmlString.Empty
+                         : Html.BuildFormForModel(Model.Entity, EleWise.ELMA.Model.Views.ViewType.Display,
+                                                  b =>
+                                                      {
+                                                          b.HideForm();
+                                                          b.Prefix("Entity");
+                                                          b.Layout(new TwoColumnsFormLayout());
+                                                          b.LayoutConfig<TwoColumnsFormLayout>(
+                                                              l =>
+                                                                  {
+                                                                      l.LeftTableAttributes.Html.@class = "viewGroup";
+                                                                      l.RightTableAttributes.Html.@class = "viewGroup";
+                                                                      l.LeftTableAttributes.Html.style.width = "100%";
+                                                                      l.RightTableAttributes.Html.style.width = "100%";
+                                                                  });
+                                                          b.ShowOnlyUserProperties();
+                                                          b.EachPropertyRow(r => { if (r.Visible) tabCustompropCount++; });
+                                                      });
+
+    if (hasTabView && tabFormView.UseRazorView)
+    {
+        var vd = new ViewDataDictionary(ViewData) {TemplateInfo = {HtmlFieldPrefix = ViewData.TemplateInfo.GetFullHtmlFieldName("Entity")}};
+        tabCustomView = Html.Partial(tabFormView.RazorTabViewName, Model.Entity, vd);
+        tabCustompropCount = 1;
+    }
+    
+    var hasCommonView = Model.HasCustomFormViews(EleWise.ELMA.Model.Views.ViewType.Display, false);
+    var commonFormView = Model.GetCustomFormView(EleWise.ELMA.Model.Views.ViewType.Display, false);
+    var viewInpayments = CRMPermissionProvider.HasPermission(CRMPermissionProvider.InpaymentsAccessPermission);
+}
+
+@(TabPanel("SaleViewInfo").Items(tabs =>
+{
+    tabs.Add(
+        new EleWise.ELMA.Web.Mvc.Models.Selectors.TabPanelItem {
+            Text = SR.T("О сделке"),
+            Selected = selectedTab == 0 
+        }).Content(
+        @<text><table style="width: 100%"><tr><td style="width: @(viewInpayments ? "40%" : "100%")">
+@if (hasCommonView && commonFormView.UseRazorView)
+{
+    var vd = new ViewDataDictionary(ViewData) { TemplateInfo = { HtmlFieldPrefix = ViewData.TemplateInfo.GetFullHtmlFieldName("Entity") } };
+    @Html.Partial(commonFormView.RazorCommonViewName, Model.Entity, vd)
+}
+else
+{
+    @Html.BuildFormForModel(Model.Entity, EleWise.ELMA.Model.Views.ViewType.Display,
+    b =>
+    {
+        b.HideAllProperties();
+
+        b.PropertyRow(m => m.Contractor).Order(1);
+        b.PropertyRow(m => m.Name).Order(2);
+        b.PropertyRow(m => m.SalesVolume).Order(3)
+            .ValueTemplate(s => MvcHtmlString.Create("<span id=\"SalesVolumeValueDiv\">"+Html.Display(x => x.Entity.SalesVolume)+"</span>"));
+        b.PropertyRow(m => m.Currency).Order(4);
+        b.PropertyRow(m => m.Priority).Order(5);
+        b.PropertyRow(m => m.ShortStatus).Order(6);
+        b.PropertyRow(m => m.Responsible).Order(7);
+        b.PropertyRow(m => m.SaleStage).Order(8);
+        b.PropertyRow(m => m.SaleStatus).Order(9);
+        b.PropertyRow(m => m.StartDate).Order(10);
+        b.PropertyRow(m => m.EndDate).Order(11);
+        b.PropertyRow(m => m.SaleType).Order(12);
+        if (Model.Entity.Contractor != null)
+        {
+            b.PropertyRow(m => m.Author).RowTemplate(a => Html.Property(m => m.Entity.Contractor.Categories)).Order(13);
+        }
+        b.PropertyRow(m => m.Description).Order(14);
+        b.PropertyRow(m => m.MarketingActivity).Order(15);
+        b.PropertyRow(m => m.Dublicates).Order(16).Hide(Model.Entity.Dublicates == null || Model.Entity.Dublicates.Count == 0);
+
+        if (hasCommonView && !commonFormView.UseRazorView)
+        {
+            b.UserProperties();
+            b.UserPropertiesOrder(17, 1);
+        }
+    })
+}
+    </td>
+    @if (viewInpayments)
+    {
+        <td><div style="width: 10px;"></div></td>
+        <td style="width: 60%">@Html.Action("Inpayments", "Inpayment", new {SaleId = Model.Entity.Id})</td>
+    }
+    </tr></table>@Html.EventHistory(Model.Entity, true)</text>);
+    
+    if (hasTabView && tabCustompropCount > 0)
+    {
+        tabs.Add(
+            new EleWise.ELMA.Web.Mvc.Models.Selectors.TabPanelItem
+            {
+                Text = string.IsNullOrWhiteSpace(tabFormView.ViewInTabName) ? SR.T("Дополнительные поля") : tabFormView.ViewInTabName
+            }).Content(@<text> @tabCustomView </text>);
+    }
+
+    var relFilter = InterfaceActivator.Create<IRelationshipFilter>();
+    relFilter.DisableSecurity = true;
+    relFilter.Sale = Model.Entity;
+    var relCount = RelationshipManager.Instance.Count(relFilter);     
+    
+    tabs.Add(
+        new EleWise.ELMA.Web.Mvc.Models.Selectors.TabPanelItem
+        {
+            Text = SR.T("Взаимоотношения", relCount),
+            Counter = relCount,
+            TabIndex = 1,
+            Selected = selectedTab == 1
+        }).Content(@<text>
+            <div>
+                @Html.Action("Grid", "Relationship", new { SaleId = Model.Entity.Id, GridId = "SaleRelationships_" + Model.Entity.Id })
+            </div>
+        </text>);
+    tabs.Add(
+        new EleWise.ELMA.Web.Mvc.Models.Selectors.TabPanelItem
+        {
+            Text = SR.T("Продукты."),
+            Counter = Model.Entity.Products.Count(p => !p.IsDeleted),
+            TabIndex = 2,
+            Selected = selectedTab == 2
+        }).Content(@<text>
+            <div>
+                @Html.Action("Products", "Sale", new { SaleId = Model.Entity.Id })
+            </div>
+        </text>);
+
+    var filter = InterfaceActivator.Create<ICRMTaskBaseFilter>();
+    filter.DisableSecurity = true;
+    filter.Sale = Model.Entity;
+    filter.FilterByEntity = true;
+    filter.CompleteStatus = TaskCompleteStatus.Active;
+    var taskCount = TaskBaseManager.Instance.Count(filter);
+
+    tabs.Add(
+        new EleWise.ELMA.Web.Mvc.Models.Selectors.TabPanelItem
+        {
+            Text = SR.T("Задачи"),
+            Counter = taskCount,
+            TabIndex = 3,
+            Selected = selectedTab == 3
+        }).Content(@<text>@Html.Partial("TasksTab")</text>);
+
+    var docFilter = InterfaceActivator.Create<ICRMAttachmentFilter>();
+    docFilter.Sale = Model.Entity;
+    var docCount = EntityManager<ICRMAttachment>.Instance.Count(docFilter);
+
+    tabs.Add(
+            new EleWise.ELMA.Web.Mvc.Models.Selectors.TabPanelItem
+            {
+                Text = SR.T("Документы"),
+                Counter = docCount,
+                Selected = selectedTab == 4,
+            }).Content(@<text>
+<div>
+    @Html.Action("AttachmentsOfSale", "AttachmentFilter", new { area = CRMAreaRegistration.AREA_NAME, saleId = Model.Entity.Id })
+</div>
+</text>);
+
+    tabs.Add(
+          new EleWise.ELMA.Web.Mvc.Models.Selectors.TabPanelItem
+          {
+              Text = SR.T("Доступ"),
+              //  Counter = docCount,
+              Selected = selectedTab == 5,
+          }).Content(@<text>@Html.Partial("Sale/SaleAcessingGridViewItem")</text>);
+
+
+
+}).Render())
+

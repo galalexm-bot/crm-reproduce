@@ -1,0 +1,50 @@
+﻿@using EleWise.ELMA.ComponentModel
+@using EleWise.ELMA.CRM.Extensions
+@using EleWise.ELMA.CRM.Web
+@using EleWise.ELMA;
+@using EleWise.ELMA.Model.Types.Settings
+@model EleWise.ELMA.CRM.Web.Models.ExchangeRates.CurrencyDynamicsSettingsModel
+
+@{
+    Html.Toolbar()
+        .Group("toolbar-group-1")
+        .ToolbarSubmit(SR.T("Импорт"), "#complete.svg")
+        .ToolbarButton(new ActionToolbarItem("toolbar-copy-to-auto")
+        {
+            Text = SR.T("Копировать в планировщик"),
+            ToolTip = SR.T("Перенести выбранные пары в планировщик для автоматического обновления"),
+            Click = "SetAutoImport()"
+        });
+    Html.Header(SR.T("Импортировать динамику курса валюты"));
+}
+
+<div class="t-content" id="currencyImportContent">
+    @using (Html.ELMAForm("Index", "CurrencyDynamics", new { area = RouteProvider.AreaName }, FormMethod.Post, new { id = "CurrencyImportForm" }))
+    {
+        @Html.TableFormStart(a => a.Attributes(x => x.@class = "currencyDynamicsSettingsTable").ViewType(EleWise.ELMA.Model.Views.ViewType.Edit))
+            @Html.EditableProperty(a => a.StartDate)
+            @Html.EditableProperty(a => a.EndDate)
+            <tr>
+                <td colspan="2">
+                    @Html.Partial("CurrencyRatesGrid/Grid", Model.Items)
+                </td>
+            </tr>
+        @Html.TableFormEnd()
+    }
+</div>
+<script>
+    $(document).ready(function () {
+        $('#@(Html.IDFor(m => m.StartDate))_CaptionContainer').addClass('caption-required');
+        $('#@(Html.IDFor(m => m.EndDate))_CaptionContainer').addClass('caption-required');
+        elma.ValidationRulesManager.addRule('@(Html.IDFor(m => m.StartDate))', 'add', { required: true });
+        elma.ValidationRulesManager.addRule('@(Html.IDFor(m => m.EndDate))', 'add', { required: true });
+    });
+    SetAutoImport = function () {
+        $('#@(Html.IDFor(m => m.StartDate))_CaptionContainer').removeClass('caption-required');
+        $('#@(Html.IDFor(m => m.EndDate))_CaptionContainer').removeClass('caption-required');
+        elma.ValidationRulesManager.addRule('@(Html.IDFor(m => m.StartDate))', 'remove', "required");
+        elma.ValidationRulesManager.addRule('@(Html.IDFor(m => m.EndDate))', 'remove', "required");
+        $('#CurrencyImportForm').attr("action", '@Html.Url().Action("Index", "AutomaticCurrencyImport", new { area = RouteProvider.AreaName })').submit();
+    }
+</script>
+

@@ -1,0 +1,74 @@
+﻿@model EleWise.ELMA.CRM.Web.Models.LeadModel
+@using EleWise.ELMA.Model.Views
+@using EleWise.ELMA
+@using EleWise.ELMA.Web.Mvc.Views.ViewItem
+
+@if (Model != null)
+{
+    <div class="table-form-columns-wrapper table-form-column-count-2">
+        <div class="table-form-column">
+            @Html.TableFormStart(EleWise.ELMA.Model.Views.ViewType.Edit)
+                <tr>
+                    <td class="captionCell">
+                        @Html.Caption(m => m.NewContact.Surname)
+                    </td>
+                    <td >
+                        @Html.Editor(m => m.NewContact.Surname)
+                    </td>
+                </tr>
+                <tr>
+                    <td class="captionCell">
+                        @Html.Caption(m => m.NewContact.Firstname)
+                    </td>
+                    <td >
+                        @Html.Editor(m => m.NewContact.Firstname)
+                    </td>
+                </tr>
+                <tr>
+                    <td class="captionCell">
+                        @Html.Caption(m => m.NewContact.Middlename)
+                    </td>
+                    <td >
+                        @Html.Editor(m => m.NewContact.Middlename)
+                    </td>
+                </tr>
+                <tr>
+                    <td class="captionCell">
+                        @Html.Caption(m => m.NewContact.Position)
+                    </td>
+                    <td >
+                        @Html.Editor(m => m.NewContact.Position)
+                    </td>
+                </tr>
+                @Html.TableFormEnd()
+        </div>
+        <div class="table-form-column">
+             @Html.TableFormStart(EleWise.ELMA.Model.Views.ViewType.Edit)
+                <tr>
+                    <td class="captionCell">
+                        @SR.T("Email")
+                    </td>
+                    <td>
+                        @Html.Partial("EditorTemplates/Entities/EmailSet", Model.NewContact.Email,
+                                                    new ViewDataDictionary { TemplateInfo = new TemplateInfo { HtmlFieldPrefix = ViewData.TemplateInfo.GetFullHtmlFieldName("NewContact.Email") } })
+                        <div>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="captionCell">
+                        @SR.T("Телефоны")
+                    </td>
+                    <td>
+                        @Html.Partial("EditorTemplates/Entities/PhoneSet", Model.NewContact.Phone,
+                                                            new ViewDataDictionary { TemplateInfo = new TemplateInfo { HtmlFieldPrefix = ViewData.TemplateInfo.GetFullHtmlFieldName("NewContact.Phone") } })
+                        <div>
+                        </div>
+                    </td>
+                </tr>
+                @Html.EditableProperty(m => m.NewContact.ICQ)
+                @Html.EditableProperty(m => m.NewContact.Skype)
+            @Html.TableFormEnd()
+        </div>
+    </div>
+}

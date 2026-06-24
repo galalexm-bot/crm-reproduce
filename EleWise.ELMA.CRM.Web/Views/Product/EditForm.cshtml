@@ -1,0 +1,16 @@
+﻿@model EleWise.ELMA.CRM.Web.Models.ProductViewModel
+@using EleWise.ELMA.CRM.Web
+@using EleWise.ELMA.Web.Content
+@using ViewType = EleWise.ELMA.Model.Views.ViewType
+
+@Html.ValidationSummary(false)
+@if (!Model.Entity.IsNew())
+{
+    @Html.HiddenFor(m => m.Entity.Id)
+}
+@{
+    var viewType = Model.Entity.IsNew() ? ViewType.Create : ViewType.Edit;
+	Model.ViewType = viewType;
+}
+
+@Html.FormViewItem(Model.View, m => m.Entity, new ActionRoute("AsyncViewItem", "Product", new { area = CRMAreaRegistration.AREA_NAME, id = Model.Entity.Id, viewType, Model.FormUid }), viewType)

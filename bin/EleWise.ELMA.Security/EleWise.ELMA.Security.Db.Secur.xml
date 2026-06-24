@@ -1,0 +1,86 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<root uid="{46A020BE-7657-41AF-AF4E-703AE55D9AA1}">
+
+  <procedures>
+
+    <procedure name="GroupPermissionMapping">
+      <mappings>
+        <hibernate-mapping xmlns="urn:nhibernate-mapping-2.2" default-access="EleWise.ELMA.Runtime.NH.EntityPropertyAccessor, EleWise.ELMA.SDK, Version=1.0.0.0, Culture=neutral, PublicKeyToken=cb29d04eca9b031d" auto-import="true" default-cascade="none" default-lazy="true">
+          <class xmlns="urn:nhibernate-mapping-2.2" mutable="true" name="EleWise.ELMA.Security.GroupPermission, EleWise.ELMA.Security, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" table="GroupPermissions">
+            <composite-id mapped="false" unsaved-value="undefined">
+              <key-property name="PermissionId" type="System.Guid, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+                <column name="PermissionId" />
+              </key-property>
+              <key-many-to-one name="Group" class="EleWise.ELMA.Security.Models.UserGroup, EleWise.ELMA.DynamicModel">
+                <column name="GroupId" />
+              </key-many-to-one>
+            </composite-id>
+          </class>
+        </hibernate-mapping>
+      </mappings>
+    </procedure>
+
+  </procedures>
+
+  <methods>
+    <method ExecuteTime="OnTablesCreated" name="CreateGroupPermissions" />
+    <method ExecuteTime="OnTablesCreated" name="CreateUserSecuritySetCacheTable7" />
+    <method ExecuteTime="OnTablesCreated" name="CreateUserSecuritySetCacheTestTable4" />
+    <method ExecuteTime="OnTablesCreated" name="CreateUpdateUserSecuritySetCacheQueueTable" />
+    <method name="CreateAdminUsers" />
+    <method name="CreateSystemUsers" />
+    <method name="UpdateSystemUsers2" />
+    <method name="SignInAdminUsers" AlwaysExecute="true" />
+    <method name="CreateAdminGroups" />
+    <method name="CreateAllUsersGroups" />
+    <method name="CreateConfiguringGroup" />
+    <method name="CreateUsersManagementGroup" />
+    <method name="UpdateOrganizationModelChiefs" />
+    <method name="FillOrgItemSoftDeletable" />
+    <method name="RetrieveCertificationAuthoritySettings" />
+    <method name="UserPublicKeyConvert" ExecuteTime="OnTablesDeleting" />
+    <method ExecuteTime="OnTablesCreated" name="CreatePublicCacheTables" />
+    <method ExecuteTime="OnIndexesCreated" AlwaysExecute="true" name="CreatePublicCacheFK" />
+    <method name="ChangeUserNames" />
+    <method ExecuteTime="OnTablesCreated" name="CreateActiveUserSessionTable3" />
+    <method name="CreatePrivilegeUsersGroup" />
+    <method name="ConvertLangUserColumn" />
+    <method name="SetDefaultLocalToUsers" />
+    <method name="UpdateOldUsersCultures" />
+    <method name="UpdateSecurityCryptoSettings" />
+    <method name="FillUserCertificateCryptoProvider" />
+    <method name="FillUserCertificateCryptoAction" />
+    <method name="FillDefaultGroundsForAbsence" />
+  </methods>
+
+  <indexes>
+    <index name="IX_USSC_SubordinateUserId" tableName="UserSecuritySetCache" columns="SubordinateUserId" />
+    <index name="IX_USSC_SetId_UserId_Sub" tableName="UserSecuritySetCache" columns="UserId, SetId, Subordinate" />
+    <index name="IX_USSC_GroupId" tableName="UserSecuritySetCache" columns="GroupId" />
+    <index name="IX_USSC_OrgItemId" tableName="UserSecuritySetCache" columns="OrgItemId" />
+    <index name="IX_USSC_UserId" tableName="UserSecuritySetCache" columns="UserId" />
+    <index name="IX_USSCT_SetId_UserId_Sub" tableName="UserSecuritySetCacheTemp" columns="UserId, SetId, Subordinate" />
+    <index name="IX_USSCT_SubordinateUserId" tableName="UserSecuritySetCacheTemp" columns="SubordinateUserId" />
+    <index name="IX_USSCT_UserId" tableName="UserSecuritySetCacheTemp" columns= "UserId" />
+    <index name="IX_UserSecSetCache_SubUser" tableName="UserSecuritySetCache" columns="SubordinateUserId,Subordinate" />
+    <index name="IX_UserSecSetCache_Subordinate" tableName="UserSecuritySetCache" columns="Subordinate" />
+    <index name="IX_UsrSecSetCacheSubUserCnt" tableName="UserSecuritySetCacheTemp" columns="SubordinateUserId,UserCount" />
+    <index name="IX_USSTC_SubordinateUserId" tableName="UserSecuritySetCacheTest" columns="SubordinateUserId" />
+    <index name="IX_USSTC_SetId_UserId_Sub" tableName="UserSecuritySetCacheTest" columns= "UserId, SetId, Subordinate" />
+    <index name="IX_USSTC_GroupId" tableName="UserSecuritySetCacheTest" columns= "GroupId" />
+    <index name="IX_USSTC_UserId" tableName="UserSecuritySetCacheTest" columns= "UserId" />
+    <index name="IX_USSTCT_SubordinateUserId" tableName="UserSecuritySetCacheTestTemp" columns= "SubordinateUserId" />
+    <index name="IX_USSTCT" tableName="UserSecuritySetCacheTestTemp" columns= "UserId, SetId, Subordinate, GroupId, SubordinateUserId" />
+    <index name="U_UpdateUSSCQueue" unique="true" tableName="UpdateUSSCQueue" columns="Uid" />
+    <index name="Idx_UpdateUSSCQueue_Date" tableName="UpdateUSSCQueue" columns="CreationDate" />
+    <index name="IX_UserGroup_N1" tableName="UserGroup" columns="TypeUid" />
+    <index name="IX_PublicCacheData_ObjId" tableName="PublicCacheData" columns="ObjectId" />
+    <index name="IX_OI_ItemType" tableName="OrganizationItem" columns="ItemType" />
+    <index name="IX_ActiveUserSessionSID" tableName="ActiveUserSession" columns="SessionId" />
+    <index name="IX_ParentItem_ISD" tableName="OrganizationItem" columns="ParentItem, IsDeleted" />
+    <index name="IX_UserGroup_User_MapGU" tableName="UserGroup_User_Map" columns="GroupId, UserId" />
+    <index name="IX_ActiveUserSessionSSU" tableName="ActiveUserSession" columns="Status, SessionId, UserId" />
+    <index name="IX_ActiveUserSessionSU" tableName="ActiveUserSession" columns="Status, UserId" />
+  </indexes>
+  
+</root>

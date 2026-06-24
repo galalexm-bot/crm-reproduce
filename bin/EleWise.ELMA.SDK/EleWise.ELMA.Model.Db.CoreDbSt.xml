@@ -1,0 +1,60 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<root uid="{BC6FE979-91C1-4B42-92B7-0D2B9D3E0AD6}">
+
+  <procedures>
+
+    <procedure name="SystemSettingsMapping">
+      <mappings>
+        <hibernate-mapping xmlns="urn:nhibernate-mapping-2.2" default-access="EleWise.ELMA.Runtime.NH.EntityPropertyAccessor, EleWise.ELMA.SDK, Version=1.0.0.0, Culture=neutral, PublicKeyToken=cb29d04eca9b031d" auto-import="true" default-cascade="none" default-lazy="true">
+          <class xmlns="urn:nhibernate-mapping-2.2" mutable="true" name="EleWise.ELMA.Runtime.Settings.Impl.SystemSettings, EleWise.ELMA.SDK, Version=1.0.0.0, Culture=neutral, PublicKeyToken=cb29d04eca9b031d" table="SystemSettings">
+            <cache usage="read-write" />
+            <composite-id mapped="false" unsaved-value="undefined">
+              <key-property name="ModuleUid" type="System.Guid, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+                <column name="ModuleUid" />
+              </key-property>
+              <key-property name="Key" type="System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+                <column name="SettingKey" />
+              </key-property>
+            </composite-id>
+            <property name="Value" type="System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+              <column name="SettingValue" />
+            </property>
+          </class>
+        </hibernate-mapping>
+      </mappings>
+    </procedure>
+
+  </procedures>
+
+  <methods>
+    <method ExecuteTime="OnTablesCreated" name="CreateSystemFileTable4" />
+    <method ExecuteTime="OnTablesCreated" name="CreateModuleReferenceMetadataTable" />
+    <method ExecuteTime="OnTablesCreated" name="CreateDataClassTypeReferenceTable" />
+    <method ExecuteTime="OnTablesCreated" name="CreateConfigurationTypeInfoTable" />
+    <method ExecuteTime="OnTablesCreated" name="CreateFormDependenciesTable" />
+    <method ExecuteTime="OnIndexesCreated" AlwaysExecute="true" name="SetUniqueUids" />
+    <method ExecuteTime="OnIndexesCreated" AlwaysExecute="true" name="CreateFormDependenciesIndex" />
+    <method ExecuteTime="OnIndexesCreated" AlwaysExecute="true" name="CreateIndexesForReferenceObject" />
+    <method ExecuteTime="OnIndexesCreated" AlwaysExecute="true" name="CreateIndexesForAllSoftDeletable" />
+    <method ExecuteTime="OnForeignKeysCreated" name="UpdateDoubleUidsSystemFile" />
+    <method name="CreateFormViewItemDependencies" />
+    <method ExecuteTime="OnTablesCreated" TransformationInVersion="3.15.8" name="ConvertMetadataItemHeaderNameColumn" />
+    <method ExecuteTime="OnTablesCreated" TransformationInVersion="4.0.1" name="ConvertMetadataItemHeaderTagColumn" />
+    <method ExecuteTime="OnTablesCreated" TransformationInVersion="4.0.6" name="ConvertModuleMetadataItemHeaderNameColumn" />
+    <method ExecuteTime="OnTablesCreating" TransformationInVersion="4.0.28" name="ConvertGlobalScriptModuleHeaderNamespaceColumn" />
+  </methods>
+
+  <indexes>
+    <index name="IX_FSF_UID" unique="true" tableName="FS_FILES" columns="Uid" /> 
+    <index name="IX_MR_ModuleUid" tableName="ModuleReference" columns="ModuleUid" />
+    <index name="IX_TSI_Store_Key" tableName="TypeSettingsInstanceStore" columns="ObjectTypeUid, ObjectId" />
+    <index name="IX_SJRI_TriggerId_Date" tableName="SchedulerJobRunInfo" columns="TriggerId, DateToRun" />
+    <index name="IX_PackageChangesUS" tableName="PackageChanges" columns="UserId, Status" />
+    <index name="IX_IndexQueueQueueType" tableName="IndexQueue" columns="QueueType" />
+    <index name="IX_IndexQueueVisualData" tableName="IndexQueue" columns="VisualData" />
+    <index name="IX_IndexQueueCreationAuthor" tableName="IndexQueue" columns="CreationAuthorId" />
+    <index name="UX_CatalogProfile" unique="true" tableName="CatalogProfile" columns="CatalogType" />
+    <index name="IX_MetadataItemHeaderName" tableName="MetadataItemHeader" columns="Name" />
+  </indexes>
+  
+</root>

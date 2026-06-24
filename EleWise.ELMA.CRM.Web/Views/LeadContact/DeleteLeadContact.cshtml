@@ -1,0 +1,16 @@
+﻿@using EleWise.ELMA.CRM.Web.Models
+@using EleWise.ELMA.CRM.Web
+@using EleWise.ELMA
+@model EleWise.ELMA.CRM.Web.Controllers.LeadContactInfoModel
+@using (Html.ELMAForm("Delete", "LeadContact", new { area = CRMAreaRegistration.AREA_NAME }))
+{
+    @Html.Hidden("Id")
+        
+    <div class="form-label" style="width: 141px">
+        @(SR.T("Удалить контакт?"))
+    </div>
+    <div class="popup-buttons">
+        <input type="submit" class="confirm" value="@SR.Delete" />
+        <input type="button" value="@SR.Cancel" onclick="@Html.ClosePopup("PopUpDeleteContact")" />
+    </div>
+}

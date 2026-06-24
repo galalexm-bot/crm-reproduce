@@ -1,0 +1,47 @@
+﻿@using EleWise.ELMA
+@using EleWise.ELMA.CRM.Web.Models
+@using EleWise.ELMA.Model.Types.Settings
+@model InpaymentChangeStatusModel
+
+@Html.HiddenFor(m => m.InpaymentId)
+@using (Html.TableForm(EleWise.ELMA.Model.Views.ViewType.Edit))
+{
+    <tr>
+        <td class="captionCell">@SR.T("Статус")</td>
+        <td>@Html.Editor(x => x.Value, a =>
+        {
+            a.Html.onchange = "StatusChange";
+            a.Html.style.width = "167px";
+        })</td>
+    </tr>
+    <tr id = "ActualDateInpaymentChangeStatusModel">
+        <td class="captionCell">@SR.T("Фактическая дата")</td>
+        <td>
+            @Html.Editor(x => x.ActualDate, a =>
+            {
+                a.TypeSettingsAction = s => ((DateTimeSettings) s).ShowTime = false;
+            })
+        </td>
+    </tr>
+    <tr>
+        <td class="captionCell">@SR.T("Комментарий")</td>
+        <td>@Html.Editor(x => x.Comment, a => a.TypeSettings = new StringSettings() {MultiLine = true})</td>
+    </tr>
+}
+<div class="popup-buttons">
+    <input type="button" class="confirm" value="@SR.Save" onclick="closeWindow(this,false,true);"/>
+    <input type="button" value="@SR.Cancel" onclick="closeWindow(this,false,false);"/>
+</div>
+<script>
+    $(document).ready(StatusChange);
+    function StatusChange() {
+        var t = $('#SetInpaymentStatusPopup_Value').val();
+
+        if (t != "Received") {
+            document.getElementById('ActualDateInpaymentChangeStatusModel').style.display = 'none';
+        } else {
+            document.getElementById('ActualDateInpaymentChangeStatusModel').style.display = '';
+
+        }
+    }
+</script>

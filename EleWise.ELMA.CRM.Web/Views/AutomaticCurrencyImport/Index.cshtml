@@ -1,0 +1,26 @@
+﻿@using EleWise.ELMA
+@using EleWise.ELMA.CRM.Web
+@model EleWise.ELMA.CRM.Web.Models.ExchangeRates.ExchangeRateImportModel
+@{
+    Html.Toolbar()
+        .Group("toolbar-group-1")
+        .ToolbarSubmit(SR.Save, "#save.svg");
+    Html.Header(SR.T("Автоматическое регулярное получение курсов валют"));
+}
+
+<div class="t-content" id="currencyImportContent">
+    @using (Html.ELMAForm("Save", "AutomaticCurrencyImport", new { area = RouteProvider.AreaName }, FormMethod.Post))
+    {
+        <table class="table_with_inputs">
+            @Html.EditableProperty(a => a.Settings.ValueStorage)
+            @Html.EditableProperty(a => a.Settings.UpdateTimeForDailyRates, w =>
+            {
+                w.TypeSettingsAction = s => ((EleWise.ELMA.Model.Types.Settings.DateTimeSettings)s).ShowDate = false;
+            })
+            @Html.EditableProperty(a => a.Settings.GroupForNotification)
+        </table>
+
+        @Html.Partial("CurrencyRatesGrid/Grid", Model.Items)
+        
+    }
+</div>

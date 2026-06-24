@@ -1,0 +1,1597 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>
+    </ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{069FBF2D-9C31-450F-A466-A826D022BB0A}</ProjectGuid>
+    <ProjectTypeGuids>{349c5851-65df-11da-9384-00065b846f21};{fae04ec0-301f-11d3-bf4b-00c04f79efbc}</ProjectTypeGuids>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>EleWise.ELMA.CRM.Web</RootNamespace>
+    <AssemblyName>EleWise.ELMA.CRM.Web</AssemblyName>
+    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
+    <MvcBuildViews>false</MvcBuildViews>
+    <UseIISExpress>false</UseIISExpress>
+    <CodeContractsAssemblyMode>1</CodeContractsAssemblyMode>
+    <FileUpgradeFlags>
+    </FileUpgradeFlags>
+    <UpgradeBackupLocation>
+    </UpgradeBackupLocation>
+    <OldToolsVersion>4.0</OldToolsVersion>
+    <MvcProjectUpgradeChecked>true</MvcProjectUpgradeChecked>
+    <IISExpressSSLPort />
+    <IISExpressAnonymousAuthentication />
+    <IISExpressWindowsAuthentication />
+    <IISExpressUseClassicPipelineMode />
+    <TargetFrameworkProfile />
+    <UseGlobalApplicationHostFile />
+    <Use64BitIISExpress />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <CodeContractsEnableRuntimeChecking>False</CodeContractsEnableRuntimeChecking>
+    <CodeContractsRuntimeOnlyPublicSurface>False</CodeContractsRuntimeOnlyPublicSurface>
+    <CodeContractsRuntimeThrowOnFailure>True</CodeContractsRuntimeThrowOnFailure>
+    <CodeContractsRuntimeCallSiteRequires>False</CodeContractsRuntimeCallSiteRequires>
+    <CodeContractsRuntimeSkipQuantifiers>False</CodeContractsRuntimeSkipQuantifiers>
+    <CodeContractsRunCodeAnalysis>False</CodeContractsRunCodeAnalysis>
+    <CodeContractsNonNullObligations>False</CodeContractsNonNullObligations>
+    <CodeContractsBoundsObligations>False</CodeContractsBoundsObligations>
+    <CodeContractsArithmeticObligations>False</CodeContractsArithmeticObligations>
+    <CodeContractsEnumObligations>False</CodeContractsEnumObligations>
+    <CodeContractsRedundantAssumptions>False</CodeContractsRedundantAssumptions>
+    <CodeContractsRunInBackground>True</CodeContractsRunInBackground>
+    <CodeContractsShowSquigglies>False</CodeContractsShowSquigglies>
+    <CodeContractsUseBaseLine>False</CodeContractsUseBaseLine>
+    <CodeContractsEmitXMLDocs>False</CodeContractsEmitXMLDocs>
+    <CodeContractsCustomRewriterAssembly />
+    <CodeContractsCustomRewriterClass />
+    <CodeContractsLibPaths />
+    <CodeContractsExtraRewriteOptions />
+    <CodeContractsExtraAnalysisOptions />
+    <CodeContractsBaseLineFile />
+    <CodeContractsCacheAnalysisResults>False</CodeContractsCacheAnalysisResults>
+    <CodeContractsRuntimeCheckingLevel>Full</CodeContractsRuntimeCheckingLevel>
+    <CodeContractsReferenceAssembly>%28none%29</CodeContractsReferenceAssembly>
+    <CodeContractsAnalysisWarningLevel>0</CodeContractsAnalysisWarningLevel>
+    <CodeContractsInferRequires>False</CodeContractsInferRequires>
+    <CodeContractsInferEnsures>False</CodeContractsInferEnsures>
+    <CodeContractsInferObjectInvariants>False</CodeContractsInferObjectInvariants>
+    <CodeContractsSuggestAssumptions>False</CodeContractsSuggestAssumptions>
+    <CodeContractsSuggestRequires>True</CodeContractsSuggestRequires>
+    <CodeContractsSuggestEnsures>False</CodeContractsSuggestEnsures>
+    <CodeContractsSuggestObjectInvariants>False</CodeContractsSuggestObjectInvariants>
+    <CodeContractsAssertsToContractsCheckBox>True</CodeContractsAssertsToContractsCheckBox>
+    <CodeContractsRedundantTests>True</CodeContractsRedundantTests>
+    <CodeContractsMissingPublicRequiresAsWarnings>True</CodeContractsMissingPublicRequiresAsWarnings>
+    <CodeContractsMissingPublicEnsuresAsWarnings>False</CodeContractsMissingPublicEnsuresAsWarnings>
+    <CodeContractsSuggestAssumptionsForCallees>False</CodeContractsSuggestAssumptionsForCallees>
+    <CodeContractsNecessaryEnsures>True</CodeContractsNecessaryEnsures>
+    <CodeContractsSuggestReadonly>True</CodeContractsSuggestReadonly>
+    <CodeContractsSQLServerOption />
+    <CodeContractsSkipAnalysisIfCannotConnectToCache>False</CodeContractsSkipAnalysisIfCannotConnectToCache>
+    <CodeContractsFailBuildOnWarnings>False</CodeContractsFailBuildOnWarnings>
+    <CodeContractsBeingOptimisticOnExternal>True</CodeContractsBeingOptimisticOnExternal>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <CodeContractsEnableRuntimeChecking>False</CodeContractsEnableRuntimeChecking>
+    <CodeContractsRuntimeOnlyPublicSurface>False</CodeContractsRuntimeOnlyPublicSurface>
+    <CodeContractsRuntimeThrowOnFailure>True</CodeContractsRuntimeThrowOnFailure>
+    <CodeContractsRuntimeCallSiteRequires>False</CodeContractsRuntimeCallSiteRequires>
+    <CodeContractsRuntimeSkipQuantifiers>False</CodeContractsRuntimeSkipQuantifiers>
+    <CodeContractsRunCodeAnalysis>False</CodeContractsRunCodeAnalysis>
+    <CodeContractsNonNullObligations>False</CodeContractsNonNullObligations>
+    <CodeContractsBoundsObligations>False</CodeContractsBoundsObligations>
+    <CodeContractsArithmeticObligations>False</CodeContractsArithmeticObligations>
+    <CodeContractsEnumObligations>False</CodeContractsEnumObligations>
+    <CodeContractsRedundantAssumptions>False</CodeContractsRedundantAssumptions>
+    <CodeContractsRunInBackground>True</CodeContractsRunInBackground>
+    <CodeContractsShowSquigglies>False</CodeContractsShowSquigglies>
+    <CodeContractsUseBaseLine>False</CodeContractsUseBaseLine>
+    <CodeContractsEmitXMLDocs>False</CodeContractsEmitXMLDocs>
+    <CodeContractsCustomRewriterAssembly />
+    <CodeContractsCustomRewriterClass />
+    <CodeContractsLibPaths />
+    <CodeContractsExtraRewriteOptions />
+    <CodeContractsExtraAnalysisOptions />
+    <CodeContractsBaseLineFile />
+    <CodeContractsCacheAnalysisResults>False</CodeContractsCacheAnalysisResults>
+    <CodeContractsRuntimeCheckingLevel>Full</CodeContractsRuntimeCheckingLevel>
+    <CodeContractsReferenceAssembly>%28none%29</CodeContractsReferenceAssembly>
+    <CodeContractsAnalysisWarningLevel>0</CodeContractsAnalysisWarningLevel>
+    <CodeContractsInferRequires>False</CodeContractsInferRequires>
+    <CodeContractsInferEnsures>False</CodeContractsInferEnsures>
+    <CodeContractsInferObjectInvariants>False</CodeContractsInferObjectInvariants>
+    <CodeContractsSuggestAssumptions>False</CodeContractsSuggestAssumptions>
+    <CodeContractsSuggestRequires>True</CodeContractsSuggestRequires>
+    <CodeContractsSuggestEnsures>False</CodeContractsSuggestEnsures>
+    <CodeContractsSuggestObjectInvariants>False</CodeContractsSuggestObjectInvariants>
+    <CodeContractsAssertsToContractsCheckBox>True</CodeContractsAssertsToContractsCheckBox>
+    <CodeContractsRedundantTests>True</CodeContractsRedundantTests>
+    <CodeContractsMissingPublicRequiresAsWarnings>True</CodeContractsMissingPublicRequiresAsWarnings>
+    <CodeContractsMissingPublicEnsuresAsWarnings>False</CodeContractsMissingPublicEnsuresAsWarnings>
+    <CodeContractsSuggestAssumptionsForCallees>False</CodeContractsSuggestAssumptionsForCallees>
+    <CodeContractsNecessaryEnsures>True</CodeContractsNecessaryEnsures>
+    <CodeContractsSuggestReadonly>True</CodeContractsSuggestReadonly>
+    <CodeContractsSQLServerOption />
+    <CodeContractsSkipAnalysisIfCannotConnectToCache>False</CodeContractsSkipAnalysisIfCannotConnectToCache>
+    <CodeContractsFailBuildOnWarnings>False</CodeContractsFailBuildOnWarnings>
+    <CodeContractsBeingOptimisticOnExternal>True</CodeContractsBeingOptimisticOnExternal>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug-CompileMarkup|AnyCPU'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <CodeAnalysisLogFile>bin\EleWise.ELMA.CRM.Web.dll.CodeAnalysisLog.xml</CodeAnalysisLogFile>
+    <CodeAnalysisUseTypeNameInSuppression>true</CodeAnalysisUseTypeNameInSuppression>
+    <CodeAnalysisModuleSuppressionsFile>GlobalSuppressions.cs</CodeAnalysisModuleSuppressionsFile>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisRuleSetDirectories>;E:\Program Files\Microsoft Visual Studio 10.0\Team Tools\Static Analysis Tools\\Rule Sets</CodeAnalysisRuleSetDirectories>
+    <CodeAnalysisIgnoreBuiltInRuleSets>true</CodeAnalysisIgnoreBuiltInRuleSets>
+    <CodeAnalysisRuleDirectories>;E:\Program Files\Microsoft Visual Studio 10.0\Team Tools\Static Analysis Tools\FxCop\\Rules</CodeAnalysisRuleDirectories>
+    <CodeAnalysisIgnoreBuiltInRules>true</CodeAnalysisIgnoreBuiltInRules>
+    <CodeContractsEnableRuntimeChecking>False</CodeContractsEnableRuntimeChecking>
+    <CodeContractsRuntimeOnlyPublicSurface>False</CodeContractsRuntimeOnlyPublicSurface>
+    <CodeContractsRuntimeThrowOnFailure>True</CodeContractsRuntimeThrowOnFailure>
+    <CodeContractsRuntimeCallSiteRequires>False</CodeContractsRuntimeCallSiteRequires>
+    <CodeContractsRuntimeSkipQuantifiers>False</CodeContractsRuntimeSkipQuantifiers>
+    <CodeContractsRunCodeAnalysis>False</CodeContractsRunCodeAnalysis>
+    <CodeContractsNonNullObligations>False</CodeContractsNonNullObligations>
+    <CodeContractsBoundsObligations>False</CodeContractsBoundsObligations>
+    <CodeContractsArithmeticObligations>False</CodeContractsArithmeticObligations>
+    <CodeContractsEnumObligations>False</CodeContractsEnumObligations>
+    <CodeContractsRedundantAssumptions>False</CodeContractsRedundantAssumptions>
+    <CodeContractsInferRequires>False</CodeContractsInferRequires>
+    <CodeContractsInferEnsures>False</CodeContractsInferEnsures>
+    <CodeContractsInferObjectInvariants>False</CodeContractsInferObjectInvariants>
+    <CodeContractsSuggestAssumptions>False</CodeContractsSuggestAssumptions>
+    <CodeContractsSuggestRequires>True</CodeContractsSuggestRequires>
+    <CodeContractsSuggestEnsures>False</CodeContractsSuggestEnsures>
+    <CodeContractsSuggestObjectInvariants>False</CodeContractsSuggestObjectInvariants>
+    <CodeContractsRunInBackground>True</CodeContractsRunInBackground>
+    <CodeContractsUseBaseLine>False</CodeContractsUseBaseLine>
+    <CodeContractsEmitXMLDocs>False</CodeContractsEmitXMLDocs>
+    <CodeContractsCustomRewriterAssembly />
+    <CodeContractsCustomRewriterClass />
+    <CodeContractsLibPaths />
+    <CodeContractsExtraRewriteOptions />
+    <CodeContractsExtraAnalysisOptions />
+    <CodeContractsBaseLineFile />
+    <CodeContractsRuntimeCheckingLevel>Full</CodeContractsRuntimeCheckingLevel>
+    <CodeContractsAnalysisWarningLevel>0</CodeContractsAnalysisWarningLevel>
+    <CodeContractsReferenceAssembly>%28none%29</CodeContractsReferenceAssembly>
+    <CodeContractsAssertsToContractsCheckBox>True</CodeContractsAssertsToContractsCheckBox>
+    <CodeContractsRedundantTests>True</CodeContractsRedundantTests>
+    <CodeContractsMissingPublicRequiresAsWarnings>True</CodeContractsMissingPublicRequiresAsWarnings>
+    <CodeContractsMissingPublicEnsuresAsWarnings>False</CodeContractsMissingPublicEnsuresAsWarnings>
+    <CodeContractsSuggestAssumptionsForCallees>False</CodeContractsSuggestAssumptionsForCallees>
+    <CodeContractsNecessaryEnsures>True</CodeContractsNecessaryEnsures>
+    <CodeContractsSuggestReadonly>True</CodeContractsSuggestReadonly>
+    <CodeContractsSQLServerOption />
+    <CodeContractsSkipAnalysisIfCannotConnectToCache>False</CodeContractsSkipAnalysisIfCannotConnectToCache>
+    <CodeContractsFailBuildOnWarnings>False</CodeContractsFailBuildOnWarnings>
+    <CodeContractsBeingOptimisticOnExternal>True</CodeContractsBeingOptimisticOnExternal>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Aspose.Cells">
+      <HintPath>packages\Aspose.Cells.20.10.0\lib\net40\Aspose.Cells.dll</HintPath>
+    </Reference>
+    <Reference Include="EleWise.ELMA.BPM">
+      <HintPath>..\..\..\..\ELMA-CE\Web\bin\EleWise.ELMA.BPM.dll</HintPath>
+    </Reference>
+    <Reference Include="EleWise.ELMA.BPM.Web.Calendar">
+      <HintPath>..\..\..\..\ELMA-CE\Web\Modules\EleWise.ELMA.BPM.Web.Calendar\bin\EleWise.ELMA.BPM.Web.Calendar.dll</HintPath>
+    </Reference>
+    <Reference Include="EleWise.ELMA.BPM.Web.Common">
+      <HintPath>..\..\..\..\ELMA-CE\Web\Modules\EleWise.ELMA.BPM.Web.Common\bin\EleWise.ELMA.BPM.Web.Common.dll</HintPath>
+    </Reference>
+    <Reference Include="EleWise.ELMA.BPM.Web.Content">
+      <HintPath>..\..\..\..\ELMA-CE\Web\Modules\EleWise.ELMA.BPM.Web.Content\bin\EleWise.ELMA.BPM.Web.Content.dll</HintPath>
+    </Reference>
+    <Reference Include="EleWise.ELMA.BPM.Web.Security">
+      <HintPath>..\..\..\..\ELMA-CE\Web\Modules\EleWise.ELMA.BPM.Web.Security\bin\EleWise.ELMA.BPM.Web.Security.dll</HintPath>
+    </Reference>
+    <Reference Include="EleWise.ELMA.BPM.Web.Tasks">
+      <HintPath>..\..\..\..\ELMA-CE\Web\Modules\EleWise.ELMA.BPM.Web.Tasks\bin\EleWise.ELMA.BPM.Web.Tasks.dll</HintPath>
+    </Reference>
+    <Reference Include="EleWise.ELMA.Calendar">
+      <HintPath>..\..\..\..\ELMA-CE\Web\bin\EleWise.ELMA.Calendar.dll</HintPath>
+    </Reference>
+    <Reference Include="EleWise.ELMA.Common">
+      <HintPath>..\..\..\..\ELMA-CE\Web\bin\EleWise.ELMA.Common.dll</HintPath>
+    </Reference>
+    <Reference Include="EleWise.ELMA.Content">
+      <HintPath>..\..\..\..\ELMA-CE\Web\bin\EleWise.ELMA.Content.dll</HintPath>
+    </Reference>
+    <Reference Include="EleWise.ELMA.CRM">
+      <HintPath>..\..\..\..\ELMA-CE\Web\bin\EleWise.ELMA.CRM.dll</HintPath>
+    </Reference>
+    <Reference Include="EleWise.ELMA.Documents">
+      <HintPath>..\..\..\..\ELMA-CE\Web\bin\EleWise.ELMA.Documents.dll</HintPath>
+    </Reference>
+    <Reference Include="EleWise.ELMA.Messages.Web">
+      <HintPath>..\..\..\..\ELMA-CE\Web\Modules\EleWise.ELMA.Messages.Web\bin\EleWise.ELMA.Messages.Web.dll</HintPath>
+    </Reference>
+    <Reference Include="EleWise.ELMA.SDK">
+      <HintPath>..\..\..\..\ELMA-CE\Web\bin\EleWise.ELMA.SDK.dll</HintPath>
+    </Reference>
+    <Reference Include="EleWise.ELMA.SDK.Web">
+      <HintPath>..\..\..\..\ELMA-CE\Web\bin\EleWise.ELMA.SDK.Web.dll</HintPath>
+    </Reference>
+    <Reference Include="EleWise.ELMA.Security">
+      <HintPath>..\..\..\..\ELMA-CE\Web\bin\EleWise.ELMA.Security.dll</HintPath>
+    </Reference>
+    <Reference Include="EleWise.ELMA.Tasks">
+      <HintPath>..\..\..\..\ELMA-CE\Web\bin\EleWise.ELMA.Tasks.dll</HintPath>
+    </Reference>
+    <Reference Include="EleWise.ELMA.Workflow.Web">
+      <HintPath>..\..\..\..\ELMA-CE\Web\Modules\EleWise.ELMA.Workflow.Web\bin\EleWise.ELMA.Workflow.Web.dll</HintPath>
+    </Reference>
+    <Reference Include="Iesi.Collections">
+      <HintPath>packages\Iesi.Collections.4.1.0\lib\net461\Iesi.Collections.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="Microsoft.Web.Infrastructure">
+      <HintPath>packages\Microsoft.Web.Infrastructure.1.0.0.0\lib\net40\Microsoft.Web.Infrastructure.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>packages\Newtonsoft.Json.12.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="NHibernate">
+      <HintPath>..\..\..\..\ELMA-CE\Web\bin\NHibernate.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Web.DynamicData" />
+    <Reference Include="System.Web.Entity" />
+    <Reference Include="System.Web.ApplicationServices" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
+    <Reference Include="System.Web" />
+    <Reference Include="System.Web.Abstractions" />
+    <Reference Include="System.Web.Extensions" />
+    <Reference Include="System.Web.Helpers">
+      <HintPath>..\..\..\..\ELMA-CE\Web\bin\System.Web.Helpers.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.Mvc">
+      <HintPath>..\..\..\..\ELMA-CE\Web\bin\System.Web.Mvc.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.Razor">
+      <HintPath>..\..\..\..\ELMA-CE\Web\bin\System.Web.Razor.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.Routing" />
+    <Reference Include="System.Web.WebPages">
+      <HintPath>..\..\..\..\ELMA-CE\Web\bin\System.Web.WebPages.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.WebPages.Deployment">
+      <HintPath>..\..\..\..\ELMA-CE\Web\bin\System.Web.WebPages.Deployment.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.WebPages.Razor">
+      <HintPath>..\..\..\..\ELMA-CE\Web\bin\System.Web.WebPages.Razor.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Xml" />
+    <Reference Include="System.Configuration" />
+    <Reference Include="System.Web.Services" />
+    <Reference Include="System.EnterpriseServices" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="Telerik.Web.Mvc">
+      <HintPath>..\..\..\..\ELMA-CE\Web\bin\Telerik.Web.Mvc.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\GlobalAssemblyInfo.cs">
+      <Link>Properties\GlobalAssemblyInfo.cs</Link>
+    </Compile>
+    <Compile Include="Attributes\ContractorCreateAttribute.cs" />
+    <Compile Include="Attributes\ContactCreateAttribute.cs" />
+    <Compile Include="Attributes\DetailsActionAttribute.cs" />
+    <Compile Include="Attributes\RelationshipCreateAttribute.cs" />
+    <Compile Include="Attributes\SaleCreateAttribute.cs" />
+    <Compile Include="Attributes\LeadCreateAttribute.cs" />
+    <Compile Include="Code\AddressComboBoxItemControl.cs" />
+    <Compile Include="Code\MarketingActivityRelatedEntitiesFinder.cs" />
+    <Compile Include="Code\ToolbarGroupUids.cs" />
+    <Compile Include="Components\AddressSimpleEventRender.cs" />
+    <Compile Include="Components\BankAccountFormViewItemTransformate.cs" />
+    <Compile Include="Components\BankAccountLink.cs" />
+    <Compile Include="Components\BankAccountPopupLink.cs" />
+    <Compile Include="Components\BankDetailsLink.cs" />
+    <Compile Include="Components\BankDetailsPopupLink.cs" />
+    <Compile Include="Components\BankDetailsTitleResolver.cs" />
+    <Compile Include="Components\CalendarPortletCallColumn.cs" />
+    <Compile Include="Components\CalendarPortletMailColumn.cs" />
+    <Compile Include="Components\CalendarPortletMeetingColumn.cs" />
+    <Compile Include="Components\CalendarRelationshipItemIcon.cs" />
+    <Compile Include="Components\CalendarRelationshipItemLink.cs" />
+    <Compile Include="Components\ContactContractorPropertyViewItemAdjustment.cs" />
+    <Compile Include="Components\ContractorSalesTabViewItemRenderer.cs" />
+    <Compile Include="Components\CrmLessSourceProvider.cs" />
+    <Compile Include="Components\CrmModelBinderProvider.cs" />
+    <Compile Include="Components\EmailBinder.cs" />
+    <Compile Include="Components\EmailSetBinder.cs" />
+    <Compile Include="Components\ExportExcelValueProvider.cs" />
+    <Compile Include="Components\FilterMarketingCalendarMenuProviderExtension.cs" />
+    <Compile Include="Components\FilterMarketingStatisticMenuProviderExtension.cs" />
+    <Compile Include="Components\MarketingHelper.cs" />
+    <Compile Include="Components\PermissionGridViewItemRenderer.cs" />
+    <Compile Include="Components\ContactCommentHistoryPartProvider.cs" />
+    <Compile Include="Components\ContractorCommentHistoryPartProvider.cs" />
+    <Compile Include="Components\ContactSimpleEventRender.cs" />
+    <Compile Include="Components\ContractorSaleFilterProvider.cs" />
+    <Compile Include="Components\ActiveLeadFilterProvider.cs" />
+    <Compile Include="Components\ContractorContactsGridViewItemRenderer.cs" />
+    <Compile Include="Components\ContractorSalesGridViewItemRenderer.cs" />
+    <Compile Include="Components\AttachmentsGridViewItemRenderer.cs" />
+    <Compile Include="Components\ContactSupportFilterProvider.cs" />
+    <Compile Include="Components\ContractorDefaultSelectedColumnsProvider.cs" />
+    <Compile Include="Components\CrmModuleSettingsCurrencyItemProvider.cs" />
+    <Compile Include="Components\LeadContactsGridViewItemRenderer.cs" />
+    <Compile Include="Components\PaymentCardLink.cs" />
+    <Compile Include="Components\PaymentCardPopupLink.cs" />
+    <Compile Include="Components\PhoneBinder.cs" />
+    <Compile Include="Components\PhoneSetBinder.cs" />
+    <Compile Include="Components\PropertyMarketingEffectIsEmpty.cs" />
+    <Compile Include="Components\RelationshipContactPropertyAdjustment.cs" />
+    <Compile Include="Components\RelationshipContractorPropertyAdjustment.cs" />
+    <Compile Include="Components\RelationshipContractorsContactsPropertyAdjustment.cs" />
+    <Compile Include="Components\RelationshipHidePropertyAdjustment.cs" />
+    <Compile Include="Components\RelationshipIsPrivateViewItemRenderer.cs" />
+    <Compile Include="Components\RelationshipLeadPropertyAdjustment.cs" />
+    <Compile Include="Components\RelationshipSalePropertyAdjustment.cs" />
+    <Compile Include="Components\SaleContractorReadOnlyFunnelFormViewItemTransforma.cs" />
+    <Compile Include="Components\SaleDublicatesPropertyViewItemAdjustment.cs" />
+    <Compile Include="Components\RelationshipContactInfoViewItemRenderer.cs" />
+    <Compile Include="Components\RelationshipContactInfoFormViewItemTransformate.cs" />
+    <Compile Include="Components\RelationshipInformToViewItemRenderer.cs" />
+    <Compile Include="Components\RelationshipIntervalViewItemRenderer.cs" />
+    <Compile Include="Components\RelationshipLinkedEntityViewItemRenderer.cs" />
+    <Compile Include="Components\RelationshipMeetingSchedulesViewItemRenderer.cs" />
+    <Compile Include="Components\RelationshipMeetingWholeDayViewItemRenderer.cs" />
+    <Compile Include="Components\RelationshipParticipantsViewItemRenderer.cs" />
+    <Compile Include="Components\RelationshipTypeViewItemRenderer.cs" />
+    <Compile Include="Components\SaleQuestionsHistoryPartProvider.cs" />
+    <Compile Include="Components\SaleQuestionEventRender.cs" />
+    <Compile Include="Components\MarketingBaseDefaultSelectedColumnsProvider.cs" />
+    <Compile Include="Components\MarketingBaseIcon.cs" />
+    <Compile Include="Components\SaleDefaultSelectedColumnsProvider.cs" />
+    <Compile Include="Components\MarketingBaseQuestionsHistoryPartProvider.cs" />
+    <Compile Include="Components\MarketingBaseQuestionEventRender.cs" />
+    <Compile Include="Components\MarketingActivityDefaultSelectedColumnsProvider.cs" />
+    <Compile Include="Components\EntityWithoutMarketingFilterProvider.cs" />
+    <Compile Include="Components\ProductGroupFilterProvider.cs" />
+    <Compile Include="Components\SaleCreationDatePropertyVisibility.cs" />
+    <Compile Include="Components\SaleSaleFunnelPropertyViewItemAdjustment.cs" />
+    <Compile Include="Components\TasksGridViewItemRenderer.cs" />
+    <Compile Include="Components\SaleProductsGridViewItemRenderer.cs" />
+    <Compile Include="Components\RelationshipsGridViewItemRenderer.cs" />
+    <Compile Include="Components\SaleInpaymentsGridViewItemRenderer.cs" />
+    <Compile Include="Components\SaleCategoriesViewItemRenderer.cs" />
+    <Compile Include="Components\OpenSaleFilterProvider.cs" />
+    <Compile Include="Components\LeadDefaultSelectedColumnsProvider.cs" />
+    <Compile Include="Components\ProductFilterPropertyEditor.cs" />
+    <Compile Include="Components\InpaymentDefaultSelectedColumnsProvider.cs" />
+    <Compile Include="Components\RelationshipDefaultSelectedColumnsProvider.cs" />
+    <Compile Include="Components\CrmModuleSettingsItemProvider.cs" />
+    <Compile Include="Components\RelationshipMeetingDefaultSelectedColumnsProvider.cs" />
+    <Compile Include="Components\SaleTypeFilterProvider.cs" />
+    <Compile Include="Components\InpaymentCommentHistoryPartProvider.cs" />
+    <Compile Include="Components\InpaymentSimpleEventRender.cs" />
+    <Compile Include="Components\CrmTaskParametersActionWebHandler.cs" />
+    <Compile Include="Components\FilterContractorTypeFilter.cs" />
+    <Compile Include="Components\MarketingBaseHistoryPartProvider.cs" />
+    <Compile Include="Components\MarketingBaseSimpleEventRender.cs" />
+    <Compile Include="Components\CheckEmptyProperty.cs" />
+    <Compile Include="Components\RelationMeetingEventAddAction.cs" />
+    <Compile Include="Components\RelationMailEventAddAction.cs" />
+    <Compile Include="Components\PartnerFilterProvider.cs" />
+    <Compile Include="Components\ContractorSimpleEventRender.cs" />
+    <Compile Include="Components\RelationCallEventAddAction.cs" />
+    <Compile Include="Components\RelationshipCommentHistoryPartProvider.cs" />
+    <Compile Include="Components\RelationshipSimpleEventRender.cs" />
+    <Compile Include="Components\LeadCommentHistoryPartProvider.cs" />
+    <Compile Include="Components\LeadSimpleEventRender.cs" />
+    <Compile Include="Components\SaleCommentHistoryPartProvider.cs" />
+    <Compile Include="Components\SaleSimpleEventRender.cs" />
+    <Compile Include="Components\ScriptPanelBankAccountFormViewItemTransformate.cs" />
+    <Compile Include="Components\ScriptPanelBDSFormViewItemTransformate.cs" />
+    <Compile Include="Components\ScriptPanelPaymentCardFormViewItemTransformate.cs" />
+    <Compile Include="Components\SecurityDefaultHomePagePortletProvider.cs" />
+    <Compile Include="Components\TaskEditForm.cs" />
+    <Compile Include="Components\InpaymentQuestionEventRender.cs" />
+    <Compile Include="Components\InpaymentQuestionsHistoryPartProvider.cs" />
+    <Compile Include="Components\TaskViewForm.cs" />
+    <Compile Include="Controllers\AddressController.cs" />
+    <Compile Include="Controllers\AdminController.cs" />
+    <Compile Include="Controllers\BankAccountController.cs" />
+    <Compile Include="Controllers\BankDetailsSWIFTController.cs" />
+    <Compile Include="Controllers\CategoryController.cs" />
+    <Compile Include="Controllers\CategoryRuleController.cs" />
+    <Compile Include="Controllers\AttachmentController.cs" />
+    <Compile Include="Controllers\AttachmentFilterController.cs" />
+    <Compile Include="Controllers\ContractorBaseAddressController.cs" />
+    <Compile Include="Controllers\CrmAttachmentDeletePermission.cs" />
+    <Compile Include="Controllers\CRMObjectIdOnly.cs" />
+    <Compile Include="Controllers\LeadContactInfoModel.cs" />
+    <Compile Include="Controllers\PhoneController.cs" />
+    <Compile Include="Controllers\RelationshipControllerAbstract.cs" />
+    <Compile Include="Extensions\HtmlExtensions.cs" />
+    <Compile Include="Extensions\IAddressBaseSettings.cs" />
+    <Compile Include="Extensions\IAddressProviderWeb.cs" />
+    <Compile Include="Extensions\IContractorBaseModel2.cs" />
+    <Compile Include="Extensions\IPhoneSettingsExtension.cs" />
+    <Compile Include="Extensions\IRelationshipBaseModel2.cs" />
+    <Compile Include="FullTextSearch\Models\CRMFullTextSearchSettingsModel.cs" />
+    <Compile Include="Integration\Views\BankAccountFormCreator.cs" />
+    <Compile Include="Integration\Views\ContractorFormCreator.cs" />
+    <Compile Include="Integration\Views\RelationshipMeetingFormCreator.cs" />
+    <Compile Include="Integration\Views\RelationshipFormCreator.cs" />
+    <Compile Include="Integration\Views\RelationshipNotCreatable.cs" />
+    <Compile Include="LeadConverterConsts.cs" />
+    <Compile Include="Models\AddrBaseCrm.cs" />
+    <Compile Include="Models\AddressItem.cs" />
+    <Compile Include="Models\CategoryIndexModel.cs" />
+    <Compile Include="Models\ContractorBaseModel.cs" />
+    <Compile Include="Controllers\FullTextSearchController.cs" />
+    <Compile Include="Controllers\LeadScoringSettingsController.cs" />
+    <Compile Include="Controllers\PaymentCardController.cs" />
+    <Compile Include="Controllers\SaleTypeController.cs" />
+    <Compile Include="Controllers\InpaymentController.cs" />
+    <Compile Include="Controllers\ExchangeRates\AutomaticCurrencyImportController.cs" />
+    <Compile Include="Controllers\ExchangeRates\CurrencyDynamicsController.cs" />
+    <Compile Include="Controllers\ExchangeRates\CurrencyQualifierController.cs" />
+    <Compile Include="Controllers\ExchangeRates\CurrencyRatesGridController.cs" />
+    <Compile Include="Controllers\ProductController.cs" />
+    <Compile Include="Controllers\MarketingActivityController.cs" />
+    <Compile Include="Controllers\SaleFunnelController.cs" />
+    <Compile Include="Controllers\SaleFunnelReportController.cs" />
+    <Compile Include="Controllers\TaskController.cs" />
+    <Compile Include="Components\ContractorDublicatesPropertyViewItemAdjustment.cs" />
+    <Compile Include="Extensions\ContractorLegalWatchNotifier.cs" />
+    <Compile Include="FullTextSearch\Components\CRMFullTextSearchModeuleSettingsRender.cs" />
+    <Compile Include="Integration\Views\BankDetailsSwiftFormCreator.cs" />
+    <Compile Include="Menu\CRMMenuItems.cs" />
+    <Compile Include="Models\AddMarketingTagPopupViewModel.cs" />
+    <Compile Include="Extensions\FilterPortletExcludedTypesExtension.cs" />
+    <Compile Include="Extensions\FilterPortletShowOnlyMyExtensions.cs" />
+    <Compile Include="Extensions\ICrmModuleSettingsItemProvider.cs" />
+    <Compile Include="Extensions\IRelationshipBaseModel.cs" />
+    <Compile Include="Extensions\MarketingFilterPortletExtensions.cs" />
+    <Compile Include="Extensions\RelationshipLinkExtension.cs" />
+    <Compile Include="Extensions\RelationshipWorkLogEntityLinkDescription.cs" />
+    <Compile Include="Models\AddStagePopupViewModel.cs" />
+    <Compile Include="Models\CategoryEditModel.cs" />
+    <Compile Include="Models\BankAccountModel.cs" />
+    <Compile Include="Models\BankDetailsSWIFTModel.cs" />
+    <Compile Include="Models\CategoryRuleEditModel.cs" />
+    <Compile Include="Models\CategoryRulesListModel.cs" />
+    <Compile Include="Controllers\ContactController.cs" />
+    <Compile Include="Controllers\ContractorLegalController.cs" />
+    <Compile Include="Controllers\ContractorIndividualController.cs" />
+    <Compile Include="Controllers\CrmSettingsController.cs" />
+    <Compile Include="Controllers\CrmSettingsModuleController.cs" />
+    <Compile Include="Extensions\IContractorBaseModel.cs" />
+    <Compile Include="Models\ContractorEditedPropertiesModel.cs" />
+    <Compile Include="Models\CRMPermissionModel.cs" />
+    <Compile Include="Models\ContractorSaleModel.cs" />
+    <Compile Include="Models\CrmModuleSettingsItem.cs" />
+    <Compile Include="Models\CategoryRulesIndexModel.cs" />
+    <Compile Include="Models\AddSaleProductPopupViewModel.cs" />
+    <Compile Include="Models\ExchangeRates\CurrencyDynamicsSettingsModel.cs" />
+    <Compile Include="Models\ExchangeRates\CurrencyImportModel.cs" />
+    <Compile Include="Models\ExchangeRates\ExchangeRateImportModel.cs" />
+    <Compile Include="Models\ExchangeRates\ExchangeRateImportSettings.cs" />
+    <Compile Include="Models\ExchangeRates\__Resources_CurrencyDynamicsSettingsModel.cs" />
+    <Compile Include="Models\ExchangeRates\__Resources_ExchangeRatesImportSettingsModel.cs" />
+    <Compile Include="Models\IDeleteCategoriesDialogModel.cs" />
+    <Compile Include="Models\InpaymentPortletModel.cs" />
+    <Compile Include="Models\LeadChangeTypeModel_SR.cs" />
+    <Compile Include="Models\LeadContactListModel.cs" />
+    <Compile Include="Models\LeadDynamicModel.cs" />
+    <Compile Include="Models\LeadDynamicState.cs" />
+    <Compile Include="Models\LeadPortletModel.cs" />
+    <Compile Include="Models\InpaymentChangeStatusModel.cs" />
+    <Compile Include="Models\InpaymentChangeDateModel.cs" />
+    <Compile Include="Models\InpaymentPersonalizationAdministration.cs" />
+    <Compile Include="Models\InpaymentStatusFilterModel.cs" />
+    <Compile Include="Models\InpaymentSubPanelModel.cs" />
+    <Compile Include="Models\LeadScoringModel.cs" />
+    <Compile Include="Models\LeadScoringModel_SR.cs" />
+    <Compile Include="Models\LeadStepScoringModel.cs" />
+    <Compile Include="Models\LeadStepScoringModel_SR.cs" />
+    <Compile Include="Models\Lead\DublicateLeadLink.cs" />
+    <Compile Include="Models\Lead\DublicateLeadLink_SR.cs" />
+    <Compile Include="Models\Lead\DublicateLeadModel.cs" />
+    <Compile Include="Models\LeadDublicateModel.cs" />
+    <Compile Include="Models\Lead\DublicateLeadModel_SR.cs" />
+    <Compile Include="Models\LinkEntityToMarketingModel.cs" />
+    <Compile Include="Models\LinkEntityToMarketingModel_SR.cs" />
+    <Compile Include="Models\MarketingElementModel.cs" />
+    <Compile Include="Models\MarketingPaymentModel.cs" />
+    <Compile Include="Models\MarketingPeriodEnum.cs" />
+    <Compile Include="Models\MarketingStatisticModel.cs" />
+    <Compile Include="Models\MarketingStatisticState.cs" />
+    <Compile Include="Models\OnePeriodStatisticModel.cs" />
+    <Compile Include="Models\ProductViewModel.cs" />
+    <Compile Include="Models\PaymentCardModel.cs" />
+    <Compile Include="Models\PaymentCardPostEdit.cs" />
+    <Compile Include="Models\RelationshipEditedPropertiesModel.cs" />
+    <Compile Include="Models\RelationshipLink_SR.cs" />
+    <Compile Include="Models\RelationshipMeetingChangeTimeModel.cs" />
+    <Compile Include="Models\RelationshipModel_SR.cs" />
+    <Compile Include="Models\RelationshipModel_T.cs" />
+    <Compile Include="Models\SaleFunnelEditModel.cs" />
+    <Compile Include="Models\SaleFunnelReportFilterModel.cs" />
+    <Compile Include="Models\SaleFunnelReportModel.cs" />
+    <Compile Include="Models\SaleInpaymentEditModel.cs" />
+    <Compile Include="Models\CrmAttachment.cs" />
+    <Compile Include="Models\CrmCustomPermissionsModel.cs" />
+    <Compile Include="Models\CrmPermissionsGridModel.cs" />
+    <Compile Include="Models\AutoCompleteContractorItem.cs" />
+    <Compile Include="Models\ContractorContactListModel.cs" />
+    <Compile Include="Models\LeadModel.cs" />
+    <Compile Include="Models\LeadSelectResponsibleModel.cs" />
+    <Compile Include="Models\LeadConvertModel.cs" />
+    <Compile Include="Controllers\LeadController.cs" />
+    <Compile Include="Models\LeadFailModel.cs" />
+    <Compile Include="Controllers\PaymentController.cs" />
+    <Compile Include="Controllers\RelationshipController.cs" />
+    <Compile Include="Controllers\RelationshipCallController.cs" />
+    <Compile Include="Controllers\RelationshipMailController.cs" />
+    <Compile Include="Controllers\RelationshipMeetingController.cs" />
+    <Compile Include="Controllers\SaleController.cs" />
+    <Compile Include="Controllers\SalesPlanController.cs" />
+    <Compile Include="Controllers\SaleStageController.cs" />
+    <Compile Include="Controllers\SecurityController.cs" />
+    <Compile Include="Controllers\LeadContactController.cs" />
+    <Compile Include="CRMAreaRegistration.cs" />
+    <Compile Include="Controllers\ContractorController.cs" />
+    <Compile Include="Models\ContactGrid.cs" />
+    <Compile Include="Models\ContactModel.cs" />
+    <Compile Include="Models\GroupContactInfo.cs" />
+    <Compile Include="Models\GroupContractorInfo.cs" />
+    <Compile Include="Models\MarketingActivityModel.cs" />
+    <Compile Include="Models\RelationshipAddDayModel.cs" />
+    <Compile Include="Models\RelationshipChangeTimeModel.cs" />
+    <Compile Include="Models\RelationshipCompleteModel.cs" />
+    <Compile Include="Models\RelationshipLink.cs" />
+    <Compile Include="Models\RelationshipModel.cs" />
+    <Compile Include="Models\RelationshipMailModel.cs" />
+    <Compile Include="Models\RelationshipMeetingModel.cs" />
+    <Compile Include="Models\SaleChangeStageModel.cs" />
+    <Compile Include="Models\SaleChangeStatusModel.cs" />
+    <Compile Include="Models\SaleInpaymentsModel.cs" />
+    <Compile Include="Models\SaleModel.cs" />
+    <Compile Include="Models\RelationshipGrid.cs" />
+    <Compile Include="Models\SalePortletModel.cs" />
+    <Compile Include="Models\SaleProductEditModel.cs" />
+    <Compile Include="Models\SaleProductsModel.cs" />
+    <Compile Include="Models\SalesPlan\CalendarModel.cs" />
+    <Compile Include="Models\SalesPlan\Month.cs" />
+    <Compile Include="Models\SalesPlan\PaymentModel.cs" />
+    <Compile Include="Models\LeadContactModel.cs" />
+    <Compile Include="Models\LeadContactGrid.cs" />
+    <Compile Include="Models\GroupLeadInfo.cs" />
+    <Compile Include="Models\LeadChangeTypeModel.cs" />
+    <Compile Include="Models\SalesPlan\Week.cs" />
+    <Compile Include="Models\SalesVolumesInfo.cs" />
+    <Compile Include="Models\SaleUpdatedPropertiesModel.cs" />
+    <Compile Include="Models\SelectMarketingActivityModel.cs" />
+    <Compile Include="Models\ViewItemPaymentCardModel.cs" />
+    <Compile Include="Models\__Resources_MarketingPeriodEnum.cs" />
+    <Compile Include="Portlets\CRMHomePortletPersonalization.cs" />
+    <Compile Include="Portlets\InpaymentPortlet.cs" />
+    <Compile Include="Portlets\InpaymentPortletPersonalization.cs" />
+    <Compile Include="Portlets\LeadPortlet.cs" />
+    <Compile Include="Portlets\CRMHomePortlet.cs" />
+    <Compile Include="Portlets\LeadPortletPersonalization.cs" />
+    <Compile Include="Portlets\SalePortlet.cs" />
+    <Compile Include="Portlets\SalePortletPersonalization.cs" />
+    <Compile Include="Security\ModulePermissionsPageProvider.cs" />
+    <Compile Include="UIExtensions.cs" />
+    <Compile Include="Models\ContractorLegalModel.cs" />
+    <Compile Include="Models\ContractorIndividualModel.cs" />
+    <Compile Include="Models\RelationshipCallModel.cs" />
+    <Compile Include="Models\SecurityPermissionModel.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="RouteProvider.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Content\CRM.less" />
+    <Content Include="Content\CRMMobile.less" />
+    <None Include="Content\Feed.less" />
+    <Content Include="Content\Images\feedtype-title-Relationship-l.png" />
+    <Content Include="Content\Images\feedtype-title-Relationship-r.png" />
+    <Content Include="Content\Images\grad.gif" />
+    <Content Include="Content\Images\StartMenu\contractors.png" />
+    <Content Include="Content\Images\StartMenu\crm_blue.png" />
+    <Content Include="Content\Images\StartMenu\crm_gray.png" />
+    <Content Include="Content\Images\StartMenu\crm_green.png" />
+    <Content Include="Content\Images\StartMenu\crm_red.png" />
+    <Content Include="Content\Images\StartMenu\crm_yellow.png" />
+    <Content Include="Content\Images\StartMenu\inpayments.png" />
+    <Content Include="Content\Images\StartMenu\leads.png" />
+    <Content Include="Content\Images\StartMenu\sales.png" />
+    <Content Include="Content\Images\x16\add_call.png" />
+    <Content Include="Content\Images\x16\add_contact.png" />
+    <Content Include="Content\Images\x16\add_contractorindividual.png" />
+    <Content Include="Content\Images\x16\add_contractorlegal.png" />
+    <Content Include="Content\Images\x16\add_deal.png" />
+    <Content Include="Content\Images\x16\add_mail.png" />
+    <Content Include="Content\Images\x16\add_meeting.png" />
+    <Content Include="Content\Images\x16\add_potential_client.png" />
+    <Content Include="Content\Images\x16\archive.gif" />
+    <Content Include="Content\Images\x16\attach-lead.png" />
+    <Content Include="Content\Images\x16\Contact.png" />
+    <Content Include="Content\Images\x16\Contractor.png" />
+    <Content Include="Content\Images\x16\convert_potential_client.png" />
+    <Content Include="Content\Images\x16\deals.gif" />
+    <Content Include="Content\Images\x16\deals.png" />
+    <Content Include="Content\Images\x16\inpayment.png" />
+    <Content Include="Content\Images\x16\marketing-calendar.png" />
+    <Content Include="Content\Images\x16\marketing-statistic.png" />
+    <Content Include="Content\Images\x16\marketing_activity.png" />
+    <Content Include="Content\Images\x16\marketing_activity_gray.png" />
+    <Content Include="Content\Images\x16\marketing_effect.png" />
+    <Content Include="Content\Images\x16\marketing_effect_gray.png" />
+    <Content Include="Content\Images\x16\marketing_group.png" />
+    <Content Include="Content\Images\x16\marketing_group_gray.png" />
+    <Content Include="Content\Images\x16\not-dublicate.png" />
+    <Content Include="Content\Images\x16\potential_begin.png" />
+    <Content Include="Content\Images\x16\potential_client.gif" />
+    <Content Include="Content\Images\x16\potential_client.png" />
+    <Content Include="Content\Images\x16\potential_fail.png" />
+    <Content Include="Content\Images\x16\SaleFunnels.png" />
+    <Content Include="Content\Images\x16\settings.png" />
+    <Content Include="Content\Images\x16\set_marketing_activity.png" />
+    <Content Include="Content\Images\x24\add_call.png" />
+    <Content Include="Content\Images\x24\add_contact.png" />
+    <Content Include="Content\Images\x24\add_contractorindividual.png" />
+    <Content Include="Content\Images\x24\add_contractorlegal.png" />
+    <Content Include="Content\Images\x24\add_deal.png" />
+    <Content Include="Content\Images\x24\add_mail.png" />
+    <Content Include="Content\Images\x24\add_marketing_activity.png" />
+    <Content Include="Content\Images\x24\add_marketing_effect.png" />
+    <Content Include="Content\Images\x24\add_marketing_group.png" />
+    <Content Include="Content\Images\x24\add_meeting.png" />
+    <Content Include="Content\Images\x24\add_potential_client.gif" />
+    <Content Include="Content\Images\x24\add_potential_client.png" />
+    <Content Include="Content\Images\x24\Contact.png" />
+    <Content Include="Content\Images\x24\Contractor.png" />
+    <Content Include="Content\Images\x24\CRM.png" />
+    <Content Include="Content\Images\x24\deals.png" />
+    <Content Include="Content\Images\x24\inpayment.png" />
+    <Content Include="Content\Images\x24\marketing_activity_gray.png" />
+    <Content Include="Content\Images\x24\marketing_effect_gray.png" />
+    <Content Include="Content\Images\x24\marketing_group_gray.png" />
+    <Content Include="Content\Images\x24\portlet_deals.png" />
+    <Content Include="Content\Images\x24\portlet_inpayment.png" />
+    <Content Include="Content\Images\x24\portlet_leads.png" />
+    <Content Include="Content\Images\x24\potential_client.png" />
+    <Content Include="Content\Images\x24\SaleFunnels.png" />
+    <Content Include="Content\Images\x24\settings.png" />
+    <Content Include="Content\Images\x24\set_marketing_activity.png" />
+    <Content Include="Content\Images\x32\access_clients.png" />
+    <Content Include="Content\Images\x32\add_company.png" />
+    <Content Include="Content\Images\x32\add_contact.png" />
+    <Content Include="Content\Images\x32\add_deal.png" />
+    <Content Include="Content\Images\x32\add_doc.png" />
+    <Content Include="Content\Images\x32\add_marketing_activity.png" />
+    <Content Include="Content\Images\x32\add_marketing_effect.png" />
+    <Content Include="Content\Images\x32\add_marketing_group.png" />
+    <Content Include="Content\Images\x32\add_potential_client.png" />
+    <Content Include="Content\Images\x32\add_ring.png" />
+    <Content Include="Content\Images\x32\category.png" />
+    <Content Include="Content\Images\x32\change_time.png" />
+    <Content Include="Content\Images\x32\check_permission.png" />
+    <Content Include="Content\Images\x32\Complete.png" />
+    <Content Include="Content\Images\x32\CRM.png" />
+    <Content Include="Content\Images\x24\marketing_activity.png" />
+    <Content Include="Content\Images\x24\marketing_effect.png" />
+    <Content Include="Content\Images\x24\marketing_group.png" />
+    <Content Include="Content\Images\x32\edit_sale_stage.png" />
+    <Content Include="Content\Images\x32\edit_sale_status.png" />
+    <Content Include="Content\Images\x32\inpayment.png" />
+    <Content Include="Content\Images\x32\inpayment_change_status.png" />
+    <Content Include="Content\Images\x32\marketing-period.png" />
+    <Content Include="Content\Images\x32\marketing-show-archive.png" />
+    <Content Include="Content\Images\x32\marketing-statistic.png" />
+    <Content Include="Content\Images\x32\meeting.png" />
+    <Content Include="Content\Images\x32\next_day.png" />
+    <Content Include="Content\Images\x32\Poruch.png" />
+    <Content Include="Content\Images\color.png" />
+    <Content Include="Content\Images\x24\access_clients.gif" />
+    <Content Include="Content\Images\x24\actions2.gif" />
+    <Content Include="Content\Images\x24\add_meeting2.gif" />
+    <Content Include="Content\Images\x24\category.gif" />
+    <Content Include="Content\Images\x24\clients.gif" />
+    <Content Include="Content\Images\x24\edit_sale_stage.gif" />
+    <Content Include="Content\Images\x24\edit_sale_status.gif" />
+    <Content Include="Content\Images\x24\poruch.gif" />
+    <Content Include="Content\Images\x32\set_marketing_activity.png" />
+    <Content Include="Module.txt" />
+    <Content Include="Templates\Content\Images\x16\Contractor.gif" />
+    <Content Include="Templates\Content\Images\x24\access_clients.gif" />
+    <Content Include="Templates\Content\Images\x24\clients.gif" />
+    <Content Include="Scripts\CategoryRuleAssigner.js" />
+    <Content Include="Scripts\MarketingActivityAssigner.js" />
+    <Content Include="Views\Shared\CrmAttachmentItems.cshtml" />
+    <Content Include="Views\Sale\SummaryTable.cshtml" />
+    <Content Include="Views\Shared\EditorTemplates\ViewItems\PostalAddressValue.cshtml" />
+    <Content Include="Views\Shared\EditorTemplates\ViewItems\PostalAddressLite.cshtml" />
+    <Content Include="Views\Shared\EditorTemplates\ViewItems\LegalAddressValue.cshtml" />
+    <Content Include="Views\Shared\EditorTemplates\ViewItems\LegalAddressLite.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\Shared\EditorTemplates\Entities\PhoneSet.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\Contractor\Index.cshtml" />
+    <Content Include="Views\Contractor\Grid.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\Shared\EditorTemplates\Entities\EmailSet.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\Shared\DisplayTemplates\Entities\EmailSet.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\Shared\DisplayTemplates\Entities\PhoneSet.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\Security\Permissions.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\Shared\EditorTemplates\Entities\Address.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\Shared\DisplayTemplates\Entities\Address.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\ContractorLegal\Create.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\ContractorLegal\Details.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\ContractorLegal\Editors\ContractorLegalEdit.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\ContractorLegal\TabView.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\ContractorLegal\Edit.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\RelationshipCall\Create.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\Sale\Index.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\ContractorIndividual\Editors\ContractorIndividualEdit.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\ContractorIndividual\Create.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\ContractorIndividual\TabView.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\ContractorIndividual\Details.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\ContractorIndividual\Edit.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\RelationshipCall\Editors\RelationshipCallEdit.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\Sale\Grid.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\Relationship\Grid.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\Sale\Create.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\Sale\Editors\SaleEdit.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\Sale\Details.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\Sale\TabView.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\Sale\Edit.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\SalesPlan\Index.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\SalesPlan\Calendar.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\SalesPlan\Week.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\Sale\Editors\SaleTypeEdit.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\Sale\Editors\SaleStageEdit.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\SalesPlan\Payment.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\SalesPlan\Sale.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\SalesPlan\Days.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\Payment\Create.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\SalesPlan\SalesPlan.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\RelationshipMeeting\Create.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\RelationshipMeeting\Editors\RelationshipMeetingEdit.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\RelationshipMail\Create.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\RelationshipMail\Editors\RelationshipMailEdit.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\Contact\Index.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\Contact\Grid.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\Contact\Create.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\Contact\Editors\ContactEdit.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\Contact\Details.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\Contact\Edit.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\Contact\TabView.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\RelationshipCall\Details.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\RelationshipCall\TabView.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\RelationshipMail\Details.cshtml" />
+    <Content Include="Views\RelationshipMail\TabView.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\RelationshipMeeting\Details.cshtml" />
+    <Content Include="Views\RelationshipMeeting\TabView.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\RelationshipCall\Edit.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\RelationshipMail\Edit.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\RelationshipMeeting\Edit.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\Shared\RelationshipComplete.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\Shared\RelationshipAddDay.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\Shared\RelationshipChangeTime.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\Contact\GridTable.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\Contact\DeleteGroup.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\Lead\DeleteGroup.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\Lead\Create.cshtml" />
+    <Content Include="Views\Lead\Editors\LeadEdit.cshtml" />
+    <Content Include="Views\Lead\Grid.cshtml" />
+    <Content Include="Views\Lead\Index.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\Lead\Details.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\Lead\TabView.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\Lead\Edit.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\LeadContact\Create.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\LeadContact\Editors\LeadContactEdit.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\LeadContact\GridTable.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\CrmSettings\View.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\CrmSettings\Edit.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\LeadContact\DeleteLeadContact.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\LeadContact\Edit.cshtml">
+      <SubType>Code</SubType>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\Lead\State\Fail.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\Contractor\DeleteGroup.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\Lead\SelectResponsible.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\Lead\SelectTypes.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\Shared\EditorTemplates\ContractorContactList.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\Shared\EditorTemplates\Entities\PopupEntity.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\Category\EditForm.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\Category\Index.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\Category\Grid.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\Admin\CrmPermissionsGrid.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\Sale\Editors\SaleStatusEdit.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\Sale\SaleProducts\Grid.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\Sale\SaleProducts\Products.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\Sale\SaleProducts\EditProduct.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\Sale\SaleProducts\CreateProduct.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\Sale\SalesOfContractorGrid.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\CategoryRule\Index.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\CategoryRule\CategoryRulesList.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\CategoryRule\CategoryRulesListGrid.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\CategoryRule\EditForm.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\Shared\DisplayTemplates\Entities\Contractor.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\Shared\DisplayTemplates\Entities\Contact.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\Shared\DisplayTemplates\Entities\Lead.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\Shared\DisplayTemplates\Entities\LeadContact.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\Shared\DisplayTemplates\Entities\Relationship.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\Shared\DisplayTemplates\Entities\Sale.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\Shared\DisplayTemplates\Entities\ContactSet.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\Shared\DisplayTemplates\Entities\LeadContactSet.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\Lead\Convert.cshtml" />
+    <Content Include="Views\Lead\Convert\Wizard.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\Lead\Convert\StepConvertInit.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\Lead\Convert\StepContractor.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\Lead\Convert\StepContacts.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\Lead\Convert\StepSale.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\Lead\Convert\StepRelationship.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\MarketingActivity\Index.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\MarketingActivity\TabView.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\MarketingActivity\Details.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\MarketingActivity\Grid.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\MarketingActivity\Create.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\MarketingActivity\Editors\MarketingActivityEdit.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\MarketingActivity\Edit.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\MarketingActivity\RelatedMarketingActivityEntities\RelatedLeadsGrid.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\MarketingActivity\RelatedMarketingActivityEntities\RelatedContractorsGrid.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\MarketingActivity\RelatedMarketingActivityEntities\RelatedSalesGrid.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\MarketingActivity\SelectMarketingActivity.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\Task\TaskGrid.cshtml" />
+  </ItemGroup>
+  <PropertyGroup>
+    <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
+    <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'CE-Debug|AnyCPU'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\</OutputPath>
+    <DefineConstants>TRACE;DEBUG;CE</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'CE|AnyCPU'">
+    <OutputPath>bin\</OutputPath>
+    <DefineConstants>TRACE;CE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <ItemGroup>
+    <Content Include="Views\AttachmentFilter\AttachmentGrid.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\Attachment\Create.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\Attachment\AddAttachmentPopup.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\EditorTemplates\CrmAttachment.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\Shared\CrmAttachment.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\Shared\CrmAttachmentFile.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\Shared\CrmAttachmentDocument.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\Shared\TaskEntitySelector.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\Shared\TaskEntityDisplay.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\MarketingActivity\EffectsTemplate.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Web.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\MarketingActivity\EffectsClientTemplate.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\Shared\Lead\LeadEditFields.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\Inpayment\SaleInpayments\Grid.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\Inpayment\SaleInpayments\Inpayments.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\Inpayment\EditInpayment.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\Inpayment\Index.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\Inpayment\Grids.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\Shared\ContractorLegal\ContractorLegalEditForm.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\Shared\ContractorIndividual\ContractorIndividualEditForm.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\Shared\Sale\SaleEditForm.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\Shared\Contact\ContactEditForm.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\Shared\RelationshipCall\RelationshipCallEditForm.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\Shared\RelationshipMail\RelationshipMailEditForm.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\Shared\RelationshipMeeting\RelationshipMeetingEditForm.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\SaleFunnel\Index.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\SaleFunnel\Grid.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\SaleFunnel\Edit.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\SaleFunnel\SaleStagesGrid.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\SaleFunnel\AddStage.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\Shared\DisplayTemplates\Entities\SaleStageSet.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\SaleStage\Index.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\SaleStage\Grid.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\SaleStage\GridContent.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\Inpayment\Edit.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\Inpayment\Editors\InpaymentEdit.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\Inpayment\Details.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\Inpayment\TabView.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\Inpayment\SetInpaymentDatePopup.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\Inpayment\SetInpaymentStatusPopup.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\Inpayment\SubPanelGrid.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\Inpayment\SubPanelGridTotal.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\SaleFunnelReport\Index.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\SaleFunnelReport\SaleFunnel.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\Sale\SalePortletSettings.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\Sale\SalePortlet.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\Sale\PortletGrid.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\Lead\LeadPortlet.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\Lead\LeadPortletSettings.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\Lead\PortletGrid.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\Inpayment\InpaymentPortlet.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\Inpayment\InpaymentPortletSettings.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\Inpayment\PortletGrid.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\Shared\EditorTemplates\Entities\SaleProductSet.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\Shared\SaleProductEditor\AddSaleProductPopup.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\Admin\ModuleSettingsPage.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\Shared\RelationshipUsersList.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\Shared\RelationshipSchedulesList.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\Inpayment\PortletSplitGrids.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\Shared\AuditView\Sale.ChangeStatus.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\Shared\AuditView\Sale.ChangeStage.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\Lead\Dublicate.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\Shared\EditorTemplates\ContractorSale.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\Relationship\LinkedEntity.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\Shared\Contractor\TasksTab.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\Contact\TasksTab.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\Lead\TasksTab.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\Sale\TasksTab.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\Shared\Relationship\ContactInfo.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\Shared\DisplayTemplates\Entities\RelationshipCall.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\Shared\DisplayTemplates\Entities\RelationshipMail.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\Shared\DisplayTemplates\Entities\RelationshipMeeting.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\Shared\DisplayTemplates\Entities\LeadSet.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\Shared\DisplayTemplates\Entities\ContractorSet.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\Shared\DisplayTemplates\Entities\SaleSet.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\Shared\DisplayTemplates\Entities\RelationshipSet.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\Shared\DisplayTemplates\Entities\RelationshipCallSet.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\Shared\DisplayTemplates\Entities\RelationshipMailSet.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\Shared\DisplayTemplates\Entities\RelationshipMeetingSet.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\Shared\AuditView\Relationship.ChangeTime.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\SaleType\Grid.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\SaleType\Index.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\SaleType\Edit.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\Shared\DisplayTemplates\Entities\ContractorLegal.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\Shared\DisplayTemplates\Entities\ContractorIndividual.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\Shared\DisplayTemplates\Entities\ContractorLegalSet.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\Shared\DisplayTemplates\Entities\ContractorIndividualSet.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Content\SaleStage.less" />
+    <None Include="packages.config" />
+    <Content Include="Content\index.less" />
+    <Content Include="Views\WorkLogItem\RelationshipInfo.cshtml" />
+    <Content Include="Views\Admin\HomePortlet.cshtml" />
+    <Content Include="Views\Shared\EditorTemplates\ProductFilterPropertyEditor.cshtml" />
+    <Content Include="Views\Shared\Relationship\FollowingActions.cshtml" />
+    <Content Include="Views\Shared\ViewItems\ContractorContactsGridViewItem.cshtml" />
+    <Content Include="Views\Shared\ViewItems\RelationshipsGridViewItem.cshtml" />
+    <Content Include="Views\Shared\ViewItems\ContractorSalesGridViewItem.cshtml" />
+    <Content Include="Views\Shared\ViewItems\AttachmentsGridViewItem.cshtml" />
+    <Content Include="Views\Shared\EditorTemplates\ViewItems\LegalAddress.cshtml" />
+    <Content Include="Views\Shared\EditorTemplates\ViewItems\PostalAddress.cshtml" />
+    <Content Include="Views\Shared\ViewItems\SaleCategoriesViewItem.cshtml" />
+    <Content Include="Views\Shared\ViewItems\SaleInpaymentsGridViewItem.cshtml" />
+    <Content Include="Views\Shared\ViewItems\SaleGeneralInfo.cshtml" />
+    <Content Include="Views\Shared\ViewItems\SaleRelationshipsTabCaption.cshtml" />
+    <Content Include="Views\Shared\ViewItems\SaleProductsGridViewItem.cshtml" />
+    <Content Include="Views\Shared\ViewItems\SaleProductsTabCaption.cshtml" />
+    <Content Include="Views\Shared\ViewItems\SaleTasksTabCaption.cshtml" />
+    <Content Include="Views\Shared\ViewItems\SaleContractorId.cshtml" />
+    <Content Include="Views\Product\EditorFields.cshtml" />
+    <Content Include="Views\Product\Index.cshtml" />
+    <Content Include="Views\Product\Edit.cshtml" />
+    <Content Include="Views\Product\Details.cshtml" />
+    <Content Include="Views\Shared\AuditView\Contractor.Edit.cshtml" />
+    <Content Include="Views\Shared\HistoryParts\ContractorEditedProperties.cshtml" />
+    <Content Include="Views\MarketingActivity\LinkEntity.cshtml" />
+    <Content Include="Views\MarketingActivity\ActivityEffectsGrid.cshtml" />
+    <Content Include="Views\MarketingActivity\GroupActivitiesGrid.cshtml" />
+    <Content Include="Views\MarketingActivity\GroupEffectGrid.cshtml" />
+    <Content Include="Views\Shared\DisplayTemplates\Entities\MarketingTagSet.cshtml" />
+    <Content Include="Views\MarketingActivity\MarketingTagPopup.cshtml" />
+    <Content Include="Views\Shared\EditorTemplates\Entities\MarketingTagSet.cshtml" />
+    <Content Include="Views\Relationship\CommentsClientTemplate.cshtml" />
+    <Content Include="Views\Relationship\CommentsTemplate.cshtml" />
+    <Content Include="Views\Shared\EditorTemplates\Entities\MarketingEffect.cshtml" />
+    <Content Include="Views\Shared\DisplayTemplates\Entities\MarketingEffect.cshtml" />
+    <Content Include="Views\MarketingActivity\Explorer.cshtml" />
+    <Content Include="Views\Contact\DetailsForm.cshtml" />
+    <Content Include="Views\Shared\ViewItems\ContractorAttachmentsTabCaption.cshtml" />
+    <Content Include="Views\Shared\ViewItems\ContractorRelationshipsTabCaption.cshtml" />
+    <Content Include="Views\Shared\ViewItems\ContractorSalesTabCaption.cshtml" />
+    <Content Include="Views\Shared\ViewItems\ContractorTasksTabCaption.cshtml" />
+    <Content Include="Views\Shared\DeleteCategoriesDialog.cshtml" />
+    <Content Include="Views\Address\DefaultProviderRegion.cshtml" />
+    <Content Include="Views\ContractorBaseAddress\Settings.cshtml" />
+    <Content Include="Views\Shared\DisplayTemplates\Entities\Email.cshtml" />
+    <Content Include="Views\Shared\DisplayTemplates\Entities\Phone.cshtml" />
+    <Content Include="Views\Shared\EditorTemplates\Entities\Phone.cshtml" />
+    <Content Include="Views\Shared\EditorTemplates\Entities\Email.cshtml" />
+    <Content Include="Views\ContractorBaseAddress\DefaultCountry.cshtml" />
+    <Content Include="Views\FullTextSearch\Settings\FullTextSearchCRMSettingsEditForm.cshtml" />
+    <Content Include="Views\FullTextSearch\Settings\FullTextSearchCRMSettingsViewForm.cshtml" />
+    <Content Include="Views\Shared\DisplayTemplates\TimeNotSet.cshtml" />
+    <Content Include="Views\Shared\ViewItems\RelationshipParticipantsViewItem.cshtml" />
+    <Content Include="Views\Shared\ViewItems\RelationshipInformToViewItem.cshtml" />
+    <Content Include="Views\Shared\ViewItems\RelationshipLinkedEntityViewItem.cshtml" />
+    <Content Include="Views\Shared\ViewItems\RelationshipIntervalViewItem.cshtml" />
+    <Content Include="Views\Shared\ViewItems\RelationshipContactInfoViewItem.cshtml" />
+    <Content Include="Views\Shared\ViewItems\RelationshipTypeViewItem.cshtml" />
+    <Content Include="Views\Shared\ViewItems\RelationshipGeneralInfo.cshtml" />
+    <Content Include="Views\Shared\DisplayTemplates\Entities\RelationshipStartDateWithReminder.cshtml" />
+    <Content Include="Views\Shared\DisplayTemplates\Entities\RelationshipCompleted.cshtml" />
+    <Content Include="Views\Shared\EditorTemplates\RelationshipParticipants.cshtml" />
+    <Content Include="Views\Shared\EditorTemplates\RelationshipInformTo.cshtml" />
+    <Content Include="Views\Shared\EditorTemplates\RelationshipInterval.cshtml" />
+    <Content Include="Views\Shared\DisplayTemplates\RelationshipParticipantsPanel.cshtml" />
+    <Content Include="Views\Shared\DisplayTemplates\RelationshipInformToPanel.cshtml" />
+    <Content Include="Views\Shared\ViewItems\RelationshipMeetingSchedulesViewItem.cshtml" />
+    <Content Include="Views\Shared\EditorTemplates\RelationshipMeetingSchedules.cshtml" />
+    <Content Include="Views\Shared\DisplayTemplates\RelationshipMeetingSchedulesPanel.cshtml" />
+    <Content Include="Views\Shared\DisplayTemplates\Entities\Schedule.cshtml" />
+    <Content Include="Views\Shared\ViewItems\RelationshipMeetingWholeDayViewItem.cshtml" />
+    <Content Include="Views\Shared\EditorTemplates\RelationshipMeetingWholeDay.cshtml" />
+    <Content Include="Views\Shared\DisplayTemplates\RelationshipMeetingWholeDay.cshtml" />
+    <Content Include="Views\Shared\DisplayTemplates\Entities\RelationshipEndDateWithQuestionMarks.cshtml" />
+    <Content Include="Views\Shared\RelationshipMeeting\RelationshipMeetingChangeTime.cshtml" />
+    <Content Include="Views\Shared\ScriptPanelBDS.cshtml" />
+    <Content Include="Views\Shared\ViewItems\ContractorAcessingTabCaption.cshtml" />
+    <Content Include="Views\Contractor\ContractorPermissionSetting.cshtml" />
+    <Content Include="Views\Contact\ContactPermissionSetting.cshtml" />
+    <Content Include="Views\Lead\LeadPermissionSetting.cshtml" />
+    <Content Include="Views\Sale\SalePermissionSetting.cshtml" />
+    <Content Include="Views\Sale\SaleAcessinggridViewItem.cshtml" />
+    <Content Include="Views\Shared\ViewItems\SalePermissiontabCaption.cshtml" />
+    <Content Include="Views\Relationship\RelationshipPermissionSetting.cshtml" />
+    <Content Include="Views\BankAccount\PopupBankAccount.cshtml" />
+    <Content Include="Views\BankAccount\Details.cshtml" />
+    <Content Include="Views\Shared\DisplayTemplates\Entities\BankAccountsSet.cshtml" />
+    <Content Include="Views\Shared\DisplayTemplates\Entities\PaymentCardsSet.cshtml" />
+    <Content Include="Views\Shared\EditorTemplates\Entities\BankAccountsSet.cshtml" />
+    <Content Include="Views\Shared\EditorTemplates\Entities\PaymentCardsSet.cshtml" />
+    <Content Include="Views\BankDetailsSWIFT\BankDetailsSWIFTEditForm.cshtml" />
+    <Content Include="Views\Shared\ScriptPanelBankAccount.cshtml" />
+    <Content Include="Views\Shared\ScriptPanelPaymentCard.cshtml" />
+    <Content Include="Views\Shared\ViewItems\RelationshipCallPermissiontabCaption.cshtml" />
+    <Content Include="Views\Shared\ViewItems\RelationshipMailPermissiontabCaption.cshtml" />
+    <Content Include="Views\Shared\ViewItems\RelationshipMeetingPermissiontabCaption.cshtml" />
+    <Content Include="Views\Security\PropertiesPermissions.cshtml" />
+    <Content Include="Views\AutomaticCurrencyImport\Index.cshtml" />
+    <Content Include="Views\Shared\AuditView\ContractorSlave.Edit.cshtml" />
+    <Content Include="Views\Shared\AuditView\Contractor.ChangeAccess.cshtml" />
+    <Content Include="Views\Shared\ViewItems\RelationshipIsPrivateViewItem.cshtml" />
+    <Content Include="Views\RelationshipIsPrivate.cshtml" />
+    <Content Include="Views\Shared\ViewItems\TasksGridViewItem.cshtml" />
+    <Content Include="Views\Shared\ViewItems\PermissionGridViewItem.cshtml" />
+    <Content Include="Views\Shared\DisplayTemplates\ContactBirthDate.cshtml" />
+    <Content Include="Views\Shared\EditorTemplates\ContactBirthDate.cshtml" />
+    <Content Include="Views\Shared\ViewItems\LeadContactsGridViewItem.cshtml" />
+    <Content Include="Views\Shared\ViewItems\LeadContact.cshtml" />
+    <Content Include="Views\Lead\ScoringPanel.cshtml" />
+    <Content Include="Views\LeadScoringSettings\Index.cshtml" />
+    <Content Include="Views\LeadScoringSettings\Edit.cshtml" />
+    <Content Include="Views\LeadScoringSettings\Grid.cshtml" />
+    <Content Include="Views\LeadScoringSettings\StepGrid.cshtml" />
+    <Content Include="Views\LeadScoringSettings\EditStep.cshtml" />
+    <Content Include="Views\Lead\DublicateLeadsGrid.cshtml" />
+    <Content Include="Views\LeadScoringSettings\SettingsProperty.cshtml" />
+    <Content Include="Views\Lead\DublicateContractorsGrid.cshtml" />
+    <Content Include="Views\Shared\LeadDublicatePanel.cshtml" />
+    <Content Include="Views\CurrencyDynamics\Index.cshtml" />
+    <Content Include="Views\CurrencyQualifier\CurrencyImportSettings.cshtml" />
+    <Content Include="Views\CurrencyQualifier\CurrencyList.cshtml" />
+    <Content Include="Views\CurrencyQualifier\Index.cshtml" />
+    <Content Include="Views\CurrencyRatesGrid\DisplayGridRow.cshtml" />
+    <Content Include="Views\CurrencyRatesGrid\Grid.cshtml" />
+    <Content Include="Views\CurrencyRatesGrid\GridRow.cshtml" />
+    <Content Include="Views\CurrencyRatesGrid\ProviderCell.cshtml" />
+    <Content Include="Views\MarketingActivity\MarketingPayment\AddPaymentPopup.cshtml" />
+    <Content Include="Views\MarketingActivity\MarketingPayment\GridPayment.cshtml" />
+    <Content Include="Views\MarketingActivity\LeadDynamic\LeadDynamic.cshtml" />
+    <Content Include="Views\MarketingActivity\LeadDynamic\LeadDynamicActivity.cshtml" />
+    <Content Include="Views\MarketingActivity\LeadDynamic\LeadDynamicGrid.cshtml" />
+    <Content Include="Views\MarketingActivity\MarketingTagParent.cshtml" />
+    <Content Include="Views\MarketingActivity\MarketingStatistic\MarketingStatistic.cshtml" />
+    <Content Include="Views\MarketingActivity\MarketingStatistic\MarketingStatisticGrid.cshtml" />
+    <Content Include="Views\MarketingActivity\MarketingPayment\PaymentForm.cshtml" />
+    <Content Include="Views\MarketingActivity\MarketingPayment\EditPayment.cshtml" />
+    <Content Include="Views\Shared\DisplayTemplates\Entities\SaleStage.cshtml" />
+    <Content Include="Views\MarketingActivity\MarketingStatistic\MarketingStatisticObject.cshtml" />
+    <Content Include="Views\Shared\DisplayTemplates\Entities\FinancialInstitutionBank.cshtml" />
+    <Content Include="Views\Shared\DisplayTemplates\Entities\BankDetails.cshtml" />
+    <Content Include="Views\Shared\DisplayTemplates\Entities\PaymentSystem.cshtml" />
+    <Content Include="Views\Shared\DisplayTemplates\Entities\BankDetailsSet.cshtml" />
+    <Content Include="Views\Shared\EditorTemplates\Address\ComboBox.cshtml" />
+    <Content Include="Views\Shared\EditorTemplates\Address\TextBox.cshtml" />
+    <Content Include="Views\Shared\EditorTemplates\Address\AptType.cshtml" />
+    <Content Include="Views\Shared\Address\ContentBegin.cshtml" />
+    <Content Include="Views\Address\EmptyProviderRegion.cshtml" />
+    <Content Include="Views\Product\DetailsForm.cshtml" />
+    <Content Include="Views\Product\EditForm.cshtml" />
+    <Content Include="Views\Shared\Relationship\RelationshipSubmitScript.cshtml" />
+    <Content Include="Views\PaymentCard\Details.cshtml" />
+    <Content Include="Views\PaymentCard\PopupPaymentCard.cshtml" />
+    <Content Include="Views\Shared\DisplayTemplates\Entities\BankDetailsSWIFT.cshtml" />
+    <Content Include="Views\Shared\DisplayTemplates\Entities\BankDetailsSWIFTSet.cshtml" />
+    <Content Include="Views\Shared\DisplayTemplates\Entities\PaymentSystemSet.cshtml" />
+    <Content Include="Views\Shared\AuditView\Contact.Edit.cshtml" />
+    <Content Include="Views\Shared\AuditView\Address.Edit.cshtml" />
+    <Content Include="Views\Shared\AuditView\Sale.UpdateView.cshtml" />
+    <Content Include="Views\Shared\HistoryParts\SaleUpdatedProperties.cshtml" />
+    <Content Include="Views\Shared\AuditView\Marketing.Update.cshtml" />
+    <Content Include="Views\MarketingActivity\MarketingActivityPermissionSettings.cshtml" />
+    <Content Include="Views\MarketingActivity\BudgetEdit.cshtml" />
+    <Content Include="Views\MarketingActivity\BudgetForm.cshtml" />
+    <Content Include="Views\Shared\EditorTemplates\LeadContactList.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <WCFMetadata Include="Connected Services\" />
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <Import Project="$(VSToolsPath)\WebApplications\Microsoft.WebApplication.targets" Condition="'$(VSToolsPath)' != ''" />
+  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v10.0\WebApplications\Microsoft.WebApplication.targets" Condition="false" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target> -->
+  <Target Name="AfterBuild" Condition="'$(MvcBuildViews)'=='true' or '$(Configuration)' == 'Debug-CompileMarkup'">
+    <AspNetCompiler VirtualPath="temp" PhysicalPath="$(ProjectDir)" />
+  </Target>
+  <ProjectExtensions>
+    <VisualStudio>
+      <FlavorProperties GUID="{349c5851-65df-11da-9384-00065b846f21}">
+        <WebProjectProperties>
+          <UseIIS>False</UseIIS>
+          <AutoAssignPort>False</AutoAssignPort>
+          <DevelopmentServerPort>14656</DevelopmentServerPort>
+          <DevelopmentServerVPath>/</DevelopmentServerVPath>
+          <IISUrl>
+          </IISUrl>
+          <NTLMAuthentication>False</NTLMAuthentication>
+          <UseCustomServer>True</UseCustomServer>
+          <CustomServerUrl>http://www</CustomServerUrl>
+          <SaveServerSettingsInUserFile>False</SaveServerSettingsInUserFile>
+        </WebProjectProperties>
+      </FlavorProperties>
+    </VisualStudio>
+  </ProjectExtensions>
+</Project>

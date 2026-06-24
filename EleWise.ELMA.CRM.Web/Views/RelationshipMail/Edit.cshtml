@@ -1,0 +1,15 @@
+﻿@model EleWise.ELMA.CRM.Web.Models.RelationshipMailModel
+@using EleWise.ELMA;
+@using EleWise.ELMA.CRM.Web
+
+@{
+    Html.Header(SR.T("Написать письмо"));
+    var checkEventTimePeriod = ViewData.TemplateInfo.GetFullHtmlFieldId("checkEventTimePeriod");
+}
+
+@(Html.Toolbar()
+    .Group("toolbar-group-1")
+        .Button("toolbar-click-Save", b => b.Text(SR.Save).IconUrl("#save.svg").Click(checkEventTimePeriod + "('GlobalForm','');").MainAction())
+        .ToolbarLink(SR.Cancel, "#close_outline.svg", "javascript:history.back(-1);", "toolbar-action-Cancel"))
+
+@Html.Partial("Editors/RelationshipMailEdit")

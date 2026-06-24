@@ -1,0 +1,35 @@
+﻿@model LeadContactModel
+@using EleWise.ELMA.CRM.Web.Models
+@using EleWise.ELMA.Web.Mvc.Html.Forms
+
+@using (Html.ElmaForm())
+{
+    @Html.ValidationSummary(false)
+    if (!Model.Entity.IsNew())
+    {
+        @Html.HiddenFor(m => m.Entity.Id)
+    }
+    @Html.HiddenFor(m => m.Entity.Lead.Id)
+
+    <div class="general-form-container">
+        @Html.BuildFormForModel(Model.Entity, Model.Entity.IsNew() ? EleWise.ELMA.Model.Views.ViewType.Create : EleWise.ELMA.Model.Views.ViewType.Edit,
+        b =>
+        {
+            b.HideForm();
+            b.HideAllProperties();
+            b.Prefix("Entity");
+
+            b.PropertyRow(m => m.Surname);
+            b.PropertyRow(m => m.Firstname).CaptionAttributes(a => a.Required = true).EditorAttributes(a => a.Required = true);
+            b.PropertyRow(m => m.Middlename);
+            b.PropertyRow(m => m.Position);
+
+            b.PropertyRow(m => m.Email);
+            b.PropertyRow(m => m.Phone);
+            b.PropertyRow(m => m.ICQ);
+            b.PropertyRow(m => m.Skype);
+
+            b.UserProperties();
+        })
+    </div>
+}

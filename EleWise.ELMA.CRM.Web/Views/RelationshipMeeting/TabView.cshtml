@@ -1,0 +1,128 @@
+﻿@inherits DynamicViewControl<RelationshipMeetingModel>
+@using EleWise.ELMA.BPM.Web.Common.Extensions
+@using EleWise.ELMA.BPM.Web.Common.Models
+@using EleWise.ELMA
+@using EleWise.ELMA.BPM.Web.Common.Extensions
+@using EleWise.ELMA.CRM.Web.Models
+@using EleWise.ELMA.CRM.Models
+@using EleWise.ELMA.CRM.Web
+@using EleWise.ELMA.CRM.Web.Attributes
+@using EleWise.ELMA.Model.Services
+@using EleWise.ELMA.Web.Mvc.Html.Forms
+@(TabPanel("RelationshipMeetingViewInfo").Items(tabs =>
+{
+    tabs.Add(
+        new EleWise.ELMA.Web.Mvc.Models.Selectors.TabPanelItem
+        {
+            Text = SR.T("О взаимоотношении"),
+            Selected = true
+        }).Content(@<text>
+            <table style="margin-bottom: 5px; width: 100%; border: none;" cellpadding="0" cellspacing="0">
+                <tr>
+                    <td>
+                        @Html.TableFormStart(EleWise.ELMA.Model.Views.ViewType.Display)
+                <tr>
+                    <td class="captionCell">@SR.T("Тип")</td>
+                    <td>@SR.T("Встреча")</td>
+                </tr>
+                @Html.Property(m => m.Entity.Theme)
+                @Html.Property(m => m.Entity.Place)
+                @Html.Property(m => m.Entity.Priority)
+                @{
+                    if (Model.Entity.Contractor != null)
+                    {
+                        <tr>
+                            <td class="captionCell">@SR.T("Контрагент")</td>
+                            <td><a href="@(Url.Entity(Model.Entity.Contractor))">@Model.Entity.Contractor.Name</a></td>
+                        </tr>
+                        @Html.Property(m => m.Entity.ContractorsContacts)
+                    }
+                    if (Model.Entity.Contact != null)
+                    {
+                        <tr>
+                            <td class="captionCell">@SR.T("Контакт")</td>
+                            <td><a href="@(Url.Entity(Model.Entity.Contact))">@Model.Entity.Contact.Name</a></td>
+                        </tr>
+                    }
+                    if (Model.Entity.Lead != null)
+                    {
+                        <tr>
+                            <td class="captionCell">@SR.T("Потенциальный клиент")</td>
+                            <td><a href="@(Url.Entity(Model.Entity.Lead))">@Model.Entity.Lead.Name</a></td>
+                        </tr>
+                    }
+                    if (Model.Entity.Sale != null)
+                    {
+                        <tr>
+                            <td class="captionCell">@SR.T("Сделка")</td>
+                            <td><a href="@(Url.Entity(Model.Entity.Sale))">@Model.Entity.Sale.Name</a></td>
+                        </tr>
+                    }
+                }
+                @Html.Property(m => m.Completed)
+                @if (Model.Entity.TimeNotSet)
+                {
+                    @Html.Property(m => m.Entity.StartDate, a => a.TemplateName = "TimeNotSet")
+                    @Html.Property(m => m.Entity.EndDate, a => a.TemplateName = "TimeNotSet")
+                }
+                else
+                {
+                    <tr>
+                        <td class="captionCell">@Html.Caption(t => t.Entity.StartDate, forDisplay: true)</td>
+                        <td>
+                            <div class="reminder-display-container">
+                                <div class="reminder-display-item">
+                                    <b>@Html.Display(t => t.Entity.StartDate)</b>
+                                    @(Html.Reminder(new ReminderModel { Entity = Model.Entity, OriginalDate = Model.Entity.StartDate, PropertyName = "StartDate", ToolTipText = SR.T("Напоминания о начале встречи"), Periodical = false }))
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                    @Html.Property(m => m.Entity.EndDate)
+                }
+                @Html.Property(m => m.Entity.CreationAuthor)
+                @Html.Property(m => m.Entity.Description)
+                @{
+                    var custompropCount = 0;
+                    var customView = Html.BuildFormForModel(Model.Entity, EleWise.ELMA.Model.Views.ViewType.Display,
+                                                            b =>
+                                                            {
+                                                                b.HideForm();
+                                                                b.Prefix("Entity");
+                                                                b.LayoutConfig<DefaultFormLayout>(l => l.RenderTable = false);
+                                                                b.ShowOnlyUserProperties();
+                                                                b.EachPropertyRow(r => { if (r.Visible)custompropCount++; });
+                                                            });
+                    if (custompropCount > 0)
+                    {
+                        @customView
+                    }
+                }
+                @Html.TableFormEnd()
+                </td>
+                <td style="width: 30%; padding-left: 20px;">
+                    <div class="brickPanel">
+                        @Html.Partial("RelationshipUsersList", Model.Entity)
+                    </div>
+                    @if (Model.Entity.Schedules.Any())
+                    {
+                        <div class="brickPanel">
+                            @Html.Partial("RelationshipSchedulesList", Model.Entity)
+                        </div>
+                    }
+                </td>
+                </tr>
+            </table>
+            @Html.EventHistory(Model.Entity)
+        </text>);
+
+    if (Model.Entity.Contractor != null || Model.Entity.Contact != null || Model.Entity.Lead != null || Model.Entity.ContractorsContacts != null && Model.Entity.ContractorsContacts.Count > 0)
+    {
+        tabs.Add(
+            new EleWise.ELMA.Web.Mvc.Models.Selectors.TabPanelItem
+                {
+                    Text = SR.T("Контактная информация")
+                }).Content(@<text>@Html.Partial("Relationship/ContactInfo", Model.Entity,
+                       new ViewDataDictionary() { TemplateInfo = new TemplateInfo() { HtmlFieldPrefix = ViewData.TemplateInfo.GetFullHtmlFieldName("Entity") } })</text>);
+    }
+}).Render())

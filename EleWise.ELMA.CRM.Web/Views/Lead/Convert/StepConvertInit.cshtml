@@ -1,0 +1,45 @@
+﻿@using EleWise.ELMA.CRM.Web.Models
+@using EleWise.ELMA
+@using EleWise.ELMA.Model.Types.Settings
+@model LeadConvertModel
+           
+@Html.HiddenFor(m => m.Entity.Id)
+@Html.TableFormStart()
+    <tr>
+        <td class="captionCell">@SR.T("Тип нового контрагента")</td>
+        <td>
+            @(Html.Telerik()
+                .DropDownList()
+                .Name("ContractorUid")
+                .BindTo(Model.ContractorTypes))
+        </td>
+    </tr>
+    <tr>
+        <td class="captionCell">@SR.T("Тип создаваемого объекта")</td>
+        <td>
+           @(Html.Telerik()
+                .DropDownList()
+                .Name("ConvertUid")
+                .BindTo(Model.ConvertTypes)
+                .ClientEvents(e => e.OnChange("changeStep4")))
+        </td>
+    </tr>
+    <tr>
+        <td class="captionCell">@SR.T("Комментарий")</td>
+        <td>
+            @Html.Editor(m => m.Comment, a => a.TypeSettings = new TextSettings() { MultiLine = true })
+        </td>
+    </tr>
+@Html.TableFormEnd()
+
+<script type="text/javascript">
+    function changeStep4(rb) {
+        var dropDown = elma.extractComboBox(rb.currentTarget);
+        if (dropDown.value() == '@(Guid.Empty.ToString())') {
+            elma.wizards.changeStepVisible('LeadConvert', 'step_4', false);
+        } else {
+            elma.wizards.changeStepVisible('LeadConvert', 'step_4', true);
+            elma.wizards.changeStepTitle('LeadConvert', 'step_4', dropDown.text());
+        }
+    }
+</script>

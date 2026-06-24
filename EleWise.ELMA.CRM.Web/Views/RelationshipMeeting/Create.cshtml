@@ -1,0 +1,16 @@
+﻿@using EleWise.ELMA.CRM.Web.Models
+@using EleWise.ELMA
+@using EleWise.ELMA.CRM.Web
+@model RelationshipMeetingModel
+
+@{
+    Html.Header(SR.T("Создать встречу"));
+    var checkEventTimePeriod = ViewData.TemplateInfo.GetFullHtmlFieldId("checkEventTimePeriodMeeting");
+}
+
+@(Html.Toolbar()
+    .Group("toolbar-group-1")
+        .Button("toolbar-click-Save", b => b.Text(SR.Save).IconUrl("#save.svg").Click(checkEventTimePeriod + "('GlobalForm','');").MainAction())
+        .ToolbarLink(SR.Cancel, "#close_outline.svg", "javascript:history.back(-1);", "toolbar-action-Cancel"))
+
+@Html.Partial("Editors/RelationshipMeetingEdit")

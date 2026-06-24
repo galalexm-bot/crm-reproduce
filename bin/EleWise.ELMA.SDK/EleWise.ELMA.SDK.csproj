@@ -1,0 +1,254 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <AssemblyName>EleWise.ELMA.SDK</AssemblyName>
+    <GenerateAssemblyInfo>False</GenerateAssemblyInfo>
+    <TargetFramework>net48</TargetFramework>
+  </PropertyGroup>
+  <PropertyGroup>
+    <LangVersion>Preview</LangVersion>
+    <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
+  </PropertyGroup>
+  <PropertyGroup>
+    <RootNamespace />
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Remove="EleWise.ELMA.Model.Scripts.Ent.cs" />
+    <Compile Remove="EleWise.ELMA.Model.Scripts.Tem.cs" />
+    <Compile Remove="EleWise.ELMA.UI.Scripts.Templa.cs" />
+    <Compile Remove="EleWise.ELMA.Model.Scripts.Tem.cs" />
+    <Compile Remove="EleWise.ELMA.Model.Scripts.Ent.cs" />
+    <Compile Remove="EleWise.ELMA.UI.Scripts.Templa.cs" />
+    <Compile Remove="EleWise.ELMA.Model.Projects.Te.cs" />
+    <None Remove="EleWise.ELMA.OmniSharp.Resourc.csproj" />
+    <None Remove="EleWise.ELMA.Model.Projects.Te.csproj" />
+    <None Remove="EleWise.ELMA.Model.Projects.Te.cstmpl" />
+    <None Remove="EleWise.ELMA.Model.Projects.Te.tt" />
+    <None Remove="EleWise.ELMA.Model.Db.CoreDbSt.xml" />
+    <None Remove="EleWise.ELMA.Db.PropertiesAndT.xml" />
+    <None Remove="EleWise.ELMA.Resources.Page_16.png" />
+    <None Remove="EleWise.ELMA.Resources.Page_32.png" />
+    <None Remove="EleWise.ELMA.Resources.Portlet.png" />
+    <None Remove="EleWise.ELMA.Resources.Portlet.png" />
+    <None Remove="0203vEBWP7554R4YVJ.apjhGtWfgnOVBliMOj" />
+    <EmbeddedResource Include="EleWise.ELMA.Model.Scripts.Ent.cs" />
+    <EmbeddedResource Include="EleWise.ELMA.Model.Scripts.Tem.cs" />
+    <EmbeddedResource Include="EleWise.ELMA.UI.Scripts.Templa.cs" />
+    <EmbeddedResource Include="EleWise.ELMA.Model.Scripts.Tem.cs" />
+    <EmbeddedResource Include="EleWise.ELMA.Model.Scripts.Ent.cs" />
+    <EmbeddedResource Include="EleWise.ELMA.UI.Scripts.Templa.cs" />
+    <EmbeddedResource Include="EleWise.ELMA.Model.Projects.Te.cs" />
+    <EmbeddedResource Include="EleWise.ELMA.OmniSharp.Resourc.csproj" />
+    <EmbeddedResource Include="EleWise.ELMA.Model.Projects.Te.csproj" />
+    <EmbeddedResource Include="EleWise.ELMA.Model.Projects.Te.cstmpl" />
+    <EmbeddedResource Include="EleWise.ELMA.Model.Projects.Te.tt" />
+    <EmbeddedResource Include="EleWise.ELMA.Model.Db.CoreDbSt.xml" />
+    <EmbeddedResource Include="EleWise.ELMA.Db.PropertiesAndT.xml" />
+    <EmbeddedResource Include="EleWise.ELMA.Resources.Page_16.png" />
+    <EmbeddedResource Include="EleWise.ELMA.Resources.Page_32.png" />
+    <EmbeddedResource Include="EleWise.ELMA.Resources.Portlet.png" />
+    <EmbeddedResource Include="EleWise.ELMA.Resources.Portlet.png" />
+    <EmbeddedResource Include="0203vEBWP7554R4YVJ.apjhGtWfgnOVBliMOj" />
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="Antlr3.Runtime">
+      <HintPath>..\..\..\bin\Antlr3.Runtime.dll</HintPath>
+    </Reference>
+    <Reference Include="Aspose.3D">
+      <HintPath>..\..\..\bin\Aspose.3D.dll</HintPath>
+    </Reference>
+    <Reference Include="Aspose.BarCode">
+      <HintPath>..\..\..\bin\Aspose.BarCode.dll</HintPath>
+    </Reference>
+    <Reference Include="Aspose.CAD">
+      <HintPath>..\..\..\bin\Aspose.CAD.dll</HintPath>
+    </Reference>
+    <Reference Include="Aspose.Cells">
+      <HintPath>..\..\..\bin\Aspose.Cells.dll</HintPath>
+    </Reference>
+    <Reference Include="Aspose.Diagram">
+      <HintPath>..\..\..\bin\Aspose.Diagram.dll</HintPath>
+    </Reference>
+    <Reference Include="Aspose.Email">
+      <HintPath>..\..\..\bin\Aspose.Email.dll</HintPath>
+    </Reference>
+    <Reference Include="Aspose.Finance">
+      <HintPath>..\..\..\bin\Aspose.Finance.dll</HintPath>
+    </Reference>
+    <Reference Include="Aspose.Font">
+      <HintPath>..\..\..\bin\Aspose.Font.dll</HintPath>
+    </Reference>
+    <Reference Include="Aspose.HTML">
+      <HintPath>..\..\..\bin\Aspose.HTML.dll</HintPath>
+    </Reference>
+    <Reference Include="Aspose.Imaging">
+      <HintPath>..\..\..\bin\Aspose.Imaging.dll</HintPath>
+    </Reference>
+    <Reference Include="Aspose.Note">
+      <HintPath>..\..\..\bin\Aspose.Note.dll</HintPath>
+    </Reference>
+    <Reference Include="Aspose.OMR">
+      <HintPath>..\..\..\bin\Aspose.OMR.dll</HintPath>
+    </Reference>
+    <Reference Include="Aspose.Page">
+      <HintPath>..\..\..\bin\Aspose.Page.dll</HintPath>
+    </Reference>
+    <Reference Include="Aspose.PDF">
+      <HintPath>..\..\..\bin\Aspose.PDF.dll</HintPath>
+    </Reference>
+    <Reference Include="Aspose.PSD">
+      <HintPath>..\..\..\bin\Aspose.PSD.dll</HintPath>
+    </Reference>
+    <Reference Include="Aspose.PUB">
+      <HintPath>..\..\..\bin\Aspose.PUB.dll</HintPath>
+    </Reference>
+    <Reference Include="Aspose.Slides">
+      <HintPath>..\..\..\bin\Aspose.Slides.dll</HintPath>
+    </Reference>
+    <Reference Include="Aspose.SVG">
+      <HintPath>..\..\..\bin\Aspose.SVG.dll</HintPath>
+    </Reference>
+    <Reference Include="Aspose.Tasks">
+      <HintPath>..\..\..\bin\Aspose.Tasks.dll</HintPath>
+    </Reference>
+    <Reference Include="Aspose.Words">
+      <HintPath>..\..\..\bin\Aspose.Words.dll</HintPath>
+    </Reference>
+    <Reference Include="Aspose.Words.Pdf2Word">
+      <HintPath>..\..\..\bin\Aspose.Words.Pdf2Word.dll</HintPath>
+    </Reference>
+    <Reference Include="Autofac">
+      <HintPath>..\..\..\bin\Autofac.dll</HintPath>
+    </Reference>
+    <Reference Include="Autofac.Extras.DynamicProxy">
+      <HintPath>..\..\..\bin\Autofac.Extras.DynamicProxy.dll</HintPath>
+    </Reference>
+    <Reference Include="AutoMapper">
+      <HintPath>..\..\..\bin\AutoMapper.dll</HintPath>
+    </Reference>
+    <Reference Include="Castle.Core">
+      <HintPath>..\..\..\bin\Castle.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="EleWise.ELMA.CodeGeneration.CSharp">
+      <HintPath>..\..\..\bin\EleWise.ELMA.CodeGeneration.CSharp.dll</HintPath>
+    </Reference>
+    <Reference Include="EncodingTools">
+      <HintPath>..\..\..\bin\EncodingTools.dll</HintPath>
+    </Reference>
+    <Reference Include="Gettext.Cs">
+      <HintPath>..\..\..\bin\Gettext.Cs.dll</HintPath>
+    </Reference>
+    <Reference Include="Glimpse.Ado">
+      <HintPath>..\..\..\bin\Glimpse.Ado.dll</HintPath>
+    </Reference>
+    <Reference Include="Glimpse.AspNet">
+      <HintPath>..\..\..\bin\Glimpse.AspNet.dll</HintPath>
+    </Reference>
+    <Reference Include="Glimpse.Core">
+      <HintPath>..\..\..\bin\Glimpse.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="Glimpse.Mvc5">
+      <HintPath>..\..\..\bin\Glimpse.Mvc5.dll</HintPath>
+    </Reference>
+    <Reference Include="HtmlAgilityPack">
+      <HintPath>..\..\..\bin\HtmlAgilityPack.dll</HintPath>
+    </Reference>
+    <Reference Include="ICSharpCode.NRefactory">
+      <HintPath>..\..\..\bin\ICSharpCode.NRefactory.dll</HintPath>
+    </Reference>
+    <Reference Include="ICSharpCode.NRefactory.CSharp">
+      <HintPath>..\..\..\bin\ICSharpCode.NRefactory.CSharp.dll</HintPath>
+    </Reference>
+    <Reference Include="ICSharpCode.SharpZipLib">
+      <HintPath>..\..\..\bin\ICSharpCode.SharpZipLib.dll</HintPath>
+    </Reference>
+    <Reference Include="Iesi.Collections">
+      <HintPath>..\..\..\bin\Iesi.Collections.dll</HintPath>
+    </Reference>
+    <Reference Include="log4net">
+      <HintPath>..\..\..\bin\log4net.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.CodeAnalysis">
+      <HintPath>..\..\..\bin\Microsoft.CodeAnalysis.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.CodeAnalysis.CSharp">
+      <HintPath>..\..\..\bin\Microsoft.CodeAnalysis.CSharp.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Core" />
+    <Reference Include="System.Web.Services" />
+    <Reference Include="EleWise.TemplateGenerator.Merged">
+      <HintPath>..\EleWise.TemplateGenerator.Merged.dll</HintPath>
+    </Reference>
+    <Reference Include="Svg">
+      <HintPath>..\..\..\bin\Svg.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json">
+      <HintPath>..\..\..\bin\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Xml" />
+    <Reference Include="System.Web.Extensions" />
+    <Reference Include="System.Configuration" />
+    <Reference Include="System.Data" />
+    <Reference Include="NHibernate">
+      <HintPath>..\..\..\bin\NHibernate.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
+    <Reference Include="System.Web.Mvc">
+      <HintPath>..\..\..\bin\System.Web.Mvc.dll</HintPath>
+    </Reference>
+    <Reference Include="Mono.Cecil">
+      <HintPath>..\..\..\bin\Mono.Cecil.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Threading.Tasks.Extensions">
+      <HintPath>..\..\..\bin\System.Threading.Tasks.Extensions.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Runtime.Caching" />
+    <Reference Include="EleWise.ELMA.Packaging">
+      <HintPath>..\EleWise.ELMA.Packaging.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Runtime.Remoting" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="EleWise.ELMA.SDK.Native">
+      <HintPath>..\EleWise.ELMA.SDK.Native.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Management" />
+    <Reference Include="NuGet.Core">
+      <HintPath>..\..\..\bin\NuGet.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Collections.Immutable">
+      <HintPath>..\..\..\bin\System.Collections.Immutable.dll</HintPath>
+    </Reference>
+    <Reference Include="System.ComponentModel.Composition" />
+    <Reference Include="System.Memory">
+      <HintPath>..\..\..\bin\System.Collections.Immutable.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.ServiceModel.Web" />
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="EleWise.ELMA.XmlSerializers">
+      <HintPath>..\EleWise.ELMA.XmlSerializers.dll</HintPath>
+    </Reference>
+    <Reference Include="System.ServiceModel" />
+    <Reference Include="SvcUtilLib">
+      <HintPath>..\..\..\bin\SvcUtilLib.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Build.Framework" />
+    <Reference Include="Microsoft.Build" />
+    <Reference Include="System.Web.WebPages">
+      <HintPath>..\..\..\bin\System.Web.WebPages.dll</HintPath>
+    </Reference>
+    <Reference Include="EleWise.ELMA.NemerleParser.Merged">
+      <HintPath>..\EleWise.ELMA.NemerleParser.Merged.dll</HintPath>
+    </Reference>
+    <Reference Include="EleWise.ELMA.SDK.Analyzers">
+      <HintPath>..\EleWise.ELMA.SDK.Analyzers.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Extensions.ObjectPool">
+      <HintPath>..\..\..\bin\Microsoft.Extensions.ObjectPool.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\EleWise.ELMA.CodeGeneration.CSharp\EleWise.ELMA.CodeGeneration.CS.csproj" />
+  </ItemGroup>
+</Project>

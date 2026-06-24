@@ -1,0 +1,40 @@
+﻿@model GridData<IMarketingEffect>
+@using EleWise.ELMA.CRM.Models
+@using EleWise.ELMA
+@using EleWise.ELMA.Web.Mvc.ExtensionPoints
+@using EleWise.ELMA.Web.Mvc.Views.ViewItem
+@{
+    const string gridId = "MarketingGroupActivitiesGrid3";
+}
+
+@(Html.DynamicGrid(gridId, Model).Columns(c =>
+{
+    c.For(m => m.MarketingActivity).GroupHeaderTemplate(i => 
+    {
+        var marketingActivity = i.Key as IMarketingActivity;
+        if (marketingActivity != null)
+        {
+            return Html.Button()
+                .NoBorder()
+                .AsLink()
+                .Url(Url.Entity(marketingActivity))
+                .Text(marketingActivity.Name)
+                .IconUrl(Html.Url().ObjectIcon(ObjectIconFormat.x16, marketingActivity))
+                .ToHtmlString();
+        } else
+        {
+            return string.Empty;
+        }
+    }).Groupable(true).Hidden(true);
+    c.For(m => m.Name).Template(@<text> @Html.Button().NoBorder().AsLink().Url(Url.Entity(item)).Text(item.Name).IconUrl(Html.Url().ObjectIcon(ObjectIconFormat.x16, item)) </text>);
+    c.For(m => m.Responsible);
+    c.For(m => m.CreationDate).Header(SR.T("Создано")).Width(150);
+    c.For(m => m.DirtyLeadCount).Header(SR.T("Возможности")).HtmlAttributes(new { style = "text-align: left;" });
+    c.For(m => m.CreatedSaleCount).Header(SR.T("Сделки")).HtmlAttributes(new { style = "text-align: left;" });
+    c.For(m => m.ArchiveDate).Visible(false);
+
+})
+.Customizable(false)
+.DefaultColumns(true)
+.ClientEvents(ce => ce.OnRowDataBound(w => "function (e) { if (!e.dataItem.MarketingEffects > '') e.row.cells[0].innerHTML = ''; }"))
+)

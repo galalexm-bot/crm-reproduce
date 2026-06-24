@@ -1,0 +1,103 @@
+﻿@using EleWise.ELMA;
+@using EleWise.ELMA.ComponentModel
+@using EleWise.ELMA.CRM.Enums.ExchangeRates
+@using EleWise.ELMA.CRM.Extensions
+@using EleWise.ELMA.CRM.Web
+@using EleWise.ELMA.Extensions
+@using ViewType = EleWise.ELMA.Model.Views.ViewType
+@model EleWise.ELMA.CRM.Web.Models.ExchangeRates.ExchangeRateImportSettings
+@{
+    Html.Toolbar();
+    Html.Header(SR.T("Импортировать классификатор валют"));
+    var providerList = ComponentManager.Current.GetExtensionPoints<IExchangeCurrencyRateImportProvider>().Where(a => a.CanFillingCurrencies).ToList();
+    var values = providerList.Select(p =>
+        new SelectListItem()
+        {
+            Text = p.Name,
+            Value = p.Uid.ToString()
+        }).ToList();
+    if (Model.Provider != Guid.Empty)
+    {
+        values.First(a => a.Value == Model.Provider.ToString()).Selected = true;
+    }
+}
+
+<div class="t-content" id="currencyImportContent">
+    @using (Html.ELMAForm("CurrencyList", "CurrencyQualifier", new { area = RouteProvider.AreaName }, FormMethod.Post, new { id = "CurrencyListForm" }))
+    {
+        @Html.TableFormStart(ViewType.Edit)
+        
+        if (providerList.Count() > 1)
+        {
+            <tr>
+                <td class="captionCell">@Html.Caption(m => m.Provider)</td>
+                <td>
+                    @Html.DropDownList(Html.NameFor(a => a.Provider).ToString(),
+                     values, "Value", "Text", onChange: "function(e) {LoadCurrencyProviderSettings(e);}")
+                </td>
+            </tr>
+        }
+
+        @Html.TableFormEnd()
+        <div id="CurrencyImportSettings">
+            @Html.Action("CurrencyImportSettings", "CurrencyQualifier", new{area = RouteProvider.AreaName, guid = Model.Provider })
+        </div>
+        <div class="clear:both"></div>
+        <div class="currencyFormButton">
+            <input class="confirm t-button" type="submit" value="@SR.T("Загрузить список")">
+        </div>
+    }
+</div>
+
+<script>
+    $(document).ready(function () {
+        if ('@Model.ExchangeRatesImportType' == '@ExchangeRatesImportType.Automatically') {
+            $('#LoadFileForCurrencyImport').hide();
+        }
+    });
+
+    function ChangeImportType(e) {
+        if (e.value === "Manually") {
+            $('#LoadFileForCurrencyImport').show();
+        } else {
+            $('#LoadFileForCurrencyImport').hide();
+        }
+    }
+    function LoadCurrencyProviderSettings(e) {
+        $.ajax({
+            url: '@Html.Url().Action("CurrencyImportSettings", "CurrencyQualifier", new { area = RouteProvider.AreaName })',
+            data: ({ guid: e.value }),
+            success: function (data) {
+                $('#CurrencyImportSettings').html(data);
+                elma.closePleaseWait(true);
+            }
+        });
+    }
+
+
+    $('#CurrencyListForm').submit(function () {
+
+        if ($('#LoadFileForCurrencyImport:visible').length > 0 && !$('#CurrencyListForm').valid()) {
+            return false;
+        }
+        
+        elma.openPleaseWait(true);
+
+        $.ajax({
+            url: '@Html.Url().Action("CurrencyList", "CurrencyQualifier", new { area = RouteProvider.AreaName })',
+            data: $('#CurrencyListForm').serialize(),
+            type: 'POST',
+            success: function (data) {
+                elma.closePleaseWait(true);
+                // В случае возникновения ошибки делаем редирект
+                if (data.RedirectUrl) {
+                    window.location.href = data.RedirectUrl;    
+                }
+                else {
+                    $('#currencyImportContent').html(data);
+                }
+            }
+        });
+        return false;
+    })
+</script>

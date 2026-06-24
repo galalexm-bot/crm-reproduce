@@ -1,0 +1,81 @@
+﻿@model IAddress
+@using EleWise.ELMA
+@using EleWise.ELMA.CRM.Models
+@using EleWise.ELMA.Serialization;
+
+@{
+    Html.RegisterContent("addrCountryScripts", @<text>
+<script type="text/javascript">
+    function addrCountryChange(e) {
+        var combobox = $(e.currentTarget).closest('.t-combobox').find('input[type="hidden"]').data('tComboBox');
+        var container = $(e.currentTarget).closest('[htmlfieldprefix]');
+
+        container.find('.AddressProviderRegion').html('<img alt="loading" src="/Content/Images/x16/loading.gif" style="horizontal-align: center; padding-right: 2px;">@(SR.T("Обновление"))...');
+
+        $.ajax({
+            url: '@MvcHtmlString.Create(Url.Action("ProviderRegion", "Address", new { area = EleWise.ELMA.CRM.Web.CRMAreaRegistration.AREA_NAME }))',
+            type: 'GET',
+            cache: false,
+            data: {
+                'htmlFieldPrefix': container.attr('htmlfieldprefix'),
+                'address.Country.Id': combobox.value() || 0
+            },
+            success: function (data) {
+                container.find('.AddressProviderRegion').html(data);
+                container.find('.addressNameContainer .display-address').find('span').text(combobox.text());
+            }
+        });
+    }
+</script>
+</text>);
+}
+
+<div class="panel editable-address-panel" htmlfieldprefix="@ViewData.TemplateInfo.HtmlFieldPrefix">
+    <div class="addressNameContainer">
+        @using (Html.TableForm(b => { b.ViewType(EleWise.ELMA.Model.Views.ViewType.Edit); b.ContainerAttributes(new { @class = "display-address-table-container" }); }))
+        {
+            <tr class="full-row">
+                <td class="display-address" colspan="2">
+                    @Html.Editor(m => m.Name, a => a.ValidationMessage = false)
+                </td>
+            </tr>
+
+            @Html.EditableProperty(m => m.Country, a =>
+            {
+                a.Html.onchange = "addrCountryChange";
+                a.Html["providerregionid"] = ViewData.TemplateInfo.GetFullHtmlFieldId("ProviderRegion");
+            })
+        }
+    </div>
+    <div id="@ViewData.TemplateInfo.GetFullHtmlFieldId("ProviderRegion")" class="AddressProviderRegion">
+        @if (Model != null && !Model.IsNew())
+        {
+            @Html.HiddenFor(m => m.Id)
+        }
+        @{
+            var route = new RouteValueDictionary
+            {
+                {"area", EleWise.ELMA.CRM.Web.CRMAreaRegistration.AREA_NAME},
+                {"htmlFieldPrefix", ViewData.TemplateInfo.HtmlFieldPrefix}
+            };
+            if (Model != null)
+            {
+                route.Add("address.Id", Model.Id);
+                route.Add("address.TypeUid", Model.TypeUid);
+                if (Model.Country != null && Model.Country.Id != 0)
+                {
+                    route.Add("address.Country.Id", Model.Country.Id);
+                }
+                if (Model.IsNew())
+                {
+                    route.Add("addressJsonState", new EntityJsonSerializer().Serialize(Model));
+                }
+            }
+            else
+            {
+                route.Add("address.Id", (long?)null);
+            }
+        }
+        @Html.Action("ProviderRegion", "Address", route)
+    </div>
+</div>

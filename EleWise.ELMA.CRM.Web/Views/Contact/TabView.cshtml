@@ -1,0 +1,190 @@
+﻿@inherits DynamicViewControl<ContactModel>
+@using EleWise.ELMA
+@using EleWise.ELMA.BPM.Web.Common.Extensions
+@using EleWise.ELMA.CRM.Extensions
+@using EleWise.ELMA.CRM.Managers
+@using EleWise.ELMA.CRM.Models
+@using EleWise.ELMA.CRM.Web.Attributes
+@using EleWise.ELMA.CRM.Web
+@using EleWise.ELMA.CRM.Web.Models
+@using EleWise.ELMA.Model.Managers
+@using EleWise.ELMA.Model.Services
+@using EleWise.ELMA.Tasks.Managers
+@using EleWise.ELMA.Tasks.Models
+@using EleWise.ELMA.Web.Mvc.Html.Forms
+
+@{
+    var selectedTab = Convert.ToInt32(ViewData["SelectedTab"] ?? 0);
+
+    var tabCustompropCount = 0;
+    var hasTabView = Model.HasCustomFormViews(EleWise.ELMA.Model.Views.ViewType.Display, true);
+    var tabFormView = Model.GetCustomFormView(EleWise.ELMA.Model.Views.ViewType.Display, true);
+    var tabCustomView = !hasTabView || tabFormView.UseRazorView
+                         ? MvcHtmlString.Empty
+                         : Html.BuildFormForModel(Model.Entity, EleWise.ELMA.Model.Views.ViewType.Display,
+                                                  b =>
+                                                  {
+                                                      b.HideForm();
+                                                      b.Prefix("Entity");
+                                                      b.Layout(new TwoColumnsFormLayout());
+                                                      b.LayoutConfig<TwoColumnsFormLayout>(
+                                                          l =>
+                                                          {
+                                                              l.LeftTableAttributes.Html.@class = "viewGroup";
+                                                              l.RightTableAttributes.Html.@class = "viewGroup";
+                                                              l.LeftTableAttributes.Html.style.width = "100%";
+                                                              l.RightTableAttributes.Html.style.width = "100%";
+                                                          });
+                                                      b.ShowOnlyUserProperties();
+                                                      b.EachPropertyRow(r => { if (r.Visible) tabCustompropCount++; });
+                                                  });
+
+    if (hasTabView && tabFormView.UseRazorView)
+    {
+        var vd = new ViewDataDictionary(ViewData) { TemplateInfo = { HtmlFieldPrefix = ViewData.TemplateInfo.GetFullHtmlFieldName("Entity") } };
+        tabCustomView = Html.Partial(tabFormView.RazorTabViewName, Model.Entity, vd);
+        tabCustompropCount = 1;
+    }
+
+    var hasCommonView = Model.HasCustomFormViews(EleWise.ELMA.Model.Views.ViewType.Display, false);
+    var commonFormView = Model.GetCustomFormView(EleWise.ELMA.Model.Views.ViewType.Display, false);
+}
+
+@(TabPanel("ContactViewInfo").Items(tabs =>
+{
+    tabs.Add(
+        new EleWise.ELMA.Web.Mvc.Models.Selectors.TabPanelItem {
+            Text = SR.T("О контакте"),
+            Selected = selectedTab == 0,
+            TabIndex = 0
+        }).Content(@<text>
+@if (hasCommonView && commonFormView.UseRazorView)
+{
+    var vd = new ViewDataDictionary(ViewData) { TemplateInfo = { HtmlFieldPrefix = ViewData.TemplateInfo.GetFullHtmlFieldName("Entity") } };
+    @Html.Partial(commonFormView.RazorCommonViewName, Model.Entity, vd)
+}
+else
+{
+    @Html.BuildFormForModel(Model.Entity, EleWise.ELMA.Model.Views.ViewType.Display,
+    b =>
+    {
+        b.HideAllProperties();
+        b.Layout(new TwoColumnsFormLayout(),
+            l =>
+            {
+                l.Mode = TwoColumnsFormLayout.SplitMode.OrderOddOrEven;
+            });
+        b.LayoutConfig<TwoColumnsFormLayout>(
+            l =>
+            {
+                l.LeftTableAttributes.Class = "viewGroup";
+                l.RightTableAttributes.Class = "viewGroup";
+                l.LeftTableAttributes.Html.style.width = "100%";
+                l.RightTableAttributes.Html.style.width = "100%";
+            });
+
+        b.PropertyRow(m => m.Name).Order(1);
+        b.PropertyRow(m => m.Contractor).Order(3);
+        b.PropertyRow(m => m.Position).Order(5);
+        b.PropertyRow(m => m.Department).Order(7);
+        b.PropertyRow(m => m.Type).Order(9);
+        b.PropertyRow(m => m.Priority).Order(11);
+        b.PropertyRow(m => m.Birthday).ValueTemplate(c => c.BirthDate()).Order(13);
+        b.PropertyRow(m => m.Description).Order(15);
+
+
+        b.PropertyRow(m => m.Site).ValueTemplate(x => x.Site != null ? Html.Partial("DisplayTemplates/Uri", x.Site) : MvcHtmlString.Empty).Order(2);
+        b.PropertyRow(m => m.Email).Order(4);
+        b.PropertyRow(m => m.Icq).Order(6);
+        b.PropertyRow(m => m.Skype).Order(8);
+        b.PropertyRow(m => m.Phone).Order(10);
+        b.PropertyRow(m => m.RegistrationAddress).Order(12);
+        b.PropertyRow(m => m.ResidenceAddress).Order(14);
+        b.PropertyRow(m => m.CreationAuthor).Order(16);
+
+        if (hasCommonView && !commonFormView.UseRazorView)
+        {
+            b.UserProperties();
+            b.UserPropertiesOrder(17, 1);
+        }
+    })
+}
+</text>);
+    if (hasTabView && tabCustompropCount > 0)
+    {
+        tabs.Add(
+            new EleWise.ELMA.Web.Mvc.Models.Selectors.TabPanelItem
+            {
+                Text = string.IsNullOrWhiteSpace(tabFormView.ViewInTabName) ? SR.T("Дополнительные поля") : tabFormView.ViewInTabName
+            }).Content(@<text> @tabCustomView </text>);
+    }
+    tabs.Add(
+        new EleWise.ELMA.Web.Mvc.Models.Selectors.TabPanelItem
+        {
+            Text = SR.T("Активность"),
+            TabIndex = 1,
+            Selected = selectedTab == 1,
+        }).Content(@<text>
+<div>
+    @Html.EventHistory(Model.Entity)
+</div>
+        </text>);
+
+    var relFilter = InterfaceActivator.Create<IRelationshipFilter>();
+    relFilter.DisableSecurity = true;
+    relFilter.Contact = Model.Entity;
+    var relCount = RelationshipManager.Instance.Count(relFilter);  
+    
+    tabs.Add(
+        new EleWise.ELMA.Web.Mvc.Models.Selectors.TabPanelItem
+        {
+            Text = SR.T("Взаимоотношения"),
+            Counter = relCount,
+            TabIndex = 2,
+            Selected = selectedTab == 2,
+        }).Content(@<text>
+<div>
+    @Html.Action("Grid", "Relationship", new { area = CRMAreaRegistration.AREA_NAME, ContactId = Model.Entity.Id, GridId = "ContactRelationships_" + Model.Entity.Id })
+</div>
+        </text>);
+
+    var taskFilter = EleWise.ELMA.CRM.Web.Controllers.TaskController.CreateFilter();
+    taskFilter.Contact = Model.Entity;
+    var taskCount = TaskBaseManager.Instance.Count(taskFilter);  
+        
+    tabs.Add(
+        new EleWise.ELMA.Web.Mvc.Models.Selectors.TabPanelItem
+        {
+            Text = SR.T("Задачи"),
+            Counter = taskCount,
+            Selected = selectedTab == 3,
+        }).Content(@<text>@Html.Partial("Contact/TasksTab")</text>);
+    
+  
+    
+    var docFilter = InterfaceActivator.Create<ICRMAttachmentFilter>();
+    docFilter.Contact = Model.Entity;
+    var docCount = EntityManager<ICRMAttachment>.Instance.Count(docFilter);
+
+    tabs.Add(
+        new EleWise.ELMA.Web.Mvc.Models.Selectors.TabPanelItem
+        {
+            Text = SR.T("Документы"),
+            Counter = docCount,
+            Selected = selectedTab == 4,
+        }).Content(@<text>
+<div>
+    @Html.Action("AttachmentsOfContact", "AttachmentFilter", new { area = CRMAreaRegistration.AREA_NAME, contactId = Model.Entity.Id })
+</div>
+</text>);
+    tabs.Add(
+      new EleWise.ELMA.Web.Mvc.Models.Selectors.TabPanelItem
+      {
+          Text = SR.T("Доступ"),
+          //Counter = taskCount,
+          Selected = selectedTab == 5,
+      }).Content(@<text>@Html.Partial("ViewItems/PermissionGridViewItem", Model.Entity)</text>);
+
+
+}).Render())
+

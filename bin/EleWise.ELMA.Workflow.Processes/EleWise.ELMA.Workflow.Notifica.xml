@@ -1,0 +1,54 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<Notifications description="Оповещения о пакетах миграции экземпляров процессов">
+
+  <Default>
+    <Filter>
+      <Event>IEntityActionHandler.ActionExecuted</Event>
+      <Object>EleWise.ELMA.Workflow.Models.WorkflowInstanceMigrationPackage</Object>
+    </Filter>
+    <RecipientSet>
+      <User>{$New.CreationAuthor}</User>
+    </RecipientSet>
+    <URL>
+      /Processes/WorkflowInstanceMigrationItem/ShowPackageItems/{$New.Id}
+    </URL>
+    <ObjectId>{$New.Id}</ObjectId>
+  </Default>
+
+  <Notification Name="ProcessError">
+    <Filter>
+      <Action>ProcessError</Action>
+    </Filter>
+    <RecipientSet Clear="true">
+      <User>{$New.CreationAuthor}</User>
+    </RecipientSet>
+    <Subject>
+      {SR('Ошибка обработки пакета')} {SR({$New.Name})}
+    </Subject>
+    <FullMessage>
+      {SR('Ошибка обработки пакета')} {SR({$New.Name})}
+    </FullMessage>
+    <ShortMessage>
+      {SR('Ошибка обработки пакета')} {SR({$New.Name})}
+    </ShortMessage>
+  </Notification>
+
+  <Notification Name="ProcessSuccess">
+    <Filter>
+      <Action>ProcessSuccess</Action>
+    </Filter>
+    <RecipientSet Clear="true">
+      <User>{$New.CreationAuthor}</User>
+    </RecipientSet>
+    <Subject>
+      {SR('Пакет ')} {SR({$New.Name})} {SR(' успешно обработан')}
+    </Subject>
+    <FullMessage>
+      {SR('Пакет обработан успешно')}
+    </FullMessage>
+    <ShortMessage>
+      {SR('Пакет обработан успешно')}
+    </ShortMessage>
+  </Notification>
+  
+</Notifications> 

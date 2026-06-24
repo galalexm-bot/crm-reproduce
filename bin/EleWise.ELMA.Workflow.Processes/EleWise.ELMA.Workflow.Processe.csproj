@@ -1,0 +1,64 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <AssemblyName>EleWise.ELMA.Workflow.Processes</AssemblyName>
+    <GenerateAssemblyInfo>False</GenerateAssemblyInfo>
+    <TargetFramework>net48</TargetFramework>
+  </PropertyGroup>
+  <PropertyGroup>
+    <LangVersion>Preview</LangVersion>
+    <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
+  </PropertyGroup>
+  <PropertyGroup>
+    <RootNamespace />
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Remove="EleWise.ELMA.Workflow.Scripts..cs" />
+    <None Remove="EleWise.ELMA.Workflow.Template.doc" />
+    <None Remove="EleWise.ELMA.Workflow.Db.Workf.xml" />
+    <None Remove="pTwdroCLp97iyoiCdx.bWhauDXjoCgVQi5aZi" />
+    <None Remove="EleWise.ELMA.Workflow.Notifica.xml" />
+    <EmbeddedResource Include="EleWise.ELMA.Workflow.Scripts..cs" />
+    <EmbeddedResource Include="EleWise.ELMA.Workflow.Template.doc" />
+    <EmbeddedResource Include="EleWise.ELMA.Workflow.Db.Workf.xml" />
+    <EmbeddedResource Include="pTwdroCLp97iyoiCdx.bWhauDXjoCgVQi5aZi" />
+    <EmbeddedResource Include="EleWise.ELMA.Workflow.Notifica.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="EleWise.ELMA.SDK">
+      <HintPath>..\EleWise.ELMA.SDK.dll</HintPath>
+    </Reference>
+    <Reference Include="EleWise.ELMA.Workflow">
+      <HintPath>..\EleWise.ELMA.Workflow.dll</HintPath>
+    </Reference>
+    <Reference Include="NHibernate" />
+    <Reference Include="EleWise.ELMA.Messages">
+      <HintPath>..\EleWise.ELMA.Messages.dll</HintPath>
+    </Reference>
+    <Reference Include="EleWise.ELMA.SDK.Diagrams">
+      <HintPath>..\EleWise.ELMA.SDK.Diagrams.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Activities" />
+    <Reference Include="EleWise.ELMA.Security">
+      <HintPath>..\EleWise.ELMA.Security.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Core" />
+    <Reference Include="System.Data" />
+    <Reference Include="EleWise.ELMA.Content">
+      <HintPath>..\EleWise.ELMA.Content.dll</HintPath>
+    </Reference>
+    <Reference Include="EleWise.ELMA.Common">
+      <HintPath>..\EleWise.ELMA.Common.dll</HintPath>
+    </Reference>
+    <Reference Include="Iesi.Collections" />
+    <Reference Include="System.Web.Extensions" />
+    <Reference Include="AutoMapper" />
+    <Reference Include="EleWise.ELMA.Tasks">
+      <HintPath>..\EleWise.ELMA.Tasks.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Xml" />
+    <Reference Include="DevComponents.DotNetBar2" />
+    <Reference Include="Nevron.Diagram" />
+    <Reference Include="Nevron.Presentation" />
+    <Reference Include="System.Web.Mvc" />
+  </ItemGroup>
+</Project>

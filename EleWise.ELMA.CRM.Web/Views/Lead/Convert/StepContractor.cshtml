@@ -1,0 +1,6 @@
+﻿@model EleWise.ELMA.CRM.Web.Models.LeadConvertModel
+
+@Html.Hidden("Contractor.__TypeName", Model.Contractor.GetType().AssemblyQualifiedName)
+@Html.Partial(Model.Contractor.EditorViewName, Model.Contractor, new ViewDataDictionary {
+    TemplateInfo = new TemplateInfo { HtmlFieldPrefix = ViewData.TemplateInfo.GetFullHtmlFieldName("Contractor") }
+}) 

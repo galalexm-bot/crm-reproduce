@@ -1,0 +1,5 @@
+﻿@model EleWise.ELMA.CRM.Models.IMarketingActivity
+@if (!Model.MarketingEffects.IsEmpty)
+{
+    @Html.Action("ActivityEffectsGrid", "MarketingActivity", new { marketingActivityId = Model.Id, pagable = false })
+}

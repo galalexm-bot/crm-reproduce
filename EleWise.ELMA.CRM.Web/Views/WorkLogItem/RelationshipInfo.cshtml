@@ -1,0 +1,10 @@
+﻿@using EleWise.ELMA
+@model EleWise.ELMA.CRM.Models.IRelationship
+
+@if (Model != null && Model.Contractor != null)
+{
+    @SR.T("Контрагент")
+    <span style="color: gray;">
+        <a href="@Url.Entity(Model.Contractor)">@Model.Contractor.ToString()</a>
+    </span>
+}

@@ -1,0 +1,31 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <AssemblyName>EleWise.ELMA.Common.Db.MsSql</AssemblyName>
+    <GenerateAssemblyInfo>False</GenerateAssemblyInfo>
+    <TargetFramework>net48</TargetFramework>
+  </PropertyGroup>
+  <PropertyGroup>
+    <LangVersion>Preview</LangVersion>
+    <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
+  </PropertyGroup>
+  <PropertyGroup>
+    <RootNamespace />
+  </PropertyGroup>
+  <ItemGroup>
+    <None Remove="EleWise.ELMA.Common.Db.MsSql.C.xml" />
+    <EmbeddedResource Include="EleWise.ELMA.Common.Db.MsSql.C.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="EleWise.ELMA.SDK">
+      <HintPath>..\EleWise.ELMA.SDK.dll</HintPath>
+    </Reference>
+    <Reference Include="NHibernate" />
+    <Reference Include="System.Core" />
+    <Reference Include="EleWise.ELMA.Common">
+      <HintPath>..\EleWise.ELMA.Common.dll</HintPath>
+    </Reference>
+    <Reference Include="EleWise.ELMA.Extensions.MSSQL">
+      <HintPath>..\EleWise.ELMA.Extensions.MSSQL.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+</Project>

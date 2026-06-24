@@ -1,0 +1,70 @@
+﻿@using EleWise.ELMA.CRM.Web.Models.SalesPlan
+@using EleWise.ELMA.Helpers
+@model List<Week>
+
+<style>
+    table.week
+    {
+        width: 100%;
+    }
+    tr.week 
+    {
+        border-top: 1px solid #CCCCCC;
+    }
+    td.week
+    {
+        width: 20%;
+        border-right: 2px solid #91B6E6;
+        padding: 5px;
+        font-size: 14px;
+    }
+    div.payment-container
+    {
+        background-color: #F5E9C6;
+    }
+    table.payment
+    {
+        width: 100%;
+        border-collapse: collapse;
+    }
+    table.payment td
+    {
+        padding:5px;
+    }
+    table.payment td.payment-name
+    {
+        width: 80%;
+        border-right: 1px solid #CCCCCC;
+    }
+    table.payment td.payment-sum
+    {
+        width: 20%;
+    }
+</style>
+
+<table class="week">
+    @foreach (var m in Model)
+    {
+        <tr class="week">
+            <td class="week">
+                @EleWise.ELMA.SR.T("{0} неделя", m.Number)<br/>
+                @m.FirstDay.ToCurrentFullFormatNotYear() - @m.LastDay.ToCurrentFullFormatNotYear()
+            </td>
+            <td data-id="@("week-" + m.Number)" data-date="@m.FirstDay">
+                @foreach(var p in m.Payments)
+                {
+                    <div data-id="@("p-container-" + p.Id)" data-container-date="@m.FirstDay" class="payment-container">
+                        <table class="payment">
+                            <tr>
+                                <td class="payment-name">@p.Name</td>
+                                <td class="payment-sum">
+                                    <a>@p.Sum</a>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                }
+            </td>
+        </tr>
+    }
+</table>

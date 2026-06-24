@@ -1,0 +1,11 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<root uid="{D267CC6E-0129-4AA5-96BD-E9CA5E19D274}">
+
+  <methods>
+    <method ExecuteTime="OnTablesCreated" name="CreateBinaryFileOriginsTable" />
+  </methods>
+
+  <indexes>
+    <index name="U_FS_ORIGINSFileId" unique="true" tableName="FS_ORIGINS" columns="FileId" />
+  </indexes>
+</root>

@@ -1,0 +1,196 @@
+﻿@model LeadDublicateModel
+           
+@using EleWise.ELMA
+@using EleWise.ELMA.Common.Models
+@using EleWise.ELMA.CRM.Enums
+@using EleWise.ELMA.CRM.Web
+@using EleWise.ELMA.CRM.Web.Models
+@using EleWise.ELMA.Model.Managers
+@using EleWise.ELMA.Web.Mvc.Models.Panels
+
+@{
+    var colorPanel = Model.Status == LeadDublicateStatus.Dublicate 
+                        ? "lightgray" 
+                        : Model.StylePanel == null ? "" : EntityManager<IColor>.Instance.Load(Model.StylePanel.ColorId).ColorCode;
+    @helper Panel(string text) { 
+        <div id="ScoringPanelHeader">
+            <div>
+                <span>@MvcHtmlString.Create(text)</span>
+            </div>
+        </div>
+    }
+
+    if (Model.Status == LeadDublicateStatus.New)
+    {
+        <div class="base-element-margin-bottom">
+            @Html.InfoPanel(Panel(SR.T("Идет проверка на дубли...")).ToHtmlString())
+        </div>
+    
+        <script type="text/javascript">
+            var auto_refresh = setInterval(
+                function(){
+                    $.ajax({
+                        url: '@Url.Action("CheckCompleteCalcDublicate", "Lead", new { area = RouteProvider.AreaName })',
+                        data: {
+                            leadId: '@Model.Lead.Id'
+                        },
+                        type: 'POST',
+                        dataType: 'json',
+                        cache: false,
+                        success: function(data) {
+                            if (data.success) {
+                                window.reloadPage();
+                            }
+                        }
+                    });
+                }, 10000);
+        </script>
+    }
+    else if (Model.Status == LeadDublicateStatus.Dublicate)
+    {
+        string nameTypeDublicateEntity;
+        string nameDublicateEntity;
+        string urlDublicateEntity;
+        if (Model.Lead.DublicateContractor != null)
+        {
+            nameTypeDublicateEntity = SR.T("Контрагенту");
+            nameDublicateEntity = Model.Lead.DublicateContractor.Name;
+            urlDublicateEntity = Url.Entity(Model.Lead.DublicateContractor);
+        }
+        else
+        {
+            nameTypeDublicateEntity = SR.T("Возможности");
+            nameDublicateEntity = Model.Lead.DublicateLead.Name;
+            urlDublicateEntity = Url.Entity(Model.Lead.DublicateLead);
+        }
+        
+        <div class="base-element-margin-bottom Dublicate_Separator">
+            @Html.InfoPanel(Panel(SR.T("Эта возможность помечена как <b>дубль</b> и привязана к {0} <a href='{1}'>{2}</a>.", 
+                nameTypeDublicateEntity, urlDublicateEntity, nameDublicateEntity)).ToHtmlString())
+        </div>
+    }
+    else
+    {
+        @helper PanelHeader(long maxPercent, string moreInfo) { 
+            <div id="ScoringPanelHeader">
+                <div>
+                    <span>
+                        @MvcHtmlString.Create(SR.T("Вероятность того, что это дубль, составляет {0}.", 
+                                string.Format("<span class=\"bold_text\">{0}%</span>", maxPercent)
+                        ))
+                    </span>
+                    <div>
+                        <span>@moreInfo</span>
+                    </div>
+                </div>
+                <div class="base-element-margin-top">
+                    @(Html.Button()
+                        .Text(SR.T("Не является дублем"))
+                        .IconUrl("#not_dublicate.svg")
+                        .Click("notDublicate()")
+                    )
+                </div>
+            </div>
+        }
+        var panel = new CollapsiblePanel {
+            Id = "Scoring",
+            SaveState = false,
+            Class = "separator-title--h3 Scoring_Separator",
+            HeaderExt = MvcHtmlString.Create(PanelHeader(Model.MaxPercent, 
+                SR.T("Найдено {0} совпадений: Похожих Компаний – {1}, Возможностей – {2}", 
+                    Model.DublicateContractorCount + Model.DublicateLeadCount, 
+                    Model.DublicateContractorCount,
+                    Model.DublicateLeadCount)
+            ).ToHtmlString())
+        };
+
+        <div class="ScoringPanelHeader-container">
+            @Html.CollapsiblePanelBegin(panel)
+            <div id="ScoringPanel">
+                @{
+                    if (Model.DublicateContractorCount > 0)
+                    {
+                        @Html.Action("DublicateContractorsGrid", "Lead", new { area = RouteProvider.AreaName, leadId = Model.Lead.Id, maxPercent = Model.MaxPercent })
+                    }
+                    if (Model.DublicateLeadCount > 0)
+                    {
+                        @Html.Action("DublicateLeadsGrid", "Lead", new { area = RouteProvider.AreaName, leadId = Model.Lead.Id, maxPercent = Model.MaxPercent })
+                    }
+                }
+            </div>
+            @Html.CollapsiblePanelEnd(panel)
+        </div>
+    }
+}
+
+<script type="text/javascript">
+    function notDublicate() {
+        jConfirm('@(SR.T("Вы уверены, что данная возможность не является дублем одного из объектов?"))', '@(SR.T("Предупреждение"))', function (r) {
+            if (r) {
+                elma.openPleaseWait();
+                $.ajax({
+                    url: '@(Url.Action("NotDublicate", "Lead", new { area = RouteProvider.AreaName, leadId = Model.Lead.Id }))',
+                    type: 'GET',
+                    dataType: 'html',
+                    cache: false,
+                    success: function() {
+                        window.reloadPage();
+                    },
+                    complete: function () {
+                        elma.closePleaseWait();
+                    }
+                });
+            }
+        });
+    }
+
+    function ContractorAttachDublicate(id, name) {
+        jConfirm(String.format('@(SR.T("Вы хотите привязать возможность к объекту {0}?"))', name), '@(SR.T("Предупреждение"))', function (r) {
+            if (r) {
+				elma.openPleaseWait();
+                $.ajax({
+                    url: '@(Url.Action("ContractorAttachDublicate", "Lead", new { area = RouteProvider.AreaName, thisLeadId = Model.Lead.Id }))&contractorId=' + id,
+                    type: 'GET',
+                    dataType: 'html',
+                    cache: false,
+                    success: function() {
+                        window.reloadPage();
+                    },
+                    complete: function () {
+                        elma.closePleaseWait();
+                    }
+                });
+            }
+        });
+    }
+
+    function LeadAttachDublicate(id, name) {
+        jConfirm(String.format('@(SR.T("Вы хотите привязать возможность к объекту {0}?"))', name), '@(SR.T("Предупреждение"))', function (r) {
+            if (r) {
+                elma.openPleaseWait();
+                $.ajax({
+                    url: '@(Url.Action("LeadAttachDublicate", "Lead", new { area = RouteProvider.AreaName, thisLeadId = Model.Lead.Id }))&leadId=' + id,
+                    type: 'GET',
+                    dataType: 'html',
+                    cache: false,
+                    success: function() {
+                        window.reloadPage();
+                    },
+                    complete: function () {
+                        elma.closePleaseWait();
+                    }
+                });
+            }
+        });
+    }
+</script>
+
+<style>
+    .collapsible-container .collapsible-panel > div.Scoring_Separator {
+        color: @colorPanel;
+    }
+
+    .collapsible-container .collapsible-panel > div.Scoring_Separator:hover {
+        color: @colorPanel !important;
+    }
+</style>

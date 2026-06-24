@@ -1,0 +1,6 @@
+﻿@model EleWise.ELMA.CRM.Web.Models.LeadConvertModel
+
+@Html.Partial("Sale/Editors/SaleEdit", Model.Sale, new ViewDataDictionary(new ViewDataDictionary { { "FormId", "SaleForm" } })
+{
+    TemplateInfo = new TemplateInfo { HtmlFieldPrefix = ViewData.TemplateInfo.GetFullHtmlFieldName("Sale") }
+}) 

@@ -1,0 +1,31 @@
+﻿@using System.ComponentModel
+@using EleWise.ELMA.CRM
+@model GridData<EleWise.ELMA.CRM.Models.ICRMAttachment>
+
+@{
+    var canDelete = CRMPermissionProvider.CheckAny(new[] { CRMPermissionProvider.CRMFullAccessPermission, 
+        CRMPermissionProvider.CRMDeletePermission }) && (bool)ViewData["CanEdit"];
+}
+
+@* уникальное имя "CrmAttachmentGrid8" используется в аякс запросе CrmAttachment.cshtml для обновления *@
+
+@(Html.DynamicGrid("CrmAttachmentGrid8", Model).Columns(c =>
+{
+    c.For(m => m.Files)
+        .Template(@<text>
+            @Html.Partial("CrmAttachmentItems", item, new ViewDataDictionary { {"CanDelete", canDelete } })
+        </text>)
+        .Order(1)
+        .Visible(true);
+    c.For(m => m.CreationAuthor)
+        .Template(@<text>
+            @Html.Partial("DisplayTemplates/Entities/User", item.CreationAuthor)
+        </text>)
+        .Order(2);
+    c.For(m => m.CreationDate)
+        .Order(3);
+})
+.DefaultSortExpression("CreationDate")
+.DefaultSortDirection(ListSortDirection.Descending)
+.EnableCustomize(false)
+)

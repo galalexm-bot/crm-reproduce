@@ -1,0 +1,122 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <!--Project was exported from assembly: D:\ELMA-CE\Web\bin\EleWise.ELMA.BPM.dll-->
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{5F940A5F-621A-42F3-967A-570CEE5A54AF}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AssemblyName>EleWise.ELMA.BPM</AssemblyName>
+    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
+    <ApplicationVersion>1.0.0.0</ApplicationVersion>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Autofac">
+      <HintPath>lib\Autofac.dll</HintPath>
+    </Reference>
+    <Reference Include="Autofac.Integration.Web">
+      <HintPath>lib\Autofac.Integration.Web.dll</HintPath>
+    </Reference>
+    <Reference Include="EleWise.ELMA.Extensions.PostgreSQL">
+      <HintPath>lib\EleWise.ELMA.Extensions.PostgreSQL.dll</HintPath>
+    </Reference>
+    <Reference Include="EleWise.ELMA.Messages">
+      <HintPath>lib\EleWise.ELMA.Messages.dll</HintPath>
+    </Reference>
+    <Reference Include="EleWise.ELMA.Packaging">
+      <HintPath>lib\EleWise.ELMA.Packaging.dll</HintPath>
+    </Reference>
+    <Reference Include="EleWise.ELMA.Packaging.Server">
+      <HintPath>lib\EleWise.ELMA.Packaging.Server.dll</HintPath>
+    </Reference>
+    <Reference Include="EleWise.ELMA.SDK">
+      <HintPath>lib\EleWise.ELMA.SDK.dll</HintPath>
+    </Reference>
+    <Reference Include="EleWise.ELMA.SDK.Diagrams">
+      <HintPath>lib\EleWise.ELMA.SDK.Diagrams.dll</HintPath>
+    </Reference>
+    <Reference Include="EleWise.ELMA.SDK.Web">
+      <HintPath>lib\EleWise.ELMA.SDK.Web.dll</HintPath>
+    </Reference>
+    <Reference Include="EleWise.ELMA.SDK.Web.Orchard">
+      <HintPath>lib\EleWise.ELMA.SDK.Web.Orchard.dll</HintPath>
+    </Reference>
+    <Reference Include="EleWise.ELMA.Security">
+      <HintPath>lib\EleWise.ELMA.Security.dll</HintPath>
+    </Reference>
+    <Reference Include="EleWise.ELMA.WebCompiler">
+      <HintPath>lib\EleWise.ELMA.WebCompiler.dll</HintPath>
+    </Reference>
+    <Reference Include="EleWise.TemplateGenerator.Merged">
+      <HintPath>lib\EleWise.TemplateGenerator.Merged.dll</HintPath>
+    </Reference>
+    <Reference Include="Iesi.Collections">
+      <HintPath>lib\Iesi.Collections.dll</HintPath>
+    </Reference>
+    <Reference Include="NHibernate">
+      <HintPath>lib\NHibernate.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Configuration" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Web" />
+    <Reference Include="System.Web.Mvc">
+      <HintPath>lib\System.Web.Mvc.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.WebPages" />
+    <Reference Include="System.Web.WebPages.Razor" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="_003CModule_003E{69E9E8EA-A304-4F64-BE97-2A1C40AF7.cs" />
+    <Compile Include="_003CModule_003E{504e5b1f-950e-4a78-8884-439e3d0cd.cs" />
+    <Compile Include="EleWise\ELMA\BPM\__Resources__AssemblyInfo.cs" />
+    <Compile Include="EleWise\ELMA\BPM\Properties\Resources.cs" />
+    <Compile Include="EleWise\ELMA\BPM\Notifications\BPMGeneratorFunctionContainer.cs" />
+    <Compile Include="EleWise\ELMA\BPM\Notifications\BPMNotificationsDataSource.cs" />
+    <Compile Include="EleWise\ELMA\BPM\Mvc\Controllers\BPMController.cs" />
+    <Compile Include="EleWise\ELMA\BPM\Mvc\Controllers\BPMController`2.cs" />
+    <Compile Include="EleWise\ELMA\BPM\Mvc\Application\MainMenuItems.cs" />
+    <Compile Include="EleWise\ELMA\BPM\Mvc\Application\TopMenu\TopMenuHelper.cs" />
+    <Compile Include="EleWise\ELMA\BPM\Mvc\Application\Orchard\ApplicationSkipDependency.cs" />
+    <Compile Include="EleWise\ELMA\BPM\Mvc\Application\Orchard\ELMAEnviromentStarter.cs" />
+    <Compile Include="EleWise\ELMA\BPM\Mvc\Application\Orchard\OrchardApplication.cs" />
+    <Compile Include="EleWise\ELMA\BPM\Mvc\Application\Orchard\Security\AuthenticationService.cs" />
+    <Compile Include="EleWise\ELMA\BPM\Mvc\Application\Orchard\Security\OrchardUser.cs" />
+    <Compile Include="EleWise\ELMA\BPM\Models\ComponentsExpiration.cs" />
+    <Compile Include="EleWise\ELMA\BPM\Components\ExpirationChecker.cs" />
+    <Compile Include="rTtVXgHRgBSsFavshV\fousyr1O5TImehMQsy.cs" />
+    <Compile Include="SG9KiyIbtdgGDf12qr\z2jc63fLkugS1X8Q9N.cs" />
+    <Compile Include="j3AmrhgkCleVTGdEwA\TKW1L3mlUyvXmg29jA.cs" />
+    <Compile Include="AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="aR3nbf8dQp2feLmk31\lSfgApatkdxsVcGcrktoFd.resx" />
+    <EmbeddedResource Include="EleWise\ELMA\BPM\Notifications\BPM\Expiration.xml" />
+    <EmbeddedResource Include="EleWise\ELMA\BPM\Properties\Resources.resx" />
+    <EmbeddedResource Include="gHLU2YiTKPJM9Rxexk.mQXZ3UuTkPNJYiWMP3" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+</Project>

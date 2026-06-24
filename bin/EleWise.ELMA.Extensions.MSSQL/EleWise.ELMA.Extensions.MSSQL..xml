@@ -1,0 +1,74 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<root uid="{48730A11-52C1-4EA1-8F18-68CBF4B56A7F}">
+
+  <methods>
+    <method name="Alter_G_GenIdFix" ExecuteTime="OnProceduresDeleted" TransformationInVersion="4.0.5" />
+  </methods>
+
+  <procedures>
+    
+    <procedure ExecuteTime="OnTablesCreating" name="SystemSettings">
+      <text>
+        <![CDATA[
+        IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[SystemSettings]') AND type in (N'U'))
+        CREATE TABLE [SystemSettings] (
+          [ModuleUid] [uniqueidentifier] NOT NULL,
+          [SettingKey] nvarchar(255) NOT NULL,
+          [SettingValue] nvarchar(max)
+          CONSTRAINT [PK_SystemSettings] PRIMARY KEY CLUSTERED
+          (
+            [ModuleUid] ASC,
+            [SettingKey] ASC
+          ) WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON) ON [PRIMARY]
+        ) ON [PRIMARY]
+        ]]>
+      </text>
+    </procedure>
+    <procedure name="GuidToCharSql">
+      <text>
+        <![CDATA[
+          CREATE FUNCTION [GUID_TO_CHAR_SQL] (@UidId uniqueidentifier)
+            RETURNS varchar(36)
+          AS
+          BEGIN
+          /*Преобразование GUID в строку с правильным UID-ом */
+            RETURN CONVERT(varchar(36), @UidId);
+          END
+        ]]>
+      </text>
+    </procedure>
+    <procedure name="CharToGuidSql">
+      <text>
+        <![CDATA[
+          CREATE FUNCTION [CHAR_TO_GUID_SQL] (@UidId varchar(36))
+            RETURNS uniqueidentifier
+          AS
+          BEGIN
+          /*Преобразование GUID в строку с правильным UID-ом */
+            RETURN CONVERT(uniqueidentifier, @UidId);
+          END
+        ]]>
+      </text>
+    </procedure>
+  </procedures>
+
+  <indexes>
+    <index name="IX_SchedulerTask_N1" tableName="SchedulerTask" columns="Type, Status, OnceExecuteTime" />
+    <index name="IX_SJRI_IdDesc" tableName="SchedulerJobRunInfo">
+      <text>
+        CREATE NONCLUSTERED INDEX [IX_SJRI_IdDesc] ON [SchedulerJobRunInfo] 
+        (
+          [TriggerId] ASC,
+          [Id] DESC
+        )
+      </text>
+    </index>
+    <index name="IX_SJRI_Connect_Job" tableName="SchedulerJobRunInfo">
+        <text>
+          CREATE NONCLUSTERED INDEX [IX_SJRI_Connect_Job]
+          ON [SchedulerJobRunInfo] ([ConnectionUid], [Job]) INCLUDE ([Id])
+        </text>
+    </index>
+  </indexes>
+  
+</root>

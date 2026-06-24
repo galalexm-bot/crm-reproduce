@@ -1,0 +1,138 @@
+﻿@using System.Reflection
+@using EleWise.ELMA
+@using EleWise.ELMA.CRM.Models
+@using EleWise.ELMA.CRM.Types
+@using EleWise.ELMA.CRM.Web
+@using EleWise.ELMA.Model.Metadata
+@using EleWise.ELMA.Web.Mvc.Models.Boxes
+@using EleWise.ELMA.Web.Mvc.Models.Panels
+@using EleWise.ELMA.Web.Mvc.Views.Inputs
+@using EleWise.ELMA.Services
+@using EleWise.ELMA.Web.Mvc.Services;
+@using EleWise.ELMA.Model.Entities
+@inherits InputControl<IMarketingEffect, MarketingEffectSettings>
+@{
+    var modelContainerObject = ViewData.ModelMetadata.GetContainerObject();
+}
+@if (Settings.IsComposite && modelContainerObject != null)
+{
+
+    string groupEditorName;
+    string activityEditorName;
+    string effectEditorName;
+
+    IMarketingGroup groupValue;
+    IMarketingActivity activityValue;
+
+    var inputId = ViewData.TemplateInfo.GetFullHtmlFieldId("");
+    var popupId = String.Format("MarketingBasePopup_{0}", inputId);
+    var prefix = ViewData.TemplateInfo.GetFullHtmlFieldName("");
+    var basePrefix = prefix.IndexOf('.') < 0 ? String.Empty : prefix.Substring(0, prefix.LastIndexOf('.')+1);
+    
+    var metadataModelContainerObject = MetadataLoader.LoadMetadata(modelContainerObject.GetType(), loadImplementation: false) as EntityMetadata;
+    if (metadataModelContainerObject != null)
+    {
+        var groupPropMetadata = metadataModelContainerObject.Properties.FirstOrDefault(p => p.Uid == Settings.MarketingGroupPropertyUid);
+        var activityPropMetadata = metadataModelContainerObject.Properties.FirstOrDefault(p => p.Uid == Settings.MarketingActivityPropertyUid);
+        groupEditorName = String.Format("{0}{1}.Id", basePrefix, groupPropMetadata.Name);
+        activityEditorName = String.Format("{0}{1}.Id", basePrefix, activityPropMetadata.Name);
+        effectEditorName = ViewData.TemplateInfo.GetFullHtmlFieldName("Id");
+
+        var groupProp = modelContainerObject.GetType().GetReflectionProperty(groupPropMetadata.Name);
+        var activityProp = modelContainerObject.GetType().GetReflectionProperty(activityPropMetadata.Name);
+        groupValue = groupProp.GetValue(modelContainerObject, null) as IMarketingGroup;
+        activityValue = activityProp.GetValue(modelContainerObject, null) as IMarketingActivity;
+    }
+    else
+    {
+        groupEditorName = String.Format("{0}{1}.Id", basePrefix, "MarketingGroup");
+        activityEditorName = String.Format("{0}{1}.Id", basePrefix, "MarketingActivity");
+        effectEditorName = ViewData.TemplateInfo.GetFullHtmlFieldName("Id");
+
+        var groupProp = modelContainerObject.GetType().GetReflectionProperty("MarketingGroup");
+        var activityProp = modelContainerObject.GetType().GetReflectionProperty("MarketingActivity");
+
+        groupValue = groupProp.GetValue(modelContainerObject, null) as IMarketingGroup;
+        activityValue = activityProp.GetValue(modelContainerObject, null) as IMarketingActivity;
+    }
+    var selectedItems = new AutocompleteItem[0];
+        if (Model != null)
+        {
+            selectedItems = new List<AutocompleteItem> { new AutocompleteItem { Value = String.Format("e{0}", Model.Id), Text = Model.Name, EntityUrl = Url.Entity((IEntity)Model) } }.ToArray();
+        }
+        else if (activityValue != null)
+        {
+            selectedItems = new List<AutocompleteItem> { new AutocompleteItem { Value = String.Format("a{0}", activityValue.Id), Text = activityValue.Name, EntityUrl = Url.Entity((IEntity)activityValue) } }.ToArray();
+        }
+        else if (groupValue != null)
+        {
+            selectedItems = new List<AutocompleteItem> { new AutocompleteItem { Value = String.Format("g{0}", groupValue.Id), Text = groupValue.Name, EntityUrl = Url.Entity((IEntity)groupValue) } }.ToArray();
+        }
+        
+        <input type="hidden" name="@(groupEditorName)" id="@(groupEditorName.Replace(".", "_"))" value="@(groupValue != null ? groupValue.Id.ToString() : String.Empty)" />
+        <input type="hidden" name="@(activityEditorName)" id="@(activityEditorName.Replace(".", "_"))" value="@(activityValue != null ? activityValue.Id.ToString() : String.Empty)"/>
+        <input type="hidden" name="@(effectEditorName)" id="@(effectEditorName.Replace(".", "_"))" value="@(Model != null ? Model.Id.ToString() : String.Empty)"/>
+
+        @Html.AutocompleteEntityComboBox(new AutocompleteEntityComboBox()
+        {
+            ActionName = "ComboboxSelect",
+            ControllerName = "MarketingActivity",
+            RouteValueDictionary = new RouteValueDictionary() { { "area", CRMAreaRegistration.AREA_NAME } },
+            AutoFill = true,
+            OnChange = String.Format("{0}_effectChanged", inputId),
+            Name = ViewData.TemplateInfo.GetFullHtmlFieldName("Composite"),
+            SelectedEntities = selectedItems,
+            HtmlAttributes = HtmlAttributes,
+            SelectImageOnClick = Html.OpenPopup(popupId, onCloseScript: string.Format("{0}_SetValue()", inputId)).ToString(),
+            Encode = false
+        })
+        @Html.PopupWindow(new Popup
+        {
+            PopupId = popupId,
+            PopupHeader = SR.T("Выберите маркетинг"),
+            ActionUrl = Html.Url().Action("Explorer", "MarketingActivity", 
+                    new RouteValueDictionary { { "area", RouteProvider.AreaName }, { "popupId", popupId } }),
+            Width = 500
+        })
+
+        <script type="text/javascript">
+            function @(inputId)_effectChanged(sel) {
+                @(inputId)_setEffectValue(sel.value);
+            }
+            function @(inputId)_setEffectValue(val) {
+                var t = val.substring(0, 1);
+                if (t == "g") {
+                    $('input[name="@(groupEditorName)"]').val(val.substring(1));
+                    $('input[name="@(activityEditorName)"]').val('');
+                    $('input[name="@(effectEditorName)"]').val('');
+
+                } else if (t == "a") {
+                    $('input[name="@(groupEditorName)"]').val('');
+                    $('input[name="@(activityEditorName)"]').val(val.substring(1));
+                    $('input[name="@(effectEditorName)"]').val('');
+
+                } else if (t == "e") {
+                    $('input[name="@(groupEditorName)"]').val('');
+                    $('input[name="@(activityEditorName)"]').val('');
+                    $('input[name="@(effectEditorName)"]').val(val.substring(1));
+                } else {
+                    $('input[name="@(groupEditorName)"]').val('');
+                    $('input[name="@(activityEditorName)"]').val('');
+                    $('input[name="@(effectEditorName)"]').val('');
+                }
+            }
+
+            function @(inputId)_SetValue() {
+                var val = $('#@(popupId)_value').val();
+                if (val > '') {
+                    @(inputId)_setEffectValue(val);
+                    var combobox = $('#@(ViewData.TemplateInfo.GetFullHtmlFieldId("Composite"))').data('tComboBox');
+                    combobox.reloadSelect(val);
+                }
+            }
+        </script>
+}
+else
+{
+    @Html.Partial("EditorTemplates/Entity")
+}

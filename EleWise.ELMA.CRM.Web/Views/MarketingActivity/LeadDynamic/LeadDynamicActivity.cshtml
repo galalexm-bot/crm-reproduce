@@ -1,0 +1,105 @@
+﻿@model LeadDynamicModel
+
+@using System.Globalization
+@using System.Web.Mvc
+@using EleWise.ELMA
+@using EleWise.ELMA.CRM
+@using EleWise.ELMA.CRM.Models
+@using EleWise.ELMA.CRM.Web
+@using EleWise.ELMA.CRM.Web.Models
+@using EleWise.ELMA.Model.Services
+@using EleWise.ELMA.Model.Views
+@using EleWise.ELMA.Web.Mvc.ExtensionPoints
+@using EleWise.ELMA.Web.Mvc.Enums
+
+@{
+    var entityId = Model.Entity == null ? 0 : Model.Entity.Id;
+    var countColumn = Model.PeriodList.Count;
+    var canAdd = CRMPermissionProvider.CheckAny(new[] { CRMPermissionProvider.CRMFullAccessPermission, CRMPermissionProvider.MarketingFullAccessPermission });
+}
+
+@if (Model != null)
+{
+    var first = 0;
+    var list = Model.ShowArchive ? Model.GridDataArchive : Model.GridData;
+    foreach (MarketingElementModel el in list)
+    {
+        first++;
+        var classDiv = first == list.Count ? "t-last" : "";
+        var classDiv2 = first == list.Count ? "t-bot" : first == 1 ? "t-top" : "t-mid";
+
+        var allHours = (Model.PeriodList[Model.PeriodList.Count - 1].To.Value - Model.PeriodList[1].From.Value).TotalHours;
+        double left = 0;
+        double width = 0;
+        var activity = el.Entity as IMarketingActivity;
+        if (activity != null)
+        {
+            left = ((activity.StartDate - Model.PeriodList[1].From.Value).TotalHours / allHours) * 80 + 20;
+            width = ((activity.EndDate - activity.StartDate).TotalHours / allHours) * 80;
+        }
+        var effect = el.Entity as IMarketingEffect;
+        if (effect != null)
+        {
+            left = ((effect.StartDate - Model.PeriodList[1].From.Value).TotalHours / allHours) * 80 + 20;
+            width = ((effect.EndDate - effect.StartDate).TotalHours / allHours) * 80;
+        }
+
+        var hide = left > 100 || (left + width) < 20 || width <= 0;
+        if (left < 20)
+        {
+            width += left - 20;
+            left = 20;
+        }
+        if ((left + width) > 100)
+        {
+            width = 99.5 - left;
+        }
+
+        if (!hide)
+        {
+            <div class="period-block parent-@entityId @(Model.ShowArchive ? "is-archive" : "")" style="left: @left.ToString(CultureInfo.InvariantCulture)%; width: @(width.ToString(CultureInfo.InvariantCulture))%;"></div>
+        }
+        <div class="lead-dynamic-grid-row parent-@entityId @(Model.ShowArchive ? "is-archive" : "")">
+            <div class="lead-dynamic-grid-td">
+                <div class="t-item">
+                    <div class="t-item @(el.Entity is IMarketingEffect ? "" : classDiv)">
+                        @(el.Entity is IMarketingEffect ? MvcHtmlString.Create("<div class='t-item " + classDiv + "'>") : MvcHtmlString.Empty)
+                        <div class="@(classDiv2)">
+                            @if (el.AnyChildren)
+                            {
+                                <span class="t-icon @(el.IsShow ? "t-minus" : "t-plus")" marketing-id="@el.Entity.Id"></span>
+                            }
+                            <span class="t-in">
+                                @Html.Image(Html.Url().ObjectIcon(ObjectIconFormat.x16, el.Entity), "", new { @class = "t-image" })
+                                <span><a href="@Url.Entity(el.Entity)" class="marketing-activity-button">@el.Entity.Name</a></span>
+                                @if ((canAdd || el.UserHasCreateItemsPermission) && el.Entity is IMarketingActivity && el.Entity.Status != MarketingObjectStatus.Archived)
+                                {
+                                    @Html.Button().IconUrl("#add.svg").Url(Url.Action("Create", "MarketingActivity", new                                        {
+                                            area = CRMAreaRegistration.AREA_NAME,
+                                            typeUid = InterfaceActivator.UID<IMarketingEffect>(),
+                                            parentId = el.Entity.Id
+                                        })).Attributes(new {
+                                            @class = "tree-item-button",
+                                            title = SR.T("Создать воздействие")
+                                        })
+                                }
+                            </span>
+                        </div>
+                        @(el.Entity is IMarketingEffect ? MvcHtmlString.Create("</div>") : MvcHtmlString.Empty)
+                    </div>
+                </div>
+            </div>
+            @{
+                for (var i = 1; i < countColumn; i++)
+                {
+                    <div class="lead-dynamic-grid-td">@MvcHtmlString.Create(Model.ShowStatistic ? LeadDynamicModel.TemplateTd(Html, el, Model.PeriodList[i], i) : "")</div>
+                }
+            }
+        </div>
+
+        if (el.IsShow)
+        {
+            @Html.Partial("LeadDynamic/LeadDynamicActivity", new LeadDynamicModel(Model.Mode, Model.CurrentDate, Model.ShowArchive, Model.ShowStatistic, el.Entity.Id))
+        }
+    }
+}

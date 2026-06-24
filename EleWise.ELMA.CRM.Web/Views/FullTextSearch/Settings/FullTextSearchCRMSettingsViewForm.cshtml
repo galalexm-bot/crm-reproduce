@@ -1,0 +1,173 @@
+﻿@using EleWise.ELMA
+@using EleWise.ELMA.CRM.FullTextSearch
+@using EleWise.ELMA.CRM.Web.FullTextSearch.Models
+@using EleWise.ELMA.ComponentModel
+@using EleWise.ELMA.CRM.Web
+@using EleWise.ELMA.Model.Views
+
+@model CRMFullTextSearchSettingsModel
+
+@if (Model.Settings.IndexingContractor == true)
+{
+    using (Html.ELMAForm("IndexingContractorOff", "FullTextSearch", new { area = RouteProvider.AreaName }, FormMethod.Post, new { id = "IndexingContractorOffForm" }))
+    {
+    }
+
+    @Html.PopupWindow("IndexingContractorOffPopup", SR.T("Отключить индексирование контрагентов"), @<text>
+
+        @SR.T("Внимание!")
+        <br />
+        <br />
+        @SR.T("Индексирование контрагентов будет остановленно.")
+
+        <div class="popup-buttons">
+            <input type="submit" value="@SR.T("Продолжить")" class="confirm" onclick="elma.openPleaseWait(true); $('#IndexingContractorOffForm').submit();" />
+            <input type="button" value="@SR.Cancel" onclick="@Html.ClosePopup()" />
+        </div>
+
+    </text>)
+}
+
+@if (Model.Settings.IndexingContractorAttachments == true)
+{
+    using (Html.ELMAForm("IndexingContractorAttachmentsOff", "FullTextSearch", new { area = RouteProvider.AreaName }, FormMethod.Post, new { id = "IndexingContractorAttachmentsOff" }))
+    {
+    }
+
+    @Html.PopupWindow("IndexingContractorAttachmentsOffPopup", SR.T("Отключить индексирование вложений контрагентов"), @<text>
+        @SR.T("Внимание!")
+        <br />
+        <br />
+        @SR.T("Индексирование вложений контрагентов системы будет остановленно. Полнотекстовый поиск по его содержимому станет недоступен.")
+
+        <div class="popup-buttons">
+            <input type="submit" value="@SR.T("Продолжить")" class="confirm" onclick="elma.openPleaseWait(true); $('#IndexingContractorAttachmentsOff').submit();" />
+            <input type="button" value="@SR.Cancel" onclick="@Html.ClosePopup()" />
+        </div>
+    </text>)
+}
+
+@Html.PopupWindow("IndexingContractorOnPopup", SR.T("Включить индексирование контрагентов"), @<text>
+    <div class="messagePanel-Warning">
+        @SR.T("Будет произведено индексирование контрагентов. На время проведения индексации функции полнотекстового поиска станут недоступны.")
+    </div>
+    <br />
+    @using (Html.TableForm(v => v.Attributes(a => a.@class = "settings_table full-text-search-settings-container")))
+    {
+        <tr>
+            <td class="captionCell">
+                @Html.Caption(m => m.IndexingContractorAttachments)
+            </td>
+            <td>
+                @Html.ModernSwitchButtonFor(m => m.IndexingContractorAttachments, true, true)
+            </td>
+        </tr>
+    }
+
+    <div class="popup-buttons">
+        <input type="submit" value="@SR.T("Продолжить")" class="confirm" onclick="elma.openPleaseWait(true); IndexingContractorOn()" />
+        <input type="button" value="@SR.T("Отмена")" onclick="@Html.ClosePopup()" />
+    </div>
+</text>)
+
+@if (!string.IsNullOrWhiteSpace(Model.Settings.IndexingStopInfo))
+{
+    <div class="note fullTextSearch-info-panel">
+        <div class="note-content">
+            <div>@SR.T("В данный момент индексация отключена")</div>
+            <div class="color-red">
+                @SR.T("Причина остановки индексации: {0}", Model.Settings.IndexingStopInfo)
+            </div>
+        </div>
+    </div>
+}
+
+
+@using (Html.TableForm(v => v.Attributes(a => a.@class = "settings_table full-text-search-settings-container")))
+{
+    <tr>
+        <td class="captionCell">
+            @Html.Caption(m => m.Settings.IndexingContractor)
+        </td>
+        <td>
+            @Html.Display(m => m.Settings.IndexingContractor)
+            @if (Model.Settings.IndexingContractor == true)
+            {
+                @(Html.Button()
+                    .Text(SR.T("Выключить"))
+                    .Click(Html.OpenPopup("IndexingContractorOffPopup").ToHtmlString())
+                    .Attributes(new { type="submit", @class="full-text-search-off-button" })
+                    .Style(ButtonStyle.Red)
+                )
+            }
+            else
+            {
+                if (!Model.ReIndexState)
+                {
+                    @(Html.Button()
+                                .Text(SR.T("Включить"))
+                                .Click(Html.OpenPopup("IndexingContractorOnPopup").ToHtmlString())
+                                .Attributes(new { type = "submit", @class = "full-text-search-off-button" })
+                                .Style(ButtonStyle.Green)
+                    )
+                }
+            }
+        </td>
+    </tr>
+    <tr>
+        <td class="captionCell">
+            @Html.Caption(m => m.Settings.IndexingContractorAttachments)
+        </td>
+        <td>
+            @Html.Display(m => m.Settings.IndexingContractorAttachments)
+            @if (Model.Settings.IndexingContractorAttachments == true)
+            {
+                @(Html.Button()
+                    .Text(SR.T("Выключить"))
+                    .Click(Html.OpenPopup("IndexingContractorAttachmentsOffPopup").ToHtmlString())
+                    .Attributes(new { type="submit", @class="full-text-search-off-button" })
+                    .Style(ButtonStyle.Red)
+                )
+            }
+            else
+            {
+                if (!Model.ReIndexState)
+                {
+                    @(Html.Button()
+                            .Text(SR.T("Включить"))
+                            .Click("IndexingAttachmentsPopupOpen()")
+                            .Attributes(new { type = "submit", @class = "full-text-search-off-button" })
+                            .Style(ButtonStyle.Green)
+                    )
+                }
+            }
+        </td>
+    </tr>
+}
+
+<script>
+
+    function IndexingAttachmentsPopupOpen() {
+        $('#IndexingContractorAttachments').attr('checked', 'checked');
+        openWindow("IndexingContractorOnPopup");
+    }
+
+    function IndexingContractorOn() {
+        var indexingVersion = $('#IndexingContractorAttachments').attr('checked') == 'checked';
+        $.ajax({
+            type: 'Get',
+            url: '@Url.Action("IndexingContractorOn", "FullTextSearch", new { area = RouteProvider.AreaName })?' + "IndexingContractorAttachments=" + indexingVersion,
+            success: function (data) {
+                debugger;
+                if (data.Result) {
+                    location.reload();
+                } else {
+                    elma.AjaxError.show('@SR.T("При индексирвоании документов произошла ошибка")');
+                    elma.AjaxError.show('@SR.T("Подробную информацию об ошибке можно найти в лог-файле сервера ELMA")');
+                    elma.closePleaseWait(true);
+                }
+            }
+        });
+    }
+
+</script>

@@ -1,0 +1,19 @@
+﻿@inherits TabCaptionViewItemControl<IContractor, TabViewItem>
+@using EleWise.ELMA
+@using EleWise.ELMA.CRM.Models
+@using EleWise.ELMA.Model.Managers
+@using EleWise.ELMA.Model.Services
+@using EleWise.ELMA.Model.Views
+@using EleWise.ELMA.Web.Mvc.Views.ViewItem
+
+@if (ViewItem != null && Model != null)
+{
+    var docFilter = InterfaceActivator.Create<ICRMAttachmentFilter>();
+    docFilter.Contractor = Model;
+    Counter = EntityManager<ICRMAttachment>.Instance.Count(docFilter);
+    @(ViewItem.Caption ?? SR.T("Документы"))
+}
+else
+{
+    @SR.T("Документы")
+}

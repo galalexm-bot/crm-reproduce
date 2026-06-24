@@ -1,0 +1,64 @@
+﻿@using EleWise.ELMA
+@using EleWise.ELMA.CRM.Web
+@using EleWise.ELMA.CRM.Web.Controllers
+@using EleWise.ELMA.CRM.Web.Models
+@using EleWise.ELMA.Web.Mvc.Models.Panels
+@model InpaymentPortletModel
+
+@using (Html.CollapsiblePanel(new CollapsiblePanel(){
+    Id = ViewData.TemplateInfo.GetFullHtmlFieldId(String.Format("OldInpaymentsGridPortletPanel_{0}", Model.InstanceId)),
+    Header = SR.T("Ранее"),
+    SaveState = true,
+    Class = "separator-gray",
+    Expanded = false,
+    Url = Url.Action(InpaymentController.GetGridIds[0] + "Action", "Inpayment", new { area = CRMAreaRegistration.AREA_NAME, Model.FilterId, portletView = true, showOnlyMy = Model.ShowOnlyMy, instanceId = Model.InstanceId })
+})) {}
+
+@using (Html.CollapsiblePanel(new CollapsiblePanel(){
+    Id = ViewData.TemplateInfo.GetFullHtmlFieldId(String.Format("ThisMonthBeforeWeekGridPortletPanel_{0}", Model.InstanceId)),
+    Header = SR.T("Текущий месяц (До)"),
+    SaveState = true,
+    Class = "separator-gray",
+    Expanded = false,
+    Url = Url.Action(InpaymentController.GetGridIds[1] + "Action", "Inpayment", new { area = CRMAreaRegistration.AREA_NAME, Model.FilterId, portletView = true, showOnlyMy = Model.ShowOnlyMy, instanceId = Model.InstanceId })
+})) {}
+
+@using (Html.CollapsiblePanel(new CollapsiblePanel(){
+    Id = ViewData.TemplateInfo.GetFullHtmlFieldId(String.Format("CurrentWeekGridPortletPanel_{0}", Model.InstanceId)),
+    Header = SR.T("Текущая неделя"),
+    SaveState = true,
+    Class = "separator-gray",
+    Expanded = false,
+    Url = Url.Action(InpaymentController.GetGridIds[2] + "Action", "Inpayment", new { area = CRMAreaRegistration.AREA_NAME, Model.FilterId, portletView = true, showOnlyMy = Model.ShowOnlyMy, instanceId = Model.InstanceId })
+})) {}
+
+@using (Html.CollapsiblePanel(new CollapsiblePanel(){
+    Id = ViewData.TemplateInfo.GetFullHtmlFieldId(String.Format("ThisMonthAfterWeekGridPortletPanel_{0}", Model.InstanceId)),
+    Header = SR.T("Текущий месяц (После)"),
+    SaveState = true,
+    Class = "separator-gray",
+    Expanded = false,
+    Url = Url.Action(InpaymentController.GetGridIds[3] + "Action", "Inpayment", new { area = CRMAreaRegistration.AREA_NAME, Model.FilterId, portletView = true, showOnlyMy = Model.ShowOnlyMy, instanceId = Model.InstanceId })
+})) {}
+
+@using (Html.CollapsiblePanel(new CollapsiblePanel(){
+    Id = ViewData.TemplateInfo.GetFullHtmlFieldId(String.Format("FarFutureGridPortletPanel_{0}", Model.InstanceId)),
+    Header = SR.T("Далее"),
+    SaveState = true,
+    Class = "separator-gray",
+    Expanded = false,
+    Url = Url.Action(InpaymentController.GetGridIds[4] + "Action", "Inpayment", new { area = CRMAreaRegistration.AREA_NAME, Model.FilterId, portletView = true, showOnlyMy = Model.ShowOnlyMy, instanceId = Model.InstanceId })
+})) {}
+
+@{
+    Html.RegisterContent("updateGridTotalContent", @<text>
+<script type="text/javascript">
+    function updateGridTotal(gridId) {
+        var ajaxData = $('#' + gridId).data('tGrid').ajaxData;
+        $('#' + gridId + '_total #TotalInPlanWithDate').html(ajaxData.TotalInPlanWithDate);
+        $('#' + gridId + '_total #TotalInPlanWithOutDate').html(ajaxData.TotalInPlanWithOutDate);
+        $('#' + gridId + '_total #TotalReceived').html(ajaxData.TotalReceived);
+        $('#' + gridId + '_total #Total').html(ajaxData.Total);
+    }
+</script></text>);
+}

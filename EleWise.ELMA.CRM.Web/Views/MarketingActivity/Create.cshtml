@@ -1,0 +1,20 @@
+﻿@model EleWise.ELMA.CRM.Web.Models.MarketingActivityModel
+@using EleWise.ELMA
+@using EleWise.ELMA.CRM.Web
+@using EleWise.ELMA.Model.Metadata
+
+@{
+    var metadata = (EntityMetadata)MetadataLoader.LoadMetadata(Model.Entity.GetType());
+    Html.Header(string.Format("{0} - {1}", SR.T("Создание"), metadata.DisplayName));
+}
+
+@(Html.Toolbar()
+    .Group("toolbar-group-1")
+        .ToolbarSubmit("toolbar-action-Save", b => b
+            .Text(SR.Save)
+            .MainAction(true)
+            .IconUrl("#save.svg")
+        )
+        .ToolbarLink(SR.Cancel, "#close_outline.svg", "javascript:history.back(-1);", "toolbar-action-Cancel"))
+
+@Html.Partial("Editors/MarketingActivityEdit")

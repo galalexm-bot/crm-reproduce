@@ -1,0 +1,22 @@
+﻿@using EleWise.ELMA
+@model EleWise.ELMA.CRM.Web.Models.AddStagePopupViewModel
+
+@using (Html.JavascriptForm(null, "saveStage(this);return false;" ))
+{
+    @Html.HiddenFor(m => m.Entity.Id)
+	@Html.Hidden("Entity.Color.Id", 0)
+    @Html.Hidden("Entity_BinderProviderUid", EntityCreateOnLoadModelBinderProvider.UID)
+    @Html.HiddenFor(m => m.Entity.GlobalOrder)
+    using (Html.TableForm(EleWise.ELMA.Model.Views.ViewType.Edit))
+    {
+        @Html.EditableProperty(m => m.Entity.Name)
+        @Html.EditableProperty(m => m.Entity.Color)
+        @Html.EditableProperty(m => m.Entity.Shrinkage, a => a.Name = SR.T("Сужение воронки (%)"))
+        @Html.ExtensionZone("EleWise.ELMA.CRM.Web.AddStagePopup")
+    }
+
+    <div class="popup-buttons">
+        <input type="submit" class="confirm" value="@SR.T("ОК")" />
+        <input type="button" onclick="closeWindow('AddStagePopup')" value="@SR.Cancel" />
+    </div>
+}

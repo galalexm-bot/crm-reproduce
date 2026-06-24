@@ -1,0 +1,84 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<Notifications
+  description="Оповещение информационных каналов">
+
+  <Default>
+    <Filter>
+      <Event>IEntityActionHandler.ActionExecuted</Event>
+      <Object>EleWise.ELMA.Messages.Models.ChannelMessage</Object>
+    </Filter>
+    <RecipientSet>
+      <User>{$New.Recipients}</User>
+      <MessageChannelRecipient>{$New}</MessageChannelRecipient>
+    </RecipientSet>
+    <URL>
+      /Messages/ChannelMessage/Info/{$New.Id}
+    </URL>
+    <ObjectId>{$New.Id}</ObjectId>
+  </Default>
+
+  <Notification Name="Create">
+    <Filter>
+      <Action>Create</Action>
+    </Filter>
+    <Subject>
+      {if {$New.Parent}=null}({if {$New.Channels.Count}=0}{SR('Новое сообщение')}{else}{SR('Новое сообщение в инфоканале ')}{end if}{for ch in {$New.Channels}}#{$ch.Name}{if Index({$ch})&lt;Count({$ch})-1}, {end if}{end}) {$New.Subject}{else}({SR('Добавлен комментарий')}) {$New.Parent.Subject}{end if}
+    </Subject>
+    <ShortMessage>
+      {TableStart()}
+      {PropertyFullRow({$New.FullMessage};'')}
+      {TableEnd()}
+    </ShortMessage>
+    <FullMessage>
+      {TableStart()}
+      {PropertyFullRow({$New.FullMessage};'')}
+      {PropertyFullRow({$New.Attachments};'')}
+      {ExtensionZone('EleWise.ELMA.Messages.Web.ChannelMessageView-DefaultFullMessage-AfterAttachments')}
+      {TableEnd()}
+    </FullMessage>
+  </Notification>
+
+  <Notification Name="CreateTestMessage">
+    <Filter>
+      <Action>CreateTestMessage</Action>
+    </Filter>
+    <RecipientSet Clear="true" SendToAuthorOnly="true">
+      <User>{$New.Recipients}</User>
+    </RecipientSet>
+    <Subject>
+      {$New.Subject}
+    </Subject>
+    <ShortMessage>
+      {TableStart()}
+      {PropertyFullRow({$New.FullMessage};'')}
+      {TableEnd()}
+    </ShortMessage>
+    <FullMessage>
+      {TableStart()}
+      {PropertyFullRow({$New.FullMessage};'')}
+      {PropertyFullRow({$New.Attachments};'')}
+      {ExtensionZone('EleWise.ELMA.Messages.Web.ChannelMessageView-DefaultFullMessage-AfterAttachments')}
+      {TableEnd()}
+    </FullMessage>
+  </Notification>
+
+  <Notification Name="AddRecipients">
+    <Filter>
+      <Action>AddRecipients</Action>
+    </Filter>
+    <RecipientSet Clear="true">
+      <User>{$NewRecipients}</User>
+    </RecipientSet>
+    <Subject>
+      ({SR('Вы добавлены в получатели сообщения')}) {$New.Subject}
+    </Subject>
+    <FullMessage>
+      {TableStart()}
+      {PropertyFullRow({$New.FullMessage};'')}
+      {PropertyFullRow({$New.Attachments};'')}
+      {ExtensionZone('EleWise.ELMA.Messages.Web.ChannelMessageView-DefaultFullMessage-AfterAttachments')}
+      {TableEnd()}
+    </FullMessage>
+  </Notification>
+
+</Notifications>

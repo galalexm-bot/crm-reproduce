@@ -1,0 +1,69 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<root uid="{AF0D8261-11DF-4C3C-B103-7B1B942EF07C}">
+
+  <procedures>
+
+    <procedure name="ResponsibilityProcessCheck">
+      <mappings>
+        <hibernate-mapping xmlns="urn:nhibernate-mapping-2.2">
+          <resultset name="ResponsobilityMatrixHandler">
+            <return-scalar column="BPMNProcess" type="System.Int64"/>
+          </resultset>
+          <sql-query name="ResponsibilityProcessCheck" resultset-ref="ResponsobilityMatrixHandler">
+            <query-param name="userfilter" type="System.Int64" />
+            <query-param name="orgitemtype" type="System.Guid" />
+            <query-param name="usergrouptype" type="System.Guid" />
+            <![CDATA[
+            select &&BPMNProcess&& from &&ResponsibilityMatrixItem&& rm
+            left join &&OrganizationItem&& dep on rm.&&WorkerType&& = :orgitemtype and dep.&&Id&& = rm.&&WorkerId&&
+            left join &&OrganizationItemUsers&& du on rm.&&WorkerType&& = :orgitemtype and du.&&OrganizationItemId&& = dep.&&Id&&
+            left join &&UserSecuritySetCache&& agu on rm.&&WorkerType&& = :usergrouptype and agu.&&GroupId&&=rm.&&WorkerId&&
+            where rm.&&ResponsibilityLevel&& = 2 and 
+	              (dep.&&UserId&& = :userfilter or 
+	              (rm.&&WorkerType&& = :orgitemtype and du.&&UserId&& = :userfilter) or 
+	              (rm.&&WorkerType&& = :usergrouptype and agu.&&UserId&& = :userfilter))
+            ]]>
+          </sql-query>
+        </hibernate-mapping>
+      </mappings>
+      <text>
+      </text>
+    </procedure>
+
+
+  </procedures>
+
+  <methods>
+
+    <method name="CreateFullMonitorUserGroup" />
+    <method name="CreateProcessRegulationDefault"/>
+    <method name="CreateWorkflowProcessListRunning"/>
+    <method name="CreateFakeDependencies" />
+    <method name="CreateScriptErrorNotificationSendGroup" />
+    <method name="DeleteWorkflowQueueItemsAssociatedWithRestrictedWorkflowInstances" TransformationInVersion="3.15.12" />
+
+    <method ExecuteTime="OnTablesCreated" name="ReCreateWorkflowInstanceParentsTable" />
+    <method ExecuteTime="OnTablesCreating" name="DropObservedContextPropertyTable" />
+    <method ExecuteTime="OnTablesCreated" name="ReCreateObservedContextPropertyTable" />
+    <method ExecuteTime="OnTablesCreated" name="CreateWorkflowQueueDbServiceStructures" />
+    <method ExecuteTime="OnTablesCreated" name="CreateActiveTasksMembers" TransformationInVersion="4.0.0" />
+  </methods>
+
+  <scripts>
+  </scripts>
+
+  <indexes>
+    <index name="IX_WorkflowInstance_Status" tableName="WorkflowInstance" columns="Id, Process, Status" />
+    <index name="IX_MVD_CriticalTime" tableName="MetricValueData" columns="CriticalTime" />
+    <index name="IX_Sys_ObservedCSubTypeType" tableName="Sys_ObservedCtxProperty" columns="SubType, ObjectOI, PropertyUid, WorkflowInstance" />
+    <index name="IX_Sys_ObservedCtxPropertyFull" tableName="Sys_ObservedCtxProperty" columns="ProcessHeader, Context, PropertyUid, ObjectOI" />
+    <index name="IDX_WorkflowInstanceParents" tableName="WorkflowInstanceParents" columns="Parent, Child" />
+    <index name="IX_WIP_Child" tableName="WorkflowInstanceParents" columns="Child" />
+    <index name="IX_WorkflowTrackingItem_IEE" tableName="WorkflowTrackingItem" columns="Instance, ElementUid, EndDate" />
+    <index name="IX_P_WFQProcessingItem_ExUid" unique="true" tableName="WorkflowQueueProcessingItem" columns="ExecutionUid" />
+    <index name="IX_P_WFQProcessing_ItemId" unique="true" tableName="WorkflowQueueProcessingItem" columns="ItemId" />
+    <index name="IX_P_WFQProcessing_InstanceId" unique="true" tableName="WorkflowQueueProcessingItem" columns="InstanceId" />
+    <index name="IX_WflInstMember_UserInst" tableName="WorkflowInstanceMember" columns="User,Instance" />
+  </indexes>
+  
+</root>

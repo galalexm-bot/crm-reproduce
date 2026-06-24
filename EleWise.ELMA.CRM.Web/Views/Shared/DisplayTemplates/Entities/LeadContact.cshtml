@@ -1,0 +1,14 @@
+﻿@using EleWise.ELMA.Model.Entities
+@model EleWise.ELMA.CRM.Models.ILeadContact
+
+@if (Model != null)
+{
+    if (Model.IsNew() || Model.IsDeleted)
+    {
+        @Model.GetTitleOrDefault(m => m.Name)
+    }
+    else
+    {
+        <a href="@Url.Entity(Model.Lead)?tabIndex=1">@Model.GetTitleOrDefault(m => m.Name)</a>
+    }
+}

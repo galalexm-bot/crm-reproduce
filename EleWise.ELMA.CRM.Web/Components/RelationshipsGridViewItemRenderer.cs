@@ -1,0 +1,34 @@
+﻿// Decompiled with JetBrains decompiler
+// Type: EleWise.ELMA.CRM.Web.Components.RelationshipsGridViewItemRenderer
+// Assembly: EleWise.ELMA.CRM.Web, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
+// MVID: F0C16743-1D89-40E8-934E-B30ADB346902
+// Assembly location: D:\ELMA-CE\Web\Modules\EleWise.ELMA.CRM.Web\bin\EleWise.ELMA.CRM.Web.dll
+
+using EleWise.ELMA.ComponentModel;
+using EleWise.ELMA.CRM.Managers;
+using EleWise.ELMA.CRM.Models;
+using EleWise.ELMA.CRM.ViewItems;
+using EleWise.ELMA.Model.Common;
+using EleWise.ELMA.Model.Services;
+using EleWise.ELMA.Model.Views;
+using EleWise.ELMA.Web.Mvc.ExtensionPoints;
+
+namespace EleWise.ELMA.CRM.Web.Components
+{
+  [Component]
+  public class RelationshipsGridViewItemRenderer : 
+    ViewItemRendererBase<RelationshipsGridViewItem>,
+    ICountViewItemRenderer
+  {
+    public long? Count(object model, ICountViewItem viewItem)
+    {
+      IRelationshipFilter filter = InterfaceActivator.Create<IRelationshipFilter>();
+      filter.DisableSecurity = true;
+      filter.Contractor = model as IContractor;
+      filter.Contact = model as IContact;
+      filter.Lead = model as ILead;
+      filter.Sale = model as ISale;
+      return new long?(RelationshipManager.Instance.Count((IEntityFilter) filter));
+    }
+  }
+}

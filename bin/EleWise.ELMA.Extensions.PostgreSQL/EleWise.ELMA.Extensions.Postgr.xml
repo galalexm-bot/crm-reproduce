@@ -1,0 +1,49 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<root uid="{5E0076B4-9898-4078-BE84-7009AA1E5A84}">
+
+  <methods>
+    <method ExecuteTime="OnTablesCreated" name="CreateSystemSettingsTable" />
+    <method ExecuteTime="OnPrimaryKeysCreated" name="UpdateSystemSettingsTable" />
+  </methods>
+
+  <procedures>
+  <procedure name="GuidToCharSql">
+    <text>
+      <![CDATA[
+      CREATE OR REPLACE FUNCTION GUID_TO_CHAR_SQL(&&UidId&& uuid)
+          RETURNS varchar(36) as $$
+          begin
+          
+          /*Преобразование GUID в строку с правильным UID-ом */
+            RETURN cast(&&UidId&& as varchar(36));
+          end;
+          $$
+          language plpgsql;
+        ]]>
+    </text>
+  </procedure>
+  <procedure name="CharToGuidSql">
+    <text>
+      <![CDATA[
+         CREATE OR REPLACE FUNCTION CHAR_TO_GUID_SQL(&&UidId&& varchar(36))
+          RETURNS uuid as $$
+          begin
+          
+          /*Преобразование GUID в строку с правильным UID-ом */
+            RETURN cast(&&UidId&& as uuid);
+          end;
+          $$
+          language plpgsql;
+        ]]>
+    </text>
+  </procedure>
+  </procedures>
+    
+  <scripts>
+  </scripts>
+
+  <indexes>
+    <index name="IX_SJRI_Connect_Job" tableName="SchedulerJobRunInfo" columns="ConnectionUid, Job, Id" />
+  </indexes>
+
+</root>

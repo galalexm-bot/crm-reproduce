@@ -1,0 +1,28 @@
+﻿@model EleWise.ELMA.CRM.Web.Models.SalesPlan.CalendarModel
+
+@{
+    string rightPanel = "SalesPlanRightPanel";
+    var state = EleWise.ELMA.BPM.Web.Common.Extensions.StateExtensions.LoadState<EleWise.ELMA.Web.Mvc.Menu.MenuState>(rightPanel);
+    if (state == null)
+    {
+        state = new EleWise.ELMA.Web.Mvc.Menu.MenuState() { Id = rightPanel, Collapsed = true, Width = 180 };
+        EleWise.ELMA.BPM.Web.Common.Extensions.StateExtensions.SaveState(rightPanel, state);
+    }
+}
+
+<table style="width:100%">
+    <tr>
+        <td id="calendar-place-holder" style="width:100%">
+            @Html.Partial("Calendar")
+        </td>
+        <td id="list-splitter" class="calendar-vertical-splitter @(state.Collapsed ? " collapsed" : "")" onclick="toggleSplitter()">
+            <div style="width: 26px;display: block;">&nbsp;</div>
+        </td>
+        <td id="sales-list" style="width: 250px;@(state.Collapsed ? "display:none" : "")">
+            @foreach (var s in Model.Sales)
+            {
+                @Html.Partial("Sale", s);
+            }
+        </td>
+    </tr>
+</table>

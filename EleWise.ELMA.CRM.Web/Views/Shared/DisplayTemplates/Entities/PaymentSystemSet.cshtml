@@ -1,0 +1,17 @@
+﻿@using EleWise.ELMA.Web.Mvc.Views.Inputs
+@using EleWise.ELMA.CRM.Models.BillingInformation
+@using EleWise.ELMA.Model.Types.Settings
+@inherits InputControl<IEnumerable<IPaymentSystem>, EntitySettings>
+
+@if (Model != null)
+{
+    foreach (var item in Model)
+    {
+        if (item != null && !item.IsDeleted)
+        {
+            <div>
+                @Html.Partial("DisplayTemplates/Entities/PaymentSystem", item)
+            </div>
+        }
+    }
+}

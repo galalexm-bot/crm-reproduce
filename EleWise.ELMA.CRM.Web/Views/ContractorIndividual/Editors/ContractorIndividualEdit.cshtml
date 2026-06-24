@@ -1,0 +1,11 @@
+﻿@model EleWise.ELMA.CRM.Web.Models.ContractorIndividualModel
+@using ViewType = EleWise.ELMA.Model.Views.ViewType;
+@{
+    var isEditing = Model.View.ViewType == ViewType.Create || Model.View.ViewType == ViewType.Edit || Model.View.ViewType == ViewType.Custom;
+}
+@using (Html.ElmaForm(confirmOnClose: isEditing))
+{
+    @Html.Partial("ContractorIndividual/ContractorIndividualEditForm")
+
+    @Html.Partial("DeleteCategoriesDialog")
+}

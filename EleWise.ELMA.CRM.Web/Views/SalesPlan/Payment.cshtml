@@ -1,0 +1,148 @@
+﻿@model IPayment
+@using EleWise.ELMA.CRM.Enums
+@using EleWise.ELMA.CRM.Models
+@using EleWise.ELMA.Helpers
+@using EleWise.ELMA.Web.Mvc
+
+<div data-id="@("p-container-" + Model.Id)" data-container-date="@(Model.PaymentDate.ToString("yyyyMMdd"))">
+    <table class="payment @(Model.PaymentStatus == PaymentStatus.Billed ? "billed" : string.Empty)" style="width: 100%">
+        <tr>
+            <td class="col-1">@(Model.PaymentDate.ToString("ddd") + " (" + Model.PaymentDate.ToCurrentFullFormatNotYear() + ")")</td>
+            <td>
+                <span class="payment-name">@Model.Name</span>
+                <span>,</span>
+                <a href="@(Url.Action("Details", "Sale", new { id = Model.Sale.Id }))">@Model.Sale.Name</a>
+                <span>,</span>
+                <a href="@(Url.Entity(Model.Sale.Contractor))">@Model.Sale.Contractor.Name</a>
+            </td>
+            <td class="col-3">
+                <a href="javascript:void()" onclick="@(Html.OpenPopup("ChangeSum-" + Model.Id));">@Model.Sum</a>
+            </td>
+            <td class="col-4">
+                <a href="javascript:void()" onclick="@(Html.OpenPopup("ChangeStatus-" + Model.Id));">@Html.Display(m => m.PaymentStatus)</a>
+            </td>
+        </tr>
+    </table>
+</div>
+
+<style type="text/css">
+    table.payment tr {
+        border-bottom: 1px solid black;
+    }
+    table.payment td {
+        padding: 5px 10px;
+        text-align: left;
+        background-color: #F5E9C6;
+    }
+    table.payment td.col-1, table.payment td.col-3 {
+        width: 65px;
+    }
+    table.payment td.col-4 {
+        width: 100px;
+    }
+    table.billed td.col-1, table.billed span.payment-name {
+        color: green;
+    }
+    table.expired-payment table.payment td.col-1, table.expired-payment span.payment-name {
+        color: red;
+    }
+    td.sum input.t-input 
+    {
+        width: 200px;
+    }
+</style>
+
+@(Html.PopupWindow("ChangeStatus-" + Model.Id, EleWise.ELMA.SR.T("Изменить статус"),
+    @<text>
+        <table class="table_with_inputs">
+            <tr>
+                <td style="padding-right: 5px;">@Html.Caption(m => m.PaymentStatus)</td>
+                <td>
+                    @(Html.Telerik().DropDownList()
+                        .Name("PaymentStatus-" + Model.Id)
+                        .BindTo(EleWise.ELMA.Model.Common.ModelHelper.GetEnumItems(new ViewDataDictionary<Enum>(new PaymentStatus())))
+                        .SelectedIndex((int)Model.PaymentStatus - 1)
+                        .HtmlAttributes(new { style = "width:436px;" })
+                        .ClientEvents(events => events.OnChange("onStatusChange")))
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    @EleWise.ELMA.SR.T("Комментарий")
+                </td>
+                <td>
+                    <textarea id="comment" class="text-box"></textarea>
+                </td>
+            </tr>
+        </table>
+        
+        <input id="PaymentStatus-@(Model.Id)" type="hidden" />
+        <div class="popup-buttons">
+            <input type="button" value="@EleWise.ELMA.SR.T("ОК")" onclick="saveStatus(@(Model.Id));" />
+            <input type="button" value="@EleWise.ELMA.SR.T("Отмена")" onclick="@Html.ClosePopup("ChangeStatus-" + Model.Id)" />
+        </div>
+        <script type="text/javascript">
+            function saveStatus(id) {
+                var status = $("#PaymentStatus-" + id).val();
+                $.ajax({
+                    type: 'POST',
+                    url: '@(Url.Action("ChangeStatus", "SalesPlan"))',
+                    data: "id=" + id + "&status=" + status,
+                    success: function (data) {
+                        window.navigateToUrl("@(Request.RawUrl)");
+                    },
+                    dataType: "json"
+                });
+            }
+            function onStatusChange(item) {
+                $("#PaymentStatus-@(Model.Id)").val(item.value);
+            }
+        </script>
+    </text>
+, 375)
+)
+
+@(Html.PopupWindow("ChangeSum-" + Model.Id, EleWise.ELMA.SR.T("Изменить сумму"),
+    @<text>
+        <table class="table_with_inputs">
+            <tr>
+                <td style="padding-right: 5px;">@Html.Caption(m => m.Sum)</td>
+                <td class="sum">
+                    @Html.Telerik().NumericTextBox().Name("PaymentSum-" + Model.Id).Spinners(false).DecimalDigits(0).EmptyMessage(EleWise.ELMA.SR.T("Пусто")).Value(Model.Sum)
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    @EleWise.ELMA.SR.T("Комментарий")
+                </td>
+                <td>
+                    <textarea id="comment1" class="text-box"></textarea>
+                </td>
+            </tr>
+        </table>
+        
+        <input id="PaymentSum-@(Model.Id)" type="hidden" />
+        <div class="popup-buttons">
+            <input type="button" value="@EleWise.ELMA.SR.T("ОК")" onclick="saveSum(@(Model.Id));" />
+            <input type="button" value="@EleWise.ELMA.SR.T("Отмена")" onclick="@Html.ClosePopup("ChangeSum-" + Model.Id)" />
+        </div>
+        <script type="text/javascript">
+            function saveSum(id) {
+                var sum = $("#PaymentSum-" + id).val();
+                $.ajax({
+                    type: 'POST',
+                    url: '@(Url.Action("ChangeSum", "SalesPlan"))',
+                    data: "id=" + id + "&sum=" + sum,
+                    success: function (data) {
+                        window.navigateToUrl("@(Request.RawUrl)");
+                    },
+                    dataType: "json"
+                });
+            }
+            function onStatusChange(item) {
+                $("#PaymentSum-@(Model.Id)").val(item.value);
+            }
+        </script>
+    </text>
+, 375)
+)

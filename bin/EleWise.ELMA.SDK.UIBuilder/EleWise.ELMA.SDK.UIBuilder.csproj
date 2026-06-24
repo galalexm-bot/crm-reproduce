@@ -1,0 +1,64 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <AssemblyName>EleWise.ELMA.SDK.UIBuilder</AssemblyName>
+    <GenerateAssemblyInfo>False</GenerateAssemblyInfo>
+    <TargetFramework>net48</TargetFramework>
+  </PropertyGroup>
+  <PropertyGroup>
+    <LangVersion>Preview</LangVersion>
+    <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
+  </PropertyGroup>
+  <PropertyGroup>
+    <RootNamespace />
+  </PropertyGroup>
+  <ItemGroup>
+    <None Remove="EleWise.ELMA.UIBuilder.Db.Comp.xml" />
+    <None Remove="EleWise.ELMA.UIBuilder.Db.Data.xml" />
+    <None Remove="EleWise.ELMA.UIBuilder.Db.Meta.xml" />
+    <None Remove="EleWise.ELMA.UIBuilder.Db.Desi.xml" />
+    <Compile Remove="EleWise.ELMA.UIBuilder.Service.cs" />
+    <Compile Remove="EleWise.ELMA.UIBuilder.Service.cs" />
+    <None Remove="EleWise.ELMA.UIBuilder.Service.json" />
+    <None Remove="EleWise.ELMA.UIBuilder.Service.csproj" />
+    <None Remove="EleWise.ELMA.UIBuilder.Service.csproj" />
+    <EmbeddedResource Include="EleWise.ELMA.UIBuilder.Db.Comp.xml" />
+    <EmbeddedResource Include="EleWise.ELMA.UIBuilder.Db.Data.xml" />
+    <EmbeddedResource Include="EleWise.ELMA.UIBuilder.Db.Meta.xml" />
+    <EmbeddedResource Include="EleWise.ELMA.UIBuilder.Db.Desi.xml" />
+    <EmbeddedResource Include="EleWise.ELMA.UIBuilder.Service.cs" />
+    <EmbeddedResource Include="EleWise.ELMA.UIBuilder.Service.cs" />
+    <EmbeddedResource Include="EleWise.ELMA.UIBuilder.Service.json" />
+    <EmbeddedResource Include="EleWise.ELMA.UIBuilder.Service.csproj" />
+    <EmbeddedResource Include="EleWise.ELMA.UIBuilder.Service.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="EleWise.ELMA.SDK">
+      <HintPath>..\EleWise.ELMA.SDK.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Core" />
+    <Reference Include="Microsoft.CodeAnalysis" />
+    <Reference Include="Microsoft.CodeAnalysis.CSharp" />
+    <Reference Include="System.Collections.Immutable" />
+    <Reference Include="NHibernate" />
+    <Reference Include="Microsoft.CodeAnalysis.Workspaces" />
+    <Reference Include="System.Xml" />
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="AutoMapper" />
+    <Reference Include="EleWise.ELMA.Packaging">
+      <HintPath>..\EleWise.ELMA.Packaging.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Configuration" />
+    <Reference Include="EleWise.ELMA.CodeGeneration.CSharp">
+      <HintPath>..\EleWise.ELMA.CodeGeneration.CSharp.dll</HintPath>
+    </Reference>
+    <Reference Include="EleWise.ELMA.SDK.Analyzers">
+      <HintPath>..\EleWise.ELMA.SDK.Analyzers.dll</HintPath>
+    </Reference>
+    <Reference Include="EleWise.ELMA.SDK.UIBuilder.Analyzers">
+      <HintPath>..\EleWise.ELMA.SDK.UIBuilder.Analyzers.dll</HintPath>
+    </Reference>
+    <Reference Include="Mono.Cecil" />
+    <Reference Include="Microsoft.CodeAnalysis.CSharp.Workspaces" />
+    <Reference Include="System.Data" />
+  </ItemGroup>
+</Project>

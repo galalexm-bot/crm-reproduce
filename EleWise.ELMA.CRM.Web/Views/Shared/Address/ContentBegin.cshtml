@@ -1,0 +1,116 @@
+﻿@model IAddress
+@using EleWise.ELMA.CRM.Enums
+@using EleWise.ELMA.CRM.Models
+@using EleWise.ELMA.CRM.Web
+@using EleWise.ELMA.CRM.Web.Code
+@using EleWise.ELMA.CRM.Web.Extensions
+
+@{
+    const bool console = false;
+
+    Html.RegisterContent("addrScripts", @<text>
+<script type="text/javascript">
+    function addrGetZip(combobox) {
+        var data = addrGetData(combobox);
+        var zip = data ? data.Zip : null;
+        if (!zip) {
+            var parentId = combobox.$wrapper.attr('parentid');
+            if (parentId) {
+                zip = addrGetZip($('#' + parentId).data('tComboBox'));
+            }
+        }
+        return zip;
+    }
+
+    function addrGetData(combobox, checkParent) {
+        var value = combobox.value();
+        var data = combobox.data ? $.grep(combobox.data, function (i) { return i.Value == value; })[0] : null;
+        if (checkParent && !data && !combobox.text()) {
+            var parentId = combobox.$wrapper.attr('parentid');
+            if (parentId) {
+                data = addrGetData($('#' + parentId).data('tComboBox'), true);
+            }
+        }
+        return data;
+    }
+
+    function currentComboBox(e) {
+        return $(e).closest('.t-combobox').find('input[type="hidden"]').data('tComboBox');
+    }
+
+    function addrComboBoxClear(e) {
+        var comboBox = currentComboBox(e);
+        if (comboBox.dropDown.isOpened()) {
+            comboBox.trigger.close();
+        }
+        comboBox.clearSelect();
+        comboBox.trigger.change();
+    }
+
+@if (console)
+{
+@:    function comboBoxName(combobox) {
+@:        var name = combobox.$text.attr('name');
+@:        var dotIndex = name.lastIndexOf('.');
+@:        return dotIndex >= 0 ? name.substring(dotIndex + 1) : name;
+@:    }
+@:
+}
+    function addrComboBoxChange(e) {
+        var combobox = currentComboBox(e.currentTarget);
+        combobox.text(combobox.text().replace(/^\s+|\s+$/g, ''));
+        var zipId = combobox.$wrapper.attr('zipid');
+        if (zipId) {
+            $('#' + zipId).val(addrGetZip(combobox));
+        }
+        var data = addrGetData(combobox, true);
+@if (console)
+{
+@:        console.log('Changed ' + comboBoxName(combobox));
+@:        console.log('value: \'' + combobox.text() + '\' data: ' + (data ? '\'' + data.Text + '\' (' + data.Uid + ')' : 'null'));
+}
+        addrComboBoxChildUpdate(combobox, data ? data.Uid : '');
+        addrGenerateAddress(e.currentTarget);
+    }
+
+    function addrComboBoxChildUpdate(combobox, parent) {
+        var childId = combobox.$wrapper.attr('childid');
+        if (!childId)
+            return;
+        var childCombobox = $('#' + childId).data('tComboBox');
+        childCombobox.ajax.selectUrl = elma.replaceUrlParam(childCombobox.ajax.selectUrl, 'parent', parent);
+@if (console)
+{
+@:        console.log('Update ' + comboBoxName(childCombobox));
+@:        console.log('parent: ' + parent + ' url: ' + childCombobox.ajax.selectUrl);
+}
+        if (childCombobox.text()) {
+            childCombobox.clearSelect();
+            childCombobox.trigger.change();
+        }
+        else {
+            addrComboBoxChildUpdate(childCombobox, parent);
+        }
+    }
+
+    function addrGenerateAddress(e) {
+        var container = $(e).closest('[htmlfieldprefix]');
+
+        var fields = elma.dynamics.getPostData(container, null, container.attr('htmlfieldprefix') + '.', '');
+
+        $.ajax({
+            url: '@(Url.Action("GenerateAddress", "Address", new { area = CRMAreaRegistration.AREA_NAME }))',
+            type: "POST",
+            data: $.extend({}, fields),
+            cache: false,
+            success: function (data) {
+                container.find('.addressNameContainer .display-address').find('span').text(data);
+            }
+        });
+    }
+</script>
+</text>);
+}
+
+@Html.HiddenFor(m => m.TypeUid)
+@Html.HiddenFor(m => m.Name)

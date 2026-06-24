@@ -1,0 +1,3516 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>EleWise.ELMA.Content</name>
+    </assembly>
+    <members>
+        <member name="T:EleWise.ELMA.Content.Components.ContentIgnoreUidUI">
+            <summary>
+            Реализация расширения, позволяющего не назначать уникальные индексы для таблиц сущностей модуля EleWise.ELMA.Content
+            </summary>
+        </member>
+        <member name="T:EleWise.ELMA.Content.Components.LessVariableNameAttribute">
+            <summary>
+            Атрибут имени less переменной
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Content.Components.LessVariableNameAttribute.Name">
+            <summary>
+            Имя less переменной
+            </summary>
+        </member>
+        <member name="M:EleWise.ELMA.Content.Components.LessVariableNameAttribute.#ctor(System.String)">
+            <summary>
+            ctor
+            </summary>
+            <param name="name">Имя less переменной</param>
+        </member>
+        <member name="T:EleWise.ELMA.Content.Components.MobileWorkPlaceType">
+            <summary>
+            Интерфейс для мобильных приложений
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Content.Components.MobileWorkPlaceType.Name">
+            <summary>
+            Название
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Content.Components.MobileWorkPlaceType.Folder">
+            <summary>
+            Директория
+            </summary>
+        </member>
+        <member name="T:EleWise.ELMA.Content.Components.ResetMenuTranslateChangeHandler">
+            <summary>
+            Сбрасываем меню при смене целевой локали или переводе строки
+            </summary>
+        </member>
+        <member name="T:EleWise.ELMA.Content.Components.StandardWorkPlaceType">
+            <summary>
+            Стандартный интерфейс, использующий основные предстваления
+            </summary>
+        </member>
+        <member name="T:EleWise.ELMA.Content.Constants.ColorSchemeConst">
+            <summary>
+            Константы цветовой схемы
+            </summary>
+        </member>
+        <member name="F:EleWise.ELMA.Content.Constants.ColorSchemeConst.SystemColorsStyleFileName">
+            <summary>
+            Имя файла с css-стилями дефолтной цветовой схемы
+            </summary>
+        </member>
+        <member name="F:EleWise.ELMA.Content.Constants.ColorSchemeConst.DefaultColorSchemeUid">
+            <summary>
+            Uid цветовой схемы по умолчанию
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Content.Constants.ColorSchemeConst.DefaultColorSchemeName">
+            <summary>
+            Имя цветовой схемы по умолчанию
+            </summary>
+        </member>
+        <member name="F:EleWise.ELMA.Content.Constants.ColorSchemeConst.DarkSystemColorsStyleFileName">
+            <summary>
+            Имя файла с css-стилями тёмной цветовой схемы
+            </summary>
+        </member>
+        <member name="F:EleWise.ELMA.Content.Constants.ColorSchemeConst.DarkColorSchemeUid">
+            <summary>
+            Uid тёмной цветовой схемы
+            </summary>
+        </member>
+        <member name="F:EleWise.ELMA.Content.Constants.ColorSchemeConst.RedSystemColorsStyleFileName">
+            <summary>
+            Имя файла с css-стилями красной цветовой схемы
+            </summary>
+        </member>
+        <member name="F:EleWise.ELMA.Content.Constants.ColorSchemeConst.RedColorSchemeUid">
+            <summary>
+            Uid красной цветовой схемы
+            </summary>
+        </member>
+        <member name="F:EleWise.ELMA.Content.Constants.ColorSchemeConst.BlueSystemColorsStyleFileName">
+            <summary>
+            Имя файла с css-стилями синей цветовой схемы
+            </summary>
+        </member>
+        <member name="F:EleWise.ELMA.Content.Constants.ColorSchemeConst.BlueColorSchemeUid">
+            <summary>
+            Uid синей цветовой схемы
+            </summary>
+        </member>
+        <member name="F:EleWise.ELMA.Content.Constants.ColorSchemeConst.GreenSystemColorsStyleFileName">
+            <summary>
+            Имя файла с css-стилями зелёной цветовой схемы
+            </summary>
+        </member>
+        <member name="F:EleWise.ELMA.Content.Constants.ColorSchemeConst.GreenColorSchemeUid">
+            <summary>
+            Uid зелёной цветовой схемы
+            </summary>
+        </member>
+        <member name="F:EleWise.ELMA.Content.Constants.ColorSchemeConst.YellowSystemColorsStyleFileName">
+            <summary>
+            Имя файла с css-стилями жёлтой цветовой схемы
+            </summary>
+        </member>
+        <member name="F:EleWise.ELMA.Content.Constants.ColorSchemeConst.YellowColorSchemeUid">
+            <summary>
+            Uid жёлтой цветовой схемы
+            </summary>
+        </member>
+        <member name="F:EleWise.ELMA.Content.Constants.ColorSchemeConst.DefaultWorkplaceColorSchemeUid">
+            <summary>
+            Uid набора цветовой схемы по умолчанию
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Content.Constants.ColorSchemeConst.DefaultColorSchemeSettings">
+            <summary>
+            Цветовая схема по умолчанию
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Content.Constants.ColorSchemeConst.DarkColorSchemeSettings">
+            <summary>
+            Тёмная цветовая схема
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Content.Constants.ColorSchemeConst.RedColorSchemeSettings">
+            <summary>
+            Красная цветовая схема
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Content.Constants.ColorSchemeConst.BlueColorSchemeSettings">
+            <summary>
+            Синяя цветовая схема
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Content.Constants.ColorSchemeConst.GreenColorSchemeSettings">
+            <summary>
+            Зелёная цветовая схема
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Content.Constants.ColorSchemeConst.YellowColorSchemeSettings">
+            <summary>
+            Жёлтая цветовая схема
+            </summary>
+        </member>
+        <member name="T:EleWise.ELMA.Content.Constants.MobileWorkPlaceTypeConst">
+            <summary>
+            Константы для Mobile интерфейса
+            </summary>
+        </member>
+        <member name="F:EleWise.ELMA.Content.Constants.MobileWorkPlaceTypeConst.Uid">
+            <summary>
+            Идентификатор
+            </summary>
+        </member>
+        <member name="F:EleWise.ELMA.Content.Constants.MobileWorkPlaceTypeConst.Folder">
+            <summary>
+            Директория
+            </summary>
+        </member>
+        <member name="T:EleWise.ELMA.Content.ExtensionPoints.IWorkPlaceType">
+            <summary>
+            Точка расширения для типа интерфейса
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Content.ExtensionPoints.IWorkPlaceType.Name">
+            <summary>
+            Наименование типа интерфейса
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Content.ExtensionPoints.IWorkPlaceType.Uid">
+            <summary>
+            Уникальный идентификатор типа интерфейса
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Content.ExtensionPoints.IWorkPlaceType.Folder">
+            <summary>
+            Название папки для хранения представлений
+            </summary>
+        </member>
+        <member name="T:EleWise.ELMA.Content.Helpers.PortalObjectHelper">
+            <summary>
+            Хелпер для работы с объектами портала
+            </summary>
+        </member>
+        <member name="M:EleWise.ELMA.Content.Helpers.PortalObjectHelper.PageWithSettings(EleWise.ELMA.Content.Models.IPortalObject)">
+            <summary>
+            Страница с настройками
+            </summary>
+            <param name="page">Страница</param>
+            <returns><c>True</c>, если страница с настройками</returns>
+        </member>
+        <member name="M:EleWise.ELMA.Content.Helpers.PortalObjectHelper.GetPageInputs(EleWise.ELMA.Model.Metadata.ClassMetadata)">
+            <summary>
+            Получить инпуты страницы
+            </summary>
+            <param name="metadata">Метаданные контекста страницы</param>
+            <returns>Инпуты страницы</returns>
+        </member>
+        <member name="T:EleWise.ELMA.Content.Listeners.PageProfileComponentMetadataItemHeaderListener">
+            <summary>
+            Лисенер для создания <see cref="T:EleWise.ELMA.Content.Models.IPortalObject" /> при работе с <see cref="T:EleWise.ELMA.UI.Models.ComponentMetadataItemHeader" />
+            </summary>
+        </member>
+        <member name="M:EleWise.ELMA.Content.Listeners.PageProfileComponentMetadataItemHeaderListener.#ctor(EleWise.ELMA.Content.Managers.PageFolderManager,EleWise.ELMA.Content.Managers.PageProfileManager,EleWise.ELMA.Runtime.Db.Migrator.Framework.ITransformationProvider)">
+            <summary>
+            Ctor
+            </summary>
+            <param name="pageFolderManager">Менеджер папок страниц</param>
+            <param name="pageProfileManager">Менеджер сущности "Профиль страницы"</param>
+            <param name="transformationProvider">Провайдер преобразования БД</param>
+        </member>
+        <member name="M:EleWise.ELMA.Content.Listeners.PageProfileComponentMetadataItemHeaderListener.OnPostUpdate(NHibernate.Event.PostUpdateEvent)">
+            <inheritdoc />
+        </member>
+        <member name="M:EleWise.ELMA.Content.Listeners.PageProfileComponentMetadataItemHeaderListener.OnPostDelete(NHibernate.Event.PostDeleteEvent)">
+            <inheritdoc />
+        </member>
+        <member name="T:EleWise.ELMA.Content.Listeners.ContentPermissionListener">
+            <summary>
+            Удаление разрешений, группы которых удаляются
+            </summary>
+        </member>
+        <member name="T:EleWise.ELMA.Content.Listeners.MenuItemActionHandler">
+            <summary>
+            Обработчик действий с элементами меню
+            </summary>
+        </member>
+        <member name="T:EleWise.ELMA.Content.Listeners.PortalObjectUserGroupListener">
+            <summary>
+            Удаление разрешений, группы которых удаляются
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Content.Listeners.WorkplaceListener.TransformationProvider">
+            <summary>
+            Интерфейс провайдера преобразования БД
+            </summary>
+        </member>
+        <member name="M:EleWise.ELMA.Content.Listeners.WorkplaceListener.OnPreUpdateCollection(NHibernate.Event.PreCollectionUpdateEvent)">
+            <inheritdoc/>
+        </member>
+        <member name="F:EleWise.ELMA.Content.__AssemblyInfo.UID_S">
+            <summary>
+            Уникальный идентификатор данного класса
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Content.__AssemblyInfo.UID">
+            <summary>
+            Уникальный идентификатор данного класса
+            </summary>
+        </member>
+        <member name="T:EleWise.ELMA.Content.Db.ContentDbStructure">
+            <summary>
+            Структура БД модуля "Содержимое"
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Content.Db.ContentDbStructure.PortletManager">
+            <summary>
+            Менеджер для управления портлетами на страницах
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Content.Db.ContentDbStructure.ProviderUid">
+            <summary>
+            Все провайдеры
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Content.Db.ContentDbStructure.References">
+            <summary>
+            Ссылки на преобразователи БД, от которых зависит данный преобразователь
+            </summary>
+        </member>
+        <member name="M:EleWise.ELMA.Content.Db.ContentDbStructure.UpdateMenu">
+            <summary>
+            Обновить меню
+            </summary>
+        </member>
+        <member name="M:EleWise.ELMA.Content.Db.ContentDbStructure.UpdateWorkPlaces">
+            <summary>
+            Преобразовать интерфейсы
+            </summary>
+        </member>
+        <member name="M:EleWise.ELMA.Content.Db.ContentDbStructure.CreateDefaultMenu">
+            <summary>
+            Создание меню по умолчанию
+            </summary>
+        </member>
+        <member name="M:EleWise.ELMA.Content.Db.ContentDbStructure.CreateStartMenu">
+            <summary>
+            Создание меню по умолчанию
+            </summary>
+        </member>
+        <member name="M:EleWise.ELMA.Content.Db.ContentDbStructure.CreateDefaultWorkPlase">
+            <summary>
+            Создать интерфейс по умолчанию
+            </summary>
+        </member>
+        <member name="M:EleWise.ELMA.Content.Db.ContentDbStructure.ConvertPageFoldersSettings">
+            <summary>
+            Преобразование системных папок страниц
+            </summary>
+        </member>
+        <member name="M:EleWise.ELMA.Content.Db.ContentDbStructure.AssignDefaultWorkplacePages(EleWise.ELMA.Content.Models.IWorkplacePages)">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="M:EleWise.ELMA.Content.Db.ContentDbStructure.AssignDefaultWorkplacePages2">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="M:EleWise.ELMA.Content.Db.ContentDbStructure.AssignDefaultMenu2">
+            <summary>
+            Заполнить пустые стартовое и левое меню значением меню по умолчанию
+            </summary>
+        </member>
+        <member name="M:EleWise.ELMA.Content.Db.ContentDbStructure.AssignDefaultWorkPlace">
+            <summary>
+            Заполнить пустые интерфейсы пользователей интерфейсом по умолчанию
+            </summary>
+        </member>
+        <member name="M:EleWise.ELMA.Content.Db.ContentDbStructure.HomePageUsers">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="M:EleWise.ELMA.Content.Db.ContentDbStructure.Convert_HomePageSetting_Page">
+            <summary>
+            Преобразовать таблицу добашних страниц при изменении названия столбца
+            </summary>
+        </member>
+        <member name="M:EleWise.ELMA.Content.Db.ContentDbStructure.RemovePortletProfile">
+            <summary>
+            Преобразовать БД при удалении PortletProfile
+            </summary>
+        </member>
+        <member name="M:EleWise.ELMA.Content.Db.ContentDbStructure.RemoveSecurityHomePagePortlets">
+            <summary>
+            Удаление портлетов в администрировании для применения новых стилей
+            </summary>
+        </member>
+        <member name="M:EleWise.ELMA.Content.Db.ContentDbStructure.FixHomePageSettings">
+            <summary>
+            Главная страница обязательно должна относиться к какому-либо набору. 
+            Если после преобразования она никуда не привязана, то её следует удалить.
+            </summary>
+        </member>
+        <member name="M:EleWise.ELMA.Content.Db.ContentDbStructure.CreateDefaultLiteWorkPlace">
+            <summary>
+            Создать лайн интерфейс
+            </summary>
+        </member>
+        <member name="M:EleWise.ELMA.Content.Db.ContentDbStructure.CreateDefaultMobileWorkPlace">
+            <summary>
+            Создать mobile интерфейс
+            </summary>
+        </member>
+        <member name="M:EleWise.ELMA.Content.Db.ContentDbStructure.FixFilterActionLink">
+            <summary>
+            Правки для FilterActionLink
+            </summary>
+        </member>
+        <member name="M:EleWise.ELMA.Content.Db.ContentDbStructure.ConvertMenuItemColumns">
+            <summary>
+            Преобразование колонок для MenuItem
+            </summary>
+        </member>
+        <member name="M:EleWise.ELMA.Content.Db.ContentDbStructure.DisableUserPanelActions">
+            <summary>
+            Отключить кнопки Календарь и Задачи в блоке информации о текущем пользователе
+            </summary>
+        </member>
+        <member name="M:EleWise.ELMA.Content.Db.ContentDbStructure.UpdateColors">
+            <summary>
+            Обновить цвета
+            </summary>
+        </member>
+        <member name="M:EleWise.ELMA.Content.Db.ContentDbStructure.CreateDefaultColorSchemes1">
+            <summary>
+            Создать стандартные цветовые схемы
+            </summary>
+        </member>
+        <member name="M:EleWise.ELMA.Content.Db.ContentDbStructure.UpdateDefaultColorSchemes4">
+            <summary>
+            Обновить стандартные цветовые схемы
+            </summary>
+        </member>
+        <member name="M:EleWise.ELMA.Content.Db.ContentDbStructure.ConvertColorScheme">
+            <summary>
+            Преобразовать цветовую схему
+            </summary>
+        </member>
+        <member name="M:EleWise.ELMA.Content.Db.ContentDbStructure.UpdateColorSchemes5">
+            <summary>
+            Применить новые цвета
+            </summary>
+        </member>
+        <member name="M:EleWise.ELMA.Content.Db.ContentDbStructure.CreateWorkplaceColorSchemes">
+            <summary>
+            Создать набор цветовых схем
+            </summary>
+        </member>
+        <member name="M:EleWise.ELMA.Content.Db.ContentDbStructure.UpdateWorkplaceColorScheme">
+            <summary>
+            Применить набора цветовой схемы по умолчанию интерфейсам
+            </summary>
+        </member>
+        <member name="T:EleWise.ELMA.Content.Filters.MenuItemFilter">
+            <summary>
+            Фильтр элементов меню
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Content.Filters.MenuItemFilter.Menu">
+            <summary>
+            Меню
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Content.Filters.MenuItemFilter.ParentItem">
+            <summary>
+            Родительский элемент
+            </summary>
+        </member>
+        <member name="T:EleWise.ELMA.Content.Managers.ColorSchemeManager">
+            <summary>
+            Менеджер сущности <see cref="T:EleWise.ELMA.Content.Models.IColorScheme"/>
+            </summary>
+        </member>
+        <member name="F:EleWise.ELMA.Content.Managers.ColorSchemeManager.CurrentSchemeLessModelKey">
+            <summary>
+            Ключ текущей цветовой less-схемы в кэше
+            </summary>
+        </member>
+        <member name="F:EleWise.ELMA.Content.Managers.ColorSchemeManager.CurrentSchemeCssModelKey">
+            <summary>
+            Ключ текущей цветовой css-схемы в кэше
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Content.Managers.ColorSchemeManager.ThemeSettingsModule">
+            <summary>
+            Настройки темы
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Content.Managers.ColorSchemeManager.Instance">
+            <summary>
+            Экземпляр менеджера
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Content.Managers.ColorSchemeManager.AuthenticationService">
+            <summary>
+            Сервис аутентификации
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Content.Managers.ColorSchemeManager.CacheService">
+            <summary>
+            Интерфейс работы с кэшем
+            </summary>
+        </member>
+        <member name="F:EleWise.ELMA.Content.Managers.ColorSchemeManager.SystemColorSchemeGuids">
+            <summary>
+            Идентификаторы системных цветовых схем
+            </summary>
+        </member>
+        <member name="M:EleWise.ELMA.Content.Managers.ColorSchemeManager.CanEdit(EleWise.ELMA.Content.Models.IColorScheme)">
+            <summary>
+            Проверить возможность редактирования цветовой схемы
+            </summary>
+            <param name="colorScheme">Цветовая схема</param>
+            <returns>True, если можно редактировать</returns>
+        </member>
+        <member name="M:EleWise.ELMA.Content.Managers.ColorSchemeManager.CanSave(EleWise.ELMA.Content.Models.IColorScheme)">
+            <inheritdoc/>
+        </member>
+        <member name="M:EleWise.ELMA.Content.Managers.ColorSchemeManager.CanDelete(EleWise.ELMA.Content.Models.IColorScheme)">
+            <inheritdoc/>
+        </member>
+        <member name="M:EleWise.ELMA.Content.Managers.ColorSchemeManager.GetUserColorScheme(EleWise.ELMA.Content.Models.IWorkPlace,EleWise.ELMA.Content.Models.IUserWorkPlace)">
+            <summary>
+            Получить цветовую схему пользователя
+            </summary>
+            <param name="workPlace">Интерфейс</param>
+            <param name="user">Пользователь</param>
+            <returns>Цветовая схема</returns>
+        </member>
+        <member name="M:EleWise.ELMA.Content.Managers.ColorSchemeManager.SetColorSchemeSettings(EleWise.ELMA.Content.Models.IColorScheme,EleWise.ELMA.Content.Models.ColorSchemeSettingsModel)">
+            <summary>
+            Установить настройки цветовой схемы
+            </summary>
+            <param name="colorScheme">Цветовая схема</param>
+            <param name="colorSchemeSettings">Настройки цветовой схемы</param>
+        </member>
+        <member name="M:EleWise.ELMA.Content.Managers.ColorSchemeManager.GetCurrentSchemeLessModel(System.String)">
+            <summary>
+            Получить текущую цветовую less-схему
+            </summary>
+            /// <param name="compiledCssSrc">Путь скомпилированных файлов</param>
+            <returns>Модель цветовой схемы</returns>
+        </member>
+        <member name="M:EleWise.ELMA.Content.Managers.ColorSchemeManager.GetCurrentSchemeCssModel">
+            <summary>
+            Получить текущую цветовую css-схему
+            </summary>
+            <returns>Модель цветовой схемы</returns>
+        </member>
+        <member name="M:EleWise.ELMA.Content.Managers.ColorSchemeManager.IsSystemColorScheme(EleWise.ELMA.Content.Models.IColorScheme)">
+            <summary>
+            Проверить, что цветовая схема является системной
+            </summary>
+            <param name="colorScheme">Цветовая схема</param>
+            <returns>True, если цветовая схема является системной</returns>
+        </member>
+        <member name="M:EleWise.ELMA.Content.Managers.ColorSchemeManager.ClearSchemeChache(System.Nullable{System.Guid})">
+            <summary>
+            Очистить кеш цветовой схемы
+            </summary>
+            <param name="colorSchemeUid">Uid цветовой схемы</param>
+        </member>
+        <member name="M:EleWise.ELMA.Content.Managers.ColorSchemeManager.GetDefaultColorScheme(System.String)">
+            <summary>
+            Получить цветовую схему по умолчанию
+            </summary>
+            <param name="systemColorsStyleFileName">Путь к файле цветовой схемы</param>
+            <returns>Цветовая схема по умолчанию</returns>
+        </member>
+        <member name="M:EleWise.ELMA.Content.Managers.ColorSchemeManager.GetCurrentSchemeModel``1(System.String,System.Func{EleWise.ELMA.Content.Models.IColorScheme,``0})">
+            <summary>
+            Получить текущую цветовую схему
+            </summary>
+            <typeparam name="T">Тип модели цветовой схемы</typeparam>
+            <param name="cacheKey">Ключ для кеширования модели цветовой схемы</param>
+            <param name="factory">Функция, которая возвращает модель цветовой схемы</param>
+            <returns>Модель цветовой схемы</returns>
+        </member>
+        <member name="M:EleWise.ELMA.Content.Managers.ColorSchemeManager.GetCurrentScheme">
+            <summary>
+            Получить текущую цветовую схему
+            </summary>
+            <returns>Цветовая схема</returns>
+        </member>
+        <member name="M:EleWise.ELMA.Content.Managers.ColorSchemeManager.CreateLessTheme(System.String)">
+            <summary>
+            Инициализация файла с less-темой 
+            </summary>
+            <param name="schemeData">Данные цветовой схемы в формате Json</param>
+            <returns>Цветовая схема</returns>
+        </member>
+        <member name="M:EleWise.ELMA.Content.Managers.ColorSchemeManager.CreateCssTheme(System.String)">
+            <summary>
+            Инициализация файла с css-темой
+            </summary>
+            <param name="schemeData">Данные цветовой схемы в формате Json</param>
+            <returns>Цветовая схема</returns>
+        </member>
+        <member name="M:EleWise.ELMA.Content.Managers.ColorSchemeManager.CreateTheme(System.String,System.String)">
+            <summary>
+            Инициализация темы
+            </summary>
+            <param name="schemeData">Данные цветовой схемы в формате Json</param>
+            <param name="themeVariableformat">Формат определения переменной цветовой схемы: аргумент {0} - имя переменной, аргумент {1} - значение переменной</param>
+            <returns>Цветовая схема</returns>
+        </member>
+        <member name="T:EleWise.ELMA.Content.Managers.FilterActionLinkManager">
+            <summary>
+            Менеджер для управления фильтрами
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Content.Managers.FilterActionLinkManager.CacheService">
+            <summary>
+            Кэш данных в рамках контекста
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Content.Managers.FilterActionLinkManager.Instance">
+            <summary>
+            Статический экземпляр менеджера
+            </summary>
+        </member>
+        <member name="M:EleWise.ELMA.Content.Managers.FilterActionLinkManager.Delete(EleWise.ELMA.Content.Models.IFilterActionLink)">
+            <inheritdoc />
+        </member>
+        <member name="T:EleWise.ELMA.Content.Managers.HomePageSettingManager">
+            <summary>
+            Менеджер главных страниц
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Content.Managers.HomePageSettingManager.Instance">
+            <summary>
+            Экземпляр менеджера
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Content.Managers.HomePageSettingManager.CacheService">
+            <summary>
+            Сервис кэширования
+            </summary>
+        </member>
+        <member name="M:EleWise.ELMA.Content.Managers.HomePageSettingManager.GetTabs(System.Collections.Generic.IEnumerable{EleWise.ELMA.Content.Models.IHomePageSetting})">
+            <summary>
+            Формирует модель закладок из списка главных страниц
+            </summary>
+            <param name="pages"></param>
+            <returns></returns>
+        </member>
+        <member name="M:EleWise.ELMA.Content.Managers.HomePageSettingManager.GetTabs(EleWise.ELMA.Content.Models.IWorkPlace,EleWise.ELMA.Content.Models.IUserWorkPlace)">
+            <summary>
+            Получить список вкладок для указанного пользователя (закладки на страницы к которым нет доступа не показываются)
+            </summary>
+            <param name="workPlace"> </param>
+            <param name="user"></param>
+            <returns></returns>
+        </member>
+        <member name="M:EleWise.ELMA.Content.Managers.HomePageSettingManager.GetHomePageSettings(EleWise.ELMA.Content.Models.IWorkPlace,EleWise.ELMA.Content.Models.IUserWorkPlace,System.Boolean)">
+            <summary>
+            Получить список главных страниц для указанного пользователя
+            </summary>
+            <param name="workPlace"></param>
+            <param name="user"></param>
+            <param name="disableSecurity">Не учитывать права доступа к страницам</param>
+            <returns></returns>
+        </member>
+        <member name="M:EleWise.ELMA.Content.Managers.HomePageSettingManager.ResetTabsCache(EleWise.ELMA.Content.Models.IUserWorkPlace)">
+            <summary>
+            Сбросить кэш
+            </summary>
+        </member>
+        <member name="M:EleWise.ELMA.Content.Managers.HomePageSettingManager.SaveOrganizerSettings(EleWise.ELMA.Content.Models.IUserWorkPlace,System.Collections.Generic.ICollection{EleWise.ELMA.Content.Models.IHomePageSetting})">
+            <summary>
+            Сохранить настройки органайзера для пользователя
+            </summary>
+            <param name="user">Пользователь</param>
+            <param name="pages">Текущие настройки страниц</param>
+        </member>
+        <member name="M:EleWise.ELMA.Content.Managers.HomePageSettingManager.AddPage(EleWise.ELMA.Content.Models.IWorkPlace,EleWise.ELMA.Content.Models.IUserWorkPlace,EleWise.ELMA.Content.Models.IPageBase)">
+            <summary>
+            Добавить домашнюю страницу пользователю
+            </summary>
+            <param name="workPlace"></param>
+            <param name="user"> </param>
+            <param name="page"></param>
+        </member>
+        <member name="M:EleWise.ELMA.Content.Managers.HomePageSettingManager.AddPage(EleWise.ELMA.Content.Models.IWorkPlace,EleWise.ELMA.Content.Models.IPageBase)">
+            <summary>
+            Добавить домашнюю страницу в интерфейс
+            </summary>
+            <param name="wp"></param>
+            <param name="page"></param>
+        </member>
+        <member name="T:EleWise.ELMA.Content.Managers.MenuItemManager">
+            <summary>
+            Менеджер элемента веб-меню
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Content.Managers.MenuItemManager.MenuManager">
+            <summary>
+            Менеджер веб-меню
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Content.Managers.MenuItemManager.ComplexCacheService">
+            <summary>
+            Кэш для хранения редко меняююихся данных
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Content.Managers.MenuItemManager.Instance">
+            <summary>
+            Статический экземпляр менеджера
+            </summary>
+        </member>
+        <member name="M:EleWise.ELMA.Content.Managers.MenuItemManager.Save(EleWise.ELMA.Content.Models.IMenuItem)">
+            <inheritdoc />
+        </member>
+        <member name="M:EleWise.ELMA.Content.Managers.MenuItemManager.Delete(EleWise.ELMA.Content.Models.IMenuItem)">
+            <inheritdoc />
+        </member>
+        <member name="M:EleWise.ELMA.Content.Managers.MenuItemManager.LoadByMenuUid(EleWise.ELMA.Content.Models.IMenu,System.Guid)">
+            <summary>
+            Загрузить элемент веб-меню
+            </summary>
+            <param name="menu">Веб-меню</param>
+            <param name="menuUid">Идентификатор элемента меню</param>
+            <returns></returns>
+        </member>
+        <member name="M:EleWise.ELMA.Content.Managers.MenuItemManager.DeleteAllItems(System.Int64)">
+            <summary>
+            Удалить все элементы меню
+            </summary>
+            <param name="id">Идентификатор меню</param>
+        </member>
+        <member name="M:EleWise.ELMA.Content.Managers.MenuItemManager.DeleteItemRecursive(System.Int64)">
+            <summary>
+            Удалить элемент меню со всеми вложенными элементами
+            </summary>
+            <param name="id"></param>
+        </member>
+        <member name="M:EleWise.ELMA.Content.Managers.MenuItemManager.DeleteItemRecursive(EleWise.ELMA.Content.Models.IMenuItem)">
+            <summary>
+            Удалить элемент меню со всеми вложенными элементами
+            </summary>
+            <param name="item"></param>
+        </member>
+        <member name="M:EleWise.ELMA.Content.Managers.MenuItemManager.SetupFilter(NHibernate.ICriteria,EleWise.ELMA.Model.Common.IEntityFilter)">
+            <inheritdoc />
+        </member>
+        <member name="M:EleWise.ELMA.Content.Managers.MenuItemManager.LoadItemsReadOnly(EleWise.ELMA.Content.Models.IMenu,System.Boolean)">
+            <summary>
+            Получить список элементов. ВНИМАНИЕ! Нельзя менять полученные элементы, т.к. они могут быть не привязаны к сессии NHibernate (результат кэшируется)
+            </summary>
+            <param name="menu"></param>
+            <param name="allowDisabled"></param>
+            <returns></returns>
+        </member>
+        <member name="M:EleWise.ELMA.Content.Managers.MenuItemManager.LoadItemsReadOnly(System.Guid,System.Boolean)">
+            <summary>
+            Получить список элементов. ВНИМАНИЕ! Нельзя менять полученные элементы, т.к. они могут быть не привязаны к сессии NHibernate (результат кэшируется)
+            </summary>
+            <param name="menuUid"></param>
+            <param name="allowDisabled"></param>
+            <returns></returns>
+        </member>
+        <member name="M:EleWise.ELMA.Content.Managers.MenuItemManager.CreateMainMenuCustomGroup(System.Int32)">
+            <summary>
+            Создать группу для пользовательских элементов меню
+            </summary>
+            <param name="menuId">Идентификатор меню</param>
+            <returns>Группа для пользовательских элементов меню</returns>
+        </member>
+        <member name="M:EleWise.ELMA.Content.Managers.MenuItemManager.GetOrCreateMainMenuCustomGroup(System.Int32)">
+            <summary>
+            Получить или создать группу для пользовательских элементов меню
+            </summary>
+            <param name="menuId">Идентификатор меню</param>
+            <returns>Группа для пользовательских элементов меню</returns>
+        </member>
+        <member name="M:EleWise.ELMA.Content.Managers.MenuItemManager.ResetItems4UserCache(System.Int64)">
+            <summary>
+            Обнулить кэш элементов меню
+            </summary>
+        </member>
+        <member name="M:EleWise.ELMA.Content.Managers.MenuItemManager.ResetItemsCache(System.Guid)">
+            <summary>
+            Обнулить кэш элементов меню
+            </summary>
+        </member>
+        <member name="M:EleWise.ELMA.Content.Managers.MenuItemManager.ResetItemsCache">
+            <summary>
+            Обнулить кэш элементов всех меню
+            </summary>
+        </member>
+        <member name="T:EleWise.ELMA.Content.Managers.MenuManager">
+            <summary>
+            Менеджер веб-меню
+            </summary>
+        </member>
+        <member name="F:EleWise.ELMA.Content.Managers.MenuManager.LeftMenuUid">
+            <summary>
+            Идентификатор левого меню
+            </summary>
+        </member>
+        <member name="F:EleWise.ELMA.Content.Managers.MenuManager.CreateMenuUid">
+            <summary>
+            Идентификатор меню создания
+            </summary>
+        </member>
+        <member name="F:EleWise.ELMA.Content.Managers.MenuManager.StartMenuUid">
+            <summary>
+            Идентификатор главного меню
+            </summary>
+        </member>
+        <member name="F:EleWise.ELMA.Content.Managers.MenuManager.TopMenuUid">
+            <summary>
+            Идентификатор верхнего меню
+            </summary>
+        </member>
+        <member name="F:EleWise.ELMA.Content.Managers.MenuManager.SystemMenus">
+            <summary>
+            Идентификаторы всех меню системы
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Content.Managers.MenuManager.Instance">
+            <summary>
+            Статический экземпляр менеджера
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Content.Managers.MenuManager.ComplexCacheService">
+            <summary>
+            Кэш для хранения редко меняююихся данных
+            </summary>
+        </member>
+        <member name="M:EleWise.ELMA.Content.Managers.MenuManager.GetMenuUid(System.String)">
+            <summary>
+            Получить идентификатор меню по ключу
+            </summary>
+            <param name="menuUid"></param>
+            <returns></returns>
+        </member>
+        <member name="M:EleWise.ELMA.Content.Managers.MenuManager.GetLeftMenuByUser(System.Int64)">
+            <summary>
+            Загрузка левого меню для пользователя
+            </summary>
+            <param name="userId">Идентификатор пользователя</param>
+            <returns>Меню</returns>
+        </member>
+        <member name="M:EleWise.ELMA.Content.Managers.MenuManager.GetLeftMenuByUserReadOnly(System.Int64)">
+            <summary>
+            Загрузка левого меню для пользователя. ВНИМАНИЕ! Нельзя менять полученное меню, т.к. оно может быть не привязано к сессии NHibernate (результат кэшируется)
+            </summary>
+        </member>
+        <member name="M:EleWise.ELMA.Content.Managers.MenuManager.GetStartMenuByUser(System.Int64)">
+            <summary>
+            Загрузка главного меню для пользователя
+            </summary>
+            <param name="userId">Идентификатор пользователя</param>
+            <returns>Меню</returns>
+        </member>
+        <member name="M:EleWise.ELMA.Content.Managers.MenuManager.GetStartMenuByUserReadOnly(System.Int64)">
+            <summary>
+            Загрузка главного меню для пользователя. ВНИМАНИЕ! Нельзя менять полученное меню, т.к. оно может быть не привязано к сессии NHibernate (результат кэшируется)
+            </summary>
+        </member>
+        <member name="M:EleWise.ELMA.Content.Managers.MenuManager.ResetCache">
+            <summary>
+            Сбросить кэш по менюшкам
+            </summary>
+        </member>
+        <member name="M:EleWise.ELMA.Content.Managers.MenuManager.CloneMenu``1(``0)">
+            <summary>
+            Создание копии меню со всеми пунктами и сохранение его в базу
+            </summary>
+        </member>
+        <member name="M:EleWise.ELMA.Content.Managers.MenuManager.Delete(EleWise.ELMA.Content.Models.IMenu)">
+            <inheritdoc />
+        </member>
+        <member name="M:EleWise.ELMA.Content.Managers.MenuManager.LoadByUid(System.Guid)">
+            <inheritdoc />
+        </member>
+        <member name="M:EleWise.ELMA.Content.Managers.MenuManager.LoadOrNullReadOnly(System.Int32)">
+            <summary>
+            Загрузить по идентификатору. Если не найдена - возвращается null. ВНИМАНИЕ! Нельзя менять полученное меню, т.к. оно может быть не привязано к сессии NHibernate (результат кэшируется)
+            </summary>
+        </member>
+        <member name="M:EleWise.ELMA.Content.Managers.MenuManager.LoadOrNullReadOnly(System.Guid)">
+            <summary>
+            Загрузить по уникальному идентификатору. Если не найдена - возвращается null. ВНИМАНИЕ! Нельзя менять полученное меню, т.к. оно может быть не привязано к сессии NHibernate (результат кэшируется)
+            </summary>
+        </member>
+        <member name="T:EleWise.ELMA.Content.Managers.PageBaseManager`1">
+            <summary>
+            Менеджер базового класса страницы портала
+            </summary>
+        </member>
+        <member name="T:EleWise.ELMA.Content.Managers.PageBaseManager">
+            <summary>
+            Менеджер базового класса страницы портала
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Content.Managers.PageBaseManager.Instance">
+            <summary>
+            Экземпляр менеджера
+            </summary>
+        </member>
+        <member name="M:EleWise.ELMA.Content.Managers.PageBaseManager.GetFolderContents(EleWise.ELMA.Content.Models.IPageFolder,System.Boolean)">
+            <summary>
+            Получить содержимое папки
+            </summary>
+            <param name="folder">Папка</param>
+            <param name="needLevelUp">Добавлять в начало запись "на уровень выше", в случае, если папка не корневая</param>
+            <returns></returns>
+        </member>
+        <member name="M:EleWise.ELMA.Content.Managers.PageBaseManager.TryDeletePage(System.Int64)">
+            <summary>
+            Проверить все связи страницы и попытаться удалить, если таковых не имеется
+            </summary>
+            <param name="id"></param>
+        </member>
+        <member name="T:EleWise.ELMA.Content.Managers.PageFolderManager">
+            <summary>
+            Менеджер папок
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Content.Managers.PageFolderManager.Instance">
+            <summary>
+            Экземпляр менеждера
+            </summary>
+        </member>
+        <member name="F:EleWise.ELMA.Content.Managers.PageFolderManager.UserPagesFolderUid">
+            <summary>
+            Идентификатор папки "Пользовательские страницы"
+            </summary>
+        </member>
+        <member name="F:EleWise.ELMA.Content.Managers.PageFolderManager.HomePagesFolderUid">
+            <summary>
+            Идентификатор папки "Главные страницы"
+            </summary>
+        </member>
+        <member name="F:EleWise.ELMA.Content.Managers.PageFolderManager.PageProfilesFolderUid">
+            <summary>
+            Идентификатор папки "Главные конфигурации"
+            </summary>
+        </member>
+        <member name="M:EleWise.ELMA.Content.Managers.PageFolderManager.LoadOrCreateUserFolder(EleWise.ELMA.Security.Models.IUser)">
+            <summary>
+            Загрузить или создать папку для пользователя
+            </summary>
+            <param name="user"></param>
+            <returns></returns>
+        </member>
+        <member name="M:EleWise.ELMA.Content.Managers.PageFolderManager.LoadOrCreateHomePagesFolder">
+            <summary>
+            Загрузить или создать папку "Главные страницы"
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:EleWise.ELMA.Content.Managers.PageFolderManager.LoadOrCreatePageProfilesFolder">
+            <summary>
+            Загрузить или создать папку "Страницы конфигурации"
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:EleWise.ELMA.Content.Managers.PageFolderManager.IsParentFolder(EleWise.ELMA.Content.Models.IPageFolder,EleWise.ELMA.Content.Models.IPageFolder)">
+            <summary>
+            Это родительская папка
+            </summary>
+            <param name="entity">Родительская папка</param>
+            <param name="folder">Подпапка</param>
+            <returns></returns>
+        </member>
+        <member name="T:EleWise.ELMA.Content.Managers.PageProfileManager">
+            <summary>
+            Менеджер сущности профиль страницы
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Content.Managers.PageProfileManager.RunWithElevatedPrivilegiesService">
+            <summary>
+            Сервис, влияющий на результат проверки прав в текущем контексте 
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Content.Managers.PageProfileManager.Instance">
+            <summary>
+            Статический экземпляр менеджера
+            </summary>
+        </member>
+        <member name="M:EleWise.ELMA.Content.Managers.PageProfileManager.LoadByUid(System.Guid)">
+            <inheritdoc />
+        </member>
+        <member name="M:EleWise.ELMA.Content.Managers.PageProfileManager.LoadByUidBase(System.Guid)">
+            <summary>
+            Загрузить по уникальному идентификатору. Если не найдена - возвращается null
+             !!! Не удалять этот метод. Иначе компилятор .нет 4.0 неверно строит сборку, и падает ошибка BadImageFormatException
+            </summary>
+            <param name="uid">Уникальный идентификатор сущности</param>
+            <returns>Сущность или null</returns>
+        </member>
+        <member name="T:EleWise.ELMA.Content.Managers.PortalObjectManager`2">
+            <summary>
+            Менеджер объекта портала
+            </summary>
+            <typeparam name="T"></typeparam>
+            <typeparam name="TId"></typeparam>
+        </member>
+        <member name="M:EleWise.ELMA.Content.Managers.PortalObjectManager`2.SetupFetchOptions(NHibernate.ICriteria,EleWise.ELMA.Model.Common.FetchOptions,System.Type)">
+            <inheritdoc />
+        </member>
+        <member name="M:EleWise.ELMA.Content.Managers.PortalObjectManager`2.SetupFilter(NHibernate.ICriteria,EleWise.ELMA.Model.Common.IEntityFilter)">
+            <inheritdoc />
+        </member>
+        <member name="M:EleWise.ELMA.Content.Managers.PortalObjectManager`2.AddPermissionsFromParent(`0)">
+            <summary>
+            Добавить привилегии из родительского объекта
+            </summary>
+            <param name="portalObj">Текущий объект, которому нужно назначить привилегии</param>
+            <exception cref="T:System.ArgumentNullException"></exception>
+            <exception cref="T:System.ArgumentException"></exception>
+        </member>
+        <member name="M:EleWise.ELMA.Content.Managers.PortalObjectManager`2.EnableInheritPermissions(`0,System.Boolean)">
+            <summary>
+            Включить/выключить наследование прав от родительской папки
+            </summary>
+            <param name="portalObj"></param>
+            <param name="enable"></param>
+        </member>
+        <member name="M:EleWise.ELMA.Content.Managers.PortalObjectManager`2.UpdatePermissions(EleWise.ELMA.Content.Models.IPortalObject)">
+            <summary>
+            Обновление прав
+            </summary>
+            <param name="portalObject"></param>
+        </member>
+        <member name="M:EleWise.ELMA.Content.Managers.PortalObjectManager`2.MoveTo(EleWise.ELMA.Content.Models.IPageFolder,System.Collections.Generic.List{`1},System.Collections.Generic.List{EleWise.ELMA.Content.Models.IPortalObject})">
+            <summary>
+            Перемещает объекты в другую папку.
+            </summary>
+            <param name="newFolder">Новая папка.</param>
+            <param name="objectsId">Список идентификаторов, перемещаемых объектов.</param>
+        </member>
+        <member name="T:EleWise.ELMA.Content.Managers.PortalObjectManager">
+            <summary>
+            Менеджер объектов портала
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Content.Managers.PortalObjectManager.Instance">
+            <summary>
+            Экземпляр менеджера
+            </summary>
+        </member>
+        <member name="M:EleWise.ELMA.Content.Managers.PortalObjectManager.#ctor">
+            <summary>
+            Ctor
+            </summary>
+        </member>
+        <member name="T:EleWise.ELMA.Content.Managers.PortletPageManager">
+            <summary>
+            Менеджер портлетных страниц
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Content.Managers.PortletPageManager.Instance">
+            <summary>
+            Статический экземпляр менеджера
+            </summary>
+        </member>
+        <member name="T:EleWise.ELMA.Content.Managers.RoleMapPageManager">
+            <summary>
+            Менеджер ролевых страниц
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Content.Managers.RoleMapPageManager.Instance">
+            <summary>
+            Статический экземпляр менеджера
+            </summary>
+        </member>
+        <member name="M:EleWise.ELMA.Content.Managers.RoleMapPageManager.GetMappedPage(EleWise.ELMA.Content.Models.IRoleMapPage)">
+            <summary>
+            Получить сопоставленную страницу в зависимости от текущего пользователя
+            </summary>
+            <param name="roleMapPage">Ролевая страница</param>
+            <returns></returns>
+        </member>
+        <member name="T:EleWise.ELMA.Content.Managers.WebToolbarManager">
+            <summary>
+            Менеджер веб-тулбара
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Content.Managers.WebToolbarManager.Instance">
+            <summary>
+            Статический экземпляр менеджера
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Content.Managers.WebToolbarManager.ComplexCacheService">
+            <summary>
+            Кэш для хранения редко меняющихся данных
+            </summary>
+        </member>
+        <member name="M:EleWise.ELMA.Content.Managers.WebToolbarManager.GetToolbarByUser(System.Int64)">
+            <summary>
+            Загрузка toolbar-а для пользователя
+            </summary>
+            <param name="userId">Идентификатор пользователя</param>
+            <returns>Toolbar</returns>
+        </member>
+        <member name="T:EleWise.ELMA.Content.Managers.WorkPlaceManager">
+            <summary>
+            Менеджер объекта "Интерфейс пользователя"
+            </summary>
+        </member>
+        <member name="F:EleWise.ELMA.Content.Managers.WorkPlaceManager.DefaultWorkPlaceUid">
+            <summary>
+            Идентификатор рабочего места по умолчанию
+            </summary>
+        </member>
+        <member name="F:EleWise.ELMA.Content.Managers.WorkPlaceManager.DefaultWorkplacePagesUid">
+            <summary>
+            Идентификатор домашней страницы по умолчанию
+            </summary>
+        </member>
+        <member name="F:EleWise.ELMA.Content.Managers.WorkPlaceManager.LiteWorkPlaceUid">
+            <summary>
+            Идентификатор рабочего места лайт-интерфейса
+            </summary>
+        </member>
+        <member name="F:EleWise.ELMA.Content.Managers.WorkPlaceManager.MobileWorkPlaceUid">
+            <summary>
+            Идентификатор рабочего места mobile интерфейса
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Content.Managers.WorkPlaceManager.Instance">
+            <summary>
+            Статический экземпляр менеджера
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Content.Managers.WorkPlaceManager.ComplexCacheService">
+            <summary>
+            Кэш для хранения редко меняющихся данных
+            </summary>
+        </member>
+        <member name="M:EleWise.ELMA.Content.Managers.WorkPlaceManager.GetWorkPlaceByUser(System.Int64,System.Boolean)">
+            <summary>
+            Загрузка левого меню для пользователя
+            </summary>
+            <param name="userId">Идентификатор пользователя</param>
+            <param name="loadDefaultWorkPlace">Если нет левого меня для пользователя, загружать дефортный</param>
+            <returns>Меню</returns>
+        </member>
+        <member name="M:EleWise.ELMA.Content.Managers.WorkPlaceManager.Delete(EleWise.ELMA.Content.Models.IWorkPlace)">
+            <inheritdoc />
+        </member>
+        <member name="M:EleWise.ELMA.Content.Managers.WorkPlaceManager.LoadByUid(System.Guid)">
+            <inheritdoc />
+        </member>
+        <member name="M:EleWise.ELMA.Content.Managers.WorkPlaceManager.GetWorkPlaceType(System.Guid)">
+            <summary>
+            Получить тип интерфейса по идентификатору
+            </summary>
+            <param name="uid">Уникальный идентификатор типа интерфейса</param>
+            <returns></returns>
+        </member>
+        <member name="M:EleWise.ELMA.Content.Managers.WorkPlaceManager.GetWorkPlaceTypes">
+            <summary>
+            Получить все типы интерфейсов
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="T:EleWise.ELMA.Content.Managers.WorkplacePagesManager">
+            <summary>
+            Менеджер главных страниц интерфейсов
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Content.Managers.WorkplacePagesManager.Instance">
+            <summary>
+            Статический экземпляр менеджера
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Content.Managers.WorkplacePagesManager.ComplexCacheService">
+            <summary>
+            Кэш для хранения редко меняющихся данных
+            </summary>
+        </member>
+        <member name="M:EleWise.ELMA.Content.Managers.WorkplacePagesManager.GetWorkplacePagesByUser(System.Int64)">
+            <summary>
+            Загрузка главных страниц интерфейса для пользователя
+            </summary>
+            <param name="userId">Идентификатор пользователя</param>
+            <returns>Главные страницы интерфейса</returns>
+        </member>
+        <member name="T:EleWise.ELMA.Content.Models.IColorScheme">
+            <summary>
+            Цветовая схема
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Content.Models.IColorScheme.Uid">
+            <summary>
+            Уникальный идентификатор
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Content.Models.IColorScheme.Name">
+            <summary>
+            Наименование
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Content.Models.IColorScheme.SettingsData">
+            <summary>
+            Настройки цветовой схемы в формате JSON
+            </summary>
+        </member>
+        <member name="T:EleWise.ELMA.Content.Models.ColorSchemeSettingsModel">
+            <summary>
+            Модель настроек цветовой схемы
+            </summary>
+        </member>
+        <member name="M:EleWise.ELMA.Content.Models.ColorSchemeSettingsModel.#ctor">
+            <summary>
+            ctor
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Content.Models.ColorSchemeSettingsModel.GeneralBackground">
+            <summary>
+            Цвет общего фона
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Content.Models.ColorSchemeSettingsModel.LeftMenuBackground">
+            <summary>
+            Цвет фона левого меню
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Content.Models.ColorSchemeSettingsModel.LeftMenuElement">
+            <summary>
+            Цвет элемента левого меню
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Content.Models.ColorSchemeSettingsModel.LeftMenuElementHover">
+            <summary>
+            Цвет элемента левого меню
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Content.Models.ColorSchemeSettingsModel.TopMenuBackground">
+            <summary>
+            Цвет фона тулбара
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Content.Models.ColorSchemeSettingsModel.BlockBackground">
+            <summary>
+            Цвета фона компонентов
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Content.Models.ColorSchemeSettingsModel.ShadowColor">
+            <summary>
+            Цвет тени
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Content.Models.ColorSchemeSettingsModel.SeparatorColor">
+            <summary>
+            Цвет разделителя
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Content.Models.ColorSchemeSettingsModel.GeneralFontColor">
+            <summary>
+            Базовый цвет текста
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Content.Models.ColorSchemeSettingsModel.GeneralNegativeFontColor">
+            <summary>
+            Инверсия базового цвета текста
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Content.Models.ColorSchemeSettingsModel.CaptionCellFontColor">
+            <summary>
+            Цвет текста наименования свойств
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Content.Models.ColorSchemeSettingsModel.DescriptionFontColor">
+            <summary>
+            Цвет текста описания свойств
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Content.Models.ColorSchemeSettingsModel.PlaceholderFontColor">
+            <summary>
+            Цвет заполнителя
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Content.Models.ColorSchemeSettingsModel.ValidationSuccessFontColor">
+            <summary>
+            Цвет текста успешного выполнения
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Content.Models.ColorSchemeSettingsModel.ValidationErrorFontColor">
+            <summary>
+            Цвет текста сообщения об ошибке
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Content.Models.ColorSchemeSettingsModel.ValidationWarningFontColor">
+            <summary>
+            Цвет текста предупреждения
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Content.Models.ColorSchemeSettingsModel.ValidationPrimaryFontColor">
+            <summary>
+            Цвет выделенного текста
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Content.Models.ColorSchemeSettingsModel.SeparatorGrayBackgroundColor">
+            <summary>
+            Цвет серой панели
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Content.Models.ColorSchemeSettingsModel.SeparatorGrayHoverBackgroundColor">
+            <summary>
+            Цвет серой панели при наведении
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Content.Models.ColorSchemeSettingsModel.SeparatorBlueBackgroundColor">
+            <summary>
+            Цвет синей панели
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Content.Models.ColorSchemeSettingsModel.SeparatorBlueHoverBackgroundColor">
+            <summary>
+            Цвет синей панели при наведении
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Content.Models.ColorSchemeSettingsModel.SeparatorYellowBackgroundColor">
+            <summary>
+            Цвет желтой панели
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Content.Models.ColorSchemeSettingsModel.SeparatorYellowHoverBackgroundColor">
+            <summary>
+            Цвет желтой панели при наведении
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Content.Models.ColorSchemeSettingsModel.SeparatorRedBackgroundColor">
+            <summary>
+            Цвет красной панели
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Content.Models.ColorSchemeSettingsModel.SeparatorRedHoverBackgroundColor">
+            <summary>
+            Цвет красной панели при наведении
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Content.Models.ColorSchemeSettingsModel.SeparatorGreenBackgroundColor">
+            <summary>
+            Цвет зеленой панели
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Content.Models.ColorSchemeSettingsModel.SeparatorGreenHoverBackgroundColor">
+            <summary>
+            Цвет зеленой панели при наведении
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Content.Models.ColorSchemeSettingsModel.SeparatorWhiteBackgroundColor">
+            <summary>
+            Цвет белой панели
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Content.Models.ColorSchemeSettingsModel.SeparatorWhiteHoverBackgroundColor">
+            <summary>
+            Цвет белой панели при наведении
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Content.Models.ColorSchemeSettingsModel.ButtonGray">
+            <summary>
+            Цвет серой кнопки
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Content.Models.ColorSchemeSettingsModel.ButtonHoverGray">
+            <summary>
+            Цвет серой кнопки при наведении
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Content.Models.ColorSchemeSettingsModel.ButtonOutlineGray">
+            <summary>
+            Цвет серой кнопки без заливки
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Content.Models.ColorSchemeSettingsModel.ButtonOutlineHoverGray">
+            <summary>
+            Цвет серой кнопки без заливки при наведении
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Content.Models.ColorSchemeSettingsModel.ButtonBlue">
+            <summary>
+            Цвет синей кнопки
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Content.Models.ColorSchemeSettingsModel.ButtonHoverBlue">
+            <summary>
+            Цвет синей кнопки при наведении
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Content.Models.ColorSchemeSettingsModel.ButtonOutlineBlue">
+            <summary>
+            Цвет синей кнопки без заливки
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Content.Models.ColorSchemeSettingsModel.ButtonOutlineHoverBlue">
+            <summary>
+            Цвет синей кнопки без заливки при наведении
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Content.Models.ColorSchemeSettingsModel.ButtonRed">
+            <summary>
+            Цвет красной кнопки
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Content.Models.ColorSchemeSettingsModel.ButtonHoverRed">
+            <summary>
+            Цвет красной кнопки при наведении
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Content.Models.ColorSchemeSettingsModel.ButtonOutlineRed">
+            <summary>
+            Цвет красной кнопки без заливки
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Content.Models.ColorSchemeSettingsModel.ButtonOutlineHoverRed">
+            <summary>
+            Цвет красной кнопки без заливки при наведении
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Content.Models.ColorSchemeSettingsModel.ButtonGreen">
+            <summary>
+            Цвет зеленой кнопки
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Content.Models.ColorSchemeSettingsModel.ButtonHoverGreen">
+            <summary>
+            Цвет зеленой кнопки при наведении
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Content.Models.ColorSchemeSettingsModel.ButtonOutlineGreen">
+            <summary>
+            Цвет зеленой кнопки без заливки
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Content.Models.ColorSchemeSettingsModel.ButtonOutlineHoverGreen">
+            <summary>
+            Цвет зеленой кнопки без заливки при наведении
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Content.Models.ColorSchemeSettingsModel.ButtonYellow">
+            <summary>
+            Цвет желтой кнопки
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Content.Models.ColorSchemeSettingsModel.ButtonHoverYellow">
+            <summary>
+            Цвет желтой кнопки при наведении
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Content.Models.ColorSchemeSettingsModel.ButtonOutlineYellow">
+            <summary>
+            Цвет желтой кнопки без заливки
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Content.Models.ColorSchemeSettingsModel.ButtonOutlineHoverYellow">
+            <summary>
+            Цвет желтой кнопки без заливки при наведении
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Content.Models.ColorSchemeSettingsModel.ButtonSimple">
+            <summary>
+            Цвет простой кнопки
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Content.Models.ColorSchemeSettingsModel.ButtonHoverSimple">
+            <summary>
+            Цвет простой кнопки при наведении
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Content.Models.ColorSchemeSettingsModel.ButtonOutlineSimple">
+            <summary>
+            Цвет простой кнопки без заливки
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Content.Models.ColorSchemeSettingsModel.ButtonOutlineHoverSimple">
+            <summary>
+            Цвет простой кнопки без заливки при наведении
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Content.Models.ColorSchemeSettingsModel.MainActionButton">
+            <summary>
+            Главное действие
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Content.Models.ColorSchemeSettingsModel.ButtonMain">
+            <summary>
+            Цвет кнопки главного действия
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Content.Models.ColorSchemeSettingsModel.ButtonHoverMain">
+            <summary>
+            Цвет кнопки главного действия при наведении
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Content.Models.ColorSchemeSettingsModel.ButtonOutlineMain">
+            <summary>
+            Цвет кнопки главного действия без заливки
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Content.Models.ColorSchemeSettingsModel.ButtonOutlineHoverMain">
+            <summary>
+            Цвет кнопки главного действия без заливки при наведении
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Content.Models.ColorSchemeSettingsModel.ButtonBorderMain">
+            <summary>
+            Цвет рамки кнопки главного действия
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Content.Models.ColorSchemeSettingsModel.ButtonBorderHoverMain">
+            <summary>
+            Цвет рамки кнопки главного действия при наведении
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Content.Models.ColorSchemeSettingsModel.ButtonTextMain">
+            <summary>
+            Цвет текста кнопки главного действия
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Content.Models.ColorSchemeSettingsModel.ButtonLinkMain">
+            <summary>
+            Цвет ссылки кнопки главного действия
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Content.Models.ColorSchemeSettingsModel.TabFontColor">
+            <summary>
+            Цвет текста вкладки
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Content.Models.ColorSchemeSettingsModel.CounterTextColor">
+            <summary>
+            Цвет текста счетчика
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Content.Models.ColorSchemeSettingsModel.CounterBackgroundColor">
+            <summary>
+            Цвет фона счетчика
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Content.Models.ColorSchemeSettingsModel.ActiveTabBackgroundColor">
+            <summary>
+            Цвет активной вкладки
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Content.Models.ColorSchemeSettingsModel.ActiveTabFontColor">
+            <summary>
+            Цвет текста активной вкладки
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Content.Models.ColorSchemeSettingsModel.ActiveCounterTextColor">
+            <summary>
+            Цвет текста счетчика активной вкладки
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Content.Models.ColorSchemeSettingsModel.ActiveCounterBackgroundColor">
+            <summary>
+            Цвет фона счетчика активной вкладки
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Content.Models.ColorSchemeSettingsModel.ControlBorderColor">
+            <summary>
+            Цвет границы
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Content.Models.ColorSchemeSettingsModel.ControlHoverBorderColor">
+            <summary>
+            Цвет границы при наведении
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Content.Models.ColorSchemeSettingsModel.ControlFocusBorderColor">
+            <summary>
+            Цвет границы в фокусе
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Content.Models.ColorSchemeSettingsModel.ControlHoverBackgroundColor">
+            <summary>
+            Цвет фона контрола при наведении
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Content.Models.ColorSchemeSettingsModel.ControlDisabledBackgroundColor">
+            <summary>
+            Цвет фона отключенного контрола
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Content.Models.ColorSchemeSettingsModel.ControlActiveBackgroundColor">
+            <summary>
+            Цвет фона активного элемента
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Content.Models.ColorSchemeSettingsModel.AlertErrorBackgroundColor">
+            <summary>
+            Цвет фона ошибки
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Content.Models.ColorSchemeSettingsModel.AlertErrorBorderColor">
+            <summary>
+            Цвет границ ошибки
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Content.Models.ColorSchemeSettingsModel.AlertErrorIconColor">
+            <summary>
+            Цвет иконки ошибки
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Content.Models.ColorSchemeSettingsModel.AlertWarningBackgroundColor">
+            <summary>
+            Цвет фона предупреждения
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Content.Models.ColorSchemeSettingsModel.AlertWarningBorderColor">
+            <summary>
+            Цвет границ предупреждения
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Content.Models.ColorSchemeSettingsModel.AlertWarningIconColor">
+            <summary>
+            Цвет иконки предупреждения
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Content.Models.ColorSchemeSettingsModel.AlertSuccessBackgroundColor">
+            <summary>
+            Цвет фона положительного результата
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Content.Models.ColorSchemeSettingsModel.AlertSuccessBorderColor">
+            <summary>
+            Цвет границ положительного результата
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Content.Models.ColorSchemeSettingsModel.AlertSuccessIconColor">
+            <summary>
+            Цвет иконки положительного результата
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Content.Models.ColorSchemeSettingsModel.AlertInformationBackgroundColor">
+            <summary>
+            Цвет фона информации
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Content.Models.ColorSchemeSettingsModel.AlertInformationBorderColor">
+            <summary>
+            Цвет границ информации
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Content.Models.ColorSchemeSettingsModel.ShadowColor10">
+            <summary>
+            Цвет тени c прозрачностью 10
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Content.Models.ColorSchemeSettingsModel.ShadowColor20">
+            <summary>
+            Цвет тени c прозрачностью 20
+            </summary>
+        </member>
+        <member name="M:EleWise.ELMA.Content.Models.ColorSchemeSettingsModel.ToJson(EleWise.ELMA.Content.Models.ColorSchemeSettingsModel)">
+            <summary>
+            Преобразовать в формат Json
+            </summary>
+            <param name="colorSchemeSettings">Настройки цветовой схемы</param>
+            <returns>Настройки цветовой схемы в формате Json</returns>
+        </member>
+        <member name="M:EleWise.ELMA.Content.Models.ColorSchemeSettingsModel.FromJson(System.String)">
+            <summary>
+            Получить объект из строки в формате Json
+            </summary>
+            <param name="colorSchemeSettingsData">Настройки цветовой схемы в строковом представлении</param>
+            <returns>Объект настроек цветовой схемы</returns>
+        </member>
+        <member name="M:EleWise.ELMA.Content.Models.ColorSchemeSettingsModel.FromColorScheme(EleWise.ELMA.Content.Models.IColorScheme)">
+            <summary>
+            Получить модель настроек из цветовой схемы
+            </summary>
+            <param name="colorScheme">Цветовая схема</param>
+            <returns>Модель настроек цветовой схемы</returns>
+        </member>
+        <member name="T:EleWise.ELMA.Content.Models.IHomePageSetting">
+            <summary>
+            HomePageSetting
+            </summary>
+            <remarks>
+            Настроки домашней страницы (Tab)
+            
+            </remarks>
+        </member>
+        <member name="P:EleWise.ELMA.Content.Models.IHomePageSetting.Uid">
+            <summary>
+            Уникальный идентификатор
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Content.Models.IHomePageSetting.Visible">
+            <summary>
+            Показывать
+            </summary>
+            <remarks>
+            Показывать/не показывать страницу в списке
+            </remarks>
+        </member>
+        <member name="P:EleWise.ELMA.Content.Models.IHomePageSetting.Order">
+            <summary>
+            Порядок
+            </summary>
+            <remarks>
+            Порядок отображения в табах
+            </remarks>
+        </member>
+        <member name="P:EleWise.ELMA.Content.Models.IHomePageSetting.WorkplacePages">
+            <summary>
+            Набор главных страниц интерфейса
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Content.Models.IHomePageSetting.Page">
+            <summary>
+            Страница
+            </summary>
+            <remarks>
+            Связная портлетная страница
+            </remarks>
+        </member>
+        <member name="P:EleWise.ELMA.Content.Models.IHomePageSetting.Parameters">
+            <summary>
+            Параметры
+            </summary>
+            <remarks>
+            Параметры запуска страницы. Дописываются в URL
+            </remarks>
+        </member>
+        <member name="T:EleWise.ELMA.Content.Models.IPageProfile">
+            <summary>
+            PageProfile
+            </summary>
+        </member>
+        <member name="T:EleWise.ELMA.Content.Models.IWebToolbar">
+            <summary>
+            Панель инструментов
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Content.Models.IWebToolbar.Uid">
+            <summary>
+            Уникальный идентификатор
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Content.Models.IWebToolbar.Transformations">
+            <summary>
+            Transformations
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Content.Models.IWebToolbar.Name">
+            <summary>
+            Наименование
+            </summary>
+        </member>
+        <member name="T:EleWise.ELMA.Content.Models.IWorkplaceColorScheme">
+            <summary>
+            Набор цветовых схем
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Content.Models.IWorkplaceColorScheme.Uid">
+            <summary>
+            Уникальный идентификатор
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Content.Models.IWorkplaceColorScheme.ColorSchemes">
+            <summary>
+            Цветовые схемы
+            </summary>
+        </member>
+        <member name="T:EleWise.ELMA.Content.Models.IWorkplaceColorSchemeFilter">
+            <summary>
+            Фильтр для объекта "Набор цветовых схем"
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Content.Models.IWorkplaceColorSchemeFilter.ColorSchemes">
+            <summary>
+            Фильтр для свойства "Цветовые схемы"
+            </summary>
+        </member>
+        <member name="T:EleWise.ELMA.Content.Models.ICreateMenu">
+            <summary>
+            Меню создания
+            </summary>
+        </member>
+        <member name="T:EleWise.ELMA.Content.Models.IMenu">
+            <summary>
+            Веб меню
+            </summary>
+            <remarks>
+            Веб меню, формируемые для навигации по разделам системы, состоит из элементов меню.
+            </remarks>
+        </member>
+        <member name="P:EleWise.ELMA.Content.Models.IMenu.MenuUid">
+            <summary>
+            Идентификатор меню
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Content.Models.IMenu.Uid">
+            <summary>
+            Уникальный идентификатор
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Content.Models.IMenu.Name">
+            <summary>
+            Название
+            </summary>
+            <remarks>
+            Наименование веб меню
+            </remarks>
+        </member>
+        <member name="P:EleWise.ELMA.Content.Models.IMenu.Description">
+            <summary>
+            Описание
+            </summary>
+            <remarks>
+            Описание веб меню
+            </remarks>
+        </member>
+        <member name="P:EleWise.ELMA.Content.Models.IMenu.Items">
+            <summary>
+            Ссылки
+            </summary>
+            <remarks>
+            Перечень элементов меню из которых состоит веб меню
+            </remarks>
+        </member>
+        <member name="P:EleWise.ELMA.Content.Models.IMenu.ItemsChangeDate">
+            <summary>
+            Дата изменения ссылок
+            </summary>
+        </member>
+        <member name="T:EleWise.ELMA.Content.Models.ILeftMenu">
+            <summary>
+            Левое меню
+            </summary>
+        </member>
+        <member name="T:EleWise.ELMA.Content.Models.IStartMenu">
+            <summary>
+            Главное меню
+            </summary>
+        </member>
+        <member name="T:EleWise.ELMA.Content.Models.IFilterActionLink">
+            <summary>
+            Ссылка на действие в фильтрах
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Content.Models.IFilterActionLink.Description">
+            <summary>
+            Описание
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Content.Models.IFilterActionLink.ActionTypeProviderId">
+            <summary>
+            Идентификатор типа ссылки
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Content.Models.IFilterActionLink.ActionId">
+            <summary>
+            Идентификатор ссылки
+            </summary>
+        </member>
+        <member name="T:EleWise.ELMA.Content.Models.HomePageTab">
+            <summary>
+            Информация о вкладке домашней страницы
+            </summary>
+        </member>
+        <member name="M:EleWise.ELMA.Content.Models.HomePageTab.#ctor">
+            <summary>
+            Ctor
+            </summary>
+        </member>
+        <member name="M:EleWise.ELMA.Content.Models.HomePageTab.#ctor(EleWise.ELMA.Content.Models.IPortalObject)">
+            <summary>
+            Ctor
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Content.Models.HomePageTab.Name">
+            <summary>
+            Название таба
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Content.Models.HomePageTab.Default">
+            <summary>
+            Показывать таб по умолчан7ию
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Content.Models.HomePageTab.Id">
+            <summary>
+            Идентификатор таба, соответсвует идентификатору страницы
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Content.Models.HomePageTab.Order">
+            <summary>
+            Порядок
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Content.Models.HomePageTab.Visible">
+            <summary>
+            Показывать, не показывать таб в списке
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Content.Models.HomePageTab.Parameters">
+            <summary>
+            Параметры страницы
+            </summary>
+        </member>
+        <member name="T:EleWise.ELMA.Content.Models.IMenuItem">
+            <summary>
+            Элемент веб меню
+            </summary>
+            <remarks>
+            Элемент веб меню, входит в совокупность элементов веб меню, предназначен для перехода в соответствующий раздел системы, вызова действия.
+            </remarks>
+        </member>
+        <member name="P:EleWise.ELMA.Content.Models.IMenuItem.Items">
+            <summary>
+            Используется для трансформаций, с базой не связано
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Content.Models.IMenuItem.Uid">
+            <summary>
+            Уникальный идентификатор
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Content.Models.IMenuItem.Menu">
+            <summary>
+            Меню
+            </summary>
+            <remarks>
+            Веб меню в которое входит элемент меню
+            </remarks>
+        </member>
+        <member name="P:EleWise.ELMA.Content.Models.IMenuItem.ParentItem">
+            <summary>
+            Родительский элемент меню
+            </summary>
+            <remarks>
+            Ссылка на родительский элемент веб меню
+            </remarks>
+        </member>
+        <member name="P:EleWise.ELMA.Content.Models.IMenuItem.Name">
+            <summary>
+            Название
+            </summary>
+            <remarks>
+            Наименование элемента веб меню
+            </remarks>
+        </member>
+        <member name="P:EleWise.ELMA.Content.Models.IMenuItem.Description">
+            <summary>
+            Описание
+            </summary>
+            <remarks>
+            Описание элемента веб меню
+            </remarks>
+        </member>
+        <member name="P:EleWise.ELMA.Content.Models.IMenuItem.ImageUrl">
+            <summary>
+            Картинка
+            </summary>
+            <remarks>
+            Путь до изображения, отображаемого в элементе веб меню
+            </remarks>
+        </member>
+        <member name="P:EleWise.ELMA.Content.Models.IMenuItem.NavigateUrl">
+            <summary>
+            Путь
+            </summary>
+            <remarks>
+            не описывать
+            </remarks>
+        </member>
+        <member name="P:EleWise.ELMA.Content.Models.IMenuItem.Disabled">
+            <summary>
+            Отключен
+            </summary>
+            <remarks>
+            Текущий статус элемента веб меню, при Отключен="Да" элемент не отображается в веб меню.
+            </remarks>
+        </member>
+        <member name="P:EleWise.ELMA.Content.Models.IMenuItem.Weight">
+            <summary>
+            Порядок
+            </summary>
+            <remarks>
+            Определяет порядок отображения элементов в веб меню или в родительском элементе веб меню.
+            </remarks>
+        </member>
+        <member name="P:EleWise.ELMA.Content.Models.IMenuItem.ExtensionPointName">
+            <summary>
+            Имя точки расширения
+            </summary>
+            <remarks>
+            не описывать
+            </remarks>
+        </member>
+        <member name="P:EleWise.ELMA.Content.Models.IMenuItem.LinkedWithAction">
+            <summary>
+            Привязан к действию
+            </summary>
+            <remarks>
+            Определяет является или нет элемент веб меню действием
+            </remarks>
+        </member>
+        <member name="P:EleWise.ELMA.Content.Models.IMenuItem.ActionTypeProviderId">
+            <summary>
+            Идентификатор типа ссылки
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Content.Models.IMenuItem.ActionId">
+            <summary>
+            Идентификатор ссылки
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Content.Models.IMenuItem.Code">
+            <summary>
+            Code
+            </summary>
+            <remarks>
+            Служебный идентификатор элемента веб меню
+            </remarks>
+        </member>
+        <member name="P:EleWise.ELMA.Content.Models.IMenuItem.OnTop">
+            <summary>
+            Наверху
+            </summary>
+            <remarks>
+            Если "Да" то выбранный элемент перемещается наверх, вне зависимости от "Порядка"
+            
+            </remarks>
+        </member>
+        <member name="P:EleWise.ELMA.Content.Models.IMenuItem.Stretch">
+            <summary>
+            Растягивать
+            </summary>
+            <remarks>
+            Определяет показывать выбранный пункт меню на полную высоту экрана или нет, при этом при активации данного элемента другие неактивные элементы веб меню скрываются
+            </remarks>
+        </member>
+        <member name="P:EleWise.ELMA.Content.Models.IMenuItem.Type">
+            <summary>
+            Тип
+            </summary>
+            <remarks>
+            Определяет базовый тип элемента веб меню (Группа, Разделитель, Действие)
+            </remarks>
+        </member>
+        <member name="P:EleWise.ELMA.Content.Models.IMenuItem.Permissions">
+            <summary>
+            Привилегии
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Content.Models.IMenuItem.MenuUid">
+            <summary>
+            Уникальный идентификатор элемента меню
+            </summary>
+            <remarks>
+            Идентификатор элемента меню, уникальный в рамках меню.
+            Уникальность идентификатора между различными меню не обеспечивается.
+            </remarks>
+        </member>
+        <member name="P:EleWise.ELMA.Content.Models.IMenuItem.Color">
+            <summary>
+            Цвет
+            </summary>
+            <remarks>
+            Используется для указания цвета группы кнопок в главном меню.
+            Может принимать одно из следующих значений:
+             - blue
+             - gray
+             - green
+             - red
+             - yellow
+            
+            </remarks>
+        </member>
+        <member name="P:EleWise.ELMA.Content.Models.IMenuItem.Target">
+            <summary>
+            Target
+            </summary>
+            <remarks>
+            Как открывать ссылку
+            </remarks>
+        </member>
+        <member name="T:EleWise.ELMA.Content.Models.Media.IMediaFile">
+            <summary>
+            Мультимедия файл
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Content.Models.Media.IMediaFile.Uid">
+            <summary>
+            Уникальный идентификатор
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Content.Models.Media.IMediaFile.Name">
+            <summary>
+            Название
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Content.Models.Media.IMediaFile.ContentType">
+            <summary>
+            ContentType
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Content.Models.Media.IMediaFile.Size">
+            <summary>
+            Размер
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Content.Models.Media.IMediaFile.CreationDate">
+            <summary>
+            Дата создания
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Content.Models.Media.IMediaFile.CreationAuthor">
+            <summary>
+            Автор создания
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Content.Models.Media.IMediaFile.ChangeDate">
+            <summary>
+            Дата изменения
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Content.Models.Media.IMediaFile.ChangeAuthor">
+            <summary>
+            Автор изменения
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Content.Models.Media.IMediaFile.Parent">
+            <summary>
+            Parent
+            </summary>
+            <remarks>
+            Папка в которой содердится объект
+            </remarks>
+        </member>
+        <member name="P:EleWise.ELMA.Content.Models.Media.IMediaFile.StoreId">
+            <summary>
+            Идентификатор сохраненного файла
+            </summary>
+        </member>
+        <member name="T:EleWise.ELMA.Content.Models.Media.IMediaFolder">
+            <summary>
+            Мультимедия папка
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Content.Models.Media.IMediaFolder.Uid">
+            <summary>
+            Уникальный идентификатор
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Content.Models.Media.IMediaFolder.Name">
+            <summary>
+            Наименование
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Content.Models.Media.IMediaFolder.CreationDate">
+            <summary>
+            Дата создания
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Content.Models.Media.IMediaFolder.CreationAuthor">
+            <summary>
+            Автор создания
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Content.Models.Media.IMediaFolder.ChangeDate">
+            <summary>
+            Дата изменения
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Content.Models.Media.IMediaFolder.ChangeAuthor">
+            <summary>
+            Автор изменения
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Content.Models.Media.IMediaFolder.Parent">
+            <summary>
+            Parent
+            </summary>
+            <remarks>
+            Папка в которой содержится объект
+            </remarks>
+        </member>
+        <member name="P:EleWise.ELMA.Content.Models.Media.IMediaFolder.Deleted">
+            <summary>
+            Deleted
+            </summary>
+        </member>
+        <member name="T:EleWise.ELMA.Content.Models.IMenuItemPermission">
+            <summary>
+            Настройки доступа к элементу меню
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Content.Models.IMenuItemPermission.Uid">
+            <summary>
+            Уникальный идентификатор
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Content.Models.IMenuItemPermission.MenuItem">
+            <summary>
+            Элемент меню
+            </summary>
+            <remarks>
+            Ссылка на элемент меню
+            </remarks>
+        </member>
+        <member name="P:EleWise.ELMA.Content.Models.IMenuItemPermission.User">
+            <summary>
+            Пользователь
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Content.Models.IMenuItemPermission.Group">
+            <summary>
+            Группа
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Content.Models.IMenuItemPermission.OrganizationItemEmployee">
+            <summary>
+            Сотрудник отдела
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Content.Models.IMenuItemPermission.OrganizationItemPosition">
+            <summary>
+            Должность
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Content.Models.IMenuItemPermission.PermissionRole">
+            <summary>
+            Роль
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Content.Models.IMenuItemPermission.PermissionId">
+            <summary>
+            Идентификатор привилегии
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Content.Models.IMenuItemPermission.UserSecuritySetCacheId">
+            <summary>
+            Кэш
+            </summary>
+        </member>
+        <member name="T:EleWise.ELMA.Content.Models.MenuItemType">
+            <summary>
+            Тип элемента меню
+            </summary>
+            <remarks>
+            Базовые типы элементов веб меню
+            </remarks>
+        </member>
+        <member name="F:EleWise.ELMA.Content.Models.MenuItemType.Action">
+            <summary>
+            Действие
+            </summary>
+            <remarks>
+            Элемент меню является действием, при нажатии на которое осуществляется переход  в сответствующий раздел системы, переход к документу в системе, вызов другого действия
+            </remarks>
+        </member>
+        <member name="F:EleWise.ELMA.Content.Models.MenuItemType.Section">
+            <summary>
+            Группа
+            </summary>
+            <remarks>
+            Элемент меню представляет собой группу элементов
+            </remarks>
+        </member>
+        <member name="F:EleWise.ELMA.Content.Models.MenuItemType.Separator">
+            <summary>
+            Разделитель
+            </summary>
+            <remarks>
+            Элемент меню представляет собой визуальный разделитель элементов меню
+            </remarks>
+        </member>
+        <member name="T:EleWise.ELMA.Content.Models.IPageBase">
+            <summary>
+            Базовая страница портала
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Content.Models.IPageBase.HomePageUsers">
+            <summary>
+            HomePageUsers
+            </summary>
+        </member>
+        <member name="T:EleWise.ELMA.Content.Models.IPageFolder">
+            <summary>
+            Папка с портлетными страницами
+            </summary>
+        </member>
+        <member name="T:EleWise.ELMA.Content.Models.IPortalObject">
+            <summary>
+            Объект портала
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Content.Models.IPortalObject.Uid">
+            <summary>
+            Уникальный идентификатор
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Content.Models.IPortalObject.Name">
+            <summary>
+            Наименование
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Content.Models.IPortalObject.CreationDate">
+            <summary>
+            Дата создания
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Content.Models.IPortalObject.CreationAuthor">
+            <summary>
+            Автор создания
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Content.Models.IPortalObject.ChangeDate">
+            <summary>
+            Дата изменения
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Content.Models.IPortalObject.ChangeAuthor">
+            <summary>
+            Автор изменения
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Content.Models.IPortalObject.Permissions">
+            <summary>
+            Права доступа
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Content.Models.IPortalObject.Folder">
+            <summary>
+            Родительская папка
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Content.Models.IPortalObject.SortTypeId">
+            <summary>
+            Поле сортировки
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Content.Models.IPortalObject.InheritPermissions">
+            <summary>
+            Наследовать права родительской папки
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Content.Models.IPortalObject.IsSystem">
+            <summary>
+            Системный
+            </summary>
+        </member>
+        <member name="T:EleWise.ELMA.Content.Models.IPortalObjectFilter">
+            <summary>
+            Фильтр для объекта "Объект портала"
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Content.Models.IPortalObjectFilter.Name">
+            <summary>
+            Фильтр для свойства "Наименование"
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Content.Models.IPortalObjectFilter.CreationDate">
+            <summary>
+            Фильтр для свойства "Дата создания"
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Content.Models.IPortalObjectFilter.CreationAuthor">
+            <summary>
+            Фильтр для свойства "Автор создания"
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Content.Models.IPortalObjectFilter.ChangeDate">
+            <summary>
+            Фильтр для свойства "Дата изменения"
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Content.Models.IPortalObjectFilter.ChangeAuthor">
+            <summary>
+            Фильтр для свойства "Автор изменения"
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Content.Models.IPortalObjectFilter.Folder">
+            <summary>
+            Фильтр для свойства "Родительская папка"
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Content.Models.IPortalObjectFilter.IsRoot">
+            <summary>
+            Корневой элемент
+            </summary>
+        </member>
+        <member name="T:EleWise.ELMA.Content.Models.IPortalObjectPermission">
+            <summary>
+            Привилегии объекта портала
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Content.Models.IPortalObjectPermission.Uid">
+            <summary>
+            Уникальный идентификатор
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Content.Models.IPortalObjectPermission.PortalObject">
+            <summary>
+            Объект портала
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Content.Models.IPortalObjectPermission.PermissionId">
+            <summary>
+            Привилегия
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Content.Models.IPortalObjectPermission.User">
+            <summary>
+            Пользователь
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Content.Models.IPortalObjectPermission.Group">
+            <summary>
+            Группа
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Content.Models.IPortalObjectPermission.OrganizationItemPosition">
+            <summary>
+            Должность
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Content.Models.IPortalObjectPermission.OrganizationItemEmployee">
+            <summary>
+            Сотрудник отдела
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Content.Models.IPortalObjectPermission.UserSecuritySetCacheId">
+            <summary>
+            UserSecuritySetCacheId
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Content.Models.IPortalObjectPermission.PermissionRole">
+            <summary>
+            Роль
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Content.Models.IPortalObjectPermission.InheritedFromFolder">
+            <summary>
+            Папка, от которой насоедована привилегия
+            </summary>
+        </member>
+        <member name="T:EleWise.ELMA.Content.Models.IPortletPage">
+            <summary>
+            Портлетная страница
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Content.Models.IPortletPage.PortletsLayoutId">
+            <summary>
+            Размещение
+            </summary>
+            <remarks>
+            Шаблон макета определяет расположение зон на странице, в каждую зону может быть добавлено несколько портлетов. Портлеты в зонах укладываются вертикально.
+            </remarks>
+        </member>
+        <member name="T:EleWise.ELMA.Content.Models.IRoleMapPage">
+            <summary>
+            Ролевая страница
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Content.Models.IRoleMapPage.MapItems">
+            <summary>
+            Настройки перенаправления
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Content.Models.IRoleMapPage.DefaultMapPage">
+            <summary>
+            Страница по умолчанию
+            </summary>
+            <remarks>
+            Страница, на которую будет сделано перенаправление, если ни одно из условий не выполнится
+            </remarks>
+        </member>
+        <member name="T:EleWise.ELMA.Content.Models.IRoleMapPageFilter">
+            <summary>
+            Фильтр для объекта "Ролевая страница"
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Content.Models.IRoleMapPageFilter.DefaultMapPage">
+            <summary>
+            Фильтр для свойства "Страница по умолчанию"
+            </summary>
+        </member>
+        <member name="T:EleWise.ELMA.Content.Models.IRoleMapPageItem">
+            <summary>
+            Элемент настройки ролевой страницы
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Content.Models.IRoleMapPageItem.Uid">
+            <summary>
+            Уникальный идентификатор
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Content.Models.IRoleMapPageItem.Page">
+            <summary>
+            Страница
+            </summary>
+            <remarks>
+            Страница на которую производится перенаправление при совпадении ролей
+            </remarks>
+        </member>
+        <member name="P:EleWise.ELMA.Content.Models.IRoleMapPageItem.UserGroups">
+            <summary>
+            Группы
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Content.Models.IRoleMapPageItem.Order">
+            <summary>
+            Порядок
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Content.Models.IRoleMapPageItem.OrganizationItems">
+            <summary>
+            Элементы орг. структуры
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Content.Models.IRoleMapPageItem.Users">
+            <summary>
+            Пользователи
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Content.Models.IRoleMapPageItem.Parent">
+            <summary>
+            Родительская ролевая страница
+            </summary>
+            <remarks>
+            Ролевая страница, с которой необходимо перенаправить пользователя
+            </remarks>
+        </member>
+        <member name="T:EleWise.ELMA.Content.Models.IRoleMapPageItemFilter">
+            <summary>
+            Фильтр для объекта "Элемент настройки ролевой страницы"
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Content.Models.IRoleMapPageItemFilter.Page">
+            <summary>
+            Фильтр для свойства "Страница"
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Content.Models.IRoleMapPageItemFilter.Order">
+            <summary>
+            Фильтр для свойства "Порядок"
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Content.Models.IRoleMapPageItemFilter.OrganizationItems">
+            <summary>
+            Фильтр для свойства "Элементы орг. структуры"
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Content.Models.IRoleMapPageItemFilter.Users">
+            <summary>
+            Фильтр для свойства "Пользователи"
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Content.Models.IRoleMapPageItemFilter.Parent">
+            <summary>
+            Фильтр для свойства "Родительская ролевая страница"
+            </summary>
+        </member>
+        <member name="T:EleWise.ELMA.Content.Models.UserWorkPlaceActions">
+            <summary>
+            Действия для объекта "UserWorkPlace"
+            </summary>
+        </member>
+        <member name="M:EleWise.ELMA.Content.Models.UserWorkPlaceActions.#ctor">
+            <summary>
+            ctor
+            </summary>
+        </member>
+        <member name="T:EleWise.ELMA.Content.Models.IUserWorkPlace">
+            <summary>
+            UserWorkPlace
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Content.Models.IUserWorkPlace.WorkPlace">
+            <summary>
+            Интерфейс
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Content.Models.IUserWorkPlace.ColorScheme">
+            <summary>
+            Цветовая схема
+            </summary>
+        </member>
+        <member name="T:EleWise.ELMA.Content.Models.IWorkPlace">
+            <summary>
+            Интерфейс
+            </summary>
+            <remarks>
+            Адаптация интерфейса под пользователя
+            </remarks>
+        </member>
+        <member name="P:EleWise.ELMA.Content.Models.IWorkPlace.Uid">
+            <summary>
+            Уникальный идентификатор
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Content.Models.IWorkPlace.Name">
+            <summary>
+            Наименование
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Content.Models.IWorkPlace.LeftMenu">
+            <summary>
+            Левое меню
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Content.Models.IWorkPlace.WorkplacePages">
+            <summary>
+            Набор главных страниц
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Content.Models.IWorkPlace.StartMenu">
+            <summary>
+            Главное меню
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Content.Models.IWorkPlace.Toolbar">
+            <summary>
+            Панель инструментов
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Content.Models.IWorkPlace.Type">
+            <summary>
+            Тип интерфейса
+            </summary>
+            <remarks>
+            Уникальный идентификатор типа интерфейса
+            </remarks>
+        </member>
+        <member name="P:EleWise.ELMA.Content.Models.IWorkPlace.WorkplaceColorSchemes">
+            <summary>
+            Набор цветовых схем
+            </summary>
+        </member>
+        <member name="T:EleWise.ELMA.Content.Models.IWorkPlaceFilter">
+            <summary>
+            Фильтр для объекта "Интерфейс"
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Content.Models.IWorkPlaceFilter.Name">
+            <summary>
+            Фильтр для свойства "Наименование"
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Content.Models.IWorkPlaceFilter.LeftMenu">
+            <summary>
+            Фильтр для свойства "Левое меню"
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Content.Models.IWorkPlaceFilter.WorkplacePages">
+            <summary>
+            Фильтр для свойства "Набор главных страниц"
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Content.Models.IWorkPlaceFilter.StartMenu">
+            <summary>
+            Фильтр для свойства "Главное меню"
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Content.Models.IWorkPlaceFilter.Toolbar">
+            <summary>
+            Фильтр для свойства "Панель инструментов"
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Content.Models.IWorkPlaceFilter.WorkplaceColorSchemes">
+            <summary>
+            Фильтр для свойства "Набор цветовых схем"
+            </summary>
+        </member>
+        <member name="T:EleWise.ELMA.Content.Models.IWorkplacePages">
+            <summary>
+            Главные страницы интерфейса
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Content.Models.IWorkplacePages.Uid">
+            <summary>
+            Уникальный идентификатор
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Content.Models.IWorkplacePages.CreationDate">
+            <summary>
+            Дата создания
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Content.Models.IWorkplacePages.CreationAuthor">
+            <summary>
+            Автор создания
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Content.Models.IWorkplacePages.ChangeDate">
+            <summary>
+            Дата изменения
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Content.Models.IWorkplacePages.ChangeAuthor">
+            <summary>
+            Автор изменения
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Content.Models.IWorkplacePages.Pages">
+            <summary>
+            Страницы
+            </summary>
+        </member>
+        <member name="T:EleWise.ELMA.Content.Models._NamespaceInfo">
+            <summary>
+            Информация о пространстве имен EleWise.ELMA.Content.Models
+            </summary>
+        </member>
+        <member name="F:EleWise.ELMA.Content.Models._NamespaceInfo.UID_S">
+            <summary>
+            Уникальный идентификатор данного класса
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Content.Models._NamespaceInfo.UID">
+            <summary>
+            Уникальный идентификатор данного класса
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Content.Models._NamespaceInfo.DisplayName">
+            <summary>
+            Отображаемое название
+            </summary>
+        </member>
+        <member name="T:EleWise.ELMA.Content.Services.ColorSchemeLessService">
+            <summary>
+            Сервис цветовой схемы
+            </summary>
+        </member>
+        <member name="M:EleWise.ELMA.Content.Services.ColorSchemeLessService.#ctor(EleWise.ELMA.Content.Managers.ColorSchemeManager)">
+            <summary>
+            ctor
+            </summary>
+            <param name="colorSchemeManager">Менеджер сущности <see cref="T:EleWise.ELMA.Content.Models.IColorScheme"/></param>
+        </member>
+        <member name="M:EleWise.ELMA.Content.Services.ColorSchemeLessService.GetScheme(System.String)">
+            <inheritdoc />
+        </member>
+        <member name="M:EleWise.ELMA.Content.Services.ColorSchemeLessService.GetCssScheme">
+            <inheritdoc />
+        </member>
+        <member name="T:EleWise.ELMA.Content.ThemeSettings">
+            <summary>
+            Настройки цветовой темы
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Content.ThemeSettings.CurrentColorScheme">
+            <summary>
+            Текущая цветовая схема
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Content.ThemeSettings.CurrentColorSchemeId">
+            <summary>
+            Идентификатор текущей цветовой схемы
+            </summary>
+        </member>
+        <member name="M:EleWise.ELMA.Content.ThemeSettings.#ctor">
+            <summary>
+            Ctor
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Content.ThemeSettings.GeneralBackground">
+            <summary>
+            Цвет общего фона
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Content.ThemeSettings.LeftMenuBackground">
+            <summary>
+            Цвет фона левого меню
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Content.ThemeSettings.TopMenuBackground">
+            <summary>
+            Цвет фона тулбара
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Content.ThemeSettings.BlockBackground">
+            <summary>
+            Цвета фона компонентов
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Content.ThemeSettings.ShadowColor">
+            <summary>
+            Цвет тени
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Content.ThemeSettings.GeneralFontColor">
+            <summary>
+            Базовый цвет текста
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Content.ThemeSettings.GeneralNegativeFontColor">
+            <summary>
+            Инверсия базового цвета текста
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Content.ThemeSettings.CaptionCellFontColor">
+            <summary>
+            Цвет текста наименования свойств
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Content.ThemeSettings.DescriptionFontColor">
+            <summary>
+            Цвет текста описания свойств
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Content.ThemeSettings.PlaceholderFontColor">
+            <summary>
+            Цвет заполнителя
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Content.ThemeSettings.ValidationSuccessFontColor">
+            <summary>
+            Цвет текста успешного выполнения
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Content.ThemeSettings.ValidationErrorFontColor">
+            <summary>
+            Цвет текста сообщения об ошибке
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Content.ThemeSettings.SeparatorGrayBackgroundColor">
+            <summary>
+            Цвет панели I типа
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Content.ThemeSettings.SeparatorGrayHoverBackgroundColor">
+            <summary>
+            Цвет панели I типа при наведении
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Content.ThemeSettings.SeparatorBlueBackgroundColor">
+            <summary>
+            Цвет панели II типа
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Content.ThemeSettings.SeparatorBlueHoverBackgroundColor">
+            <summary>
+            Цвет панели II типа при наведении
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Content.ThemeSettings.SeparatorYellowBackgroundColor">
+            <summary>
+            Цвет панели III типа
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Content.ThemeSettings.SeparatorYellowHoverBackgroundColor">
+            <summary>
+            Цвет панели III типа при наведении
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Content.ThemeSettings.SeparatorRedBackgroundColor">
+            <summary>
+            Цвет панели IV типа
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Content.ThemeSettings.SeparatorRedHoverBackgroundColor">
+            <summary>
+            Цвет панели IV типа при наведении
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Content.ThemeSettings.SeparatorGreenBackgroundColor">
+            <summary>
+            Цвет панели V типа
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Content.ThemeSettings.SeparatorGreenHoverBackgroundColor">
+            <summary>
+            Цвет панели V типа при наведении
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Content.ThemeSettings.ButtonGray">
+            <summary>
+            Цвет кнопки I типа
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Content.ThemeSettings.ButtonHoverGray">
+            <summary>
+            Цвет кнопки I типа при наведении
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Content.ThemeSettings.ButtonOutlineGray">
+            <summary>
+            Цвет кнопки I типа без заливки
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Content.ThemeSettings.ButtonOutlineHoverGray">
+            <summary>
+            Цвет кнопки I типа без заливки при наведении
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Content.ThemeSettings.ButtonBlue">
+            <summary>
+            Цвет кнопки II типа
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Content.ThemeSettings.ButtonHoverBlue">
+            <summary>
+            Цвет кнопки II типа при наведении
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Content.ThemeSettings.ButtonOutlineBlue">
+            <summary>
+            Цвет кнопки II типа без заливки
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Content.ThemeSettings.ButtonOutlineHoverBlue">
+            <summary>
+            Цвет кнопки II типа без заливки при наведении
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Content.ThemeSettings.ButtonRed">
+            <summary>
+            Цвет кнопки III типа
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Content.ThemeSettings.ButtonHoverRed">
+            <summary>
+            Цвет кнопки III типа при наведении
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Content.ThemeSettings.ButtonOutlineRed">
+            <summary>
+            Цвет кнопки III типа без заливки
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Content.ThemeSettings.ButtonOutlineHoverRed">
+            <summary>
+            Цвет кнопки III типа без заливки при наведении
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Content.ThemeSettings.ButtonGreen">
+            <summary>
+            Цвет кнопки IV типа
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Content.ThemeSettings.ButtonHoverGreen">
+            <summary>
+            Цвет кнопки IV типа при наведении
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Content.ThemeSettings.ButtonOutlineGreen">
+            <summary>
+            Цвет кнопки IV типа без заливки
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Content.ThemeSettings.ButtonOutlineHoverGreen">
+            <summary>
+            Цвет кнопки IV типа без заливки при наведении
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Content.ThemeSettings.ButtonYellow">
+            <summary>
+            Цвет кнопки V типа
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Content.ThemeSettings.ButtonHoverYellow">
+            <summary>
+            Цвет кнопки V типа при наведении
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Content.ThemeSettings.ButtonOutlineYellow">
+            <summary>
+            Цвет кнопки V типа без заливки
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Content.ThemeSettings.ButtonOutlineHoverYellow">
+            <summary>
+            Цвет кнопки V типа без заливки при наведении
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Content.ThemeSettings.ButtonSimple">
+            <summary>
+            Цвет кнопки VI типа
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Content.ThemeSettings.ButtonHoverSimple">
+            <summary>
+            Цвет кнопки VI типа при наведении
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Content.ThemeSettings.ButtonOutlineSimple">
+            <summary>
+            Цвет кнопки VI типа без заливки
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Content.ThemeSettings.ButtonOutlineHoverSimple">
+            <summary>
+            Цвет кнопки VI типа без заливки при наведении
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Content.ThemeSettings.TabFontColor">
+            <summary>
+            Цвет текста вкладки
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Content.ThemeSettings.CounterTextColor">
+            <summary>
+            Цвет текста счетчика
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Content.ThemeSettings.CounterBackgroundColor">
+            <summary>
+            Цвет фона счетчика
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Content.ThemeSettings.ActiveTabBackgroundColor">
+            <summary>
+            Цвет активной вкладки
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Content.ThemeSettings.ActiveTabFontColor">
+            <summary>
+            Цвет текста активной вкладки
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Content.ThemeSettings.ActiveCounterTextColor">
+            <summary>
+            Цвет текста счетчика активной вкладки
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Content.ThemeSettings.ActiveCounterBackgroundColor">
+            <summary>
+            Цвет фона счетчика активной вкладки
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Content.ThemeSettings.ControlBorderColor">
+            <summary>
+            Цвет границы
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Content.ThemeSettings.ControlHoverBorderColor">
+            <summary>
+            Цвет границы при наведении
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Content.ThemeSettings.ControlFocusBorderColor">
+            <summary>
+            Цвет границы в фокусе
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Content.ThemeSettings.ControlHoverBackgroundColor">
+            <summary>
+            Цвет фона контрола при наведении
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Content.ThemeSettings.ControlDisabledBackgroundColor">
+            <summary>
+            Цвет фона отключенного контрола
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Content.ThemeSettingsModule.ColorSchemeManager">
+            <summary>
+            Менеджер сущности <see cref="T:EleWise.ELMA.Content.Models.IColorScheme"/>
+            </summary>
+        </member>
+        <member name="M:EleWise.ELMA.Content.ThemeSettingsModule.SaveSettings">
+            <inheritdoc />
+        </member>
+        <member name="T:EleWise.ELMA.Content.Transformation.MenuItemTransformationBase`5">
+            <summary>
+            Базовый класс трансформации элемента меню
+            </summary>
+            <typeparam name="TTransformation">Тип трансформации</typeparam>
+            <typeparam name="TAdd">Тип добавления элемента меню</typeparam>
+            <typeparam name="TMove">Тип перемещения элемента меню</typeparam>
+            <typeparam name="THide">Тип скрытия элемента меню</typeparam>
+            <typeparam name="TChange">Тип изменения содержания элемента меню</typeparam>
+        </member>
+        <member name="M:EleWise.ELMA.Content.Transformation.MenuItemTransformationBase`5.GetSubItems(EleWise.ELMA.Content.Models.IMenuItem)">
+            <inheritdoc />
+        </member>
+        <member name="M:EleWise.ELMA.Content.Transformation.MenuItemTransformationBase`5.GetUid(EleWise.ELMA.Content.Models.IMenuItem)">
+            <inheritdoc />
+        </member>
+        <member name="M:EleWise.ELMA.Content.Transformation.MenuItemTransformationBase`5.IsHide(EleWise.ELMA.Content.Models.IMenuItem)">
+            <inheritdoc />
+        </member>
+        <member name="M:EleWise.ELMA.Content.Transformation.MenuItemTransformationBase`5.SetHide(EleWise.ELMA.Content.Models.IMenuItem,EleWise.ELMA.Content.Models.IMenuItem,System.Boolean)">
+            <inheritdoc />
+        </member>
+        <member name="M:EleWise.ELMA.Content.Transformation.MenuItemTransformationBase`5.CreateCopy(EleWise.ELMA.Content.Models.IMenuItem)">
+            <inheritdoc />
+        </member>
+        <member name="M:EleWise.ELMA.Content.Transformation.MenuItemTransformationBase`5.Clone(EleWise.ELMA.Content.Models.IMenuItem)">
+            <inheritdoc />
+        </member>
+        <member name="T:EleWise.ELMA.Content.Transformation.MenuItemTransformationBase`5.MenuItemWeightChanged">
+            <summary>
+            Класс события изменения веса элемента меню
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Content.Transformation.MenuItemTransformationBase`5.MenuItemWeightChanged.MenuItem">
+            <summary>
+            Элемент меню
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Content.Transformation.MenuItemTransformationBase`5.WeightChanged">
+            <summary>
+            Событие изменения порядка элемента
+            </summary>
+        </member>
+        <member name="M:EleWise.ELMA.Content.Transformation.MenuItemTransformationBase`5.AddItem(EleWise.ELMA.Content.Models.IMenuItem,EleWise.ELMA.Content.Models.IMenuItem)">
+            <inheritdoc />
+        </member>
+        <member name="M:EleWise.ELMA.Content.Transformation.MenuItemTransformationBase`5.InsertItem(EleWise.ELMA.Content.Models.IMenuItem,System.Int32,EleWise.ELMA.Content.Models.IMenuItem)">
+            <inheritdoc />
+        </member>
+        <member name="T:EleWise.ELMA.Content.Transformation.PageV2TransformationContainer">
+            <summary>
+            Контейнер для трансформаций
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Content.Transformation.PageV2TransformationContainer.Page">
+            <summary>
+            Страница
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Content.Transformation.PageV2TransformationContainer.Parameters">
+            <summary>
+            Параметры страницы
+            </summary>
+        </member>
+        <member name="T:EleWise.ELMA.Content.Transformation.PersonalMenuItemTransformationSerializer">
+            <summary>
+            Класс для сериализации для класса PersonalMenuItemTransformation
+            </summary>
+        </member>
+        <member name="M:EleWise.ELMA.Content.Transformation.PersonalMenuItemTransformationSerializer.#ctor">
+            <summary>
+            ctor
+            </summary>
+        </member>
+        <member name="T:EleWise.ELMA.Content.Transformation.PersonalMenuItemTransformationSerializer.PersonalMenuItemTransformationConverter">
+            <summary>
+            Класс конвертор для объекта трансформации элемента меню
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Content.Transformation.PersonalMenuItemTransformationSerializer.PersonalMenuItemTransformationConverter.SupportedTypes">
+            <inheritdoc />
+        </member>
+        <member name="M:EleWise.ELMA.Content.Transformation.PersonalMenuItemTransformationSerializer.PersonalMenuItemTransformationConverter.Deserialize(System.Collections.Generic.IDictionary{System.String,System.Object},System.Type,System.Web.Script.Serialization.JavaScriptSerializer)">
+            <inheritdoc />
+        </member>
+        <member name="M:EleWise.ELMA.Content.Transformation.PersonalMenuItemTransformationSerializer.PersonalMenuItemTransformationConverter.Serialize(System.Object,System.Web.Script.Serialization.JavaScriptSerializer)">
+            <inheritdoc />
+        </member>
+        <member name="T:EleWise.ELMA.Content.Transformation.PersonalMenuItemTransformationSerializer.MenuItemConverter">
+            <summary>
+            Класс конвертор для элемента меню
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Content.Transformation.PersonalMenuItemTransformationSerializer.MenuItemConverter.Logger">
+            <summary>
+            Логгер
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Content.Transformation.PersonalMenuItemTransformationSerializer.MenuItemConverter.SupportedTypes">
+            <inheritdoc />
+        </member>
+        <member name="M:EleWise.ELMA.Content.Transformation.PersonalMenuItemTransformationSerializer.MenuItemConverter.Deserialize(System.Collections.Generic.IDictionary{System.String,System.Object},System.Type,System.Web.Script.Serialization.JavaScriptSerializer)">
+            <inheritdoc />
+        </member>
+        <member name="M:EleWise.ELMA.Content.Transformation.PersonalMenuItemTransformationSerializer.MenuItemConverter.Serialize(System.Object,System.Web.Script.Serialization.JavaScriptSerializer)">
+            <inheritdoc />
+        </member>
+        <member name="T:EleWise.ELMA.Content.Transformation.PersonalMenuItemTransformationAdd">
+            <summary>
+            Класс добавления элемента меню
+            </summary>
+        </member>
+        <member name="T:EleWise.ELMA.Content.Transformation.PersonalMenuItemTransformationMove">
+            <summary>
+            Класс перемещения элемента меню
+            </summary>
+        </member>
+        <member name="T:EleWise.ELMA.Content.Transformation.PersonalMenuItemTransformationHide">
+            <summary>
+            Класс скрытия элемента меню
+            </summary>
+        </member>
+        <member name="T:EleWise.ELMA.Content.Transformation.PersonalMenuItemTransformationChange">
+            <summary>
+            Класс изменения содержания элемента меню
+            </summary>
+        </member>
+        <member name="T:EleWise.ELMA.Content.Transformation.PersonalMenuItemTransformation">
+            <summary>
+            Класс трансформации элемента меню
+            </summary>
+        </member>
+        <member name="T:EleWise.ELMA.Content.Transformation.IPageTransformationContainer">
+            <summary>
+            Интерфейс объединения WorkplacePagesContainer и IPageBase
+            </summary>
+        </member>
+        <member name="T:EleWise.ELMA.Content.Transformation.WorkplacePagesContainer">
+            <summary>
+            Контейнер для трансформации
+            </summary>
+        </member>
+        <member name="F:EleWise.ELMA.Content.Transformation.WorkplacePagesContainer.VisibleListUid">
+            <summary>
+            Uid списка видимых страниц
+            </summary>
+        </member>
+        <member name="F:EleWise.ELMA.Content.Transformation.WorkplacePagesContainer.HiddenListUid">
+            <summary>
+            Uid списка скрытых страниц
+            </summary>
+        </member>
+        <member name="M:EleWise.ELMA.Content.Transformation.WorkplacePagesContainer.Pack(System.Collections.Generic.ICollection{EleWise.ELMA.Content.Models.IHomePageSetting})">
+            <summary>
+            Создать контейнер по сущности
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:EleWise.ELMA.Content.Transformation.WorkplacePagesContainer.Unpack(EleWise.ELMA.Content.Transformation.WorkplacePagesContainer)">
+            <summary>
+            Восстановить сущность по данным контейнера
+            </summary>
+            <param name="container"></param>
+            <returns></returns>
+        </member>
+        <member name="P:EleWise.ELMA.Content.Transformation.WorkplacePagesContainer.Uid">
+            <summary>
+            VisibleListUid, HiddenListUid, либо Guid страницы
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Content.Transformation.WorkplacePagesContainer.Items">
+            <summary>
+            Список из двух элементов, где [0] - видимые элементы, [1] - невидимые элементы,
+            либо дочерние элементы - страницы
+            </summary>
+        </member>
+        <member name="M:EleWise.ELMA.Content.Transformation.WorkplacePagesTransformationAdd.GetItem">
+            <summary>
+            Возращается значение, сформированное из сохраняемого свойстыва (создается копия объекта, если типы одинаковые)
+            </summary>
+        </member>
+        <member name="M:EleWise.ELMA.Content.Transformation.WorkplacePagesTransformationAdd.SetItem(EleWise.ELMA.Content.Transformation.IPageTransformationContainer)">
+            <summary>
+            Устанавливает значение для сохраняемого свойства (создается копия объекта, если типы одинаковые)
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Content.Transformation.WorkplacePagesTransformationAdd.Parameters">
+            <summary>
+            Параметры страницы
+            </summary>
+        </member>
+        <member name="T:EleWise.ELMA.Content.Transformation.WorkplacePagesTransformation">
+            <summary>
+            Класс описания трансформаций для наборов главных страниц интерфейса
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Content.Transformation.WorkplacePagesTransformation.BlobUid">
+            <summary>
+            Key для BlobStoreHolder
+            </summary>
+        </member>
+        <member name="M:EleWise.ELMA.Content.Transformation.WorkplacePagesTransformation.GetSubItems(EleWise.ELMA.Content.Transformation.IPageTransformationContainer)">
+            <inheritdoc />
+        </member>
+        <member name="M:EleWise.ELMA.Content.Transformation.WorkplacePagesTransformation.GetUid(EleWise.ELMA.Content.Transformation.IPageTransformationContainer)">
+            <inheritdoc />
+        </member>
+        <member name="M:EleWise.ELMA.Content.Transformation.WorkplacePagesTransformation.IsHide(EleWise.ELMA.Content.Transformation.IPageTransformationContainer)">
+            <summary>
+            Если по общей логике элементы можно скрывать, то метод должен возвращать "скрытость" элемента.<br/>
+            Если элементы можно только добавлять/удалять, то метод должен возвращать false.
+            </summary>
+            <param name="item"></param>
+            <returns></returns>
+        </member>
+        <member name="M:EleWise.ELMA.Content.Transformation.WorkplacePagesTransformation.SetHide(EleWise.ELMA.Content.Transformation.IPageTransformationContainer,EleWise.ELMA.Content.Transformation.IPageTransformationContainer,System.Boolean)">
+            <summary>
+            В зависимости от общей логики - скрыть, либо удалить элемент из родительского.
+            </summary>
+            <param name="parentItem">Родительский элемент</param>
+            <param name="item"></param>
+            <param name="hide"></param>
+        </member>
+        <member name="T:EleWise.ELMA.Content.Transformation.MenuItemTransformationAdd">
+            <summary>
+            Класс добавления элемента меню
+            </summary>
+        </member>
+        <member name="T:EleWise.ELMA.Content.Transformation.MenuItemTransformationMove">
+            <summary>
+            Класс перемещения элемента меню
+            </summary>
+        </member>
+        <member name="T:EleWise.ELMA.Content.Transformation.MenuItemTransformationHide">
+            <summary>
+            Класс скрытия элемента меню
+            </summary>
+        </member>
+        <member name="T:EleWise.ELMA.Content.Transformation.MenuItemTransformationChange">
+            <summary>
+            Класс изменения содержания элемента меню
+            </summary>
+        </member>
+        <member name="T:EleWise.ELMA.Content.Transformation.MenuItemTransformation">
+            <summary>
+            Класс трансформации элемента меню
+            </summary>
+        </member>
+        <member name="T:EleWise.ELMA.Content.MenuSecurity">
+            <summary>
+            Привилегии для элемента веб-меню
+            </summary>
+        </member>
+        <member name="F:EleWise.ELMA.Content.MenuSecurity.Module">
+            <summary>
+            Идентификатор модуля
+            </summary>
+        </member>
+        <member name="F:EleWise.ELMA.Content.MenuSecurity.ViewMenuItemPermissionId">
+            <summary>
+            Идентификатор привилегии Просмотр элемента меню
+            </summary>
+        </member>
+        <member name="F:EleWise.ELMA.Content.MenuSecurity.ViewMenuItemPermission">
+            <summary>
+            Привилегия Просмотр элемента меню
+            </summary>
+        </member>
+        <member name="M:EleWise.ELMA.Content.MenuSecurity.#ctor">
+            <summary>
+            Ctor
+            </summary>
+        </member>
+        <member name="M:EleWise.ELMA.Content.MenuSecurity.GetPermissions">
+            <summary>
+            Получить все привилегии веб-меню
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:EleWise.ELMA.Content.MenuSecurity.GetPermissionStereotypes">
+            <summary>
+            Получить информацию о назначении привилеги ролям по умолчанию
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="P:EleWise.ELMA.Content.MenuSecurity.UserGroupManager">
+            <summary>
+            Менеджер пользовательских групп
+            </summary>
+        </member>
+        <member name="M:EleWise.ELMA.Content.MenuSecurity.CreatePermissions(EleWise.ELMA.Model.Entities.IEntity)">
+            <summary>
+            Добавляет привилегию на веб-меню всем пользователям
+            </summary>
+            <param name="entity"></param>
+        </member>
+        <member name="M:EleWise.ELMA.Content.MenuSecurity.GetTypePermissionRoleStereotypes">
+            <summary>
+            Получить информацию о соответвтсии типа, привилигиях и ролях.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:EleWise.ELMA.Content.MenuSecurity.GetRoleTypes">
+            <summary>
+            Получить типы ролей для веб-меню
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="P:EleWise.ELMA.Content.MenuSecurity.Filtering">
+            <inheritdoc />
+        </member>
+        <member name="M:EleWise.ELMA.Content.MenuSecurity.CanGrandPermissions(EleWise.ELMA.Security.IUser,System.Object)">
+            <inheritdoc />
+        </member>
+        <member name="M:EleWise.ELMA.Content.MenuSecurity.GetPermissionHolderCollection(EleWise.ELMA.Content.Models.IMenuItem)">
+            <inheritdoc />
+        </member>
+        <member name="P:EleWise.ELMA.Content.MenuSecurity.LocalizedItemsNames">
+            <summary>
+            Локализованные названия привилегий
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Content.MenuSecurity.LocalizedItemsDescriptions">
+            <summary>
+            Локализованные описания привилегий
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Content.MenuSecurity.LocalizedItemsCategories">
+            <summary>
+            Локализованные названия категорий привилегий
+            </summary>
+        </member>
+        <member name="T:EleWise.ELMA.Content.PageSecurity">
+            <summary>
+            Компонет с привилегиями сущности объекта портала
+            </summary>
+        </member>
+        <member name="F:EleWise.ELMA.Content.PageSecurity.Module">
+            <summary>
+            Идентификатор молудя Content
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Content.PageSecurity.UserGroupManager">
+            <summary>
+            Менеджер групп прользователей
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Content.PageSecurity.UserManager">
+            <summary>
+            Менеджер пользователей
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Content.PageSecurity.PortalObjectManager">
+            <summary>
+            Менеджер объектов портала
+            </summary>
+        </member>
+        <member name="F:EleWise.ELMA.Content.PageSecurity.ViewPagePermissionId">
+            <summary>
+            Идентификатор привилегии Просмотр объектов портала
+            </summary>
+        </member>
+        <member name="F:EleWise.ELMA.Content.PageSecurity.EditPagePermissionId">
+            <summary>
+            Идентификатор привилегии Редактирование объектов портала
+            </summary>
+        </member>
+        <member name="F:EleWise.ELMA.Content.PageSecurity.FullPagePermissionId">
+            <summary>
+            Идентификатор привилегии Полный доступ к объектам портала
+            </summary>
+        </member>
+        <member name="F:EleWise.ELMA.Content.PageSecurity.ViewPagePermission">
+            <summary>
+            Привилегия Просмотр объектов портала
+            </summary>
+        </member>
+        <member name="F:EleWise.ELMA.Content.PageSecurity.EditPagePermission">
+            <summary>
+            Привилегия Редактирование объектов портала
+            </summary>
+        </member>
+        <member name="F:EleWise.ELMA.Content.PageSecurity.FullAccessPagePermission">
+            <summary>
+            Привилегия Полный доступ к объектам портала
+            </summary>
+        </member>
+        <member name="M:EleWise.ELMA.Content.PageSecurity.GetPermissions">
+            <summary>
+            Получить привилегии для типа объект портала
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:EleWise.ELMA.Content.PageSecurity.GetPermissionStereotypes">
+            <summary>
+            Получить информацию о назначении привилегий ролям по умолчанию на тип объекта портала
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:EleWise.ELMA.Content.PageSecurity.#ctor">
+            <summary>
+            Ctor
+            </summary>
+        </member>
+        <member name="M:EleWise.ELMA.Content.PageSecurity.GetPermissionHolderCollection(EleWise.ELMA.Content.Models.IPortalObject)">
+            <summary>
+            Получить привилегии для объекта протала
+            </summary>
+            <param name="target"></param>
+            <returns></returns>
+        </member>
+        <member name="M:EleWise.ELMA.Content.PageSecurity.CanGrandPermissions(EleWise.ELMA.Security.IUser,System.Object)">
+            <inheritdoc />
+        </member>
+        <member name="P:EleWise.ELMA.Content.PageSecurity.EntityType">
+            <summary>
+            Тип сущности (объект портала)
+            </summary>
+        </member>
+        <member name="M:EleWise.ELMA.Content.PageSecurity.CreatePermissions(EleWise.ELMA.Model.Entities.IEntity)">
+            <summary>
+            Создать привилегии для объекта портала
+            </summary>
+            <param name="entity"></param>
+        </member>
+        <member name="P:EleWise.ELMA.Content.PageSecurity.AdminPermission">
+            <summary>
+            Привилегия Администрирование портала
+            </summary>
+        </member>
+        <member name="M:EleWise.ELMA.Content.PageSecurity.GrandAllUsersViewPermission(EleWise.ELMA.Content.Models.IPortalObject)">
+            <summary>
+            Добавляет права на чтение для группы Все пользователи
+            </summary>
+            <param name="portalObject"></param>
+        </member>
+        <member name="M:EleWise.ELMA.Content.PageSecurity.GrandAuthorPermissions(EleWise.ELMA.Content.Models.IPortalObject)">
+            <summary>
+            Добавляет полные права автору
+            </summary>
+            <param name="portalObject"></param>
+        </member>
+        <member name="M:EleWise.ELMA.Content.PageSecurity.GetTypePermissionRoleStereotypes">
+            <summary>
+            Получить информацию о соответвтсии привилигий и ролей объекта портала.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="P:EleWise.ELMA.Content.PageSecurity.LocalizedItemsNames">
+            <summary>
+            Локализованные названия привилегий
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Content.PageSecurity.LocalizedItemsDescriptions">
+            <summary>
+            Локализованные описания привилегий
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Content.PageSecurity.LocalizedItemsCategories">
+            <summary>
+            Локализованные названия категорий привилегий
+            </summary>
+        </member>
+        <member name="M:EleWise.ELMA.Content.PermissionProvider.GetPermissionNames">
+            <summary>
+            Возвращает соответстие привилегия - имя привилегии(на английском)
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="T:EleWise.ELMA.Content._NamespaceInfo">
+            <summary>
+            Информация о пространстве имен EleWise.ELMA.Content
+            </summary>
+        </member>
+        <member name="F:EleWise.ELMA.Content._NamespaceInfo.UID_S">
+            <summary>
+            Уникальный идентификатор данного класса
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Content._NamespaceInfo.UID">
+            <summary>
+            Уникальный идентификатор данного класса
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Content._NamespaceInfo.DisplayName">
+            <summary>
+            Отображаемое название
+            </summary>
+        </member>
+    </members>
+</doc>

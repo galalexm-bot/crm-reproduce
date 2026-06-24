@@ -1,0 +1,198 @@
+﻿@model LeadDynamicModel
+
+@using System.Globalization
+@using System.Web.Mvc
+@using EleWise.ELMA
+@using EleWise.ELMA.CRM
+@using EleWise.ELMA.CRM.Models
+@using EleWise.ELMA.CRM.Web
+@using EleWise.ELMA.CRM.Web.Components
+@using EleWise.ELMA.CRM.Web.Models
+@using EleWise.ELMA.Model.Ranges
+@using EleWise.ELMA.Model.Services
+@using EleWise.ELMA.Model.Views
+@using EleWise.ELMA.Web.Mvc.ExtensionPoints
+@using EleWise.ELMA.Web.Mvc.Enums
+@using EleWise.ELMA.Web.Mvc.Html
+
+@{
+    var countColumn = Model.PeriodList.Count;
+    var allCount = Model.AllCount;
+
+    var activeGroups = Model.GridData;
+    var archiveGroups = Model.GridDataArchive;
+    var canAdd = CRMPermissionProvider.CheckAny(new[] { CRMPermissionProvider.CRMFullAccessPermission, CRMPermissionProvider.MarketingFullAccessPermission });
+}
+
+@functions {
+
+    void GetPeriodGroup(IMarketingGroup group, out DateTime startDate, out DateTime endDate)
+    {
+        startDate = new DateTime();
+        endDate = new DateTime();
+        foreach (var activity in group.MarketingActivities)
+        {
+            startDate = activity.StartDate < startDate || startDate == new DateTime() ? activity.StartDate : startDate;
+            endDate = activity.EndDate > endDate ? activity.EndDate : endDate;
+            foreach (var effect in activity.MarketingEffects)
+            {
+                startDate = effect.StartDate < startDate ? effect.StartDate : startDate;
+                endDate = effect.EndDate > endDate ? effect.EndDate : endDate;
+            }
+        }
+    }
+
+    MvcHtmlString HeaderTd(MarketingPeriodEnum mode, DateTimeRange date, MarketingElementModel model, int count)
+    {
+        return MvcHtmlString.Create(String.Format("<div class='lead-date'>{0}</div><div>{1}</div>",
+            MarketingHelper.HeaderTableDateText(mode, date.From.Value, date.To.Value),
+            LeadDynamicModel.TemplateTd(Html, model, date, count, true)
+            ));
+    }
+}
+
+<div class="lead-dynamic-grid-table">
+    <div class="lead-dynamic-grid-head">
+        <div class="lead-dynamic-grid-th" style="width: 20%;">&nbsp;</div>
+        @{
+            for (var i = 1; i < countColumn; i++)
+            {
+                <div class="lead-dynamic-grid-th @(Model.PeriodList[i].From.Value <= DateTime.Today && Model.PeriodList[i].To.Value > DateTime.Today ? "current-period" : "")">@HeaderTd(Model.Mode, Model.PeriodList[i], allCount, i)</div>
+            }
+        }
+    </div>
+    
+    <div class="lead-dynamic-grid-body t-treeview-lines t-treeview">
+        @{
+            var first = 0;
+            foreach (MarketingElementModel group in activeGroups)
+            {
+                first++;
+                var classDiv = first == Model.GridData.Count ? "t-last" : first == 1 ? "t-first" : "";
+                var classDiv2 = first == 1 ? "t-top" : first == Model.GridData.Count ? "t-bot" : "t-mid";
+                var entityId = group.Entity == null ? 0 : group.Entity.Id;
+
+                var allHours = (Model.PeriodList[Model.PeriodList.Count - 1].To.Value - Model.PeriodList[1].From.Value).TotalHours;
+                double left = 0;
+                double width = 0;
+                var groupEntity = group.Entity as IMarketingGroup;
+                if (groupEntity != null)
+                {
+                    DateTime startDate, endDate;
+                    GetPeriodGroup(groupEntity, out startDate, out endDate);
+                    left = ((startDate - Model.PeriodList[1].From.Value).TotalHours / allHours) * 80 + 20;
+                    width = ((endDate - startDate).TotalHours / allHours) * 80;
+                }
+
+                var hide = left > 100 || (left + width) < 20 || width <= 0;
+                if (left < 20)
+                {
+                    width += left - 20;
+                    left = 20;
+                }
+                if ((left + width) > 100)
+                {
+                    width = 99.5 - left;
+                }
+
+                if (!hide)
+                {
+                    <div class="period-block @(Model.ShowArchive ? "is-archive" : "")" style="left: @left.ToString(CultureInfo.InvariantCulture)%; width: @(width.ToString(CultureInfo.InvariantCulture))%;"></div>
+                }
+
+                <div class="lead-dynamic-grid-row">
+                    <div class="lead-dynamic-grid-td">
+                        <div style="display: inline-block;" class="t-item @(classDiv)">
+                            <div class="@(classDiv2)">
+                                @if (group.AnyChildren)
+                                {
+                                    <span class="t-icon @(group.IsShow ? "t-minus" : "t-plus")" marketing-id="@entityId"></span>
+                                }
+                                <span class="t-in">
+                                    @if (entityId != 0)
+                                    {
+                                        @Html.Image(Html.Url().ObjectIcon(ObjectIconFormat.x16, group.Entity), "", new { @class = "t-image" })
+                                        <span><a href="@Url.Entity(group.Entity)" class="marketing-activity-button">@group.Entity.Name</a></span>
+                                    }
+                                    else {
+                                        <span>@SR.T("Без группы")</span>
+                                    }
+                                    
+                                    @if (canAdd || group.UserHasCreateItemsPermission) {
+                                        @Html.Button().IconUrl(UIIcons.Add).Url(Url.Action("Create", "MarketingActivity", new {
+                                            area = CRMAreaRegistration.AREA_NAME,
+                                            typeUid = InterfaceActivator.UID<IMarketingActivity>(),
+                                            parentId = entityId == 0 ? "" : entityId.ToString()
+                                        })).Attributes(new {
+                                            @class = "tree-item-button",
+                                            title = SR.T("Создать мероприятие")
+                                        })
+                                    }
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                    @{
+                        for (var i = 1; i < countColumn; i++)
+                        {
+                            <div class="lead-dynamic-grid-td">@MvcHtmlString.Create(Model.ShowStatistic ? LeadDynamicModel.TemplateTd(Html, group, Model.PeriodList[i], i) : "")</div>
+                        }
+                    }
+                </div>
+                if (group.IsShow)
+                {
+                    @Html.Partial("LeadDynamic/LeadDynamicActivity", new LeadDynamicModel(Model.Mode, Model.CurrentDate, false, Model.ShowStatistic, entityId))
+                }
+            }
+
+            if (Model.ShowArchive)
+            {
+                <div class="lead-dynamic-grid-row">
+                    <div class="lead-dynamic-grid-td" style="padding: 0 10px; font-weight: bold;">Архив</div>
+                </div>
+
+                var firstArchive = 0;
+                foreach (MarketingElementModel group in archiveGroups)
+                {
+                    firstArchive++;
+                    var classDiv = firstArchive == archiveGroups.Count ? "t-last" : firstArchive == 1 ? "t-first" : "";
+                    var classDiv2 = firstArchive == 1 ? "t-top" : firstArchive == archiveGroups.Count ? "t-bot" : "t-mid";
+                    var entityId = group.Entity == null ? 0 : group.Entity.Id;
+                    <div class="lead-dynamic-grid-row is-archive">
+                        <div class="lead-dynamic-grid-td">
+                            <div style="display: inline-block;" class="t-item @(classDiv)">
+                                <div class="@(classDiv2)">
+                                    @if (group.AnyChildren)
+                                    {
+                                        <a class="t-icon @(group.IsShow ? "t-minus" : "t-plus")" marketing-id="@entityId"></a>
+                                    }
+                                    <span class="t-in">
+                                        @if (entityId != 0)
+                                        {
+                                            @Html.Image(Html.Url().ObjectIcon(ObjectIconFormat.x16, group.Entity), "", new { @class = "t-image" })
+                                            <span><a href="@Url.Entity(group.Entity)">@group.Entity</a></span>
+                                        }
+                                        else
+                                        {
+                                            <span>@SR.T("Без группы")</span>
+                                        }
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                        @{
+                            for (var i = 1; i < countColumn; i++)
+                            {
+                                <div class="lead-dynamic-grid-td">@MvcHtmlString.Create(Model.ShowStatistic ? LeadDynamicModel.TemplateTd(Html, group, Model.PeriodList[i], i) : "")</div>
+                            }
+                        }
+                    </div>
+                    if (group.IsShow)
+                    {
+                        @Html.Partial("LeadDynamic/LeadDynamicActivity", new LeadDynamicModel(Model.Mode, Model.CurrentDate, true, Model.ShowStatistic, entityId))
+                    }
+                }
+            }
+        }
+    </div>
+</div>

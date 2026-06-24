@@ -1,0 +1,57 @@
+﻿@using EleWise.ELMA
+@using EleWise.ELMA.CRM.Models.BillingInformation
+@using EleWise.ELMA.Extensions
+@using EleWise.ELMA.Model.Services
+@using EleWise.ELMA.Model.Views
+@inherits EleWise.ELMA.Web.Mvc.Views.ViewItem.ViewItemControl<PanelViewItem, object, IPaymentCard>
+@{
+    var unique = Guid.NewGuid().ToString("N");
+    var paymentSystem = InterfaceActivator.PropertyUid<IPaymentCard>(m => m.PaymentSystem);
+    var number = InterfaceActivator.PropertyUid<IPaymentCard>(m => m.Number);
+    var name = InterfaceActivator.PropertyUid<IPaymentCard>(m => m.Name);
+    var list = new List<Guid> { paymentSystem, number, name };
+
+    var form = ViewItem.FormViewItem;
+    var addScript = false;
+    foreach (var property in form.GetAllProperties())
+    {
+        list.Remove(property.PropertyUid);
+        if (list.Count == 0)
+        {
+            addScript = true;
+            break;
+        }
+    }
+
+    if (addScript)
+    {
+        <script type="text/javascript">
+            $(document).ready(function () {
+                $('#@(Html.IDFor(m => m.PaymentSystem))_Id').bind("valueChange", function () {
+                    PaymentSystemAndNumberOnChange@(unique)('@(Html.IDFor(m => m.PaymentSystem))', '@(Html.IDFor(m => m.Number))', '@(Html.IDFor(m => m.Name))');
+                });
+
+                $('#@(Html.IDFor(m => m.Number))').change(function () {
+                    PaymentSystemAndNumberOnChange@(unique)('@(Html.IDFor(m => m.PaymentSystem))', '@(Html.IDFor(m => m.Number))', '@(Html.IDFor(m => m.Name))');
+                });
+
+                $('#@(Html.IDFor(m => m.Name))').attr("placeholder", '@SR.T("Наименование заполняется автоматически")');
+            });
+
+            function PaymentSystemAndNumberOnChange@(unique)(pSys, number, name) {
+                var paymentSysCombo = $('#' + pSys + '_Id').data('tComboBox');
+                if (paymentSysCombo != undefined) {
+                    var paymentSysVal = paymentSysCombo.text();
+                    var numVal = $('#' + number).val();
+                    var nameInput = $('#' + name);
+
+                    if (paymentSysVal == '' && numVal == '') {
+                        nameInput.val('');
+                    } else {
+                        nameInput.val(jQuery.format('@SR.T("{0} № {1}")')(paymentSysVal, numVal));
+                    }
+                }
+            }
+        </script>
+    }
+}

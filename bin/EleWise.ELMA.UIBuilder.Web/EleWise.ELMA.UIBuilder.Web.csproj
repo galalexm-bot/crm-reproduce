@@ -1,0 +1,37 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <AssemblyName>EleWise.ELMA.UIBuilder.Web</AssemblyName>
+    <GenerateAssemblyInfo>False</GenerateAssemblyInfo>
+    <TargetFramework>net48</TargetFramework>
+  </PropertyGroup>
+  <PropertyGroup>
+    <LangVersion>Preview</LangVersion>
+    <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
+  </PropertyGroup>
+  <PropertyGroup>
+    <RootNamespace />
+  </PropertyGroup>
+  <ItemGroup>
+    <None Remove="EleWise.ELMA.UIBuilder.Web.Res.dll" />
+    <None Remove="EleWise.ELMA.UIBuilder.Web.Res.dll" />
+    <None Remove="EleWise.ELMA.UIBuilder.Web.Res.dll" />
+    <None Remove="EleWise.ELMA.UIBuilder.Web.Res.dll" />
+    <EmbeddedResource Include="EleWise.ELMA.UIBuilder.Web.Res.dll" />
+    <EmbeddedResource Include="EleWise.ELMA.UIBuilder.Web.Res.dll" />
+    <EmbeddedResource Include="EleWise.ELMA.UIBuilder.Web.Res.dll" />
+    <EmbeddedResource Include="EleWise.ELMA.UIBuilder.Web.Res.dll" />
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="EleWise.ELMA.SDK">
+      <HintPath>..\EleWise.ELMA.SDK.dll</HintPath>
+    </Reference>
+    <Reference Include="EleWise.ELMA.SDK.Web">
+      <HintPath>..\EleWise.ELMA.SDK.Web.dll</HintPath>
+    </Reference>
+    <Reference Include="EleWise.ELMA.SDK.UIBuilder">
+      <HintPath>..\EleWise.ELMA.SDK.UIBuilder.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.Mvc" />
+    <Reference Include="System.Web" />
+  </ItemGroup>
+</Project>

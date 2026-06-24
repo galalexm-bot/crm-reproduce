@@ -1,0 +1,75 @@
+﻿@using EleWise.ELMA
+@using EleWise.ELMA.CRM.Web.Models
+@model RelationshipMeetingModel
+
+@{
+    Html.RegisterContent("ToggleTimeScripts",
+        @<text>
+             <script type="text/javascript">
+                 function toggleTime() {
+                     if ($("#WholeDay").is(":checked")) {
+                         $('.date-time-controll').addClass('no-date-time-controll').removeClass('date-time-controll');
+                         elma.hidePartDateTimePicker('Entity_StartDate', 'time');
+                         $("#Entity_EndDate_Container").hide();
+                         $("#trInterval").hide();
+                     }
+                     else {
+                         $('.no-date-time-controll').addClass('date-time-controll').removeClass('no-date-time-controll');
+                         elma.showPartDateTimePicker('Entity_StartDate', 'time');
+                         $("#Entity_EndDate_Container").show();
+                         $("#trInterval").show();
+                     }
+                }
+
+    function toggleTimeNotSet() {
+        
+        if ($("#TimeNotSet").is(":checked")) {
+            if ($("#WholeDay").is(":checked")) {
+                $("#Entity_EndDate_Container").show();
+            }
+            $('.date-time-controll').addClass('no-date-time-controll').removeClass('date-time-controll')
+            $("#WholeDayDiv").css('display', 'none');
+            elma.hidePartDateTimePicker('Entity_StartDate', 'time');
+            elma.hidePartDateTimePicker('Entity_EndDate', 'time');
+            $("#Entity_TimeNotSet").val("@true");
+            var form = $('#GlobalForm');
+            form.data('validator').element('#Entity_StartDate');
+            form.data('validator').element('#Entity_EndDate');
+        } else {
+            elma.showPartDateTimePicker('Entity_StartDate', 'time');
+            elma.showPartDateTimePicker('Entity_EndDate', 'time');
+            $('.no-date-time-controll').addClass('date-time-controll').removeClass('no-date-time-controll')
+            $("#WholeDayDiv").css('display', '');
+            $("#WholeDay").attr('checked', false);
+            $("#Entity_TimeNotSet").val("@false");
+        }
+    }
+
+    $(document).ready(function () { @(Model.Entity.TimeNotSet ? "toggleTimeNotSet();" : "" )@(Model.WholeDay ? "toggleTime();" : "" ) });
+             </script>
+         </text>);
+}
+
+<tr>
+    <td class="captionCell"></td>
+    <td>
+        <table>
+            <tr>
+                <td style="padding-right: 16px;">
+                    @Html.HiddenFor(m => m.Entity.TimeNotSet)
+                    @(Html.ModernCheckBox(false)
+                                .Id(ViewData.TemplateInfo.GetFullHtmlFieldId("TimeNotSet"))
+                                .Name(ViewData.TemplateInfo.GetFullHtmlFieldName("TimeNotSet"))
+                                .Checked(Model.Entity.TimeNotSet)
+                                .LabelText(SR.T("Уточнить время позже"))
+                                .Attributes(a => { a.onclick = "toggleTimeNotSet()"; }))
+                </td>
+                <td>
+                    <div id="@ViewData.TemplateInfo.GetFullHtmlFieldId("WholeDayDiv")">
+                        @(Html.ModernCheckBoxFor(m => m.WholeDay, false, true).LabelText(SR.T("Целый день")).Attributes(a => { a.@class = ""; a.onclick = "toggleTime()"; }))
+                    </div>
+                </td>
+            </tr>
+        </table>
+    </td>
+</tr>

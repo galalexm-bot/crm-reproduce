@@ -1,0 +1,16 @@
+﻿@model IMarketingPayment
+
+@using EleWise.ELMA.CRM.Models
+@using EleWise.ELMA.Model.Types.Settings
+
+@using (Html.TableForm(EleWise.ELMA.Model.Views.ViewType.Edit))
+{
+    @Html.HiddenFor(m => m.MarketingObjectBase.Id)
+    @Html.HiddenFor(m => m.Id)
+    @Html.EditableProperty(m => m.Name)
+    @Html.EditableProperty(m => m.Sum)
+    @Html.EditableProperty(m => m.CreationDate, a =>
+                {
+                    a.TypeSettingsAction = s => ((DateTimeSettings)s).ShowTime = false;
+                })
+}

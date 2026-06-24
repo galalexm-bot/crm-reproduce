@@ -1,0 +1,55 @@
+﻿@using EleWise.ELMA.CRM.Web
+@using EleWise.ELMA.Web.Mvc.Models.Boxes
+@using EleWise.ELMA
+@model EleWise.ELMA.CRM.Models.CurrencyImportGridRowModel
+@{
+    var selectedCurrency = new List<AutocompleteItem>();
+    var currenciesString = "";
+    if (!string.IsNullOrEmpty(Model.EstimatedCode) && !string.IsNullOrEmpty(Model.ValuationCode))
+    {
+        currenciesString = Model.EstimatedCode + "," + Model.ValuationCode;
+        var item = new AutocompleteItem()
+        {
+            Text = Model.EstimatedCode + " -> " + Model.ValuationCode,
+            Value = currenciesString
+        };
+        selectedCurrency.Add(item);
+    }
+    var index = Convert.ToInt32(ViewData["index"]);
+    const string currenciesName = "Currencies";
+    string curenciesId = TagBuilder.CreateSanitizedId(currenciesName);
+    var htmlAttributes = new HtmlAttributes();
+    htmlAttributes.style.width = "150px";
+}
+<tr class="gridRow">
+    <td>
+        @Html.AutocompleteEntityComboBox(new AutocompleteEntityComboBox
+        {
+            ControllerName = "CurrencyRatesGrid",
+            ActionName = "GetCurrencies",
+            RouteValueDictionary = new RouteValueDictionary { { "area", RouteProvider.AreaName } },
+            MultiSelect = false,
+            Name = currenciesName,
+            SelectedEntities = selectedCurrency,
+            AutoFill = true,
+            Encode = ViewBag.Encode ?? true,
+            HideSelect = true,
+            BindTo = ViewBag.BindTo,
+            OnChange = "function(e){changeCurrencies(e, " + Model.Id + ", '" + Model.Provider + "');}",
+            HtmlAttributes = htmlAttributes,
+        })
+        <span class="field-validation-valid" id="@(curenciesId)_validationMessage"></span>
+        <span class="field-validation-valid" id="@(curenciesId)_validate_validationMessage"></span>
+    </td>
+    <td class="providerCell">
+        @Html.Action("ProviderCell", "CurrencyRatesGrid",
+            new { area = RouteProvider.AreaName, providerGuid = Model.Provider ?? Guid.Empty, value = selectedCurrency.Any() ? selectedCurrency.First().Value : "", index })
+    </td>
+    <td style="text-align: center;">
+        <a class="linkForSaveRow" onclick="saveRow(this)">@Html.Image("#save.svg", SR.T("Сохранить"))</a>
+        <a onclick="removeRow(this)">@Html.Image("#delete.svg", SR.T("Удалить"))</a>
+    </td>
+    <script type="text/javascript">
+        elma.ValidationRulesManager.addRule('@(curenciesId)', 'add', { required: true, messages: { required: "@(SR.T("Заполните обязательное поле"))" } });
+    </script>
+</tr>

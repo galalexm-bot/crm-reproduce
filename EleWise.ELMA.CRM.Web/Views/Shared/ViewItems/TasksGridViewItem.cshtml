@@ -1,0 +1,30 @@
+﻿@model IEntity<long>
+@using EleWise.ELMA.CRM.Models
+@using EleWise.ELMA.CRM.Web
+@using EleWise.ELMA.Model.Entities
+
+@if (Model != null)
+{
+    var routeValues = new RouteValueDictionary { { "area", CRMAreaRegistration.AREA_NAME } };
+    if (Model is IContractor)
+    {
+        routeValues.Add("contractorId", Model.Id);
+        routeValues.Add("type", EleWise.ELMA.CRM.Web.Controllers.CRMObjectIdOnly.Contractor);
+    }
+    if (Model is IContact)
+    {
+        routeValues.Add("contactId", Model.Id);
+        routeValues.Add("type", EleWise.ELMA.CRM.Web.Controllers.CRMObjectIdOnly.Contact);
+    }
+    if (Model is ILead)
+    {
+        routeValues.Add("leadId", Model.Id);
+        routeValues.Add("type", EleWise.ELMA.CRM.Web.Controllers.CRMObjectIdOnly.Lead);
+    }
+    if (Model is ISale)
+    {
+        routeValues.Add("saleId", Model.Id);
+        routeValues.Add("type", EleWise.ELMA.CRM.Web.Controllers.CRMObjectIdOnly.Sale);
+    }
+    @Html.Action("Tasks", "Task", routeValues)
+}

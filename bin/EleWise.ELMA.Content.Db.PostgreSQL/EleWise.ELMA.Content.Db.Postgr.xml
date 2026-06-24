@@ -1,0 +1,98 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<root uid="{45465356-C25E-4143-BF74-9D2643B69246}" provider="PostgreSQL">
+
+  <scripts>
+
+  </scripts>
+
+  <procedures>
+
+    <procedure name="UpdatePortalPermsRec">
+      <text>
+        <![CDATA[        
+create or replace function UpdatePortalPermsRec(&&ObjId&& bigint)
+returns table(&&CurrentId&& bigint, &&ParentId&& bigint, &&CreationAuthor&& bigint)
+
+as
+$$
+
+with recursive t_Rec as
+(
+    select d.&&Id&&, d.&&Folder&&, d.&&CreationAuthor&& from &&PortalObject&& d where d.&&Id&& = $1
+    union all 
+    select dc.&&Id&&, dc.&&Folder&&, dc.&&CreationAuthor&& from &&PortalObject&& dc 
+    inner join t_Rec on t_Rec.&&Id&& = dc.&&Folder&& and dc.&&InheritPermissions&& = 1
+)
+
+select &&Id&& as &&CurrentId&&, &&Folder&& as &&ParentId&&, &&CreationAuthor&& 
+from t_Rec
+
+$$ 
+language sql;
+    ]]>
+      </text>
+    </procedure>
+
+    <procedure name="UpdateInheritPortalObjectPermissions">
+      <mappings>
+        <hibernate-mapping xmlns="urn:nhibernate-mapping-2.2">
+          <sql-query name="ExecUpdateInheritPortalObjectPermissions" >
+            select UpdateInheritPortalPerms(:objId , :onlyChildren)
+          </sql-query>
+        </hibernate-mapping>
+      </mappings>
+      <text>
+        <![CDATA[        
+create or replace function UpdateInheritPortalPerms(&&ObjId&& bigint, &&OnlyChildren&& integer)
+returns void
+
+as
+$$
+
+declare 
+v_UserMask bigint = 72057594037927936;
+v_TableRecord record;
+
+begin
+
+for v_TableRecord in select * from UpdatePortalPermsRec($1) where $2 = 0 or &&CurrentId&& <> $1 loop
+
+begin
+    
+    if (v_TableRecord.&&ParentId&& is not null) then
+    begin
+        delete from &&PortalObjectPermission&& where &&PortalObject&& = v_TableRecord.&&CurrentId&& and &&InheritedFromFolder&& is not null;
+        insert into &&PortalObjectPermission&& (&&Id&&, &&Uid&&, &&PortalObject&&, &&Group&&, &&InheritedFromFolder&&, &&OrganizationItemEmployee&&,
+            &&OrganizationItemPosition&&, &&PermissionId&&, &&PermissionRole&&, &&User&&, &&UserSecuritySetCacheId&& )
+        select (nextval('G_PortalObjectPermission')) as &&Id&&,
+            '00000000-0000-0000-0000-000000000000',
+            v_TableRecord.&&CurrentId&&,
+            pdp.&&Group&&,
+            (case when pdp.&&InheritedFromFolder&& is null then v_TableRecord.&&ParentId&& else pdp.&&InheritedFromFolder&& end) as InheritedFromFolder,
+            pdp.&&OrganizationItemEmployee&&, 
+            pdp.&&OrganizationItemPosition&&, 
+            pdp.&&PermissionId&&, 
+            pdp.&&PermissionRole&&, 
+            (case when pdp.&&PermissionRole&& = 'B4565CC1-7CB3-4201-B7BD-15872D1E7F92' then v_TableRecord.&&CreationAuthor&& else pdp.&&User&& end) as &&User&&,
+            (case when pdp.&&PermissionRole&& = 'B4565CC1-7CB3-4201-B7BD-15872D1E7F92' then (v_TableRecord.&&CreationAuthor&& | v_UserMask) else pdp.&&UserSecuritySetCacheId&& end) as &&UserSecuritySetCacheId&&
+            from &&PortalObjectPermission&& pdp where pdp.&&PortalObject&& = v_TableRecord.&&ParentId&&;
+	end;
+	end if;
+
+end;
+end loop;
+end
+
+$$
+language plpgsql;
+    ]]>
+      </text>
+    </procedure>
+
+  </procedures>
+
+  <indexes>
+    <index name="IX_PortalObjectPermission_N1" tableName="PortalObjectPermission" columns="PermissionId, PortalObject, UserSecuritySetCacheId, Id" />
+  </indexes>
+  
+</root>

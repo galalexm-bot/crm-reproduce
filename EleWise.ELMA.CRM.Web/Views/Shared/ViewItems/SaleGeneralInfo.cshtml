@@ -1,0 +1,30 @@
+﻿@inherits RootViewItemControl<object, PanelViewItem>
+@using EleWise.ELMA.Model.Views
+@using EleWise.ELMA.Web.Mvc.Views.ViewItem
+@using EleWise.ELMA.Web.Mvc.Models.Panels
+
+@if (ViewItem != null && ViewItem.Items.Count == 1 && ViewItem.Items[0] is ColumnsLayoutViewItem && ((RootViewItem)ViewItem.Items[0]).Items.Count == 2)
+{
+    <div class="general-info-container">
+        <div class="general-info-container-left sale-table-td-main-info">
+            @foreach (var viewItem in ((RootViewItem)ViewItem.Items[0]).Items[0].GetRenderItems())
+            {
+                @Html.ViewItem(viewItem)
+            }
+        </div>
+        @using (Html.CollapsiblePanel(new CollapsiblePanel { Id = "SaleGeneralInfoRightPanel", Expanded = true, Class = "separator-gray general-info-container-right  sale-table-td-panel", SaveState = false, Header = SR.T("Дополнительно") }))
+        {
+            foreach (var viewItem in ((RootViewItem)ViewItem.Items[0]).Items[1].GetRenderItems())
+            {
+                @Html.ViewItem(viewItem)
+            }
+        }
+    </div>
+}
+else if (ViewItem != null)
+{
+    foreach (var viewItem in ViewItem.GetRenderItems())
+    {
+        @Html.ViewItem(viewItem)
+    }
+}

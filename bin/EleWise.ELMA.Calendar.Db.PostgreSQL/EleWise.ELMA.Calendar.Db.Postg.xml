@@ -1,0 +1,8 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<root uid="{F361433C-B870-455E-A3B5-005A9484D151}" provider="PostgreSQL">
+
+  <indexes>
+    <index name="U_Schedule_Owner" unique="true" tableName="Schedule" columns="Owner" />
+  </indexes>
+  
+</root>

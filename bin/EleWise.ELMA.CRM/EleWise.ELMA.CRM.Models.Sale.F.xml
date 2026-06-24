@@ -1,0 +1,104 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<FormViewItem xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <Name>LeadConverterForm</Name>
+  <Uid>f6b6e283-5217-49d7-a318-840dadea4e2b</Uid>
+  <Items>
+    <RootViewItem xsi:type="PanelViewItem">
+      <Name>Panel1</Name>
+      <Uid>f95a1580-2a6a-4e1e-91e7-c5cc70e9bb40</Uid>
+      <Items>
+        <RootViewItem xsi:type="ColumnViewItem">
+          <Name>Column1</Name>
+          <Uid>9f6648ff-239e-4b88-97d0-46ca2995e82a</Uid>
+          <Items>
+            <RootViewItem xsi:type="PropertyViewItem">
+              <Name>Property1</Name>
+              <Uid>275dde58-e63b-408c-86d7-02676143e058</Uid>
+              <Property>aa3a9f60-a4e2-4e64-ba14-b887918d5f85</Property>
+              <Attributes />
+            </RootViewItem>
+            <RootViewItem xsi:type="PropertyViewItem">
+              <Name>Property2</Name>
+              <Uid>502670b8-e068-4ffc-b12a-e4557221d4c5</Uid>
+              <Property>d32c3e08-0901-4f39-a7f4-a66a11941b61</Property>
+              <Attributes />
+            </RootViewItem>
+            <RootViewItem xsi:type="PropertyViewItem">
+              <Name>Property3</Name>
+              <Uid>c72964ec-547f-4fa9-809a-0c44153acb8d</Uid>
+              <Property>ed15d7ca-bd54-4cf8-9ed7-88f33a7861c4</Property>
+              <Attributes />
+            </RootViewItem>
+            <RootViewItem xsi:type="PropertyViewItem">
+              <Name>Property4</Name>
+              <Uid>77590547-7bd2-40b6-8dcd-7e46bf9361c4</Uid>
+              <Property>eb188ed0-3e75-4d2d-9ed5-79034a0bb8ba</Property>
+              <Attributes />
+            </RootViewItem>
+            <RootViewItem xsi:type="PropertyViewItem">
+              <Name>Property5</Name>
+              <Uid>c3487b5a-ac5e-4c5d-a636-d49c75df27bc</Uid>
+              <Property>48fbf6e2-1ea0-4dcb-91e6-38192effda56</Property>
+              <Attributes>
+                <Description />
+              </Attributes>
+            </RootViewItem>
+            <RootViewItem xsi:type="PropertyViewItem">
+              <Name>Property6</Name>
+              <Uid>e28cce70-6045-4501-a495-70ce601453e3</Uid>
+              <Property>66e44cb8-0d63-45d8-bc75-3f3d9665be16</Property>
+              <Attributes />
+            </RootViewItem>
+            <RootViewItem xsi:type="PropertyViewItem">
+              <Name>Property7</Name>
+              <Uid>d724c91e-857e-417e-9b73-2cbd3894fb9a</Uid>
+              <Property>716ee518-66ee-4414-94e7-7f8fd05e2368</Property>
+              <Attributes />
+            </RootViewItem>
+            <RootViewItem xsi:type="PropertyViewItem">
+              <Name>Property8</Name>
+              <Uid>cb639b9e-5691-4c42-9b21-dd370c361e02</Uid>
+              <Property>a4e82b97-9092-412f-88c9-6667251681a9</Property>
+              <Attributes />
+            </RootViewItem>
+            <RootViewItem xsi:type="PropertyViewItem">
+              <Name>Property11</Name>
+              <Uid>91fc90ab-9c0f-487f-812d-64eb6bf29e9f</Uid>
+              <Property>f2d7023f-178d-4f89-a6f2-2786d7d88478</Property>
+              <Attributes />
+            </RootViewItem>
+            <ViewItem xsi:type="DefaultContainerViewItem">
+              <Name>DefaultContainer1</Name>
+              <OnlyUserProperties>true</OnlyUserProperties>
+            </ViewItem>
+          </Items>
+        </RootViewItem>
+      </Items>
+      <Caption>О сделке</Caption>
+      <Collapsible>true</Collapsible>
+      <Style>Separator</Style>
+    </RootViewItem>
+    <RootViewItem xsi:type="PanelViewItem">
+      <Name>Panel2</Name>
+      <Uid>4a6da24a-9681-48c6-9938-1769afacf803</Uid>
+      <Items>
+        <RootViewItem xsi:type="ColumnViewItem">
+          <Name>Column2</Name>
+          <Uid>90929b37-d47d-43cf-a194-288af2a53dea</Uid>
+          <Items>
+            <RootViewItem xsi:type="PropertyViewItem">
+              <Name>Property10</Name>
+              <Uid>b0ef112b-895b-4df9-850a-a4a82364be4a</Uid>
+              <Property>4a48a223-e246-4b50-8e33-11e2163a0fd7</Property>
+              <Attributes />
+            </RootViewItem>
+          </Items>
+        </RootViewItem>
+      </Items>
+      <Caption>Описание</Caption>
+      <Collapsible>true</Collapsible>
+      <Style>Separator</Style>
+    </RootViewItem>
+  </Items>
+  <DisplayName>Создание для конвертации лида (строго runtime v1)</DisplayName>
+</FormViewItem>

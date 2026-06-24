@@ -1,0 +1,29 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <AssemblyName>EleWise.ELMA.Core</AssemblyName>
+    <GenerateAssemblyInfo>False</GenerateAssemblyInfo>
+    <TargetFramework>net48</TargetFramework>
+  </PropertyGroup>
+  <PropertyGroup>
+    <LangVersion>Preview</LangVersion>
+    <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
+  </PropertyGroup>
+  <PropertyGroup>
+    <RootNamespace />
+  </PropertyGroup>
+  <ItemGroup>
+    <None Remove="Convert.js" />
+    <None Remove="Bridge.Resources.json" />
+    <EmbeddedResource Include="Convert.js" />
+    <EmbeddedResource Include="Bridge.Resources.json" />
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="Bridge" />
+    <Reference Include="EleWise.ELMA.Core.Abstractions.Metadata" />
+    <Reference Include="EleWise.ELMA.IoC" />
+    <Reference Include="Newtonsoft.Json" />
+    <Reference Include="EleWise.ELMA.Types" />
+    <Reference Include="Bridge.Html5" />
+    <Reference Include="EleWise.ELMA.Core.Engine" />
+  </ItemGroup>
+</Project>

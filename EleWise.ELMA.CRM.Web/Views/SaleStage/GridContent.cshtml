@@ -1,0 +1,153 @@
+﻿@using System.Drawing
+@using EleWise.ELMA.CRM.Models;
+@using EleWise.ELMA;
+@using EleWise.ELMA.Web.Mvc.Enums
+@model IEnumerable<ISaleStage>
+
+@{
+    var stages = Model.Where(x => x.SaleFunnel != null).OrderBy(x => x.GlobalOrder).ThenBy(x => x.SaleFunnel.Name).ToList();
+    var funnels = stages.OrderBy(x => x.SaleFunnel.Id).Select(x => x.SaleFunnel.Id).Distinct().ToList();
+    Color[] colors = new Color[] { ColorTranslator.FromHtml("#E9E9E9"), ColorTranslator.FromHtml("#fff"), ColorTranslator.FromHtml("#F7F7F7") };
+
+    long lastOrder = -1;
+    var groupStarted = false;
+    bool same;
+    foreach (var item in stages)
+    {
+        if (item.GlobalOrder != lastOrder)
+        {
+            if (groupStarted)
+            {
+                <div class="order-block-footer"></div>
+            }
+            lastOrder = item.GlobalOrder;
+            groupStarted = true;
+            same = false;
+        }
+        else
+        {
+            same = true;
+        }
+
+        var idx = funnels.IndexOf(item.SaleFunnel.Id) + 1;
+        int shift = idx > colors.Length ? (idx - 1) / colors.Length : 0;
+        double multiplier = 1;
+        if (shift == 1)
+        {
+            multiplier = 0.90;
+        }
+        else if (shift == 2)
+        {
+            multiplier = 1.05;
+        }
+        else if (shift > 2)
+        {
+            for (var i = 0; i < shift - 1; i++)
+            {
+                multiplier = multiplier * 0.90;
+            }
+        }
+        var backColor = colors[idx % colors.Length];
+        backColor = Color.FromArgb(backColor.A, (int)(Math.Min(255, backColor.R * multiplier)), (int)(Math.Min(255, backColor.G * multiplier)), (int)(Math.Min(255, backColor.B * multiplier)));
+        var borderColor = Color.FromArgb(backColor.A, (int)(Math.Min(255, backColor.R * 0.8)), (int)(Math.Min(255, backColor.G * 0.8)), (int)(Math.Min(255, backColor.B * 0.8)));
+
+        var textColor1 = (backColor.GetBrightness() > 0.4) ? Color.Black : Color.White;
+        var textColor2 = Color.Black;
+        try
+        {
+            textColor2 = (ColorTranslator.FromHtml(item.Color.ColorCode).GetBrightness() > 0.4) ? Color.Black : Color.White;
+        }
+        catch
+        {
+        }
+        <div class="order-block-content" style="@(same ? "margin-left: 40px;" : "") background-color: @(ColorTranslator.ToHtml(backColor));" id="stage@(item.Id)">
+            <table style="width:100%; height: 100%;">
+                <tbody>
+                    <tr>
+                        <td class="order-arrow-up">
+                            @(Html.ImageButton("#thin_arrow_up.svg")
+                                .Click( String.Format("globalOrderMove(1, {0})", item.Id))
+                                .Size(UISize.Small)
+                                .Attributes(new { @class = SR.T("Переместить вверх") }))
+                        </td>
+                        <td class="order-arrow-down">
+                              @(Html.ImageButton("#thin_arrow_down.svg")
+                                .Click(String.Format("globalOrderMove(0, {0})", item.Id))
+                                .Size(UISize.Small)
+                                .Attributes(new { @class = SR.T("Переместить вниз") }))
+                        </td>
+                        <td class="order-block-name" style="color: @(ColorTranslator.ToHtml(textColor1));">@item.Name</td>
+                        <td class="order-block-sale-funnel" style="color: @(ColorTranslator.ToHtml(textColor1));">@Html.DisplayValue(item.SaleFunnel)</td>
+                        <td class="order-shrinkage" style="background-color: @item.Color.ColorCode;"><span style="color: @(ColorTranslator.ToHtml(textColor2)); background-color: @item.Color.ColorCode;">@(item.Shrinkage != null ? item.Shrinkage+"%" : "")</span></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    }
+    if (stages.Any())
+    {
+        // закрыть блок
+        <div class="order-block-footer"></div>
+    }
+}
+
+@{
+    Html.RegisterContent("GlobalOrderScript", @<text>
+                                                <script type="text/javascript">
+                                                    function globalOrderMove(dir, id) {
+                                                        $.ajax({
+                                                            url: '@(Url.Action("ChangeGlobalOrder", "SaleStage", new { area = "EleWise.ELMA.CRM.Web" }))/' + id + '?direction=' + dir,
+                                                            type: "GET",
+                                                            dataType: 'html',
+                                                            cache: false,
+                                                            success: function (data) {
+                                                                $('#stagesContainer2').remove();
+                                                                var x = $('#stagesContainer').clone();
+                                                                x.attr('id', 'stagesContainer2').css('position', 'absolute').css('opacity', '0');
+                                                                x.html(data);
+                                                                x.insertBefore('#stagesContainer');
+
+                                                                var stages = $('#stagesContainer div[id^="stage"]');
+                                                                for (var i = 0; i < stages.length; i++) {
+                                                                    var id = $(stages[i]).attr('id');
+                                                                    var oldEl = $('#stagesContainer #' + id);
+                                                                    var newEl = $('#stagesContainer2 #' + id);
+                                                                    if (newEl.length == 1 && oldEl.length == 1 && (oldEl.offset().top !== newEl.offset().top || oldEl.css('margin-left') != newEl.css('margin-left'))) {
+                                                                        oldEl.css('position', 'relative');
+                                                                        oldEl.addClass('animating');
+                                                                        oldEl.animate({ top: newEl.offset().top - oldEl.offset().top, marginLeft: newEl.css('margin-left') }, '2000', function () {
+                                                                            $(this).removeClass('animating');
+                                                                            if ($('#stagesContainer .animating').length == 0) {
+                                                                                $('#stagesContainer').html(data);
+                                                                                $('#stagesContainer2').remove();
+                                                                            }
+                                                                        });
+                                                                       
+                                                                        oldEl.find('table tr td:first,td:eq(1)').addClass('animating');
+                                                                        oldEl.find('table tr td:first').animate({ minWidth: newEl.find('table tr td:first').css('min-width') }, '2000', function () {
+                                                                            $(this).removeClass('animating');
+                                                                            if ($('#stagesContainer .animating').length == 0) {
+                                                                                $('#stagesContainer').html(data);
+                                                                                $('#stagesContainer2').remove();
+                                                                            }
+                                                                        });
+                                                                        oldEl.find('table tr td:eq(1)').animate({ minWidth: newEl.find('table tr td:eq(1)').css('min-width') }, '2000', function () {
+                                                                            $(this).removeClass('animating');
+                                                                            if ($('#stagesContainer .animating').length == 0) {
+                                                                                $('#stagesContainer').html(data);
+                                                                                $('#stagesContainer2').remove();
+                                                                            }
+                                                                        });                                                                        
+                                                                    }
+                                                                }
+                                                                if ($('#stagesContainer .animating').length == 0) {
+                                                                    $('#stagesContainer').html(data);
+                                                                    $('#stagesContainer2').remove();
+                                                                }
+                                                            }
+                                                        });
+                                                    }
+
+                                                </script>
+                                               </text>);
+}

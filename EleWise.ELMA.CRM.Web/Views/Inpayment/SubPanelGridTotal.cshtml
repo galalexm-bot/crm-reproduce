@@ -1,0 +1,69 @@
+﻿@using EleWise.ELMA
+@using EleWise.ELMA.CRM.Web.Models
+@model InpaymentSubPanelModel
+
+@if (!Model.PortletView)
+{
+    <div id="@(Model.GridData.GridId)_total" class="inpayment-subgrid-total">
+        @if (Model.EndDate < DateTime.MaxValue)
+        {
+            <span class="total-caption">@SR.T("В плане:")</span>
+            <span class="total-value" id="TotalInPlanWithDate">@Html.Display(m => m.TotalInPlanWithDate)</span>
+        }
+        else
+        {
+            <span class="total-caption">@SR.T("В плане (с датой):")</span>
+            <span class="total-value" id="TotalInPlanWithDate">@Html.Display(m => m.TotalInPlanWithDate)</span>
+            <span class="total-caption">@SR.T("В плане (без даты):")</span>
+            <span class="total-value" id="TotalInPlanWithOutDate">@Html.Display(m => m.TotalInPlanWithOutDate)</span>
+        }
+        <span class="total-caption">@SR.T("Получено:")</span><span class="total-value" id="TotalReceived">@Html.Display(m => m.TotalReceived)</span>
+        <span class="total-caption">@SR.T("Всего:")</span><span class="total-value" id="Total">@Html.Display(m => m.Total)</span>
+    </div>
+}
+else
+{
+   <div id="@(Model.GridData.GridId)_total" class="inpayment-subgrid-total">
+        @if (!Model.HideTotalInPlanWithoutDate)
+        {
+            <div>
+                <span class="total-caption">@SR.T("В плане (с датой):")</span>
+                <span class="total-value" id="TotalInPlanWithDate">@Html.Display(m => m.TotalInPlanWithDate)</span>
+            </div>
+            <div>
+                <span class="total-caption">@SR.T("Получено:")</span>
+                <span class="total-value" id="TotalReceived">@Html.Display(m => m.TotalReceived)</span>
+            </div>
+        }
+        else
+        {
+            <div>
+                <span class="total-caption">@SR.T("В плане:")</span>
+                <span class="total-value" id="TotalInPlanWithDate">@Html.Display(m => m.TotalInPlanWithDate)</span>
+            </div>
+            <div>
+                <span class="total-caption">@SR.T("Всего:")</span>
+                <span class="total-value" id="Total">@Html.Display(m => m.Total)</span>
+            </div>
+        }
+
+        @if (!Model.HideTotalInPlanWithoutDate)
+        {
+            <div>
+                <span class="total-caption">@SR.T("В плане (без даты):")</span>
+                <span class="total-value" id="TotalInPlanWithOutDate">@Html.Display(m => m.TotalInPlanWithOutDate)</span>
+            </div>
+            <div>
+                <span class="total-caption">@SR.T("Всего:")</span>
+                <span class="total-value" id="Total">@Html.Display(m => m.Total)</span>
+            </div>
+        }
+        else
+        {
+            <div>
+                <span class="total-caption">@SR.T("Получено:")</span>
+                <span class="total-value" id="TotalReceived">@Html.Display(m => m.TotalReceived)</span>
+            </div>
+        }
+    </div>
+}

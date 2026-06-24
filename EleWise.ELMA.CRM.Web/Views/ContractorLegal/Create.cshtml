@@ -1,0 +1,18 @@
+﻿@model EleWise.ELMA.CRM.Web.Models.ContractorLegalModel
+@using EleWise.ELMA
+@using EleWise.ELMA.CRM.Web
+
+@{
+    Html.Header(SR.T("Создать юридическое лицо"));
+}
+
+@(Html.Toolbar()
+    .Group("toolbar-group-1")
+        .ToolbarSubmit("toolbar-action-Save", b => b
+            .Text(SR.Save)
+            .MainAction(true)
+            .IconUrl("#save.svg")
+        )
+        .ToolbarLink(SR.Cancel, "#close_outline.svg", "javascript:history.back(-1);", "toolbar-action-Cancel"))
+
+@Html.Partial("Editors/ContractorLegalEdit")

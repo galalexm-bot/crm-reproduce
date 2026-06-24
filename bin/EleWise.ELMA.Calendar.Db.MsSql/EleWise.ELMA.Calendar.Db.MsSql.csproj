@@ -1,0 +1,29 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <AssemblyName>EleWise.ELMA.Calendar.Db.MsSql</AssemblyName>
+    <GenerateAssemblyInfo>False</GenerateAssemblyInfo>
+    <TargetFramework>net48</TargetFramework>
+  </PropertyGroup>
+  <PropertyGroup>
+    <LangVersion>Preview</LangVersion>
+    <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
+  </PropertyGroup>
+  <PropertyGroup>
+    <RootNamespace />
+  </PropertyGroup>
+  <ItemGroup>
+    <None Remove="EleWise.ELMA.Calendar.Db.MsSql.xml" />
+    <EmbeddedResource Include="EleWise.ELMA.Calendar.Db.MsSql.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="EleWise.ELMA.SDK">
+      <HintPath>..\EleWise.ELMA.SDK.dll</HintPath>
+    </Reference>
+    <Reference Include="EleWise.ELMA.Extensions.MSSQL">
+      <HintPath>..\EleWise.ELMA.Extensions.MSSQL.dll</HintPath>
+    </Reference>
+    <Reference Include="EleWise.ELMA.Calendar">
+      <HintPath>..\EleWise.ELMA.Calendar.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+</Project>

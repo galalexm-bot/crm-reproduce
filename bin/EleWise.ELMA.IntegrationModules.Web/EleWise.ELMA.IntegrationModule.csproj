@@ -1,0 +1,34 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <AssemblyName>EleWise.ELMA.IntegrationModules.Web</AssemblyName>
+    <GenerateAssemblyInfo>False</GenerateAssemblyInfo>
+    <TargetFramework>net48</TargetFramework>
+  </PropertyGroup>
+  <PropertyGroup>
+    <LangVersion>Preview</LangVersion>
+    <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
+  </PropertyGroup>
+  <PropertyGroup />
+  <ItemGroup />
+  <ItemGroup>
+    <Reference Include="EleWise.ELMA.SDK">
+      <HintPath>..\EleWise.ELMA.SDK.dll</HintPath>
+    </Reference>
+    <Reference Include="EleWise.ELMA.SDK.Web">
+      <HintPath>..\EleWise.ELMA.SDK.Web.dll</HintPath>
+    </Reference>
+    <Reference Include="EleWise.ELMA.IntegrationModules">
+      <HintPath>..\EleWise.ELMA.IntegrationModules.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Core" />
+    <Reference Include="System.Web.Mvc" />
+    <Reference Include="EleWise.ELMA.BPM.Web.Common">
+      <HintPath>..\..\Modules\EleWise.ELMA.BPM.Web.Common.dll</HintPath>
+    </Reference>
+    <Reference Include="Telerik.Web.Mvc" />
+    <Reference Include="System.Web" />
+    <Reference Include="EleWise.ELMA.Common">
+      <HintPath>..\EleWise.ELMA.Common.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+</Project>

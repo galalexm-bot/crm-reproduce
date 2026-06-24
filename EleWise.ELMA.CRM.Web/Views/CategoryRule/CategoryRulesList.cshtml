@@ -1,0 +1,34 @@
+﻿@using EleWise.ELMA
+@using EleWise.ELMA.CRM.Web
+@using EleWise.ELMA.Web.Mvc.Html
+@model EleWise.ELMA.CRM.Web.Models.CategoryRulesListModel
+
+@Html.Partial("CategoryRulesListGrid", Model)
+<div class="base-element-margin-top">
+    @Html.Button().Text(SR.T("Добавить правило")).IconUrl(UIIcons.Add).Url(Url.Action("Add", "CategoryRule", new { area = RouteProvider.AreaName, typeId = Model.TypeId })).Style(EleWise.ELMA.Model.Views.ButtonStyle.Simple)
+</div>
+<script type="text/javascript">
+
+    function deleteCategoryRule(id, gridId) {
+        if (id != undefined && id != null) {
+            $.ajax({
+                url: '@(Url.Action("Delete", "CategoryRule", new { area = RouteProvider.AreaName }))/' + id,
+                type: "GET",
+                dataType: 'html',
+                cache: false,
+                success: function (data) {
+                    var gridContainer = $('#' + gridId);
+                    gridContainer.html(data);
+                }
+            });
+        }
+    }
+
+    function onDeleteCategoryRuleClick(id, gridId) {
+        jConfirm('@SR.T("Удалить правило?")', '@SR.T("Удаление")', function (r) {
+            if (r == true) {
+                deleteCategoryRule(id, gridId);
+            }
+        });
+    }
+</script>

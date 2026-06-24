@@ -1,0 +1,202 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <AssemblyName>EleWise.ELMA.CRM</AssemblyName>
+    <GenerateAssemblyInfo>False</GenerateAssemblyInfo>
+    <TargetFramework>net48</TargetFramework>
+  </PropertyGroup>
+  <PropertyGroup>
+    <LangVersion>Preview</LangVersion>
+    <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
+  </PropertyGroup>
+  <PropertyGroup>
+    <RootNamespace />
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Remove="EleWise.ELMA.CRM.Models.Addres.cs" />
+    <Compile Remove="EleWise.ELMA.CRM.Models.Templa.cs" />
+    <Compile Remove="EleWise.ELMA.CRM.Models.Contac.cs" />
+    <Compile Remove="EleWise.ELMA.CRM.Models.Contra.cs" />
+    <Compile Remove="EleWise.ELMA.CRM.Models.LeadPe.cs" />
+    <Compile Remove="EleWise.ELMA.CRM.Models.Relati.cs" />
+    <Compile Remove="EleWise.ELMA.CRM.Models.Phone..cs" />
+    <Compile Remove="EleWise.ELMA.CRM.Models.Market.cs" />
+    <Compile Remove="EleWise.ELMA.CRM.Models.Contra.cs" />
+    <Compile Remove="EleWise.ELMA.CRM.Models.Relati.cs" />
+    <Compile Remove="EleWise.ELMA.CRM.Models.SalePe.cs" />
+    <Compile Remove="EleWise.ELMA.CRM.Models.Sale.C.cs" />
+    <Compile Remove="EleWise.ELMA.CRM.Models.Contra.cs" />
+    <Compile Remove="EleWise.ELMA.CRM.Models.Contac.cs" />
+    <Compile Remove="EleWise.ELMA.CRM.Models.Lead.C.cs" />
+    <Compile Remove="EleWise.ELMA.CRM.Models.SaleSt.cs" />
+    <Compile Remove="EleWise.ELMA.CRM.Models.Templa.cs" />
+    <None Remove="EleWise.ELMA.CRM.Notifications.xml" />
+    <None Remove="EleWise.ELMA.CRM.Db.CrmDbStruc.xml" />
+    <None Remove="EleWise.ELMA.CRM.Notifications.xml" />
+    <None Remove="EleWise.ELMA.CRM.Notifications.xml" />
+    <None Remove="EleWise.ELMA.CRM.Notifications.xml" />
+    <None Remove="EleWise.ELMA.CRM.Models.Contra.xml" />
+    <None Remove="EleWise.ELMA.CRM.Models.Contra.xml" />
+    <None Remove="EleWise.ELMA.CRM.Models.Contra.xml" />
+    <None Remove="EleWise.ELMA.CRM.Models.Contra.xml" />
+    <None Remove="EleWise.ELMA.CRM.Models.Contra.xml" />
+    <None Remove="EleWise.ELMA.CRM.Models.Contra.xml" />
+    <None Remove="EleWise.ELMA.CRM.Models.Sale.F.xml" />
+    <None Remove="EleWise.ELMA.CRM.Models.Sale.F.xml" />
+    <None Remove="EleWise.ELMA.CRM.Models.Contra.xml" />
+    <None Remove="EleWise.ELMA.CRM.Models.Contra.xml" />
+    <None Remove="EleWise.ELMA.CRM.Notifications.xml" />
+    <None Remove="EleWise.ELMA.CRM.Notifications.xml" />
+    <None Remove="EleWise.ELMA.CRM.Models.Produc.xml" />
+    <None Remove="EleWise.ELMA.CRM.Models.Produc.xml" />
+    <None Remove="EleWise.ELMA.CRM.Models.SalePr.xml" />
+    <None Remove="EleWise.ELMA.CRM.Models.SalePr.xml" />
+    <None Remove="EleWise.ELMA.CRM.Models.Contac.xml" />
+    <None Remove="EleWise.ELMA.CRM.Models.Contac.xml" />
+    <None Remove="EleWise.ELMA.CRM.Models.Relati.xml" />
+    <None Remove="EleWise.ELMA.CRM.Models.Relati.xml" />
+    <None Remove="EleWise.ELMA.CRM.Models.Relati.xml" />
+    <None Remove="EleWise.ELMA.CRM.Models.Relati.xml" />
+    <None Remove="EleWise.ELMA.CRM.Models.Relati.xml" />
+    <None Remove="EleWise.ELMA.CRM.Models.Relati.xml" />
+    <None Remove="EleWise.ELMA.CRM.Models.Relati.xml" />
+    <None Remove="EleWise.ELMA.CRM.Models.Relati.xml" />
+    <None Remove="EleWise.ELMA.CRM.Models.Relati.xml" />
+    <None Remove="EleWise.ELMA.CRM.Models.Contac.xml" />
+    <None Remove="EleWise.ELMA.CRM.Models.Lead.F.xml" />
+    <None Remove="EleWise.ELMA.CRM.Models.Lead.F.xml" />
+    <None Remove="EleWise.ELMA.CRM.Models.Lead.F.xml" />
+    <None Remove="EleWise.ELMA.CRM.Notifications.xml" />
+    <None Remove="EleWise.ELMA.CRM.Models.Billin.xml" />
+    <None Remove="EleWise.ELMA.CRM.Models.Billin.xml" />
+    <None Remove="EleWise.ELMA.CRM.Models.Billin.xml" />
+    <None Remove="EleWise.ELMA.CRM.Models.Billin.xml" />
+    <None Remove="EleWise.ELMA.CRM.Models.Billin.xml" />
+    <None Remove="EleWise.ELMA.CRM.Models.Billin.xml" />
+    <None Remove="EleWise.ELMA.CRM.Models.Billin.xml" />
+    <None Remove="EleWise.ELMA.CRM.Models.Billin.xml" />
+    <None Remove="EleWise.ELMA.CRM.Models.Billin.xml" />
+    <None Remove="EleWise.ELMA.CRM.Models.Billin.xml" />
+    <None Remove="EleWise.ELMA.CRM.Models.Contra.xml" />
+    <None Remove="EleWise.ELMA.CRM.Models.Contra.xml" />
+    <None Remove="EleWise.ELMA.CRM.Models.Relati.xml" />
+    <None Remove="EleWise.ELMA.CRM.Models.Relati.xml" />
+    <None Remove="EleWise.ELMA.CRM.Models.Relati.xml" />
+    <None Remove="EleWise.ELMA.CRM.Models.Sale.F.xml" />
+    <EmbeddedResource Include="EleWise.ELMA.CRM.Models.Addres.cs" />
+    <EmbeddedResource Include="EleWise.ELMA.CRM.Models.Templa.cs" />
+    <EmbeddedResource Include="EleWise.ELMA.CRM.Models.Contac.cs" />
+    <EmbeddedResource Include="EleWise.ELMA.CRM.Models.Contra.cs" />
+    <EmbeddedResource Include="EleWise.ELMA.CRM.Models.LeadPe.cs" />
+    <EmbeddedResource Include="EleWise.ELMA.CRM.Models.Relati.cs" />
+    <EmbeddedResource Include="EleWise.ELMA.CRM.Models.Phone..cs" />
+    <EmbeddedResource Include="EleWise.ELMA.CRM.Models.Market.cs" />
+    <EmbeddedResource Include="EleWise.ELMA.CRM.Models.Contra.cs" />
+    <EmbeddedResource Include="EleWise.ELMA.CRM.Models.Relati.cs" />
+    <EmbeddedResource Include="EleWise.ELMA.CRM.Models.SalePe.cs" />
+    <EmbeddedResource Include="EleWise.ELMA.CRM.Models.Sale.C.cs" />
+    <EmbeddedResource Include="EleWise.ELMA.CRM.Models.Contra.cs" />
+    <EmbeddedResource Include="EleWise.ELMA.CRM.Models.Contac.cs" />
+    <EmbeddedResource Include="EleWise.ELMA.CRM.Models.Lead.C.cs" />
+    <EmbeddedResource Include="EleWise.ELMA.CRM.Models.SaleSt.cs" />
+    <EmbeddedResource Include="EleWise.ELMA.CRM.Models.Templa.cs" />
+    <EmbeddedResource Include="EleWise.ELMA.CRM.Notifications.xml" />
+    <EmbeddedResource Include="EleWise.ELMA.CRM.Db.CrmDbStruc.xml" />
+    <EmbeddedResource Include="EleWise.ELMA.CRM.Notifications.xml" />
+    <EmbeddedResource Include="EleWise.ELMA.CRM.Notifications.xml" />
+    <EmbeddedResource Include="EleWise.ELMA.CRM.Notifications.xml" />
+    <EmbeddedResource Include="EleWise.ELMA.CRM.Models.Contra.xml" />
+    <EmbeddedResource Include="EleWise.ELMA.CRM.Models.Contra.xml" />
+    <EmbeddedResource Include="EleWise.ELMA.CRM.Models.Contra.xml" />
+    <EmbeddedResource Include="EleWise.ELMA.CRM.Models.Contra.xml" />
+    <EmbeddedResource Include="EleWise.ELMA.CRM.Models.Contra.xml" />
+    <EmbeddedResource Include="EleWise.ELMA.CRM.Models.Contra.xml" />
+    <EmbeddedResource Include="EleWise.ELMA.CRM.Models.Sale.F.xml" />
+    <EmbeddedResource Include="EleWise.ELMA.CRM.Models.Sale.F.xml" />
+    <EmbeddedResource Include="EleWise.ELMA.CRM.Models.Contra.xml" />
+    <EmbeddedResource Include="EleWise.ELMA.CRM.Models.Contra.xml" />
+    <EmbeddedResource Include="EleWise.ELMA.CRM.Notifications.xml" />
+    <EmbeddedResource Include="EleWise.ELMA.CRM.Notifications.xml" />
+    <EmbeddedResource Include="EleWise.ELMA.CRM.Models.Produc.xml" />
+    <EmbeddedResource Include="EleWise.ELMA.CRM.Models.Produc.xml" />
+    <EmbeddedResource Include="EleWise.ELMA.CRM.Models.SalePr.xml" />
+    <EmbeddedResource Include="EleWise.ELMA.CRM.Models.SalePr.xml" />
+    <EmbeddedResource Include="EleWise.ELMA.CRM.Models.Contac.xml" />
+    <EmbeddedResource Include="EleWise.ELMA.CRM.Models.Contac.xml" />
+    <EmbeddedResource Include="EleWise.ELMA.CRM.Models.Relati.xml" />
+    <EmbeddedResource Include="EleWise.ELMA.CRM.Models.Relati.xml" />
+    <EmbeddedResource Include="EleWise.ELMA.CRM.Models.Relati.xml" />
+    <EmbeddedResource Include="EleWise.ELMA.CRM.Models.Relati.xml" />
+    <EmbeddedResource Include="EleWise.ELMA.CRM.Models.Relati.xml" />
+    <EmbeddedResource Include="EleWise.ELMA.CRM.Models.Relati.xml" />
+    <EmbeddedResource Include="EleWise.ELMA.CRM.Models.Relati.xml" />
+    <EmbeddedResource Include="EleWise.ELMA.CRM.Models.Relati.xml" />
+    <EmbeddedResource Include="EleWise.ELMA.CRM.Models.Relati.xml" />
+    <EmbeddedResource Include="EleWise.ELMA.CRM.Models.Contac.xml" />
+    <EmbeddedResource Include="EleWise.ELMA.CRM.Models.Lead.F.xml" />
+    <EmbeddedResource Include="EleWise.ELMA.CRM.Models.Lead.F.xml" />
+    <EmbeddedResource Include="EleWise.ELMA.CRM.Models.Lead.F.xml" />
+    <EmbeddedResource Include="EleWise.ELMA.CRM.Notifications.xml" />
+    <EmbeddedResource Include="EleWise.ELMA.CRM.Models.Billin.xml" />
+    <EmbeddedResource Include="EleWise.ELMA.CRM.Models.Billin.xml" />
+    <EmbeddedResource Include="EleWise.ELMA.CRM.Models.Billin.xml" />
+    <EmbeddedResource Include="EleWise.ELMA.CRM.Models.Billin.xml" />
+    <EmbeddedResource Include="EleWise.ELMA.CRM.Models.Billin.xml" />
+    <EmbeddedResource Include="EleWise.ELMA.CRM.Models.Billin.xml" />
+    <EmbeddedResource Include="EleWise.ELMA.CRM.Models.Billin.xml" />
+    <EmbeddedResource Include="EleWise.ELMA.CRM.Models.Billin.xml" />
+    <EmbeddedResource Include="EleWise.ELMA.CRM.Models.Billin.xml" />
+    <EmbeddedResource Include="EleWise.ELMA.CRM.Models.Billin.xml" />
+    <EmbeddedResource Include="EleWise.ELMA.CRM.Models.Contra.xml" />
+    <EmbeddedResource Include="EleWise.ELMA.CRM.Models.Contra.xml" />
+    <EmbeddedResource Include="EleWise.ELMA.CRM.Models.Relati.xml" />
+    <EmbeddedResource Include="EleWise.ELMA.CRM.Models.Relati.xml" />
+    <EmbeddedResource Include="EleWise.ELMA.CRM.Models.Relati.xml" />
+    <EmbeddedResource Include="EleWise.ELMA.CRM.Models.Sale.F.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="EleWise.ELMA.Calendar">
+      <HintPath>..\..\..\bin\EleWise.ELMA.Calendar.dll</HintPath>
+    </Reference>
+    <Reference Include="EleWise.ELMA.Common">
+      <HintPath>..\..\..\bin\EleWise.ELMA.Common.dll</HintPath>
+    </Reference>
+    <Reference Include="EleWise.ELMA.Content">
+      <HintPath>..\..\..\bin\EleWise.ELMA.Content.dll</HintPath>
+    </Reference>
+    <Reference Include="EleWise.ELMA.Documents">
+      <HintPath>..\..\..\bin\EleWise.ELMA.Documents.dll</HintPath>
+    </Reference>
+    <Reference Include="EleWise.ELMA.Messages">
+      <HintPath>..\..\..\bin\EleWise.ELMA.Messages.dll</HintPath>
+    </Reference>
+    <Reference Include="EleWise.ELMA.SDK">
+      <HintPath>..\..\..\bin\EleWise.ELMA.SDK.dll</HintPath>
+    </Reference>
+    <Reference Include="EleWise.ELMA.SDK.Web">
+      <HintPath>..\..\..\bin\EleWise.ELMA.SDK.Web.dll</HintPath>
+    </Reference>
+    <Reference Include="EleWise.ELMA.Security">
+      <HintPath>..\..\..\bin\EleWise.ELMA.Security.dll</HintPath>
+    </Reference>
+    <Reference Include="EleWise.ELMA.Tasks">
+      <HintPath>..\..\..\bin\EleWise.ELMA.Tasks.dll</HintPath>
+    </Reference>
+    <Reference Include="EleWise.TemplateGenerator.Merged">
+      <HintPath>..\..\..\bin\EleWise.TemplateGenerator.Merged.dll</HintPath>
+    </Reference>
+    <Reference Include="Iesi.Collections">
+      <HintPath>..\..\..\bin\Iesi.Collections.dll</HintPath>
+    </Reference>
+    <Reference Include="NHibernate">
+      <HintPath>..\..\..\bin\NHibernate.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.Extensions" />
+    <Reference Include="System.Web.Mvc">
+      <HintPath>..\..\..\bin\System.Web.Mvc.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Xml" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Web" />
+  </ItemGroup>
+</Project>

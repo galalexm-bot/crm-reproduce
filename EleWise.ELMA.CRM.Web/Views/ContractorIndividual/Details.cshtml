@@ -1,0 +1,213 @@
+﻿@model ContractorIndividualModel
+@using EleWise.ELMA
+@using EleWise.ELMA.BPM.Web.Common.Extensions
+@using EleWise.ELMA.BPM.Web.Common.Services
+@using EleWise.ELMA.BPM.Web.Common.Models
+@using EleWise.ELMA.CRM
+@using EleWise.ELMA.CRM.Models
+@using EleWise.ELMA.CRM.Web
+@using EleWise.ELMA.CRM.Web.Code
+@using EleWise.ELMA.CRM.Web.Controllers
+@using EleWise.ELMA.CRM.Web.Models
+@using EleWise.ELMA.BPM.Web.Common.Extensions
+@using EleWise.ELMA.BPM.Web.Common.Mvc.html
+@using EleWise.ELMA.BPM.Web.Common.Models
+@using EleWise.ELMA.CRM.Models
+@using EleWise.ELMA.CRM
+@using EleWise.ELMA.Extensions
+@using EleWise.ELMA.Security
+@using EleWise.ELMA.Security.Services
+@using EleWise.ELMA.Services
+@using EleWise.ELMA.Web.Content
+@using ViewType = EleWise.ELMA.Model.Views.ViewType
+@using EleWise.ELMA.Web.Mvc.Html.Toolbar
+
+@{
+    var metadata = EleWise.ELMA.Model.Metadata.MetadataLoader.LoadMetadata(Model.Entity.GetType());
+    Html.LabeledHeader(SR.T("Физическое лицо - {0}", Model.Entity.Name), Model.Entity);
+    var saleTip = string.Format("<b>{0}</b><br>{1}", SR.T("Добавить сделку"), SR.T("Перейти к странице создания сделки с текущим контрагентом"));
+    var commentTip = string.Format("<b>{0}</b><br>{1}", SR.T("Добавить новый комментарий"), SR.T("Перейти к странице создания комментария"));
+    var editTip = string.Format("<b>{0}</b><br>{1}", SR.T("Изменить атрибуты физического лица"), SR.T("Перейти к странице редактирования физического лица"));
+    var delTip = string.Format("<b>{0}</b><br>{1}", SR.T("Удалить физическое лицо"), SR.T("Текущее физическое лицо будет удалено. Действие требует подтверждения."));
+    var attachTip = string.Format("<b>{0}</b><br>{1}", SR.T("Прикрепить документ"), SR.T("Добавить документы или файлы данному физическому лицу"));
+    var service = Locator.GetServiceNotNull<ISecurityService>();
+    var hasFullPermissions = service.HasPermission(CRMPermissionProvider.CRMFullAccessPermission);
+    var hasEditPermissions = service.HasPermission(CRMPermissionProvider.EditContractorPermission, Model.Entity);
+    var permissionIssuance = service.HasPermission(CRMPermissionProvider.CRMContractorIssuanceElementPermission, Model.Entity) || hasFullPermissions;
+    var createElementpermission = service.HasPermission(CRMPermissionProvider.CRMContractorCreateElementPermission, Model.Entity) || hasEditPermissions || hasFullPermissions;
+    var canEdit = service.HasPermission(CRMPermissionProvider.CRMFullAccessPermission) || service.HasPermission(CRMPermissionProvider.CRMContractorFullAccessPermission, Model.Entity) || service.HasPermission(CRMPermissionProvider.EditContractorPermission, Model.Entity);
+    bool canDelete = CRMPermissionProvider.CheckAny(new[] { CRMPermissionProvider.CRMFullAccessPermission, CRMPermissionProvider.CRMDeletePermission });
+    var anyFile = Locator.GetServiceNotNull<ICheckAnyAttachmentService>().CheckAnyFile(Model.Entity.TypeUid, Model.Entity);
+}
+
+@{
+    var addList = new List<EleWise.ELMA.Web.Mvc.ExtensionPoints.ActionItems.IActionItem>();
+    var list = new List<ActionToolbarItem>();
+    var createRelationships = createElementpermission;// service.HasPermission(RelationshipModel<IRelationship>.RelationshipEditPermission, Model.Entity);
+
+    addList.Add(new ActionToolbarItem("toolbar-action-CreateTask") { Text = SR.T("Задачу"), IconUrl = "#create.svg", Url = Html.Url().Action("Create", "Task", new { area = CRMAreaRegistration.AREA_NAME, id = Model.Entity.Id, typeUid = metadata.Uid }), ToolTip = SR.T("Создать задачу по данному физическому лицу") });
+    if (createRelationships)
+    {
+        addList.AddRange(EleWise.ELMA.CRM.Web.UIExtensions.ToolbarCreateRelationshipsToActionsList(Html, new { ContractorId = Model.Entity.Id }, true));
+    }
+    addList.Add(new ActionToolbarSeparator());
+    if (createElementpermission)
+    {
+        addList.Add(new ActionToolbarItem("Contractor_add_sale_btn") { Text = SR.T("Сделку"), IconUrl = "#sale.svg", Url = Html.Url().Action("Create", "Sale", new { area = CRMAreaRegistration.AREA_NAME, contractorId = Model.Entity.Id }), ToolTip = saleTip });
+        addList.Add(new ActionToolbarItem("toolbar-action-CreateContact") { Text = SR.T("Контакт"), IconUrl = "#add.svg", Url = Url.Action<ContactController>(c => c.Create(Model.Entity.Id)), ToolTip = SR.T("Добавить контакт") });
+    }
+    if (canEdit)
+    {
+        addList.Add(new ActionToolbarItem("toolbar-click-AttachDocument") { Text = SR.T("Документ"), IconUrl = "#add.svg", Click = Html.OpenPopup("AddAttachmentPopup").ToString(), ToolTip = attachTip });
+    }
+    list.Add(new ActionToolbarSeparator());
+    if (anyFile)
+    {
+        list.Add(new ActionToolbarItem("Contractor_download_archive")
+        {
+            Uid = "toolbar-click-downloadselected",
+            Text = SR.T("Скачать вложения"),
+            IconUrl = Url.Image("#download.svg"),
+            Click = Html.OpenPopup("DownloadSelectedFilesPopup").ToString(),
+        });
+    }
+    list.Add(new ActionToolbarItem("Contractor_delete_btn") { Text = SR.Delete, ToolTip = delTip, IconUrl = Url.Image("#basket.svg"), Click = "ContractorDelete();", Visible = canDelete });
+    list.Add(new ActionToolbarSeparator("Contractor_individual_delete_separator"));
+    list.Add(new ActionToolbarItem("Contractor_add_comment_btn") { Text = SR.T("Добавить комментарий"), IconUrl = "#comment_outline.svg", Click = Html.AddComment("AddCommentPopup"), ToolTip = commentTip });
+    if (permissionIssuance || hasEditPermissions)
+    {
+        list.Add(new ActionToolbarItem(Html.GenerateName())
+        {
+            Uid = "toolbar-click-managewatchers",
+            Text = SR.T("Список наблюдателей"),
+            IconUrl = "#visualibility.svg",
+            ToolTipHeader = SR.T("Настройка списка наблюдателей"),
+            ToolTip = SR.T("Управление списком тех людей, которые будут получать оповещения о действиях с контрагентом"),
+            Click = Html.OpenWatchManager(metadata.Uid, Model.Entity.Id, CRMPermissionProvider.ViewContractorPermission.Id, metadata.Uid)
+        });
+    }
+    else if (Model.CurrentUserIsWatching)
+    {
+        list.Add(new ActionToolbarItem("Contractor_remove_watch_btn")
+        {
+            Text = SR.T("Прекратить наблюдение"),
+            ToolTipHeader = SR.T("Список наблюдателей"),
+            ToolTip = SR.T("Прекратить наблюдение за контрагентом"),
+            IconUrl = "#visualibility.svg",
+            Url = Url.Action<ContractorIndividualController>(c => c.RemoveWatch(Model.ContractorTypeUid, Model.Entity.Id.ToString()))
+        });
+    }
+    else
+    {
+        list.Add(new ActionToolbarItem("Contractor_add_watch_btn")
+        {
+            Text = SR.T("Начать наблюдение"),
+            ToolTipHeader = SR.T("Список наблюдателей"),
+            ToolTip = SR.T("Начать наблюдение за контрагентом"),
+            IconUrl = "#visualibility.svg",
+            Url = Url.Action<ContractorIndividualController>(c => c.AddWatch(Model.ContractorTypeUid, Model.Entity.Id.ToString()))
+        });
+    }
+}
+@if (Model.LockEditPermission)
+{
+    <div class="note" style="margin-bottom: 10px;">
+        <div style="padding: 10px;">
+            @Html.Raw(SR.T("Производится перерасчет разрешений. Изменение заблокировано. Пожалуйста попробуйте позже."))
+        </div>
+    </div>
+}
+
+@(Html.Toolbar()
+        .AdditionalButton(a =>
+        {
+            list.ForEach(b => a.Add(b));
+        })
+        .Group(ToolbarGroupUids.FrequentlyUsedButtonsGroupUid)
+            .If(canEdit, b => b
+                .ToolbarButton(new ActionToolbarItem("Contractor_edit_btn")
+                {
+                    Text = SR.Edit,
+                    ToolTip = editTip,
+                    IconUrl = "#edit.svg",
+                    Url = Url.Action<ContractorIndividualController>(c => c.Edit(Model.Entity.Id))
+                }))
+        .Group("toolbar-group-2")
+            .If(addList.Any(), b => b
+                .ToolbarButton(new ActionToolbarItem("toolbar-button-Actions")
+                {
+                    Text = SR.T("Добавить"),
+                    IconUrl = "#poruch.svg",
+                    Items = new ActionItemList(addList)
+                }))
+        .Group("toolbar-group-3")
+        .Group("makecalltoolbar")
+        )
+
+@Html.WatchManager(metadata.Uid, Model.Entity.Id)
+@Html.ExtensionZone("StartRouteExtensionZone")
+
+@(Html.PopupWindow("DownloadSelectedFilesPopup", SR.T("Выберите вложения, которые необходимо скачать"), Url.Action("DownloadSelectedFilesPopup", "DownloadArchive",
+    new { area = "EleWise.ELMA.BPM.Web.Common", typeUid = Model.Entity.TypeUid, id = Model.Entity.Id, popupId = "DownloadSelectedFilesPopup" }), 600))
+
+@(Html.AddCommentPopup(new CommentWithAttachments
+{
+    ShowAttachment = false,
+    PopupId = "AddCommentPopup",
+    ObjectId = Model.Entity.Id,
+    ObjectTypeUid = metadata.Uid,
+    AddCommentActionUid = ContractorActions.AddCommentGuid,
+    RedirectUrl = Url.Action("Details", "ContractorIndividual", new { area = CRMAreaRegistration.AREA_NAME, id = Model.Entity.Id, tabIndex = 2, selectedTab = "historyTab" })
+}))
+
+@(Html.Partial("Attachment/Create", new CrmAttachment
+{
+    PopupId = "AddAttachmentPopup",
+    EntityId = Model.Entity.Id,
+    EntityTypeUid = metadata.Uid,
+    RedirectUrl = Url.Action("Details", "ContractorIndividual", new { area = CRMAreaRegistration.AREA_NAME, id = Model.Entity.Id, tabIndex = 6, selectedTab = "attachmentsTab" })
+}))
+
+@if (true/*Model.Entity.IsAvailableDelete*/)
+{
+    using (Html.ELMAForm("Delete", "ContractorIndividual", new { area = CRMAreaRegistration.AREA_NAME, id = Model.Entity.Id }, FormMethod.Get, new { id = "ContractorDeleteForm" }))
+    {
+    }
+
+    <script type="text/javascript">
+        function ContractorDelete() {
+            jConfirm('@SR.T("Вы действительно хотите удалить физическое лицо?")', '@SR.T("Подтверждение удаления")', function (r) {
+                if (r) {
+                    $('#ContractorDeleteForm').submit();
+                }
+            });
+        }
+    </script>
+}
+
+@if (DirectoryMapVirtualPathProvider.AnyConfigFile("~/Modules/EleWise.ELMA.CRM.Web/Views/ContractorIndividual/TabView.cshtml", "~/Modules/EleWise.ELMA.CRM.Web/Views/Shared/Contractor/TasksTab.cshtml"))
+{
+    @Html.Partial("TabView", Model)
+}
+else
+{
+    using (Html.LabeledContainer(SR.T("Контрагент")))
+    {
+        using (Html.ElmaDynamicForm("ContractorIndividualDynamicForm", Model.Entity.TypeUid))
+        {
+            @Html.DynamicFormSettings(Model.DynamicFormSettings)
+            @Html.HiddenFor(m => m.Entity.TypeUid)
+            if (Model.Entity.Id != null)
+            {
+                @Html.HiddenFor(m => m.Entity.Id)
+            }
+
+            @Html.FormViewItem(Model.View, m => m.Entity, new ActionRoute("AsyncViewItem", "ContractorIndividual", new { area = CRMAreaRegistration.AREA_NAME, id = Model.Entity.Id, viewType = Model.ViewType, formUid = Model.FormUid }), Model.ViewType,
+                         Model.ItemType,
+                         EntityObjectViewItemProvider.UID, Model.ViewItemId,
+                         Model.DynamicFormSettings != null ? Model.DynamicFormSettings.DynamicFormsProviderUid : Guid.Empty,
+                         Model.DynamicFormSettings != null ? Model.DynamicFormSettings.DynamicFormsProviderData : null,
+                         Model.FormId)
+        }
+    }
+}

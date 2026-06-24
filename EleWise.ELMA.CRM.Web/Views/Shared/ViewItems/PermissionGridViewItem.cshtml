@@ -1,0 +1,27 @@
+﻿@using EleWise.ELMA.CRM.Models
+@using EleWise.ELMA.CRM.Web
+@model EleWise.ELMA.Model.Entities.IEntity<long>
+
+@if (Model != null)
+{
+    if (Model is IContractor)
+    {
+        @Html.Action("GetPermissionSettings", "Contractor", new { area = CRMAreaRegistration.AREA_NAME, id = Model.Id });
+    }
+    else if (Model is IContact)
+    {
+        @Html.Action("GetPermissionSettings", "Contact", new { area = CRMAreaRegistration.AREA_NAME, id = Model.Id });
+    }
+    else if (Model is ILead)
+    {
+        @Html.Action("GetPermissionSettings", "Lead", new { area = CRMAreaRegistration.AREA_NAME, id = Model.Id });
+    }
+    else if (Model is ISale)
+    {
+        @Html.Action("GetPermissionSettings", "Sale", new { area = CRMAreaRegistration.AREA_NAME, id = Model.Id })
+    }
+    else if (Model is IRelationship)
+    {
+        @Html.Action("GetPermissionSettings", "Relationship", new { area = CRMAreaRegistration.AREA_NAME, id = Model.Id })
+    }
+}

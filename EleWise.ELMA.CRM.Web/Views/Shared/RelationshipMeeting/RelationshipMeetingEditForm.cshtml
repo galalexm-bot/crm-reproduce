@@ -1,0 +1,313 @@
+﻿@model EleWise.ELMA.CRM.Web.Models.RelationshipMeetingModel
+@using EleWise.ELMA
+@using EleWise.ELMA.BPM.Web.Calendar
+@using EleWise.ELMA.Extensions
+@using EleWise.ELMA.Helpers
+@using EleWise.ELMA.Model.Types.Settings
+@using EleWise.ELMA.Security.Types.Settings
+@using EleWise.ELMA.Web.Mvc
+@using EleWise.ELMA.Web.Mvc.Html
+@using EleWise.ELMA.Web.Mvc.Html.Forms
+@using ViewType = EleWise.ELMA.Model.Views.ViewType
+
+@Html.DynamicFormStart("RelationshipMeetingDynamicForm", Guid.NewGuid())
+@{    
+    var viewType = Model.Entity.IsNew() ? ViewType.Create : ViewType.Edit;
+}
+
+@if (!Model.Entity.IsNew())
+{
+    @Html.HiddenFor(m => m.Entity.Id)
+}
+@Html.HiddenFor(m => m.Entity.TypeUid)
+@Html.HiddenFor(m => m.PrevContactId)
+@Html.HiddenFor(m => m.PrevContractorId)
+@Html.HiddenFor(m => m.PrevLeadId)
+@Html.HiddenFor(m => m.PrevSaleId)
+@for (int i = 0; i < Model.PrevContractorContactsIds.Count; i++)
+{
+    @Html.HiddenFor(m => m.PrevContractorContactsIds[i])
+}
+@if (Model.Entity.Contractor != null && Model.LinkReadOnly)
+{
+    @Html.HiddenFor(m => Model.Entity.Contractor.Id)
+}
+@if (Model.Entity.Contact != null && Model.LinkReadOnly)
+{
+    @Html.HiddenFor(m => Model.Entity.Contact.Id)
+}
+@if (Model.Entity.Lead != null && Model.LinkReadOnly)
+{
+    @Html.HiddenFor(m => Model.Entity.Lead.Id)
+}
+@if (Model.Entity.Sale != null && Model.LinkReadOnly)
+{
+    @Html.HiddenFor(m => Model.Entity.Sale.Id)
+}
+@if (Model.Contacts != null)
+{
+    for (int i = 0; i < Model.Contacts.Count; i++)
+    {
+        @Html.HiddenFor(m => m.Contacts[i].Id)
+    }
+}
+@if (Model.Contractors != null)
+{
+    for (int i = 0; i < Model.Contractors.Count;
+        i++)
+    {
+        @Html.HiddenFor(m => m.Contractors[i].Id)
+    }
+}
+@if (Model.Leads != null)
+{
+    for (int i = 0; i < Model.Leads.Count; i++)
+    {
+        @Html.HiddenFor(m => m.Leads[i].Id)
+    }
+}
+@if (Model.Sales != null)
+{
+    for (int i = 0; i < Model.Sales.Count; i++)
+    {
+        @Html.HiddenFor(m => m.Sales[i].Id)
+    }
+}
+@Html.HiddenFor(m => m.IsMultiCreation)
+@Html.HiddenFor(m => m.LinkReadOnly)
+@Html.DynamicFormSettings(Model.DynamicFormSettings)
+
+
+@if (DirectoryMapVirtualPathProvider.AnyConfigFile("~/Modules/EleWise.ELMA.CRM.Web/Views/Relationship/LinkedEntity.cshtml"))
+{
+    @Html.TableFormStart(ViewType.Edit)
+    <tr>
+        <td class="captionCell">@Html.Caption(m => m.Entity.Theme)</td>
+        <td>@Html.Editor(m => m.Entity.Theme)</td>
+    </tr>
+    <tr>
+        <td class="captionCell">@Html.Caption(m => m.PartyUsers, a => a.Name = SR.Partisipants)</td>
+        <td>
+            @Html.Editor(m => m.PartyUsers, a =>
+            {
+                a.Name = SR.Partisipants;
+                a.TypeSettingsAction = settingsAction =>
+                {
+                    var userSettings = (EntityUserSettings)settingsAction;
+                    userSettings.CheckReplacement = true;
+                };
+            })
+        </td>
+    </tr>
+    <tr>
+        <td class="captionCell">@Html.Caption(m => m.InformUsers, a => a.Name = SR.ToInfrom)</td>
+        <td>@Html.Editor(m => m.InformUsers, a => a.Name = SR.ToInfrom)</td>
+    </tr>
+    <tr>
+        <td class="captionCell">@Html.Caption(m => m.Entity.Place)</td>
+        <td>@Html.Editor(m => m.Entity.Place)</td>
+    </tr>
+    <tr>
+        <td class="captionCell">@Html.Caption(m => m.Entity.StartDate, a => a.Name = SR.T("Дата начала"))</td>
+        <td>
+            <table>
+                <tr>
+                    <td style="width: 180px;">
+                        @Html.Editor("Entity.StartDate", "DamperDateTime", new { ShowDamper = false, IsStart = true })
+                    </td>
+                    <td class="vertical-middle">
+                        <div id="@ViewData.TemplateInfo.GetFullHtmlFieldId("WholeDayDiv")">
+                            @(Html.ModernCheckBoxFor(m => m.WholeDay, false, true).LabelText(SR.T("Целый день")).Attributes(a => { a.@class = ""; a.onclick = "toggleTime()"; }))
+                            @*<input type="hidden" value="@false" name="@ViewData.TemplateInfo.GetFullHtmlFieldName("WholeDay")" oldvalue="@false">*@
+                        </div>
+                    </td>
+                </tr>
+            </table>
+            @Html.ValidationMessage("Entity.StartDate")
+        </td>
+    </tr>
+    <tr>
+        <td class="captionCell">@Html.Caption(m => m.Entity.EndDate, a => a.Name = SR.T("Дата окончания"))</td>
+        <td>
+            <table>
+                <tr>
+                    <td style="width: 180px">
+                        @Html.Editor("Entity.EndDate", "DamperDateTime", new { ShowDamper = false, IsStart = false })
+                    </td>
+                    <td class="vertical-middle">
+                        <input type="hidden" id="@ViewData.TemplateInfo.GetFullHtmlFieldId("Entity.TimeNotSet")" name="@ViewData.TemplateInfo.GetFullHtmlFieldName("Entity.TimeNotSet")" value="@(Model.Entity.TimeNotSet)" />
+                        @(Html.ModernCheckBox(false)
+            .Id(ViewData.TemplateInfo.GetFullHtmlFieldId("TimeNotSet"))
+            .Name(ViewData.TemplateInfo.GetFullHtmlFieldName("TimeNotSet"))
+            .Checked(Model.Entity.TimeNotSet)
+            .LabelText(SR.T("Уточнить время позже"))
+            .Attributes(a => { a.onclick = "toggleTimeNotSet()"; }))
+                        @*<input type="hidden" value="false" name="@ViewData.TemplateInfo.GetFullHtmlFieldName("Entity.TimeNotSet")" oldvalue="false">*@
+                    </td>
+                </tr>
+            </table>
+            @Html.ValidationMessage("Entity.EndDate")
+        </td>
+    </tr>
+    if (Model.SchedulesList.Any())
+    {
+        <tr id=@ViewData.TemplateInfo.GetFullHtmlFieldId("trSchedules") style="display: @(Model.ShowSchedules ? "" : "none")">
+            <td class="captionCell">@Html.Caption(m => m.Entity.Schedules)</td>
+            <td>@Html.CheckBoxList(Html.NameFor(m => m.Schedules).ToString(), Model.SchedulesList, null, false, 2, "javascript: openSchedulePopup ('{0}', null)")</td>
+        </tr>
+    }
+    <tr>
+        <td class="captionCell">@Html.Caption(m => m.Entity.Priority)</td>
+        <td>@Html.Editor(m => m.Entity.Priority)</td>
+    </tr>
+
+    @Html.Partial("Relationship/LinkedEntity", Model)
+
+    if (Model.IsMultiCreation)
+    {
+        <tr>
+            <td class="captionCell">@Html.Caption(m => m.Interval)</td>
+            <td>@Html.Editor(m => m.Interval, a => a.TypeSettings = new DateTimeSettings { ShowDate = false })</td>
+        </tr>
+    }
+
+    <tr>
+        <td class="captionCell">@Html.Caption(m => m.Entity.Description)</td>
+        <td>@Html.Editor(m => m.Entity.Description)</td>
+    </tr>
+
+    var custompropCount = 0;
+    var customView = Html.BuildFormForModel(Model.Entity, viewType,
+                                                  b =>
+                                                  {
+                                                      b.HideForm();
+                                                      b.Prefix("Entity");
+                                                      b.LayoutConfig<DefaultFormLayout>(l => l.RenderTable = false);
+                                                      b.ShowOnlyUserProperties();
+                                                      b.EachPropertyRow(r => { if (r.Visible)custompropCount++; });
+                                                  });
+    if (custompropCount > 0)
+    {
+        @customView
+    }
+
+    @Html.TableFormEnd()
+
+    <script type="text/javascript">
+
+        function openSchedulePopup(scheduleId, userId) {
+            var window = createWindow("schedulePopup", { title: "@(SR.T("Календарь"))", html: "", widthMode: 'xl', height: elma.getSchedulePopupContentHeight() });
+            if (window != null && (scheduleId != null || userId != null)) {
+                var dateStr = '?date=' + $("#@(Html.IDFor(m => m.Entity.StartDate))").val();
+                var url = scheduleId != null ?
+                    '@(Url.Action("PopupView", "Scheduler", new {area = CalendarAreaRegistration.AREA_NAME, id = ""}))/' + scheduleId
+                    : '@(Url.Action("PopupUserView", "Scheduler", new {area = CalendarAreaRegistration.AREA_NAME, id = ""}))/' + userId;
+                url += dateStr;
+                refreshPopup("schedulePopup", url);
+            } else {
+                @(Html.MessageBox("").Error(SR.T("Не удается открыть окно календаря."), SR.T("Ошибка")).Render())
+
+            }
+        }
+
+        function toggleTime() {
+            if ($("#@ViewData.TemplateInfo.GetFullHtmlFieldId("WholeDay")").is(":checked")) {
+                $("#@ViewData.TemplateInfo.GetFullHtmlFieldId("Entity.StartDate.time")").parent().parent().parent().css('display', 'none');
+                $("#@ViewData.TemplateInfo.GetFullHtmlFieldId("Entity.EndDate.time")").parent().parent().parent().css('display', 'none');
+            } else {
+                $("#@ViewData.TemplateInfo.GetFullHtmlFieldId("Entity.StartDate.time")").parent().parent().parent().css('display', '');
+                $("#@ViewData.TemplateInfo.GetFullHtmlFieldId("Entity.EndDate.time")").parent().parent().parent().css('display', '');
+            }
+        }
+
+        function toggleTimeNotSet() {
+            reassignDate();
+            if ($("#@ViewData.TemplateInfo.GetFullHtmlFieldId("TimeNotSet")").is(":checked")) {
+                $("#@ViewData.TemplateInfo.GetFullHtmlFieldId("WholeDayDiv")").css('display', 'none');
+                $("#@ViewData.TemplateInfo.GetFullHtmlFieldId("Entity.StartDate.time")").parent().parent().parent().css('display', 'none');
+                $("#@ViewData.TemplateInfo.GetFullHtmlFieldId("Entity.EndDate.time")").parent().parent().parent().css('display', 'none');
+                $("#@ViewData.TemplateInfo.GetFullHtmlFieldId("Entity.TimeNotSet")").val("@true");
+                var form = $('#RelationShipTable').parents('form');
+                form.data('validator').element('#@ViewData.TemplateInfo.GetFullHtmlFieldId("Entity.StartDate")');
+                form.data('validator').element('#@ViewData.TemplateInfo.GetFullHtmlFieldId("Entity.EndDate")');
+            } else {
+                $("#@ViewData.TemplateInfo.GetFullHtmlFieldId("WholeDayDiv")").css('display', '');
+                $("#@ViewData.TemplateInfo.GetFullHtmlFieldId("WholeDay")").attr('checked', false);
+                $("#@ViewData.TemplateInfo.GetFullHtmlFieldId("Entity.StartDate.time")").parent().parent().parent().css('display', '');
+                $("#@ViewData.TemplateInfo.GetFullHtmlFieldId("Entity.EndDate.time")").parent().parent().parent().css('display', '');
+                $("#@ViewData.TemplateInfo.GetFullHtmlFieldId("Entity.TimeNotSet")").val("@false");
+            }
+        }
+    </script>
+}
+else
+{
+    var viewItemId = !String.IsNullOrEmpty(Model.ViewItemId)
+        ? Model.ViewItemId
+        : Model.DynamicFormSettings != null
+            ? Model.DynamicFormSettings.ViewItemId
+            : null;
+    @Html.FormViewItem(Model.View ?? Model.FormViewItem(Model.ViewType), m => m.Entity, null, Model.ViewType,
+            Model.ItemType,
+            EntityObjectViewItemProvider.UID, viewItemId,
+            Model.DynamicFormSettings != null ? Model.DynamicFormSettings.DynamicFormsProviderUid : Guid.Empty,
+            Model.DynamicFormSettings != null ? Model.DynamicFormSettings.DynamicFormsProviderData : null,
+            Model.FormId)
+}
+
+@(Html.PopupWindow("CrossedEventsWindow", SR.T("Найдены пересечения"), @<text><div class="elma-window-content" style="min-width: 650px;"></div>></text>))
+
+@{ 
+    @Html.Partial("Relationship/RelationshipSubmitScript")
+
+    Html.RegisterContent("validationRules",
+        @<text>
+            <script type="text/javascript">
+                function getRelationshipPrefix(f) {
+                    var prefix = $("input[name=CreatorPrefix]")
+                    if (prefix && prefix.val()) {
+                        return prefix.val() + "_" + f;
+                    } else {
+                        return f;
+                    }
+                }
+
+                $(function () {
+                    jQuery.validator.addMethod("needStartDate", function (value, element) {
+                        var date = $("#" + getRelationshipPrefix("Entity_StartDate_date"));
+                        var time = $("#" + getRelationshipPrefix("Entity_StartDate_time"));
+                        var wholeDay = $('#WholeDay').is(':checked');
+                        var timeNotSet = $('#TimeNotSet').is(':checked');
+                        return date !== undefined && date && (timeNotSet || wholeDay || time !== undefined && time);
+                    });
+                    jQuery.validator.addMethod("needEndDate", function (value, element) {
+                        var date = $("#" + getRelationshipPrefix("Entity_EndDate_date"));
+                        var time = $("#" + getRelationshipPrefix("Entity_EndDate_time"));
+                        var wholeDay = $('#WholeDay').is(':checked');
+                        var timeNotSet = $('#TimeNotSet').is(':checked');
+                        return date !== undefined && date && (timeNotSet || wholeDay || time !== undefined && time);
+                    });
+                });
+
+                $(document).ready(function () {
+                    elma.ValidationRulesManager.addRule(getRelationshipPrefix("Entity_StartDate"), 'add', {
+                        needStartDate: true,
+                        messages: {
+                            needStartDate: '@SR.T("Заполните обязательное поле")'
+                        }
+                    });
+                    elma.ValidationRulesManager.addRule(getRelationshipPrefix("Entity_EndDate"), 'add', {
+                        needEndDate: true,
+                        messages: {
+                            needEndDate: '@SR.T("Заполните обязательное поле")'
+                        }
+                    });
+                                    
+                    elma.SetDateTimeDependenceInputs(getRelationshipPrefix("Entity_StartDate"), getRelationshipPrefix("Entity_EndDate"));
+
+                    //$('#toolbar_btn_wizardbuttonsave').attr('onclick', "reassignDate();"+$('#toolbar_btn_wizardbuttonsave').attr('onclick'));
+                });
+            </script>
+        </text>);
+}
+@Html.DynamicFormEnd()

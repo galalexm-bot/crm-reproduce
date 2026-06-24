@@ -1,0 +1,47 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<FormViewItem xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <Name>Edit</Name>
+  <Uid>bb9c48df-54a8-4da4-b1a5-19bd567b54a2</Uid>
+  <Items>
+    <RootViewItem xsi:type="ColumnsLayoutViewItem">
+      <Name>ColumnsLayout1</Name>
+      <Uid>2b145432-50aa-4cc1-a3d4-a22cb0a76aa4</Uid>
+      <Items>
+        <RootViewItem xsi:type="ColumnViewItem">
+          <Name>Column1</Name>
+          <Uid>0a358549-e59e-4c74-a93b-1406375d6b0b</Uid>
+          <Items>
+            <RootViewItem xsi:type="PropertyViewItem">
+              <Name>Property1</Name>
+              <Uid>5aec7575-47ef-4b0f-b475-dab8ac6d3cf9</Uid>
+              <Property>43e9eaf5-fa80-463a-88af-efa2cbf8dd75</Property>
+              <Attributes />
+            </RootViewItem>
+            <RootViewItem xsi:type="PropertyViewItem">
+              <Name>Property4</Name>
+              <Uid>a1c7809b-c986-4c28-acc1-8e3b81909a8d</Uid>
+              <Property>07025e18-5e8b-47bd-b83c-99ee603c26cb</Property>
+              <Attributes />
+            </RootViewItem>
+            <RootViewItem xsi:type="PropertyViewItem">
+              <Name>Property2</Name>
+              <Uid>9fc365e5-52b6-403f-b94e-1221eea49e48</Uid>
+              <Property>907e3749-ee29-4854-8f72-8e52593de117</Property>
+              <Attributes />
+            </RootViewItem>
+            <RootViewItem xsi:type="PropertyViewItem">
+              <Name>Property3</Name>
+              <Uid>48f00f58-e8b0-4ab0-9494-1dc218592a80</Uid>
+              <Property>df2ae3f0-4f61-4648-9cc6-ca0256a54eba</Property>
+              <Attributes />
+            </RootViewItem>
+          </Items>
+        </RootViewItem>
+      </Items>
+    </RootViewItem>
+    <ViewItem xsi:type="DefaultContainerViewItem">
+      <Name>DefaultContainer1</Name>
+    </ViewItem>
+  </Items>
+  <DisplayName>Редактирование/Создание</DisplayName>
+</FormViewItem>

@@ -1,0 +1,23 @@
+﻿@model ILead
+           
+@using EleWise.ELMA.CRM.Components
+@using EleWise.ELMA.CRM.Enums
+@using EleWise.ELMA.CRM.Managers
+@using EleWise.ELMA.CRM.Web.Models
+@using EleWise.ELMA.CRM.Models
+@using EleWise.ELMA.Services
+
+@{
+    var crmSettingsModule = Locator.GetServiceNotNull<CrmSettingsModule>();
+    if (!crmSettingsModule.Settings.LeadSearchDublicate)
+    {
+        return;
+    }
+
+    var state = LeadDublicateStateManager.Instance.GetLeadDublicateState(Model);
+    if (state != null && state.Status != LeadDublicateStatus.NotDublicate)
+    {
+        var model = new LeadDublicateModel(Model);
+        @Html.Partial("Lead/ScoringPanel", model)
+    }
+}

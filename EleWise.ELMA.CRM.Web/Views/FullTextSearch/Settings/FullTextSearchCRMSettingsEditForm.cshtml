@@ -1,0 +1,26 @@
+﻿@using EleWise.ELMA.CRM.FullTextSearch
+@using EleWise.ELMA.ComponentModel
+
+@model CRMFullTextSearchSettings
+
+
+@using (Html.TableForm(v => v.Attributes(a => a.@class = "settings_table")))
+{
+    <tr>
+        <td class="captionCell">
+            @Html.Caption(m => m.IndexingContractor)
+        </td>
+        <td>
+            @Html.ModernSwitchButtonFor(m => m.IndexingContractor, true)
+        </td>
+    </tr>
+    <tr>
+        <td class="captionCell">
+            @Html.Caption(m => m.IndexingContractorAttachments)
+        </td>
+        <td>
+            @Html.ModernSwitchButtonFor(m => m.IndexingContractorAttachments, true)
+        </td>
+    </tr>
+}
+        

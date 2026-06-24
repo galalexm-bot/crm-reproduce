@@ -1,0 +1,29 @@
+﻿@model EleWise.ELMA.CRM.Web.Models.SaleModel
+
+@using EleWise.ELMA;
+@using EleWise.ELMA.CRM.Web
+
+@{
+    Html.Header(SR.T("Редактирование сделки - {0}", Model.Entity.Name));
+}
+
+@(Html.Toolbar()
+    .Group("toolbar-group-1")
+        .ToolbarSubmit(SR.Save, "#save.svg", "toolbar-action-Save")
+        .ToolbarClick(SR.Cancel, "", "#close_outline.svg", "GetLinkToPreviousPage()", itemUid: "toolbar-action-Cancel"))
+
+<script type="text/javascript">
+    function GetLinkToPreviousPage()
+    {
+        if (history.length > 1)
+        {
+            history.back(-1);
+        }
+        else
+        {
+            window.navigateToUrl('@(Url.Action("Index", "Sale"))');
+        }
+    }
+</script>
+
+@Html.Partial("Editors/SaleEdit")

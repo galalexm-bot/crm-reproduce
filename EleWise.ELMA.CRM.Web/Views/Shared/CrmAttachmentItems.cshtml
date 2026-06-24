@@ -1,0 +1,82 @@
+﻿@using EleWise.ELMA.BPM.Web.Security.Extensions
+@using EleWise.ELMA.CRM.Web
+@using EleWise.ELMA.Model.Metadata
+@using EleWise.ELMA
+@model EleWise.ELMA.CRM.Models.ICRMAttachment
+
+
+<div class="history-item-content">
+<div class="history-item-title"></div>
+@if (!string.IsNullOrEmpty(Model.Comment))
+{
+    <div class="history-type-comment history-item-ext" style="padding: 4px;">
+        <div class="history-comment-content">
+            <div class="history-comment-angle"></div>
+            @Html.Display(m => m.Comment)
+        </div>
+    </div>
+}
+<div class="history-type-action history-item-ext" style="padding: 4px;">
+    @{
+        foreach (var file in Model.Files)
+        {
+            @Html.Partial("CrmAttachmentFile", file,
+                                new ViewDataDictionary { { "attachmentId", Model.Id }, { "CanDelete", ViewData["CanDelete"] }, { "IsAttachmentSet", true } })
+        }
+
+        foreach (var doc in Model.Documents.Where(d => !d.IsDeleted))
+        {
+            @Html.Partial("CrmAttachmentDocument", doc,
+                                new ViewDataDictionary { { "attachmentId", Model.Id }, { "CanDelete", ViewData["CanDelete"] }, { "IsAttachmentSet", true } })
+        }
+    }
+</div>
+</div>
+
+@{
+    Html.RegisterContent("DocumentDeleteFunc", 
+    @<text>
+        <script type="text/javascript">
+            function DocumentDelete(attachmentId, docId) {
+                jConfirm('@SR.T("Вы действительно хотите удалить документ?")', '@SR.T("Подтверждение удаления")', function(r) {
+                    if (r) {
+                        $.ajax({
+                            url: '@(Url.Action("RemoveAttachmentSubItem", "Attachment"))' + '?attachmentId=' + attachmentId + '&docId=' + docId,
+                            type: "POST",
+                            success: function(data) {
+                                refreshGrid("CrmAttachmentGrid8");
+
+                                if (data && data.success === false && !!(data.error)) {
+                                    jAlert(data.error);
+                                }
+                            }
+                        });
+                    }
+                });
+            }
+        </script>
+    </text>);
+    
+    Html.RegisterContent("FileDeleteFunc", 
+    @<text>
+        <script type="text/javascript">
+            function FileDelete(attachmentId, fileId) {
+                jConfirm('@SR.T("Вы действительно хотите удалить файл?")', '@SR.T("Подтверждение удаления")', function (r) {
+                    if (r) {
+                        $.ajax({
+                            url: '@(Url.Action("RemoveAttachmentSubItem", "Attachment"))' + '?attachmentId=' + attachmentId + '&fileId=' + fileId,
+                            type: "POST",
+                            success: function (data) {
+                                refreshGrid("CrmAttachmentGrid8");
+
+                                if (data && data.success === false && !!(data.error)) {
+                                    jAlert(data.error);
+                                }
+                            }
+                        });
+                    }
+                });
+            }
+        </script>
+    </text>);
+}

@@ -1,0 +1,83 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<FormViewItem xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <Name>Edit</Name>
+  <Uid>9a627d41-1f23-418f-bdf2-e4ebf13e035d</Uid>
+  <Items>
+    <RootViewItem xsi:type="ColumnsLayoutViewItem">
+      <Name>ColumnsLayout1</Name>
+      <Uid>8c2016f6-abc7-4244-a4b1-abd05884377d</Uid>
+      <Items>
+        <RootViewItem xsi:type="ColumnViewItem">
+          <Name>Column1</Name>
+          <Uid>7356a78f-93df-46ed-ae08-9492bb8ed0cd</Uid>
+          <Items>
+            <RootViewItem xsi:type="PropertyViewItem">
+              <Name>Property1</Name>
+              <Uid>1aea4e3e-388c-4181-9a11-0a6b725e4139</Uid>
+              <Property>6f674758-9b87-42d6-b7c5-232d250f1072</Property>
+              <Attributes />
+            </RootViewItem>
+            <RootViewItem xsi:type="PropertyViewItem">
+              <Name>Property2</Name>
+              <Uid>8068f515-cd58-4a17-b4a3-b6e7cee797bf</Uid>
+              <Property>1dccebf6-d988-4034-ade8-5a8da8fe7c7a</Property>
+              <Attributes />
+            </RootViewItem>
+            <RootViewItem xsi:type="PropertyViewItem">
+              <Name>Property3</Name>
+              <Uid>4ece18ef-0034-41ab-9bff-7a9203b83242</Uid>
+              <Property>a069c152-a235-4c45-979c-607df5a3d9cc</Property>
+              <Attributes />
+            </RootViewItem>
+            <RootViewItem xsi:type="PropertyViewItem">
+              <Name>Property4</Name>
+              <Uid>50cd1f66-5338-4183-b00b-ece1b1e5e2fb</Uid>
+              <Property>b27487ec-058c-4ec9-9af6-d592aeb86496</Property>
+              <Attributes />
+            </RootViewItem>
+            <RootViewItem xsi:type="PropertyViewItem">
+              <Name>Property5</Name>
+              <Uid>4a6acede-3739-4168-a2a9-443680b90942</Uid>
+              <Property>2f23bca4-4c65-4987-ba73-7008469b5084</Property>
+              <Attributes />
+            </RootViewItem>
+            <RootViewItem xsi:type="PropertyViewItem">
+              <Name>Property6</Name>
+              <Uid>a5f3e1eb-cbd2-482c-979e-83b17fa9c934</Uid>
+              <Property>ef129b5b-b021-4d4b-a55c-5d21a88225ea</Property>
+              <Attributes />
+            </RootViewItem>
+            <RootViewItem xsi:type="PropertyViewItem">
+              <Name>Property7</Name>
+              <Uid>0223dc53-1d5f-4a5f-af21-72ff0e20bf3a</Uid>
+              <Property>a69a3f32-d792-4f00-9992-a9bc496d674c</Property>
+              <Attributes />
+            </RootViewItem>
+            <RootViewItem xsi:type="PropertyViewItem">
+              <Name>Property8</Name>
+              <Uid>0447f40b-709e-442b-895e-6f2c1b512ed1</Uid>
+              <Property>4fb3c095-49e4-4c5e-b9c7-0dfc3ba89310</Property>
+              <Attributes />
+            </RootViewItem>
+            <RootViewItem xsi:type="PropertyViewItem">
+              <Name>Property9</Name>
+              <Uid>421c5772-7bea-4164-ac86-e958e2015935</Uid>
+              <Property>d1a0f819-85fd-4990-b3b1-2e7d8e310a67</Property>
+              <Attributes />
+            </RootViewItem>
+            <RootViewItem xsi:type="PropertyViewItem">
+              <Name>Property10</Name>
+              <Uid>2d4b0242-0c14-451b-ba9b-7c6df5bc4a74</Uid>
+              <Property>1d35b6f8-3159-4e84-a4bf-ea6ea0acf735</Property>
+              <Attributes />
+            </RootViewItem>
+          </Items>
+        </RootViewItem>
+      </Items>
+    </RootViewItem>
+    <ViewItem xsi:type="DefaultContainerViewItem">
+      <Name>DefaultContainer1</Name>
+    </ViewItem>
+  </Items>
+  <DisplayName>Редактирование/Создание</DisplayName>
+</FormViewItem>

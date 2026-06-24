@@ -1,0 +1,21 @@
+﻿@inherits ViewItemControl<RelationshipMeetingSchedulesViewItem, RelationshipMeetingModel, IRelationshipMeeting>
+@using EleWise.ELMA.CRM.Models
+@using EleWise.ELMA.CRM.ViewItems
+@using EleWise.ELMA.CRM.Web.Models
+@using EleWise.ELMA.Model.Views
+@using EleWise.ELMA.Web.Mvc.Views.ViewItem
+@using ViewType = EleWise.ELMA.Model.Views.ViewType
+
+@if (ViewItem != null)
+{
+    Html.RemovePrefix("Entity");
+    if (ViewItem.FormViewItem.IsReadOnly() || ViewItem.FormViewItem.ViewType == ViewType.Display)
+    {
+        @Html.Partial("DisplayTemplates/RelationshipMeetingSchedulesPanel", OriginalModel)
+    }
+    else
+    {
+        @Html.Partial("EditorTemplates/RelationshipMeetingSchedules", OriginalModel)
+    }
+    Html.AddPrefix("Entity");
+}

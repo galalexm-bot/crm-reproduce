@@ -1,0 +1,30 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Notifications description="Оповещения по окончанию действия временной лицензии компонентов" version="3.13.7.39115">
+  <Notification Name="ComponentExpiration">
+    <Filter>
+      <Condition>{$New} &lt;&gt; null</Condition>
+    </Filter>
+    <Subject>
+      {SR('Срок лицензии некоторых модулей истекает')}
+    </Subject>
+    <ShortMessage>
+      {SR('Список модулей с истекающим сроком лицензии:')}
+      {TableStart()} {for item in {$New.ExpiringComponents}}
+      - {$item.Title}: {SR('Лицензия истекает')} - {DateTimeFormat(ExpirationDate({$item}); 'dd.MM.yyyy')} ({if ComponentLicenseIsExpired({$item})}{SR('Лицензия истекла')}{else}{SR('Осталось дней:')} {DaysBeforeExpiration({$item})}{end if}){end}
+      {TableEnd()}
+
+      {SR('Информация об установленных модулях ELMA представлена на странице:')} {Link(SR('Компоненты'); '{#BaseUrl#}' + '/Common/License')}
+    </ShortMessage>
+    <FullMessage>
+      {SR('Список модулей с истекающим сроком лицензии:')}
+      {TableStart()} {for item in {$New.ExpiringComponents}}
+      - {$item.Title}: {SR('Лицензия истекает')} - {DateTimeFormat(ExpirationDate({$item}); 'dd.MM.yyyy')} ({if ComponentLicenseIsExpired({$item})}{SR('Лицензия истекла')}{else}{SR('Осталось дней:')} {DaysBeforeExpiration({$item})}{end if}){end}
+      {TableEnd()}
+
+      {SR('Информация об установленных модулях ELMA представлена на странице:')} {Link(SR('Компоненты'); '{#BaseUrl#}' + '/Common/License')}
+    </FullMessage>
+    <RecipientSet>
+      <User>{$New.AdminGroup}</User>
+    </RecipientSet>
+  </Notification>
+</Notifications>

@@ -1,0 +1,78 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<Notifications>
+  <Partial Name="DefaultSaleFullMessage">
+    {PropertyRow({$New.CreationAuthor})}
+
+    {PropertyRow({$New.Name})}
+
+    {PropertyFullRow({$Comment.Text};SR('Комментарий'))}
+    {PropertyFullRow({$Attachments})}
+    {ExtensionZone('EleWise.ELMA.CRM.Models.Lead-DefaultFullMessage-AfterAttachments')}
+  </Partial>
+
+  <Partial Name="DefaultSaleShortMessage">
+    {PropertyFullRow({$Comment.Text};'')}
+  </Partial>
+  
+  <Default>
+    <Filter>
+      <Event>IEntityActionHandler.ActionExecuted</Event>
+      <Object>EleWise.ELMA.CRM.Models.Lead</Object>
+    </Filter>
+    <RecipientSet>
+      <User>{$New.Responsible}</User>
+      <User>{$New.ParticipantWork}</User>
+      <User>{$New.Informs}</User>
+    </RecipientSet>
+    <URL>
+      /CRM/Lead/Details/{$New.Id}
+    </URL>
+    <ObjectId>{$New.Id}</ObjectId>
+    <FullMessage>
+      {TableStart()}
+      {Partial('DefaultSaleFullMessage')}
+      {TableEnd()}
+    </FullMessage>
+    <ShortMessage>
+      {TableStart()}
+      {Partial('DefaultSaleShortMessage')}
+      {TableEnd()}
+    </ShortMessage>
+  </Default>
+
+  <Notification Name="Dublicate">
+    <Filter>
+      <Action>Dublicate</Action>
+    </Filter>
+    <RecipientSet>
+      <User>{$New.Responsible}</User>
+    </RecipientSet>
+    <Subject>
+      ({SR('Возможность отмечена как дубликат')}) {$New.Name}
+    </Subject>
+    <ShortMessage>
+      {SR('Возможность отмечена как дубликат')}
+    </ShortMessage>
+    <FullMessage>
+      {SR('Возможность отмечена как дубликат')}
+    </FullMessage>
+  </Notification>
+
+  <Notification Name="AddComment">
+    <Filter>
+      <Action>AddComment</Action>
+    </Filter>
+    <Subject>
+      ({SR('Добавлен комментарий к возможности')}) {$New.Name}
+    </Subject>
+  </Notification>
+
+  <Notification description="Создана возможность">
+    <Filter>
+      <Action>Create</Action>
+    </Filter>
+    <Subject>
+      ({SR('Создана возможность "{$New.Name}"')})
+    </Subject>
+  </Notification>
+</Notifications>

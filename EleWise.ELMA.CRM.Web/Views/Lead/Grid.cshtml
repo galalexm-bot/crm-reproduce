@@ -1,0 +1,204 @@
+﻿@model GridDataFilter<ILead>
+@using EleWise.ELMA.BPM.Web.Common.Extensions
+@using EleWise.ELMA.CRM
+@using EleWise.ELMA.CRM.Enums
+@using EleWise.ELMA.CRM.Managers
+@using EleWise.ELMA.CRM.Web.Models
+@using EleWise.ELMA.Helpers
+@using EleWise.ELMA.Security
+@using EleWise.ELMA.Serialization
+@using EleWise.ELMA.Services
+@using EleWise.ELMA.Web.Mvc.Models.Buttons
+@using EleWise.ELMA.Web.Mvc.Models.ActionItems.Menu
+@using EleWise.ELMA
+@using EleWise.ELMA.CRM.Models
+@using EleWise.ELMA.BPM.Web.Common.Models
+@using EleWise.ELMA.CRM.Web.Extensions
+@using EleWise.ELMA.Web.Mvc.Html.FilterSearchForm
+@using EleWise.ELMA.CRM.Web.Menu
+@using EleWise.ELMA.Web.Mvc.Models.Inputs 
+
+<script type="text/javascript" src="@Url.Content("~/Scripts/Elma/Elma.Grids.ObjectSelectColumn.js")"></script>
+
+@{
+    var checkedMenu = new ActionMenu("checkedobject_menu") {
+        Items = {
+             new ActionMenuItem("btnSelectContacts") {
+                Text = SR.T("Выбрать всех потенциальных клиентов"),                
+                Click = "SelectAll($('#ObjectSelectCheckbox'))"           
+             }
+        }
+    };
+
+    var warn = string.Format("<span title='{0}' style='color: red; font-weight: bold;'> !</span>", SR.T("При выполнении массовых операций потенциальный клиент будет назначен на Вас"));
+
+    var showSummary = (bool?)ViewBag.ShowSummary ?? false;
+    var leadCounts = showSummary ? LeadManager.Instance.SummaryLeadCounts((ILeadFilter)Model.DataFilter.Filter) : new LeadCounts();
+
+    var filterModelViewData = new ViewDataDictionary { TemplateInfo = new TemplateInfo { HtmlFieldPrefix = "DataFilter" } };
+    filterModelViewData.Add("CustomOnlyMyProperty", "ShowOnlyMy");
+}
+
+@Html.Partial("Filter/FilterModel", Model.DataFilter.Builder()
+    .SubmitText(SR.T("Найти возможности"))
+    .GridAction(Url.Action("GridWithSummary"))
+    .ApplayFilterScript(string.Format("applyFilterGrid('{0}', 'filteringGridForm')", Model.GridId))
+    .FilterUrl(Url.Action("Index") + "?FilterId=")
+    .FilterMenuItemCode(CRMMenuItems.LEADS_MENU)
+    .SimpleSearchTr(html => SimpleSearchTr(html, html.ViewData.Model, Model.GridId, showSummary, leadCounts))
+    .HeaderContent(html => HeaderContent(html, html.ViewData.Model, showSummary))
+    .Model,
+    filterModelViewData)
+
+@helper SummaryLeadStatusButton(SummaryLeadStatus? filterSummaryLeadStatus, SummaryLeadStatus? summaryLeadStatus, long count)
+{
+    var value = summaryLeadStatus != null ? summaryLeadStatus.ToString() : "All";
+    var statusName = summaryLeadStatus != null ? EleWise.ELMA.Helpers.EnumHelper.GetDisplayName(summaryLeadStatus) : SR.T("Всего");
+    var template = $"{statusName}: <span>{count}</span>";
+    @(Html.Button()
+        .Click($"filterSummary('{value}')")
+        .Text(template)
+        .NoBorder()
+        .Checked(filterSummaryLeadStatus == summaryLeadStatus)
+        .Attributes(new { id = $"{value}Count" }))
+}
+@helper HeaderContent(HtmlHelper<FilterModel> Html, FilterModel Model, bool showSummary) {
+    var formId = "filteringGridForm";
+    <div class="simplesearch-header">
+        <div class="main-header">
+            @SR.T("Потенциальные клиенты:")
+        </div>
+        <div class="buttons-container">
+            @Html.Hidden("Filter.ShowOnlyMy", ((ILeadFilter)Model.Filter).ShowOnlyMy)
+            @Html.Hidden("ShowSummary", showSummary)
+            @Html.Hidden("SummaryFilter", "")
+            @(Html.ModernSwitchButton(false)
+                .Id("SpanFilterShowOnlyMyProperty")
+                .ContainerAttributes(new Dictionary<string, object> { { "class", "base-element-margin-right switch-label input-label" } })
+                .Attributes(new HtmlAttributes { onchange = $"invertShowOnlyMyProperty(); $('#{formId}').submit();" })
+                .LabelText(SR.T("Только мои"))
+                .Checked(((ILeadFilter)Model.Filter).ShowOnlyMy)
+                .TextPosition(ModernSwitchButton.LabelPosition.Left))
+            @(Html.ModernSwitchButton(false)
+                .Id("SpanFilterShowSummary")
+                .ContainerAttributes(new Dictionary<string, object> { { "class", "base-element-margin-right switch-label input-label" } })
+                .Attributes(new HtmlAttributes { onchange = $"toogleSummary(); $('#{formId}').submit();" })
+                .LabelText(SR.T("Разбиение по статусам"))
+                .Checked(showSummary)
+                .TextPosition(ModernSwitchButton.LabelPosition.Left))
+        </div>
+    </div>
+}
+@helper SimpleSearchTr(HtmlHelper<FilterModel> Html, FilterModel Model, string gridId, bool showSummary, LeadCounts leadCounts)
+{
+    @Html.FilterSearchForm().FastSearchBoxFor(m => m.Filter.SearchString).ShowExpandButton(true).IsShortSearch(true).ActionButtons(a =>
+    {
+        a.Add(new FastSearchFilterTreeButton(Model.Entity.Name, Url.Action("Index") + "?FilterId=")
+        {
+            OnClick = string.Format("openPopoverWindow('{0}', this);", FastSearchFilterTreeButton.GetFilterTreeId(Model.FilterMenuItemCode)),
+            Index = 3
+        });
+    })
+    
+}
+@{ 
+    var summaryLeadStatus = ((ILeadFilter)Model.DataFilter.Filter).SummaryLeadStatus;
+    var gridId = Model.GridId;
+}
+<div class="t-grid lead-dynamic-grid">
+    <div id="@(gridId)_summary" class="lead-dynamic t-grid-table-container" style="@(showSummary ? "" : "display:none;")">
+        <table class="t-grid-table">
+            <thead class="t-grid-header">
+                <tr>
+                    <th class="t-header"><span class="t-header-content">@SummaryLeadStatusButton(summaryLeadStatus, null, leadCounts.AllCount)</span></th>
+                    <th class="t-header"><span class="t-header-content">@SummaryLeadStatusButton(summaryLeadStatus, SummaryLeadStatus.Deleted, leadCounts.DeletedCount)</span></th>
+                    <th class="t-header"><span class="t-header-content"></span></th>
+                    <th class="t-header"><span class="t-header-content"></span></th>
+                </tr>
+            </thead>
+            <tr>
+                <td>@SummaryLeadStatusButton(summaryLeadStatus, SummaryLeadStatus.New, leadCounts.NewCount)</td>
+                <td>@SummaryLeadStatusButton(summaryLeadStatus, SummaryLeadStatus.InHand, leadCounts.InHandCount)</td>
+                <td>@SummaryLeadStatusButton(summaryLeadStatus, SummaryLeadStatus.Closed, leadCounts.QualifiedCount + leadCounts.UnqualifiedCount)</td>
+                <td>@SummaryLeadStatusButton(summaryLeadStatus, SummaryLeadStatus.Dublicate, leadCounts.DublicateCount)</td>
+            </tr>
+            <tr class="t-last-row">
+                <td colspan="2">@SummaryLeadStatusButton(summaryLeadStatus, SummaryLeadStatus.Qualified, leadCounts.QualifiedCount)</td>
+                <td colspan="2">@SummaryLeadStatusButton(summaryLeadStatus, SummaryLeadStatus.Unqualified, leadCounts.UnqualifiedCount)</td>
+            </tr>
+        </table>
+    </div>
+</div>
+<script type="text/javascript">
+    function toogleSummary() {
+        var showSummary = $("#@(ViewData.TemplateInfo.GetFullHtmlFieldId("DataFilter.ShowSummary"))");
+        if (showSummary.length > 0) {
+            if (showSummary.val() != 'True') {
+                showSummary.val('True');
+            } else {
+                showSummary.val('False');
+            }
+        }
+    }
+
+    function filterSummary(status) {
+        $('#@(gridId)_summary button').removeClass("t-state-selected");
+        $("#@(gridId)_summary button[id='" + status + "Count']").addClass("t-state-selected");
+
+        $('#filteringGridForm input[name="@ViewData.TemplateInfo.GetFullHtmlFieldName("DataFilter.SummaryFilter")"]').val(status);
+        $('#filteringGridForm').submit();
+    }
+
+    function dataBound() {
+        var showSummary = $("#@(ViewData.TemplateInfo.GetFullHtmlFieldId("DataFilter.ShowSummary"))").val() == 'True';
+        var summary = $('#@(gridId)_summary');
+        if (showSummary) {
+            var data = $.parseJSON($('#@(gridId) .summary').val());
+            summary.find('button#AllCount span span').html(data.AllCount);
+            summary.find('button#DublicateCount span span').html(data.DublicateCount);
+            summary.find('button#UnqualifiedCount span span').html(data.UnqualifiedCount);
+            summary.find('button#QualifiedCount span span').html(data.QualifiedCount);
+            summary.find('button#InHandCount span span').html(data.InHandCount);
+            summary.find('button#NewCount span span').html(data.NewCount);
+            summary.find('button#ClosedCount span span').html(data.QualifiedCount + data.UnqualifiedCount);
+            summary.find('button#DeletedCount span span').html(data.DeletedCount);
+            summary.show();
+        } else {
+            summary.hide();
+        }
+    }
+</script>
+
+<div style="height:10px"></div>
+
+
+@Html.ActionMenu(checkedMenu)
+
+@(Html.FilterDynamicGrid(Model)
+    .WithDefaultSettings()
+    .Columns(c =>
+    {
+        c.For(m => MvcHtmlString.Create(string.Format("{0} {1}", 
+                Html.ModernCheckBox(false).Name("objectid").Value(m.Id).ToHtmlString(),
+                (m.Responsible == null ? warn : string.Empty))))
+            .Header(Html.SmartCheckbox(new SmartCheckBox
+            {
+                Menu = checkedMenu,
+                Id = "ObjectSelectCheckbox",
+                DefaultScript = "ToggleCheckbox(this)"
+            }).ToString()).NotSortable().NotResizable().Width(50).Order(int.MinValue + 1);
+        c.For(m => m.Name).Link(m => Url.Entity(m));
+
+        c.For(m => m.NextRelationship).Visible(false)
+            .Template(m => Html.NextRelationshipLink(m.NextRelationship));
+
+        c.For(m => m.ConvertComment).Template(x => x.ConvertComment != null ? x.ConvertComment.Text : null);
+
+        c.For(m => m.Site).Template(x => x.Site != null ? Html.Partial("DisplayTemplates/Uri", x.Site) : MvcHtmlString.Empty);
+    })
+    .DefaultColumns(true)
+    .Resizeable(true)
+    .HeaderSummary(@<text><input type="hidden" class="summary" value="@ClassSerializationHelper.SerializeObjectByJson(leadCounts)" /></text>)
+    .ClientEvents(c => c.OnDataBound("dataBound"))
+    .ExportExcel(Locator.GetServiceNotNull<ISecurityService>().HasPermission(CRMPermissionProvider.CRMExportPermission), SR.T("Потенциальные клиенты"))
+    .Action("GridWithSummary"))

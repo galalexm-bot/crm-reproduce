@@ -1,0 +1,31 @@
+﻿@model SaleChangeStatusModel
+@using EleWise.ELMA.CRM.Web.Models
+@using EleWise.ELMA
+@using (Html.ModelForm(Model))
+{
+    @Html.HiddenFor(m => m.RedirectUrl)
+    @Html.HiddenFor(m => m.EntityId)
+
+    using (Html.TableForm())
+    {
+        <tr>
+            <td class="captionCell">@SR.T("Новый статус")</td>
+            <td>@Html.Editor(m => m.Status)</td>
+        </tr>
+        <tr>
+            <td class="captionCell">@SR.T("Комментарий")</td>
+            <td>@Html.TextAreaFor(m => m.Comment, new { @class = "text-box", rows=10 })</td>
+        </tr>
+        <tr>
+            <td class="captionCell">@SR.T("Краткий статус")</td>
+            <td>@Html.Editor(m => m.ShortStatus)</td>
+        </tr>
+        @Html.ExtensionZone("EleWise.ELMA.CRM.Web.SaleStatusEdit")
+    }
+    
+    <div class="popup-buttons">
+        <input type="submit" class="confirm" value="@SR.T("Установить")" @(Html.SubmitOnClick(Model)) />
+        <input type="button" value="@SR.Cancel" onclick="@Html.ClosePopup(Model.PopupId)" />
+    </div>
+}
+

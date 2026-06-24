@@ -1,0 +1,176 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<FormViewItemTransformation xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <Uid>70bd965d-5d7a-4d9a-9c00-d5fe565b6f29</Uid>
+  <FormName>Edit</FormName>
+  <NewFormName>ExecutionForm</NewFormName>
+  <Items>
+    <ViewItemTransformation xsi:type="ViewItemTransformationAdd">
+      <Uid>70bd965d-5d7a-4d9a-9c00-d5fe565b6f29</Uid>
+      <Item xsi:type="CommonInfoPanelViewItem">
+        <Name>CommonInfoPanel</Name>
+        <Uid>7b3db26d-9e23-467f-923a-e8cd3aa189b1</Uid>
+      </Item>
+    </ViewItemTransformation>
+    <ViewItemTransformation xsi:type="ViewItemTransformationAdd">
+      <Uid>70bd965d-5d7a-4d9a-9c00-d5fe565b6f29</Uid>
+      <Item xsi:type="PanelViewItem">
+        <Name>AdditionalFieldsPanel</Name>
+        <Uid>000cb6f0-c82d-43b1-9eb9-b20d530289d4</Uid>
+        <HideEmpty>true</HideEmpty>
+        <Caption>Дополнительные поля</Caption>
+        <Collapsible>true</Collapsible>
+        <Style>Separator</Style>
+      </Item>
+      <AfterItem>7b3db26d-9e23-467f-923a-e8cd3aa189b1</AfterItem>
+    </ViewItemTransformation>
+    <ViewItemTransformation xsi:type="ViewItemTransformationAdd">
+      <Uid>70bd965d-5d7a-4d9a-9c00-d5fe565b6f29</Uid>
+      <Item xsi:type="TabLayoutViewItem">
+        <Name>MainTabLayout</Name>
+        <Uid>aa7b18c0-36d3-48fc-913b-42f1f457c203</Uid>
+      </Item>
+      <AfterItem>000cb6f0-c82d-43b1-9eb9-b20d530289d4</AfterItem>
+    </ViewItemTransformation>
+    <ViewItemTransformation xsi:type="ViewItemTransformationAdd">
+      <Uid>70bd965d-5d7a-4d9a-9c00-d5fe565b6f29</Uid>
+      <Item xsi:type="ButtonsPanelViewItem">
+        <Name>ButtonsPanel</Name>
+        <Uid>0ecbf8a0-9cd9-4c2a-8fd5-9649c105d938</Uid>
+        <HideMode>Modal</HideMode>
+      </Item>
+      <AfterItem>aa7b18c0-36d3-48fc-913b-42f1f457c203</AfterItem>
+    </ViewItemTransformation>
+    <ViewItemTransformation xsi:type="ViewItemTransformationAdd">
+      <Uid>000cb6f0-c82d-43b1-9eb9-b20d530289d4</Uid>
+      <Item xsi:type="ColumnsLayoutViewItem">
+        <Name>AdditionalFieldsColumnsLayout</Name>
+        <Uid>b99550ee-e896-4393-8839-a777c655a60a</Uid>
+      </Item>
+    </ViewItemTransformation>
+    <ViewItemTransformation xsi:type="ViewItemTransformationAdd">
+      <Uid>b99550ee-e896-4393-8839-a777c655a60a</Uid>
+      <Item xsi:type="ColumnViewItem">
+        <Name>Column1</Name>
+        <Uid>05e0a7c8-ee34-4818-a900-80c61f83b932</Uid>
+      </Item>
+    </ViewItemTransformation>
+    <ViewItemTransformation xsi:type="ViewItemTransformationAdd">
+      <Uid>b99550ee-e896-4393-8839-a777c655a60a</Uid>
+      <Item xsi:type="ColumnViewItem">
+        <Name>Column2</Name>
+        <Uid>fa7f03be-387e-4172-a388-1b87393d3ecc</Uid>
+      </Item>
+      <AfterItem>05e0a7c8-ee34-4818-a900-80c61f83b932</AfterItem>
+    </ViewItemTransformation>
+    <ViewItemTransformation xsi:type="ViewItemTransformationAdd">
+      <Uid>b99550ee-e896-4393-8839-a777c655a60a</Uid>
+      <Item xsi:type="DefaultContainerViewItem">
+        <Name>DefaultContainer</Name>
+      </Item>
+      <AfterItem>fa7f03be-387e-4172-a388-1b87393d3ecc</AfterItem>
+    </ViewItemTransformation>
+    <ViewItemTransformation xsi:type="ViewItemTransformationAdd">
+      <Uid>aa7b18c0-36d3-48fc-913b-42f1f457c203</Uid>
+      <Item xsi:type="TabViewItem">
+        <Name>TabMain</Name>
+        <Uid>0eb425cc-ed98-4656-9bff-1f2e2e26154c</Uid>
+        <Caption>Главная страница</Caption>
+      </Item>
+    </ViewItemTransformation>
+    <ViewItemTransformation xsi:type="ViewItemTransformationAdd">
+      <Uid>aa7b18c0-36d3-48fc-913b-42f1f457c203</Uid>
+      <Item xsi:type="TabViewItem">
+        <Name>TabHistory</Name>
+        <Uid>d7e615d2-19b5-4c08-9c6e-cbf73d42cee1</Uid>
+        <Caption>История</Caption>
+      </Item>
+      <AfterItem>0eb425cc-ed98-4656-9bff-1f2e2e26154c</AfterItem>
+    </ViewItemTransformation>
+    <ViewItemTransformation xsi:type="ViewItemTransformationAdd">
+      <Uid>aa7b18c0-36d3-48fc-913b-42f1f457c203</Uid>
+      <Item xsi:type="TabViewItem">
+        <Name>WorkLogTab1</Name>
+        <Uid>4ec6383a-e191-441a-be5e-abb93c86fa3e</Uid>
+        <HideEmpty>true</HideEmpty>
+        <Caption>Трудозатраты</Caption>
+      </Item>
+      <AfterItem>d7e615d2-19b5-4c08-9c6e-cbf73d42cee1</AfterItem>
+    </ViewItemTransformation>
+    <ViewItemTransformation xsi:type="ViewItemTransformationAdd">
+      <Uid>aa7b18c0-36d3-48fc-913b-42f1f457c203</Uid>
+      <Item xsi:type="TabViewItem">
+        <Name>TabSubTasks</Name>
+        <Uid>2cccc7d0-a2bf-43f1-8f14-202a91041c5f</Uid>
+        <HideEmpty>true</HideEmpty>
+        <Caption>Подзадачи</Caption>
+      </Item>
+      <AfterItem>4ec6383a-e191-441a-be5e-abb93c86fa3e</AfterItem>
+    </ViewItemTransformation>
+    <ViewItemTransformation xsi:type="ViewItemTransformationAdd">
+      <Uid>0eb425cc-ed98-4656-9bff-1f2e2e26154c</Uid>
+      <Item xsi:type="ColumnsLayoutViewItem">
+        <Name>MainColumnsLayout</Name>
+        <Uid>e5d8f20c-588f-4d53-abae-1f541ef84805</Uid>
+      </Item>
+    </ViewItemTransformation>
+    <ViewItemTransformation xsi:type="ViewItemTransformationAdd">
+      <Uid>e5d8f20c-588f-4d53-abae-1f541ef84805</Uid>
+      <Item xsi:type="ColumnViewItem">
+        <Name>MainColumn</Name>
+        <Uid>39240899-b43d-4fa2-a909-1dd440527997</Uid>
+      </Item>
+    </ViewItemTransformation>
+    <ViewItemTransformation xsi:type="ViewItemTransformationAdd">
+      <Uid>39240899-b43d-4fa2-a909-1dd440527997</Uid>
+      <Item xsi:type="ContextDefaultContainerViewItem">
+        <Name>ContextDefaultContainer</Name>
+      </Item>
+    </ViewItemTransformation>
+    <ViewItemTransformation xsi:type="ViewItemTransformationAdd">
+      <Uid>d7e615d2-19b5-4c08-9c6e-cbf73d42cee1</Uid>
+      <Item xsi:type="HistoryPanelViewItem">
+        <Name>HistoryPanel1</Name>
+        <Uid>61848fa9-3e76-4458-997e-4c7927f6235f</Uid>
+      </Item>
+    </ViewItemTransformation>
+    <ViewItemTransformation xsi:type="ViewItemTransformationAdd">
+      <Uid>4ec6383a-e191-441a-be5e-abb93c86fa3e</Uid>
+      <Item xsi:type="WorkLogSummaryTableViewItem">
+        <Name>WorkLogSummaryTable1</Name>
+        <Uid>6695f926-8e4f-4ee7-95b2-02b7f2267691</Uid>
+        <HideEmpty>true</HideEmpty>
+      </Item>
+    </ViewItemTransformation>
+    <ViewItemTransformation xsi:type="ViewItemTransformationAdd">
+      <Uid>4ec6383a-e191-441a-be5e-abb93c86fa3e</Uid>
+      <Item xsi:type="WorkLogGridViewItem">
+        <Name>WorkLogGrid1</Name>
+        <Uid>8e1ea204-5382-4002-8492-d7dad5523d3d</Uid>
+        <HideEmpty>true</HideEmpty>
+      </Item>
+      <AfterItem>6695f926-8e4f-4ee7-95b2-02b7f2267691</AfterItem>
+    </ViewItemTransformation>
+    <ViewItemTransformation xsi:type="ViewItemTransformationAdd">
+      <Uid>2cccc7d0-a2bf-43f1-8f14-202a91041c5f</Uid>
+      <Item xsi:type="ColumnsLayoutViewItem">
+        <Name>ColumnsLayout1</Name>
+        <Uid>4d461e3c-2841-487a-a5b1-f69eddae2264</Uid>
+        <HideEmpty>true</HideEmpty>
+      </Item>
+    </ViewItemTransformation>
+    <ViewItemTransformation xsi:type="ViewItemTransformationAdd">
+      <Uid>4d461e3c-2841-487a-a5b1-f69eddae2264</Uid>
+      <Item xsi:type="ColumnViewItem">
+        <Name>Column3</Name>
+        <Uid>4cc92626-cbf5-4e60-84b1-e7c1eed8b926</Uid>
+      </Item>
+    </ViewItemTransformation>
+    <ViewItemTransformation xsi:type="ViewItemTransformationAdd">
+      <Uid>4cc92626-cbf5-4e60-84b1-e7c1eed8b926</Uid>
+      <Item xsi:type="SubTaskGridViewItem">
+        <Name>SubTaskGridPanel1</Name>
+        <Uid>9ace4913-43db-455f-bf57-04e33e791462</Uid>
+      </Item>
+    </ViewItemTransformation>
+  </Items>
+</FormViewItemTransformation>

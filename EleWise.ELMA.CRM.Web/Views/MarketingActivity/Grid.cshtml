@@ -1,0 +1,43 @@
+﻿@model GridDataFilter<IMarketingBase>
+@using System.ComponentModel
+@using EleWise.ELMA
+@using EleWise.ELMA.BPM.Web.Common.Extensions
+@using EleWise.ELMA.BPM.Web.Common.Models
+@using EleWise.ELMA.CRM
+@using EleWise.ELMA.CRM.Models
+@using EleWise.ELMA.CRM.Web.Menu
+@using EleWise.ELMA.Web.Mvc.ExtensionPoints
+
+<script type="text/javascript" src="@Url.Content("~/Scripts/Elma/Elma.Grids.ObjectSelectColumn.js")"></script>
+
+@Html.Partial("Filter/FilterModel", Model.DataFilter.Builder()
+    .Header(SR.T("Маркетинговые мероприятия"))
+    .SubmitText(SR.T("Найти маркетинговые мероприятия"))
+    .GridAction(Url.Action("Grid"))
+    .ApplayFilterScript(string.Format("applyFilterGrid('{0}', 'filteringGridForm')", Model.GridId))
+    .FilterUrl(Url.Action("Index") + "?FilterId=")
+    .FilterMenuItemCode(CRMMenuItems.MARKETING_ACTIVITIES_MENU)
+    .Model,
+    new ViewDataDictionary { TemplateInfo = new TemplateInfo { HtmlFieldPrefix = "DataFilter" } })
+
+<div style="height:10px"></div>
+
+@(Html.FilterDynamicGrid(Model)
+      .WithDefaultSettings()
+      .Columns(c =>
+      {
+          c.For(m => m.TypeUid)
+              .Header(SR.T("Тип"))
+              .Template(m => Html.Image(Html.Url().ObjectIcon(ObjectIconFormat.x16, m), ""))
+              .NotSortable()
+              .NotResizable()
+              .Width(30);
+          c.For(m => m.Name).Link(m => Url.Entity(m));
+          c.For(m => m.ArchiveDate).Visible(Model.DataFilter.Entity.Uid == CrmConstants.MarketingArchiveFilterUid);
+      })
+      .DefaultSortExpression(Model.DataFilter.Entity.Uid == CrmConstants.MarketingArchiveFilterUid ? "ArchiveDate" : "CreationDate")
+      .DefaultSortDirection(ListSortDirection.Descending)
+      .DefaultColumns(true)
+      .Resizeable()
+      .ExportExcel(SR.T("Маркетинг"))
+      .Action("Grid"))

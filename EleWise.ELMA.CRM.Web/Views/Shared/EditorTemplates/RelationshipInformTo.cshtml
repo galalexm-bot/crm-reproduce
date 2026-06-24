@@ -1,0 +1,7 @@
+﻿@model EleWise.ELMA.CRM.Web.Models.RelationshipModel
+@using EleWise.ELMA
+
+<tr>
+    <td class="captionCell">@Html.Caption(m => m.InformUsers, a => a.Name = SR.ToInfrom)</td>
+    <td>@Html.Editor(m => m.InformUsers, a => a.Name = SR.ToInfrom)</td>
+</tr>

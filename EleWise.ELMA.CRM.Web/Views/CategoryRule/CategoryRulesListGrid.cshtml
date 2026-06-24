@@ -1,0 +1,31 @@
+﻿@using EleWise.ELMA
+@using EleWise.ELMA.CRM.Web
+@model EleWise.ELMA.CRM.Web.Models.CategoryRulesListModel
+           
+@(Html.DynamicGrid(Model.GridId, Model.Rules).Columns(c =>
+{
+    c.For(m => m.Name).Header(SR.T("Название"));
+     c.For(m => MvcHtmlString.Create(Html.ButtonGroup().Item(a =>
+            a.IconUrl(UIIcons.Edit)
+            .Attributes(new { tooltiptext = SR.T("Редактировать правило") })
+            .Url(Url.Action("Edit", "CategoryRule", new { area = RouteProvider.AreaName, id = m.Id }))
+            .NoBorder()
+            .Circle()
+        )
+        .Item(a =>
+            a.IconUrl(UIIcons.Remove)
+            .Attributes(new { tooltiptext = SR.T("Удалить правило") })
+            .Click("onDeleteCategoryRuleClick(" + m.Id + ",'" + Model.GridId + "');")
+            .NoBorder()
+            .Circle()
+        )
+        .IsSplitted()
+        .Attributes(new { @class = "t-button-group-nowrap"})
+        .ToHtmlString()))
+        .Header(String.Empty)
+        .Order(int.MaxValue)
+        .NotSortable()
+        .Width(70);
+}).Action("RefreshGrid").Controller("CategoryRule").RouteValues( new {categoryRuleType = Model.TypeId } ).EnableCustomize(false)
+    .HeaderSummary(@<text><h3 class="bold_text">@Model.Header</h3></text>)
+)

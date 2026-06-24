@@ -1,0 +1,62 @@
+﻿@using EleWise.ELMA.CRM.Models;
+@using EleWise.ELMA.CRM.Web
+@using EleWise.ELMA;
+@using EleWise.ELMA.Model.Metadata
+@using EleWise.ELMA.Model.Services
+@model GridData<LeadScoringSettings>
+
+@{
+    var leadMetadata = MetadataLoader.LoadMetadata(InterfaceActivator.TypeOf<ILead>()) as EntityMetadata;
+    var leadProperty = leadMetadata.Properties;
+
+    var contractorMetadata = MetadataLoader.LoadMetadata(InterfaceActivator.TypeOf<IContractor>()) as EntityMetadata;
+    var contractorProperty = contractorMetadata.Properties;
+
+    var leadContactMetadata = MetadataLoader.LoadMetadata(InterfaceActivator.TypeOf<ILeadContact>()) as EntityMetadata;
+    var leadContactProperty = leadContactMetadata.Properties;
+
+    var contractorContactMetadata = MetadataLoader.LoadMetadata(InterfaceActivator.TypeOf<IContact>()) as EntityMetadata;
+    var contractorContactProperty = contractorContactMetadata.Properties;
+}
+
+<div class="base-element-margin-bottom">
+    @Html.InfoPanel(SR.T("Для определения дублей система использует настраиваемую таблицу скоринга. Указывайте какие свойства новой возможности надо сравнить с текущей базой возможностей и базой контрагентов и сколько процентов вероятности надо добавить при совпадении. При совпадении нескольких полей проценты складываются, образуя общую вероятность «похожести» (дубля)."))
+</div>
+
+@(Html.DynamicGrid("LeadScoringSettingsGrid", Model, Guid.Empty)
+        .Columns(c =>
+        {
+            c.For(m => m.Property).Template(x => x.Property == new Guid() ? MvcHtmlString.Empty : MvcHtmlString.Create(leadProperty.Find(m => m.Uid == x.Property) == null ? "" : leadProperty.Find(m => m.Uid == x.Property).DisplayName));
+            c.For(m => m.UseLeadContactProperty);
+            c.For(m => m.LeadContactProperty).Template(x => x.LeadContactProperty == new Guid() ? MvcHtmlString.Empty : MvcHtmlString.Create(leadContactProperty.Find(m => m.Uid == x.LeadContactProperty) == null ? "" : leadContactProperty.Find(m => m.Uid == x.LeadContactProperty).DisplayName));
+            c.For(m => m.LeadPercentValue).Template(x => MvcHtmlString.Create(string.Format("+{0}%", x.LeadPercentValue)));
+            c.For(m => m.ContractorProperty).Template(x => x.ContractorProperty == new Guid() ? MvcHtmlString.Empty : MvcHtmlString.Create(contractorProperty.Find(m => m.Uid == x.ContractorProperty) == null ? "" : contractorProperty.Find(m => m.Uid == x.ContractorProperty).DisplayName)).HtmlAttributes(new { @class = "scoring-contractor" });
+            c.For(m => m.UseContractorContactProperty).HtmlAttributes(new { @class = "scoring-contractor" });
+            c.For(m => m.ContractorContactProperty).Template(x => x.ContractorContactProperty == new Guid() ? MvcHtmlString.Empty : MvcHtmlString.Create(contractorContactProperty.Find(m => m.Uid == x.ContractorContactProperty) == null ? "" : contractorContactProperty.Find(m => m.Uid == x.ContractorContactProperty).DisplayName)).HtmlAttributes(new { @class = "scoring-contractor" });
+            c.For(m => m.ContractorPercentValue).Template(x => MvcHtmlString.Create(string.Format("+{0}%", x.ContractorPercentValue))).HtmlAttributes(new { @class = "scoring-contractor" });
+            c.For(m => m.Operator);
+            c.For(m => MvcHtmlString.Create(Html.ImageLink("#edit.svg", null, Url.Action("Edit", "LeadScoringSettings", new { area = CRMAreaRegistration.AREA_NAME, id = m.Id }), null, null, SR.Edit, true).ToString()
+                                    + Html.ImageLink("#delete.svg", null, "javascript:void(0)", null, new { onclick = "deleteLeadSettings(" + m.Id + ")" }, SR.Delete, true).ToString())
+                ).Width(52).NotSortable();
+        })
+        .Customizable(false))
+
+<div class="base-element-margin-top base-element-margin-bottom">
+    @Html.Button().IconUrl("#add.svg").Text(SR.T("Добавить свойство")).Url( Url.Action("Add", "LeadScoringSettings", new { area = CRMAreaRegistration.AREA_NAME }))
+</div>
+
+<script type="text/javascript">
+    function deleteLeadSettings(i) {
+        jConfirm('@(SR.T("Вы действительно хотите удалить свойство?"))', '@(SR.T("Удаление"))', function (r) {
+            if (r) {
+                $.ajax({
+                    url: '@(Url.Action("Delete", "LeadScoringSettings", new { area = CRMAreaRegistration.AREA_NAME }))/' + i,
+                    type: "POST",
+                    dataType: 'html',
+                    cache: false,
+                    success: function () { window.reloadPage(); }
+                });
+            }
+        });
+    }
+</script>

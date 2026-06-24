@@ -1,0 +1,960 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>EleWise.ELMA.SDK.Diagrams</name>
+    </assembly>
+    <members>
+        <member name="T:EleWise.ELMA.Diagrams.Adaptors.DiagramClipboardDataHolder">
+            <summary>
+            Хранилище элементов в буфере обмена
+            </summary>
+        </member>
+        <member name="M:EleWise.ELMA.Diagrams.Adaptors.DiagramClipboardDataHolder.#ctor">
+            <summary>
+            Ctor
+            </summary>
+        </member>
+        <member name="M:EleWise.ELMA.Diagrams.Adaptors.DiagramClipboardDataHolder.#ctor(System.Runtime.Serialization.SerializationInfo,System.Runtime.Serialization.StreamingContext)">
+            <summary>
+            Конструктор для десериализации
+            </summary>
+            <param name="info"></param>
+            <param name="context"></param>
+        </member>
+        <member name="P:EleWise.ELMA.Diagrams.Adaptors.DiagramClipboardDataHolder.DocumentUniqueId">
+            <summary>
+            Id документа
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Diagrams.Adaptors.DiagramClipboardDataHolder.Elements">
+            <summary>
+            Элементы
+            </summary>
+        </member>
+        <member name="M:EleWise.ELMA.Diagrams.Adaptors.DiagramClipboardDataHolder.SaveToClipboard(System.String)">
+            <summary>
+            Сохранить в буфер обмена
+            </summary>
+            <param name="format">Формат</param>
+        </member>
+        <member name="T:EleWise.ELMA.Diagrams.Adaptors.DiagramClipboardAdaptor">
+            <summary>
+            Адаптор Nevron-диаграмы
+            </summary>
+        </member>
+        <member name="M:EleWise.ELMA.Diagrams.Adaptors.DiagramClipboardAdaptor.#ctor(System.String)">
+            <summary>
+            Ctr
+            </summary>
+            <param name="format"></param>
+        </member>
+        <member name="P:EleWise.ELMA.Diagrams.Adaptors.DiagramClipboardAdaptor.Document">
+            <summary>
+            Nevron-диаграма
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Diagrams.Adaptors.DiagramClipboardAdaptor.Diagram">
+            <summary>
+            Диаграма
+            </summary>
+        </member>
+        <member name="M:EleWise.ELMA.Diagrams.Adaptors.DiagramClipboardAdaptor.UpdateReferences(Nevron.INReferenceProvider)">
+            <inheritdoc />
+        </member>
+        <member name="M:EleWise.ELMA.Diagrams.Adaptors.DiagramClipboardAdaptor.CanAdapt(System.Windows.Forms.IDataObject)">
+            <inheritdoc />
+        </member>
+        <member name="M:EleWise.ELMA.Diagrams.Adaptors.DiagramClipboardAdaptor.Adapt(System.Windows.Forms.IDataObject)">
+            <inheritdoc />
+        </member>
+        <member name="M:EleWise.ELMA.Diagrams.Adaptors.DiagramClipboardAdaptor.AdaptShapeDescriptor(EleWise.ELMA.Diagrams.Adaptors.DiagramClipboardDataHolder)">
+            <summary>
+            Дополнительное преобразование Nevron DataObject
+            </summary>
+        </member>
+        <member name="T:EleWise.ELMA.Diagrams.Connector">
+            <summary>
+            Соединитель
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Diagrams.Connector.StartPlug">
+            <summary>
+            Стартовая точка привязки
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Diagrams.Connector.EndPlug">
+            <summary>
+            Конечная точка привязки
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Diagrams.Connector.StartElement">
+            <summary>
+            Стартовый элемент
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Diagrams.Connector.EndElement">
+            <summary>
+            Конечный элемент
+            </summary>
+        </member>
+        <member name="M:EleWise.ELMA.Diagrams.Connector.OnCopied(System.Collections.Generic.Dictionary{System.Guid,EleWise.ELMA.Diagrams.Element})">
+            <inheritdoc />
+        </member>
+        <member name="T:EleWise.ELMA.Diagrams.ConnectorHV">
+            <summary>
+            Соединитель, состоящий из горизонтальных и вертикальных линий
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Diagrams.ConnectorHV.Points">
+            <summary>
+            Точки
+            </summary>
+        </member>
+        <member name="T:EleWise.ELMA.Diagrams.Diagram">
+            <summary>
+            Базовый класс диаграммы
+            </summary>
+        </member>
+        <member name="M:EleWise.ELMA.Diagrams.Diagram.#ctor">
+            <summary>
+            Ctor
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Diagrams.Diagram.Width">
+            <summary>
+            Ширина диаграммы
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Diagrams.Diagram.Height">
+            <summary>
+            Высота диаграммы
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Diagrams.Diagram.Elements">
+            <summary>
+            Элементы диаграммы
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Diagrams.Diagram.SelectionProvider">
+            <summary>
+            Обработчик действия с диаграммой
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Diagrams.Diagram.DiagramLoaded">
+            <summary>
+            Диаграма загружена
+            </summary>
+        </member>
+        <member name="M:EleWise.ELMA.Diagrams.Diagram.LoadDiagram">
+            <summary>
+            Загрузить диаграмму
+            </summary>
+        </member>
+        <member name="M:EleWise.ELMA.Diagrams.Diagram.ReplaceElement(EleWise.ELMA.Diagrams.Element,EleWise.ELMA.Diagrams.Element)">
+            <summary>
+            Заменить элемент
+            </summary>
+            <param name="oldElement">Старый элемент</param>
+            <param name="newElement">Новый элемент</param>
+        </member>
+        <member name="P:EleWise.ELMA.Diagrams.Diagram.ClipboardFormatName">
+            <summary>
+            Имя формата для буфера обмена
+            </summary>
+        </member>
+        <member name="F:EleWise.ELMA.Diagrams.Diagram.document">
+            <summary>
+            Карточка диаграмы
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Diagrams.Diagram.Document">
+            <summary>
+            Документ
+            </summary>
+        </member>
+        <member name="M:EleWise.ELMA.Diagrams.Diagram.GetImage">
+            <summary>
+            Получить изображение диаграммы
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:EleWise.ELMA.Diagrams.Diagram.GetImage(System.Single)">
+            <summary>
+            Получить изображение диаграммы
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:EleWise.ELMA.Diagrams.Diagram.LoadDocument">
+            <summary>
+            Инициализация карточки диаграмы
+            </summary>
+        </member>
+        <member name="M:EleWise.ELMA.Diagrams.Diagram.SetDefaultDocumentStyles">
+            <summary>
+            Устноавить стили документа диаграммы
+            </summary>
+        </member>
+        <member name="M:EleWise.ELMA.Diagrams.Diagram.CreateDataObjectAdaptors">
+            <summary>
+            Создать адапторы объектов данных
+            </summary>
+        </member>
+        <member name="M:EleWise.ELMA.Diagrams.Diagram.CreateElementShape(EleWise.ELMA.Diagrams.Element)">
+            <summary>
+            Создать фигуру, соответствующую элементу диаграммы
+            </summary>
+            <param name="element">Элемент диаграммы</param>
+            <returns>Фигура</returns>
+        </member>
+        <member name="M:EleWise.ELMA.Diagrams.Diagram.ApplyShapeStyle(Nevron.Diagram.NShape)">
+            <summary>
+            Применить стиль по умолчанию к фигуре
+            </summary>
+            <param name="shape">Фигура</param>
+        </member>
+        <member name="M:EleWise.ELMA.Diagrams.Diagram.PlugConnectorShape(EleWise.ELMA.Diagrams.Connector,System.Boolean)">
+            <summary>
+            Привязать фигуру соединителя к точке привязки
+            </summary>
+            <param name="connector">Соединитель</param>
+            <param name="isStartPlug">True, если требуется привязать начальную точку. False - конечную.</param>
+        </member>
+        <member name="M:EleWise.ELMA.Diagrams.Diagram.AttachToEvents">
+            <summary>
+            Добавление событий
+            </summary>
+        </member>
+        <member name="M:EleWise.ELMA.Diagrams.Diagram.DetatchFromEvents">
+            <summary>
+            Удаление событий
+            </summary>
+        </member>
+        <member name="E:EleWise.ELMA.Diagrams.Diagram.ElementInserted">
+            <summary>
+            Элемент добавлен
+            </summary>
+        </member>
+        <member name="M:EleWise.ELMA.Diagrams.Diagram.InvokeElementInserted(System.Object,System.EventArgs)">
+            <summary>
+            Перехват вставки объекта
+            </summary>
+        </member>
+        <member name="E:EleWise.ELMA.Diagrams.Diagram.AfterElementInserted">
+            <summary>
+            Элемент добавлен
+            </summary>
+        </member>
+        <member name="M:EleWise.ELMA.Diagrams.Diagram.InvokeAfterElementInserted(System.Object,System.EventArgs)">
+            <summary>
+            Перехват после вставки объекта
+            </summary>
+        </member>
+        <member name="M:EleWise.ELMA.Diagrams.Diagram.NodeInserted(Nevron.Dom.NChildNodeEventArgs)">
+            <summary>
+            Добавление фигуры
+            </summary>
+            <param name="args"></param>
+        </member>
+        <member name="M:EleWise.ELMA.Diagrams.Diagram.checkTypeGroupArtifact(EleWise.ELMA.Diagrams.Element)">
+            <summary>
+            Прооверить явлвяется ли элемент типа "Группа"
+            </summary>
+        </member>
+        <member name="E:EleWise.ELMA.Diagrams.Diagram.ElementRemoved">
+            <summary>
+            Элемент удален
+            </summary>
+        </member>
+        <member name="M:EleWise.ELMA.Diagrams.Diagram.InvokeElementRemoved(System.Object,System.EventArgs)">
+            <summary>
+            Перехват при удалении объекта
+            </summary>
+        </member>
+        <member name="M:EleWise.ELMA.Diagrams.Diagram.NodeRemoving(Nevron.Dom.NChildNodeCancelEventArgs)">
+            <summary>
+            Удаление фигуры
+            </summary>
+        </member>
+        <member name="M:EleWise.ELMA.Diagrams.Diagram.NodeRemoved(Nevron.Dom.NChildNodeEventArgs)">
+            <summary>
+            Удаление фигуры
+            </summary>
+            <param name="args"></param>
+        </member>
+        <member name="M:EleWise.ELMA.Diagrams.Diagram.NodeBoundsChanging(Nevron.Diagram.NNodeBoundsCancelEventArgs)">
+            <summary>
+            Метод перед изменением границ фигуры
+            </summary>
+            <param name="args"></param>
+        </member>
+        <member name="M:EleWise.ELMA.Diagrams.Diagram.NodeBoundsChanged(Nevron.Dom.NNodeEventArgs)">
+            <summary>
+            Изменение границ фигуры
+            </summary>
+            <param name="args"></param>
+        </member>
+        <member name="M:EleWise.ELMA.Diagrams.Diagram.ElementBoundsChanged(EleWise.ELMA.Diagrams.Element,Nevron.Diagram.NShape)">
+            <summary>
+            Изменение границ фигуры
+            </summary>
+            <param name="element">Элемент</param>
+            <param name="shape">Фигура</param>
+        </member>
+        <member name="M:EleWise.ELMA.Diagrams.Diagram.CanChangeElementBounds(Nevron.GraphicsCore.NRectangleF,EleWise.ELMA.Diagrams.Element,Nevron.Diagram.NShape)">
+            <summary>
+            Проверим, можно ли изменить границы фигуры
+            </summary>
+            <param name="rect">Область</param>
+            <param name="element">Элемент</param>
+            <param name="shape">Фигура</param>
+            <returns></returns>
+        </member>
+        <member name="M:EleWise.ELMA.Diagrams.Diagram.NodePropertyChanged(Nevron.Dom.NNodePropertyEventArgs)">
+            <summary>
+            Изменение свойства фигуры
+            </summary>
+            <param name="args"></param>
+        </member>
+        <member name="M:EleWise.ELMA.Diagrams.Diagram.NodePropertyChanging(Nevron.Dom.NNodePropertyCancelEventArgs)">
+            <summary>
+            Изменение свойст фигуры
+            </summary>
+        </member>
+        <member name="M:EleWise.ELMA.Diagrams.Diagram.NodeConnected(Nevron.Diagram.NConnectionEventArgs)">
+            <summary>
+            Приципление коннектора
+            </summary>
+        </member>
+        <member name="M:EleWise.ELMA.Diagrams.Diagram.NodeDisconnecting(Nevron.Diagram.NConnectionCancelEventArgs)">
+            <summary>
+            Отцепление коннектора
+            </summary>
+        </member>
+        <member name="M:EleWise.ELMA.Diagrams.Diagram.GetNodeShape(Nevron.Dom.INNode)">
+            <summary>
+            Получение вида фигуры
+            </summary>
+        </member>
+        <member name="M:EleWise.ELMA.Diagrams.Diagram.NodeMouseEnter(Nevron.Diagram.NNodeViewEventArgs)">
+            <summary>
+            Обработчик попадания на фигуру
+            </summary>
+        </member>
+        <member name="M:EleWise.ELMA.Diagrams.Diagram.NodeMouseLeave(Nevron.Diagram.NNodeViewEventArgs)">
+            <summary>
+            Обработчик выхода с фигуры
+            </summary>
+        </member>
+        <member name="M:EleWise.ELMA.Diagrams.Diagram.ExtractShapeAndElement(Nevron.Dom.INNode,Nevron.Diagram.NShape@,EleWise.ELMA.Diagrams.Element@)">
+            <summary>
+            Получение элементов из Nevron-нод
+            </summary>
+        </member>
+        <member name="M:EleWise.ELMA.Diagrams.Diagram.ConvertPlug(Nevron.Diagram.NPlug)">
+            <summary>
+            Преобразование Nevron-привязки соеденителя
+            </summary>
+        </member>
+        <member name="M:EleWise.ELMA.Diagrams.Diagram.ConvertPoints(Nevron.GraphicsCore.NPointF[])">
+            <summary>
+            Преобразование Nevron-координат
+            </summary>
+        </member>
+        <member name="M:EleWise.ELMA.Diagrams.Diagram.UpdateElementBounds(EleWise.ELMA.Diagrams.Element,Nevron.Diagram.NShape,System.Boolean)">
+            <summary>
+            Обновить границы элемента из свойств фигуры
+            </summary>
+            <param name="element">Элемент</param>
+            <param name="shape">Фигура</param>
+            <param name="inserting">True, если производится вставка нового элемента</param>
+        </member>
+        <member name="M:EleWise.ELMA.Diagrams.Diagram.UpdateConnectorBounds(EleWise.ELMA.Diagrams.Connector)">
+            <summary>
+            Обновить границы соединителя
+            </summary>
+            <param name="connector">Соединитель</param>
+        </member>
+        <member name="M:EleWise.ELMA.Diagrams.Diagram.UpdateConnectorPlugs(EleWise.ELMA.Diagrams.Connector,System.Boolean)">
+            <summary>
+            Обновить точки привязки для соединителя
+            </summary>
+            <param name="connector">Соединитель</param>
+            <param name="isStartPlug">True, если начальная точка привязки</param>
+        </member>
+        <member name="M:EleWise.ELMA.Diagrams.Diagram.OnConnectorPlugChanged(EleWise.ELMA.Diagrams.Connector,EleWise.ELMA.Diagrams.Plug,System.Boolean)">
+            <summary>
+            Действие при смене коннектора
+            </summary>
+        </member>
+        <member name="M:EleWise.ELMA.Diagrams.Diagram.#ctor(System.Runtime.Serialization.SerializationInfo,System.Runtime.Serialization.StreamingContext)">
+            <summary>
+            Ctr
+            </summary>
+        </member>
+        <member name="T:EleWise.ELMA.Diagrams.DiagramImageHelper">
+            <summary>
+            Хелпер генерации изображения фигуры
+            </summary>
+        </member>
+        <member name="M:EleWise.ELMA.Diagrams.DiagramImageHelper.GenerateImage``1(System.Int32)">
+            <summary>
+            Сгенерировать изображение
+            </summary>
+        </member>
+        <member name="M:EleWise.ELMA.Diagrams.DiagramImageHelper.GenerateImage``1(System.Int32,System.Int32)">
+            <summary>
+            Сгенерировать изображение
+            </summary>
+        </member>
+        <member name="M:EleWise.ELMA.Diagrams.DiagramImageHelper.GenerateImage``1(System.Drawing.Size)">
+            <summary>
+            Сгенерировать изображение
+            </summary>
+        </member>
+        <member name="M:EleWise.ELMA.Diagrams.DiagramImageHelper.GenerateImage(System.Type,System.Drawing.Size,System.Action{Nevron.Diagram.NShape},System.Boolean)">
+            <summary>
+            Сгенерировать изображение
+            </summary>
+        </member>
+        <member name="T:EleWise.ELMA.Diagrams.Element">
+            <summary>
+            Абстрактный элемент диаграммы
+            </summary>
+        </member>
+        <member name="M:EleWise.ELMA.Diagrams.Element.#ctor">
+            <summary>
+            Ctr
+            </summary>
+        </member>
+        <member name="M:EleWise.ELMA.Diagrams.Element.InitNew">
+            <summary>
+            Инициализировать свойства для нового элемента
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Diagrams.Element.Uid">
+            <summary>
+            Uid элемента
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Diagrams.Element.Name">
+            <summary>
+            Имя элемента
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Diagrams.Element.LocalizableName">
+            <summary>
+            Локализованное имя
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Diagrams.Element.Description">
+            <summary>
+            Описание элемента
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Diagrams.Element.LocalizableDescription">
+            <summary>
+            Локализованное описание
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Diagrams.Element.ExtendedSettings">
+            <summary>
+            Дополнительные настройки для элемента
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Diagrams.Element.Shape">
+            <summary>
+            Связанная фигура
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Diagrams.Element.OutputConnectors">
+            <summary>
+            Исходящие переходы
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Diagrams.Element.InputConnectors">
+            <summary>
+            Входящие переходы
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Diagrams.Element.OutputCancel">
+            <summary>
+            Признак "Элемент поддерживает выход по отмене". 
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Diagrams.Element.ValidateContextVariables">
+            <summary>
+            Проверять контекстные переменные на обязательность заполнения,
+            когда на переходе стоит операция "Отмена операции"
+            </summary>
+        </member>
+        <member name="M:EleWise.ELMA.Diagrams.Element.Clone">
+            <summary>
+            Клонировать элемент (вызывается в диаграммере Nevron - возвращаем тот же объект)
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:EleWise.ELMA.Diagrams.Element.CopyElement">
+            <summary>
+            Скопировать элемент
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="P:EleWise.ELMA.Diagrams.Element.DefaultName">
+            <summary>
+            Имя по умолчанию для элемента
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Diagrams.Element.IsDefaultNameWithIncrement">
+            <summary>
+            Применять ли инкремент для генерации названия элемента (например, "Задача 5")
+            </summary>
+        </member>
+        <member name="M:EleWise.ELMA.Diagrams.Element.GenerateName(EleWise.ELMA.Diagrams.Diagram)">
+            <summary>
+            Сгенерировать новое имя элемента
+            </summary>
+            <param name="diagram">Диаграмма</param>
+        </member>
+        <member name="M:EleWise.ELMA.Diagrams.Element.CopyFrom(EleWise.ELMA.Diagrams.Element)">
+            <summary>
+            Копировать из фигуры
+            </summary>
+            <param name="element"></param>
+        </member>
+        <member name="M:EleWise.ELMA.Diagrams.Element.ToString">
+            <inheritdoc />
+        </member>
+        <member name="M:EleWise.ELMA.Diagrams.Element.OnCopied(System.Collections.Generic.Dictionary{System.Guid,EleWise.ELMA.Diagrams.Element})">
+            <summary>
+            Действия при копировании
+            </summary>
+        </member>
+        <member name="M:EleWise.ELMA.Diagrams.Element.OnShapeChanged(Nevron.Diagram.NShape,Nevron.Diagram.NShape)">
+            <summary>
+            Действия при изменении фигруры
+            </summary>
+        </member>
+        <member name="T:EleWise.ELMA.Diagrams.Element2D">
+            <summary>
+            2D-элемент диаграммы
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Diagrams.Element2D.Location">
+            <summary>
+            Расположение элемента
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Diagrams.Element2D.Size">
+            <summary>
+            Границы элемента
+            </summary>
+        </member>
+        <member name="T:EleWise.ELMA.Diagrams.ElementExtendedSettings">
+            <summary>
+            Список расширенных настроек
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Diagrams.ElementExtendedSettings.Item(System.String)">
+            <summary>
+            Настройка
+            </summary>
+        </member>
+        <member name="T:EleWise.ELMA.Diagrams.ElementExtendedSetting">
+            <summary>
+            Расширенные настройки
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Diagrams.ElementExtendedSetting.Key">
+            <summary>
+            Ключ
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Diagrams.ElementExtendedSetting.Value">
+            <summary>
+            Настройка
+            </summary>
+        </member>
+        <member name="T:EleWise.ELMA.Diagrams.ElementList">
+            <summary>
+            Список элементов диаграмм
+            </summary>
+        </member>
+        <member name="M:EleWise.ELMA.Diagrams.ElementList.#ctor">
+            <summary>
+            Ctr
+            </summary>
+        </member>
+        <member name="M:EleWise.ELMA.Diagrams.ElementList.#ctor(System.Runtime.Serialization.SerializationInfo,System.Runtime.Serialization.StreamingContext)">
+            <summary>
+            Ctr
+            </summary>
+        </member>
+        <member name="M:EleWise.ELMA.Diagrams.ElementList.IndexOf(EleWise.ELMA.Diagrams.Element)">
+            <inheritdoc />
+        </member>
+        <member name="M:EleWise.ELMA.Diagrams.ElementList.Insert(System.Int32,EleWise.ELMA.Diagrams.Element)">
+            <summary>
+            Вставка элемента
+            </summary>
+        </member>
+        <member name="M:EleWise.ELMA.Diagrams.ElementList.InsertOrAdd(System.Int32,EleWise.ELMA.Diagrams.Element)">
+            <summary>
+            Вставка элемента
+            </summary>
+        </member>
+        <member name="M:EleWise.ELMA.Diagrams.ElementList.RemoveAt(System.Int32)">
+            <summary>
+            Удаляет элемент
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Diagrams.ElementList.Item(System.Int32)">
+            <summary>
+            Элемент
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Diagrams.ElementList.Item(System.Guid)">
+            <summary>
+            Элемент
+            </summary>
+        </member>
+        <member name="M:EleWise.ELMA.Diagrams.ElementList.Add(EleWise.ELMA.Diagrams.Element)">
+            <summary>
+            Добавляет элемент
+            </summary>
+        </member>
+        <member name="M:EleWise.ELMA.Diagrams.ElementList.Clear">
+            <summary>
+            Удаляет элементы
+            </summary>
+        </member>
+        <member name="M:EleWise.ELMA.Diagrams.ElementList.Contains(EleWise.ELMA.Diagrams.Element)">
+            <inheritdoc />
+        </member>
+        <member name="M:EleWise.ELMA.Diagrams.ElementList.CopyTo(EleWise.ELMA.Diagrams.Element[],System.Int32)">
+            <inheritdoc />
+        </member>
+        <member name="P:EleWise.ELMA.Diagrams.ElementList.Count">
+            <summary>
+            Количество элементов
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Diagrams.ElementList.IsReadOnly">
+            <summary>
+            Доступен ли "только для чтения"
+            </summary>
+        </member>
+        <member name="M:EleWise.ELMA.Diagrams.ElementList.Remove(EleWise.ELMA.Diagrams.Element)">
+            <inheritdoc />
+        </member>
+        <member name="M:EleWise.ELMA.Diagrams.ElementList.GetEnumerator">
+            <inheritdoc />
+        </member>
+        <member name="M:EleWise.ELMA.Diagrams.ElementList.GetObjectData(System.Runtime.Serialization.SerializationInfo,System.Runtime.Serialization.StreamingContext)">
+            <inheritdoc />
+        </member>
+        <member name="T:EleWise.ELMA.Diagrams.HintDrawElementHelper">
+            <summary>
+            Хэлпер быстрого рисования диаграмы
+            </summary>
+        </member>
+        <member name="M:EleWise.ELMA.Diagrams.HintDrawElementHelper.GetAvaiableOutputElementTypes``1">
+            <summary>
+            Получить список исходящих элементов для быстрого рисования диаграммы
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:EleWise.ELMA.Diagrams.HintDrawElementHelper.GetAvaiableOutputElementTypes(System.Type)">
+            <summary>
+            Получить список исходящих элементов для быстрого рисования диаграммы
+            </summary>
+            <param name="sourceType"></param>
+            <returns></returns>
+        </member>
+        <member name="T:EleWise.ELMA.Diagrams.HintShapeAttribute">
+            <summary>
+            Атрибут, определяющий фигуру, представляющую элемент для построения диаграмм "на лету"
+            </summary>
+        </member>
+        <member name="M:EleWise.ELMA.Diagrams.HintShapeAttribute.#ctor(System.Type)">
+            <summary>
+            Конструктор
+            </summary>
+            <param name="shapeType">Тип фигуры</param>
+        </member>
+        <member name="P:EleWise.ELMA.Diagrams.HintShapeAttribute.ShapeType">
+            <summary>
+            Тип фигуры
+            </summary>
+        </member>
+        <member name="T:EleWise.ELMA.Diagrams.IElement">
+            <summary>
+            Интерфейс элемента диаграммы
+            </summary>
+        </member>
+        <member name="T:EleWise.ELMA.Diagrams.IHintDrawElement">
+            <summary>
+            Интерфейс элемента диаграммы, который может использоваться для построения диаграмм "на лету"
+            </summary>
+        </member>
+        <member name="M:EleWise.ELMA.Diagrams.IHintDrawElement.GetAvaiableOutputElementTypes">
+            <summary>
+            Получить список типов элементов, которые могут быть следующими за текущим элементом
+            </summary>
+            <returns>Список типов элементов</returns>
+        </member>
+        <member name="T:EleWise.ELMA.Diagrams.IHintDrawElementExtension">
+            <summary>
+            Точка расширения быстрого рисования диаграмы
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Diagrams.IHintDrawElementExtension.SourceElementType">
+            <summary>
+            Тип исходного элемента
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Diagrams.IHintDrawElementExtension.TargetElementTypes">
+            <summary>
+            Типы конечных элементов
+            </summary>
+        </member>
+        <member name="T:EleWise.ELMA.Diagrams.HintDrawElementExtension`1">
+            <summary>
+            Точка расширения быстрого рисования диаграмы
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Diagrams.HintDrawElementExtension`1.SourceElementType">
+            <summary>
+            Тип исходного элемента
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Diagrams.HintDrawElementExtension`1.TargetElementTypes">
+            <summary>
+            Типы конечных элементов
+            </summary>
+        </member>
+        <member name="T:EleWise.ELMA.Diagrams.ISelectionProvider">
+            <summary>
+            Интерфейс работы с выделение фигуры
+            </summary>
+        </member>
+        <member name="M:EleWise.ELMA.Diagrams.ISelectionProvider.IsNodeSelected(Nevron.Dom.INNode)">
+            <summary>
+            Является ли фигура выделеной
+            </summary>
+        </member>
+        <member name="M:EleWise.ELMA.Diagrams.ISelectionProvider.SelectNode(Nevron.Dom.INNode)">
+            <summary>
+            Выделить фигуру
+            </summary>
+        </member>
+        <member name="T:EleWise.ELMA.Diagrams.Plug">
+            <summary>
+            Точка привязки соединителя
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Diagrams.Plug.ElementUid">
+            <summary>
+            Uid элемента, к которому привязана точка
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Diagrams.Plug.PortName">
+            <summary>
+            Имя точки привязки в элементе
+            </summary>
+        </member>
+        <member name="F:EleWise.ELMA.Diagrams.Properties.__AssemblyInfo.UID_S">
+            <summary>
+            Уникальный идентификатор данного класса
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Diagrams.Properties.__AssemblyInfo.UID">
+            <summary>
+            Уникальный идентификатор данного класса
+            </summary>
+        </member>
+        <member name="T:EleWise.ELMA.Diagrams.ShapeAttribute">
+            <summary>
+            Атрибут, определяющий фигуру для элемента диаграммы
+            </summary>
+        </member>
+        <member name="M:EleWise.ELMA.Diagrams.ShapeAttribute.#ctor(System.Type)">
+            <summary>
+            Конструктор
+            </summary>
+            <param name="shapeType">Тип фигуры</param>
+        </member>
+        <member name="P:EleWise.ELMA.Diagrams.ShapeAttribute.ShapeType">
+            <summary>
+            Тип фигуры
+            </summary>
+        </member>
+        <member name="T:EleWise.ELMA.Diagrams.ShapeImageAttribute">
+            <summary>
+            Указывает фигуру диаграммы, по которой генерируется изображение для какого-либо элемента
+            </summary>
+        </member>
+        <member name="M:EleWise.ELMA.Diagrams.ShapeImageAttribute.#ctor(System.Type,System.Int32)">
+            <summary>
+            Ctor
+            </summary>
+            <param name="shapeType">Тип фигуры</param>
+            <param name="size">Размер</param>
+        </member>
+        <member name="P:EleWise.ELMA.Diagrams.ShapeImageAttribute.ShapeType">
+            <summary>
+            Тип фигуры
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Diagrams.ShapeImageAttribute.Size">
+            <summary>
+            Размер изображения
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Diagrams.ShapeImageAttribute.IsDefault">
+            <summary>
+            Является ли изображением по умолчанию
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Diagrams.ShapeImageAttribute.Format">
+            <summary>
+            Формат изображения (BMP, JPG, PNG, GIF)
+            </summary>
+        </member>
+        <member name="M:EleWise.ELMA.Diagrams.ShapeImageAttribute.CreateImage">
+            <summary>
+            Создать изображение. После использования необходимо уничтожить.
+            </summary>
+        </member>
+        <member name="T:EleWise.ELMA.Diagrams.Toolbox.IAdaptDataObject">
+            <summary>
+            Интерфейс преобразования фигуры
+            </summary>
+        </member>
+        <member name="M:EleWise.ELMA.Diagrams.Toolbox.IAdaptDataObject.AdaptShapeDescriptor(System.Windows.Forms.IDataObject,System.String)">
+            <summary>
+            Преобразование фигуры
+            </summary>
+            <param name="dataObject"></param>
+            <param name="format"></param>
+            <returns></returns>
+        </member>
+        <member name="T:EleWise.ELMA.Diagrams.Toolbox.IToolboxNodeGroup">
+            <summary>
+            Группа элементов в панели инструментов
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Diagrams.Toolbox.IToolboxNodeGroup.GroupUid">
+            <summary>
+            Uid группы
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Diagrams.Toolbox.IToolboxNodeGroup.ParentGroupUid">
+            <summary>
+            Uid родительской группы
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Diagrams.Toolbox.IToolboxNodeGroup.Name">
+            <summary>
+            Имя группы
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Diagrams.Toolbox.IToolboxNodeGroup.Nodes">
+            <summary>
+            Набор элементов дерева
+            </summary>
+        </member>
+        <member name="T:EleWise.ELMA.Diagrams.Toolbox.ShapeDescriptorAdaptor">
+            <summary>
+            Адаптер для описания фигуры
+            </summary>
+        </member>
+        <member name="M:EleWise.ELMA.Diagrams.Toolbox.ShapeDescriptorAdaptor.#ctor(System.String)">
+            <summary>
+            ctor
+            </summary>
+            <param name="format">The format for which to check. See System.Windows.Forms.DataFormats for predefined formats.</param>
+        </member>
+        <member name="P:EleWise.ELMA.Diagrams.Toolbox.ShapeDescriptorAdaptor.Document">
+            <summary>
+            Карточка фигуры
+            </summary>
+        </member>
+        <member name="M:EleWise.ELMA.Diagrams.Toolbox.ShapeDescriptorAdaptor.UpdateReferences(Nevron.INReferenceProvider)">
+            <inheritdoc />
+        </member>
+        <member name="M:EleWise.ELMA.Diagrams.Toolbox.ShapeDescriptorAdaptor.CanAdapt(System.Windows.Forms.IDataObject)">
+            <inheritdoc />
+        </member>
+        <member name="M:EleWise.ELMA.Diagrams.Toolbox.ShapeDescriptorAdaptor.Adapt(System.Windows.Forms.IDataObject)">
+            <inheritdoc />
+        </member>
+        <member name="M:EleWise.ELMA.Diagrams.Toolbox.ShapeDescriptorAdaptor.AdaptShapeDescriptor(EleWise.ELMA.Diagrams.Toolbox.IToolboxItem)">
+            <summary>
+            Адаптировать описание фигуры
+            </summary>
+            <param name="toolboxItem">Элемент в панели инструментов</param>
+            <returns>Адаптированное описание фигуры</returns>
+        </member>
+        <member name="T:EleWise.ELMA.Diagrams.Toolbox.IToolboxItem">
+            <summary>
+            Элемент в панели инструментов
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Diagrams.Toolbox.IToolboxItem.Name">
+            <summary>
+            Имя элемента
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Diagrams.Toolbox.IToolboxItem.GroupUid">
+            <summary>
+            Uid группы элементов в панели инструментов
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Diagrams.Toolbox.IToolboxItem.Image">
+            <summary>
+            Иконка для отображения элементов в панели инструментов
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Diagrams.Toolbox.IToolboxItem.ElementType">
+            <summary>
+            Тип элемента
+            </summary>
+        </member>
+        <member name="T:EleWise.ELMA.Diagrams.Toolbox.IToolboxItemGroup">
+            <summary>
+            Группа элементов в панели инструментов
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Diagrams.Toolbox.IToolboxItemGroup.GroupUid">
+            <summary>
+            Uid группы
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Diagrams.Toolbox.IToolboxItemGroup.ParentGroupUid">
+            <summary>
+            Uid родительской группы
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.Diagrams.Toolbox.IToolboxItemGroup.Name">
+            <summary>
+            Имя группы
+            </summary>
+        </member>
+        <member name="T:EleWise.ELMA.Diagrams.WebDiagrammerShapeAttribute">
+            <summary>
+            Атрибут, определяющий фигуру для элемента BPMN-диаграммера
+            </summary>
+        </member>
+        <member name="M:EleWise.ELMA.Diagrams.WebDiagrammerShapeAttribute.#ctor(System.Type)">
+            <summary>
+            Конструктор
+            </summary>
+            <param name="shapeType">Тип фигуры</param>
+        </member>
+        <member name="P:EleWise.ELMA.Diagrams.WebDiagrammerShapeAttribute.ShapeType">
+            <summary>
+            Тип фигуры
+            </summary>
+        </member>
+    </members>
+</doc>

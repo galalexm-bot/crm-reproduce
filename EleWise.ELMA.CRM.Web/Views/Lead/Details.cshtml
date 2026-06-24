@@ -1,0 +1,317 @@
+﻿@model LeadModel
+@using EleWise.ELMA.Actions
+@using EleWise.ELMA.CRM.Enums
+@using EleWise.ELMA.CRM.Managers
+@using EleWise.ELMA.CRM.Models
+@using EleWise.ELMA
+@using EleWise.ELMA.CRM.Web
+@using EleWise.ELMA.CRM.Web.Code
+@using EleWise.ELMA.CRM.Web.Models
+@using EleWise.ELMA.CRM.Web.Controllers
+@using EleWise.ELMA.BPM.Web.Common.Extensions
+@using EleWise.ELMA.BPM.Web.Common.Mvc.html
+@using EleWise.ELMA.BPM.Web.Common.Models
+@using EleWise.ELMA.CRM
+@using EleWise.ELMA.Extensions
+@using EleWise.ELMA.Security
+@using EleWise.ELMA.Security.Services
+@using EleWise.ELMA.Services
+@using EleWise.ELMA.Web.Content
+
+@{
+    var metadata = EleWise.ELMA.Model.Metadata.MetadataLoader.LoadMetadata(Model.Entity.GetType());
+
+    Html.Header(SR.T("Потенциальный клиент - {0}", Model.Entity.Name), Model.Entity);
+    //var commentTip = string.Format("<b>{0}</b><br>{1}", SR.T("Добавить новый комментарий"), SR.T("Перейти к странице создания комментария"));
+    //var editTip = string.Format("<b>{0}</b><br>{1}", SR.T("Изменить атрибуты потенциального клиента"), SR.T("Перейти к странице редактирования потенциального клиента"));
+    //var delTip = string.Format("<b>{0}</b><br>{1}", SR.T("Удалить потенциального клиента"), SR.T("Текущий потенциальный клиент будет удален. Действие требует подтверждения."));
+    //var contactTip = string.Format("<b>{0}</b><br>{1}", SR.T("Создать контакт"), SR.T("Перейти к созданию контакта данного потенциального клиента"));
+    //var beginTip = string.Format("<b>{0}</b><br>{1}", SR.T("Работа начата"), SR.T("Установить данному потенциальному клиенту статус \"В работе\""));
+    //var failTip = string.Format("<b>{0}</b><br>{1}", SR.T("Неуспешная возможность"), SR.T("Установить данного потенциального клиента неуспешным. Существует возможность преобразовать его в реального клиента."));
+    //var changeTimeTip = string.Format("<b>{0}</b><br>{1}", SR.T("Отложить потенциального клиента"), SR.T("Отложить с указанием причины"));
+    //var convertTip = string.Format("<b>{0}</b><br>{1}", SR.T("Преобразовать потенциального клиента"), SR.T("Создать на основе атрибутов потенциального клиента реального клиента, контакт, сделку или взаимоотношение"));
+    var attachTip = string.Format("<b>{0}</b><br>{1}", SR.T("Прикрепить документ"), SR.T("Добавить документы или файлы данному потенциальному клиенту"));
+    //var activateTip = string.Format("<b>{0}</b><br>{1}", SR.T("Активировать потенциального клиента"), SR.T("Установить потенциальному клиенту статус &quotНовый&quot"));
+    //var dublicateTip = string.Format("<b>{0}</b><br>{1}", SR.T("Дубль"), SR.T("Отметить, что данный потенциальный клиент является дублем другого клиента или сделки"));
+    //var workNotStartTip = string.Format("<b>{0}</b><br>{1}", SR.T("Разговор не состоялся"), SR.T("Установить данному потенциальному клиенту статус \"Разговор не состоялся\""));
+
+    var dispatcher = Locator.GetServiceNotNull<ActionDispatcherService>();
+    var service = Locator.GetServiceNotNull<ISecurityService>();
+    var createElementpermission =
+        service.HasPermission(CRMPermissionProvider.CRMLeadCreateElementPermission, Model.Entity) ||
+        service.HasPermission(CRMPermissionProvider.CRMLeadFullAccessPermission, Model.Entity)||
+        service.HasPermission(CRMPermissionProvider.EditLeadPermission, Model.Entity) ||
+        service.HasPermission(CRMPermissionProvider.CRMFullAccessPermission);
+
+    var isQulified = Model.Entity.Status == LeadStatus.Qualified;
+    bool canEdit = !isQulified
+        ? service.HasPermission(CRMPermissionProvider.EditLeadPermission, Model.Entity) ||
+            service.HasPermission(CRMPermissionProvider.CRMLeadFullAccessPermission, Model.Entity) ||
+                service.HasPermission(CRMPermissionProvider.CRMFullAccessPermission)
+        : false;
+
+    bool canDelete = CRMPermissionProvider.CheckAny(new[] { CRMPermissionProvider.CRMFullAccessPermission, CRMPermissionProvider.CRMDeletePermission });
+    bool canDublicate = dispatcher.CheckAction<LeadManager>(m => m.Dublicate(Model.Entity, null, false, null, null, null));
+
+    var list = new List<ActionToolbarItem>();
+    var addList = new List<EleWise.ELMA.Web.Mvc.ExtensionPoints.ActionItems.IActionItem>();
+    list.Add(new ActionToolbarSeparator());
+    if (canDublicate)
+    {
+        list.Add(new ActionToolbarItem("Lead_dublicate_btn")
+        {
+            Text = SR.T("Дубль"),
+            Click = Html.OpenPopup("DublicatePopup").ToString(),
+            ToolTipHeader = SR.T("Дубль"),
+            ToolTip = SR.T("Отметить, что данный потенциальный клиент является дублем другого клиента или сделки")
+        });
+    }
+
+    if (Model.Entity.Responsible != null && Model.Entity.Status == LeadStatus.New && dispatcher.CheckAction<LeadManager>(m => m.BeginWork(Model.Entity)))
+    {
+        list.Add(new ActionToolbarItem("Lead_begin_btn")
+        {
+            Text = SR.T("Работа начата"),
+            IconUrl = "#play_outline.svg",
+            Click = Html.OpenPopup("BeginPopup").ToString(),
+            ToolTipHeader = SR.T("Работа начата"),
+            ToolTip = SR.T("Установить данному потенциальному клиенту статус \"В работе\"")
+        });
+    }
+    if (Model.Entity.Responsible != null && Model.Entity.Status == LeadStatus.New)
+    {
+        list.Add(new ActionToolbarItem("Lead_conversation_not_start_btn")
+        {
+            Text = SR.T("Разговор не состоялся"),
+            Click = Html.OpenPopup("ConversationNotStartPopup").ToString(),
+            ToolTipHeader = SR.T("Разговор не состоялся"),
+            ToolTip = SR.T("Установить данному потенциальному клиенту статус \"Разговор не состоялся\"")
+        });
+    }
+    var createRelationships = createElementpermission;
+    if (!Model.Entity.Status.In(LeadStatus.Qualified, LeadStatus.Unqualified, LeadStatus.Dublicate))
+    {
+        if (Model.Entity.Responsible != null)
+        {
+            if (dispatcher.CheckAction<LeadManager>(m => m.Fail(Model.Entity, false, null)))
+            {
+                list.Add(new ActionToolbarItem("Lead_fail_btn")
+                {
+                    Text = SR.T("Неуспех"),
+                    IconUrl = "#close.svg",
+                    Click = string.Format("LeadFail({0})", Model.Entity.Id),
+                    ToolTipHeader = SR.T("Неуспешная возможность"),
+                    ToolTip = SR.T("Установить данного потенциального клиента неуспешным. Существует возможность преобразовать его в реального клиента.")
+                });
+            }
+        }
+        if (createRelationships)
+        {
+            addList.AddRange(EleWise.ELMA.CRM.Web.UIExtensions.ToolbarCreateRelationshipsToActionsList(Html, new { LeadId = Model.Entity.Id }, true));
+        }
+        addList.Add(new ActionToolbarItem("toolbar-action-CreateTask") { Text = SR.T("Задачу"), IconUrl = "#create.svg", Url = Html.Url().Action("Create", "Task", new { area = CRMAreaRegistration.AREA_NAME, id = Model.Entity.Id, typeUid = metadata.Uid }), ToolTip = SR.T("Создать задачу по данному физическому лицу") });
+        addList.Add(new ActionToolbarSeparator());
+    }
+    list.Add(new ActionToolbarSeparator());
+    if (!Model.Entity.Status.In(LeadStatus.Qualified, LeadStatus.Unqualified, LeadStatus.Dublicate))
+    {
+        list.Add(new ActionToolbarItem("Lead_add_comment_btn")
+        {
+            Text = SR.T("Добавить комментарий"),
+            IconUrl = "#comment_outline.svg",
+            Click = Html.AddComment("AddCommentPopup"),
+            ToolTipHeader = SR.T("Добавить новый комментарий"),
+            ToolTip = SR.T("Перейти к странице создания комментария")
+        });
+
+        if (Model.Entity.Responsible != null)
+        {
+            if (dispatcher.CheckAction<LeadManager>(m => m.ConvertComplete(Model.Entity, null, null, null, null, null)))
+            {
+                list.Add(new ActionToolbarItem("Lead_convert_btn")
+                {
+                    Text = SR.T("Конвертировать"),
+                    IconUrl = "#convert.svg",
+                    Url = Url.Action<LeadController>(c => c.Convert(Model.Entity.Id)),
+                    ToolTipHeader = SR.T("Преобразовать потенциального клиента"),
+                    ToolTip = SR.T("Создать на основе атрибутов потенциального клиента реального клиента, контакт, сделку или взаимоотношение")
+                });
+            }
+        }
+    }
+    if(createRelationships)
+    {
+        addList.Add(new ActionToolbarItem("toolbar-action-CreateContact")
+        {
+            Text = SR.T("Контакт"),
+            IconUrl = "#add.svg",
+            Url = Url.Action<LeadContactController>(c => c.Create(Model.Entity.Id)),
+            ToolTipHeader = SR.T("Контакт"),
+            ToolTip = SR.T("Перейти к созданию контакта данного потенциального клиента")
+        });
+    }
+    if (canEdit)
+    {
+        addList.Add(new ActionToolbarItem("Contractor_add_comment_btn") { Text = SR.T("Документ"), IconUrl = "#add.svg", Click = Html.OpenPopup("AddAttachmentPopup").ToString(), ToolTip = attachTip });
+    }
+    if ((Model.Entity.Status == LeadStatus.Unqualified || Model.Entity.Status == LeadStatus.Dublicate) && dispatcher.CheckAction<LeadManager>(m => m.Activate(Model.Entity)))
+    {
+        list.Add(new ActionToolbarItem("Lead_activate_btn")
+        {
+            Text = SR.T("Активировать"),
+            Url = Url.Action("Activate", "Lead", new { leadsId = Model.Entity.Id }),
+            ToolTipHeader = SR.T("Активировать потенциального клиента"),
+            ToolTip = SR.T("Установить потенциальному клиенту статус \"Новый\"")
+        });
+    }
+    if (canDelete && !Model.LockEditPermission)
+    {
+        list.Add(new ActionToolbarItem("Lead_delete_btn")
+        {
+            Text = SR.Delete,
+            ToolTipHeader = SR.T("Удалить потенциального клиента"),
+            ToolTip = SR.T("Текущий потенциальный клиент будет удален. Действие требует подтверждения."),
+            IconUrl = "#basket.svg",
+            Click = "LeadDelete()"
+        });
+    }
+}
+
+@(Html.Toolbar()
+        .AdditionalButton(a =>
+        {
+            list.ForEach(b => a.Add(b));
+        })
+        .Group(ToolbarGroupUids.FrequentlyUsedButtonsGroupUid)
+            .If(canEdit, b => b
+                    .ToolbarButton(new ActionToolbarItem("Contractor_edit_btn")
+                    {
+                        Text = SR.Edit,
+                        ToolTip = SR.T("Перейти к странице редактирования потенциального клиента"),
+                        IconUrl = "#edit.svg",
+                        Url = Url.Action<LeadController>(c => c.Edit(Model.Entity.Id))
+                    }))
+        .Group("toolbar-group-2")
+            .If(addList.Any(), b => b
+                .ToolbarButton(new ActionToolbarItem("toolbar-button-Actions")
+                {
+                    Text = SR.Add,
+                    IconUrl = "#poruch.svg",
+                    Items = new ActionItemList(addList)
+                }))
+    .If(!Model.Entity.Status.In(LeadStatus.Qualified, LeadStatus.Unqualified), b => b
+        .Group("makecalltoolbar"))
+    .If(!Model.Entity.Status.In(LeadStatus.Qualified, LeadStatus.Unqualified, LeadStatus.Dublicate) && createElementpermission, b => b
+        .Group("toolbar-group-3")))
+
+@Html.ExtensionZone("StartRouteExtensionZone")
+@if (Model.LockEditPermission)
+{
+    <div class="note" style="margin-bottom: 10px;">
+        <div style="padding: 10px;">
+            @Html.Raw(SR.T("Производится перерасчет разрешений. Изменение заблокировано. Пожалуйста попробуйте позже."))
+        </div>
+    </div>
+}
+@if(canDublicate)
+{
+    @Html.PopupWindow("DublicatePopup", SR.T("Дубль"), Url.Action("Dublicate", "Lead", new { area = CRMAreaRegistration.AREA_NAME, leadId = Model.Entity.Id }))
+}
+
+@(Html.AddCommentPopup(new CommentWithAttachments
+{
+    ShowAttachment = false,
+    PopupId = "AddCommentPopup",
+    ObjectId = Model.Entity.Id,
+    ObjectTypeUid = metadata.Uid,
+    AddCommentActionUid = LeadActions.AddCommentGuid,
+    RedirectUrl = Url.Action("Details", "Lead", new { area = CRMAreaRegistration.AREA_NAME, id = Model.Entity.Id })
+}))
+
+@(Html.AddCommentPopup(new CommentWithAttachments
+{
+    ActionName = SR.T("Работа начата"),
+    ShowAttachment = false,
+    PopupId = "BeginPopup",
+    ObjectId = Model.Entity.Id,
+    ObjectTypeUid = metadata.Uid,
+    AddCommentActionUid = LeadActions.InHandGuid,
+    RedirectUrl = Url.Action("Begin", "Lead", new { area = CRMAreaRegistration.AREA_NAME, id = Model.Entity.Id })
+}))
+
+@(Html.AddCommentPopup(new CommentWithAttachments
+{
+    ActionName = SR.T("Разговор не состоялся"),
+    ShowAttachment = false,
+    PopupId = "ConversationNotStartPopup",
+    ObjectId = Model.Entity.Id,
+    ObjectTypeUid = metadata.Uid,
+    RedirectUrl = Url.Action("ConversationNotStart", "Lead", new { area = CRMAreaRegistration.AREA_NAME, id = Model.Entity.Id })
+}))
+
+@(Html.Partial("Attachment/Create", new CrmAttachment
+{
+    PopupId = "AddAttachmentPopup",
+    EntityId = Model.Entity.Id,
+    EntityTypeUid = metadata.Uid,
+    RedirectUrl = Url.Action("Details", "Lead", new { area = CRMAreaRegistration.AREA_NAME, id = Model.Entity.Id, tabIndex = 4 })
+}))
+
+@Html.PopupWindow("LeadFail", SR.T("Неуспех"), @<text></text>)
+
+@if (true/*Model.Entity.IsAvailableDelete*/)
+{
+    using (Html.ELMAForm("Delete", "Lead", new { area = CRMAreaRegistration.AREA_NAME, id = Model.Entity.Id }, FormMethod.Get, new { id = "LeadDeleteForm" }))
+    {
+    }
+    
+    <script type="text/javascript">
+        function LeadDelete() {
+            jConfirm('@SR.T("Вы действительно хотите удалить потенциального клиента вместе со всеми взаимоотношениями?")', '@SR.T("Подтверждение удаления")', function (r) {
+                if (r) {
+                    $('#LeadDeleteForm').submit();
+                }
+            });
+        }
+
+        function LeadFail(id)
+        {
+            var url = '@Url.Action("Fail", "Lead", new { area = CRMAreaRegistration.AREA_NAME})' + '?id=' + id;
+            var window = $('#LeadFail').data("tWindow");
+            window.contentUrl = url;
+            window.loaded = false;
+            @(Html.OpenPopup("LeadFail"))
+        }
+
+    </script>
+}
+
+@if (DirectoryMapVirtualPathProvider.AnyConfigFile("~/Modules/EleWise.ELMA.CRM.Web/Views/Lead/TabView.cshtml", "~/Modules/EleWise.ELMA.CRM.Web/Views/Lead/TasksTab.cshtml"))
+{
+    @Html.Partial("TabView", Model)
+}
+else
+{
+    using (Html.ElmaDynamicForm("LeadDynamicForm", Model.Entity.TypeUid))
+    {
+        var formViewItem = Model.View;
+        @Html.DynamicFormSettings(Model.DynamicFormSettings)
+        if (formViewItem != null)
+        {
+            if (metadata != null)
+            {
+                @Html.Hidden("Entity.TypeUid", metadata.Uid)
+            }
+            if (Model.Entity.Id != null)
+            {
+                @Html.HiddenFor(m => m.Entity.Id)
+            }
+            @Html.FormViewItem(formViewItem, m => m.Entity, new ActionRoute("AsyncViewItem", "Lead", new {area = CRMAreaRegistration.AREA_NAME, id = Model.Entity.Id, viewType = Model.ViewType, formUid = Model.FormUid }), Model.ViewType,
+                Model.ItemType,
+                EntityObjectViewItemProvider.UID, Model.ViewItemId,
+                Model.DynamicFormSettings != null ? Model.DynamicFormSettings.DynamicFormsProviderUid : Guid.Empty,
+                Model.DynamicFormSettings != null ? Model.DynamicFormSettings.DynamicFormsProviderData : null,
+                Model.FormId)
+        }
+    }
+}

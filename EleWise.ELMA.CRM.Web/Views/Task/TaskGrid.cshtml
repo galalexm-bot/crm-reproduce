@@ -1,0 +1,42 @@
+﻿@using System.ComponentModel
+@using EleWise.ELMA
+@using EleWise.ELMA.BPM.Web.Tasks
+@using EleWise.ELMA.BPM.Web.Tasks.Extensions
+@using EleWise.ELMA.Web.Mvc.ExtensionPoints
+@model GridData<EleWise.ELMA.Tasks.Models.ITaskBase>
+
+@(Html.DynamicGrid("CRMTaskGrid9", Model).Columns(c =>
+{
+    c.For(m => m.TypeUid)
+        .Header(SR.T("Тип"))
+        .Template(t => Html.Image(Html.Icon(t), ""))
+        .Width(30).Order(1);
+    c.For(m => m.Priority)
+        .Template(m => Html.Image(Url.ObjectIcon(ObjectIconFormat.x16, m.Priority), EleWise.ELMA.Model.Common.ModelHelper.GetEnumDisplayName(m.Priority)))
+        .Header(SR.T("Пр."))
+        .Width(30).Order(2);
+    c.For(m => m.Subject)
+        .Header(SR.T("Задача"))
+        .Template(m => Html.StatusLink(m))
+        .Order(3);
+    c.For(m => m.Status)
+        .Header(SR.T("Статус"))
+        .Width(100)
+        .HtmlAttributes(new { @class = "contractor-task-status"})
+        .Order(4);
+    c.For(m => m.CreationDate)
+        .Header(SR.T("Дата создания"))
+        .Width(100).Order(5);
+    c.For(m => m.EndDate)
+        .Header(SR.T("Срок"))
+        .Template(m => Html.Partial("AllTasks/EndDateGridTemplate", m, new ViewDataDictionary { { "GridId", "CRMTaskGrid9" } }))
+        .Width(60).Order(6);
+    c.For(m => m.Executor)
+        .Header(SR.T("Исполнитель"))
+        .Width(120).Order(7);
+
+}).EnableCustomize(true)
+    .DefaultSortExpression("CreationDate")
+    .DefaultSortDirection(ListSortDirection.Descending)
+    .ApplyExtensions("MyTasksPortletGrid")
+)

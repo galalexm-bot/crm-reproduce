@@ -1,0 +1,32 @@
+﻿@using EleWise.ELMA.CRM.Web
+@using EleWise.ELMA.CRM.Web.Models
+@using EleWise.ELMA.Common.Models.Filters
+@using EleWise.ELMA.Model.Managers
+@using EleWise.ELMA
+@model SalePortletModel
+
+@{ var uniqueId = Guid.NewGuid(); }
+
+<div id="@(uniqueId)" style="padding: 2px 0 0 3px">
+    @if (Model.FilterId != null)
+    {
+        var filter = EntityManager<IFilter>.Instance.LoadOrNull(Model.FilterId);
+        if (filter != null)
+        {
+            if (Model.ShowOnlyMy)
+            {
+                <span>@SR.T("Фильтр: {0} (только мои)", filter.Name)</span>
+            }
+            else
+            {
+                <span>@SR.T("Фильтр: {0}", filter.Name)</span>
+            }
+        }
+    }
+    else if (Model.ShowOnlyMy)
+    {
+        <span>@SR.T("Мои сделки")</span>
+    }
+</div>     
+
+@Html.Action("PortletGrid", "Sale", new { area = CRMAreaRegistration.AREA_NAME, filterId = Model.FilterId, showOnlyMy = Model.ShowOnlyMy })

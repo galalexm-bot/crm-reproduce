@@ -1,0 +1,146 @@
+﻿@using EleWise.ELMA
+@using EleWise.ELMA.BPM.Web.Common.Extensions
+@using EleWise.ELMA.CRM.Models
+@using EleWise.ELMA.CRM.Web
+@using EleWise.ELMA.Model.Services
+@using EleWise.ELMA.CRM.Web.Models
+@using EleWise.ELMA.Services
+@using EleWise.ELMA.Extensions
+@using EleWise.ELMA.Web.Mvc.Models.Inputs
+@model InpaymentSubPanelModel
+
+@helper InpaymentFilter() { 
+    <div id="@(Model.GridData.GridId)CheckboxesDiv">
+        @(Html.ModernSwitchButton(false)
+            .Name(Model.StatusSetPrefix + ".IsOverdue")
+            .Checked(Model.StatusFilterModel.IsOverdue && Model.CheckBoxOverdue)
+            .Disabled(!Model.CheckBoxOverdue)
+            .TextPosition(ModernSwitchButton.LabelPosition.Left)
+            .LabelText(SR.T("Просрочено")))
+        <span style="display:inline-block;width:16px;"></span>
+        @(Html.ModernSwitchButton(false)
+            .Name(Model.StatusSetPrefix + ".InPlan")
+            .Checked(Model.StatusFilterModel.InPlan && Model.CheckBoxInPlan)
+            .Disabled(!Model.CheckBoxInPlan)
+            .TextPosition(ModernSwitchButton.LabelPosition.Left)
+            .LabelText(SR.T("В плане")))
+        <span style="display:inline-block;width:16px;"></span>
+        @(Html.ModernSwitchButton(false)
+            .Name(Model.StatusSetPrefix + ".Received")
+            .Checked(Model.StatusFilterModel.Received)
+            .TextPosition(ModernSwitchButton.LabelPosition.Left)
+            .LabelText(SR.T("Получено")))
+        <span style="display:inline-block;width:16px;"></span>
+        @(Html.ModernSwitchButton(false)
+            .Name(Model.StatusSetPrefix + ".Cancelled")
+            .Checked(Model.StatusFilterModel.Cancelled)
+            .TextPosition(ModernSwitchButton.LabelPosition.Left)
+            .LabelText(SR.T("Отменено")))
+    </div>
+}
+<div>
+    @if (!Model.PortletView)
+    {
+        @(Html.FilterDynamicGrid(Model.GridData)
+                   .WithDefaultSettings()
+                   .Columns(c =>
+                                {
+                                    c.ContextMenu((m, p) =>
+                                                      {
+                                                          p.MenuGuid = m.IsSaleClosed ? "closed_inpayment_context_menu" : "inpayment_context_menu";
+                                                          p.Sender = new {id = m.Id, typeUid = InterfaceActivator.UID<IInpayment>()};
+                                                          return true;
+                                                      }).Order(int.MinValue).NotSortable().NotResizable();
+
+                                    c.For(m => m.Name).Template(x => Html.ActionLink(x.Name ?? SR.Untitled, "Details", "Inpayment", new {area = CRMAreaRegistration.AREA_NAME, id = x.Id}, null)).Order(1);
+                                    c.For(m => m.Status).Width(100).Order(2);
+                                    c.For(m => m.Date)
+                                        .Template(x => x.Date.HasValue ? x.Date.Value.ToShortDateString() : string.Empty)
+                                        .Order(3);
+                                    c.For(m => m.ActualDate)
+                                        .Template(x => x.ActualDate.HasValue ? x.ActualDate.Value.ToShortDateString() : string.Empty)
+                                        .Order(4);
+                                    c.For(m => m.Sum).Order(5);
+                                    c.For(m => m.Invoice).HtmlAttributes(new {style = "text-align: center;"}).Order(6);
+                                    c.For(m => m.ContractorName).Template(x => x.ContractorId > 0
+                                            ? String.Format("<a href=\"{0}\">{1}</a>", Url.Entity(x.ContractorTypeUid, x.ContractorId.ToString()), Html.Encode(x.ContractorName))
+                                            : String.Empty).Order(7);
+                                    c.For(m => m.SaleName).Template(x => x.SaleId > 0 
+                                            ? Html.ActionLink(x.SaleName ?? SR.Untitled, "Details", "Sale", new { area = CRMAreaRegistration.AREA_NAME, id = x.SaleId }, null)
+                                            : MvcHtmlString.Empty).Order(8);
+                                    c.For(m => m.ResponsibleShortName).Template(x => String.Format("<a href=\"javascript:showUserInfo('{0}');\">{1}</a>", x.ResponsibleId, x.ResponsibleShortName.HtmlEncode())).Order(9);
+                                    c.For(m => m.CreationAuthorShortName).Template(x => String.Format("<a href=\"javascript:showUserInfo('{0}');\">{1}</a>", x.CreationAuthorId, x.CreationAuthorShortName.HtmlEncode())).Order(10);
+                                })
+                   .RowHtmlAttributes((x, g) => new {style = x.Status == InpaymentStatus.Cancelled ? "color: darkgray;" : x.Status == InpaymentStatus.Received ? "color: green;" : x.Date != null && x.Date < DateTime.Today ? "color: red;" : ""})
+                   .DefaultSortExpression("Date")
+                   .Action(Model.GridAction)
+                   .ExtendedAjaxProperty("TotalInPlanWithDate", Html.Display(m => m.TotalInPlanWithDate).ToHtmlString())
+                   .ExtendedAjaxProperty("TotalInPlanWithOutDate", Html.Display(m => m.TotalInPlanWithOutDate).ToHtmlString())
+                   .ExtendedAjaxProperty("TotalReceived", Html.Display(m => m.TotalReceived).ToHtmlString())
+                   .ExtendedAjaxProperty("Total", Html.Display(m => m.Total).ToHtmlString())
+                   .ClientEvents(c => c.OnDataBound(w => "function () { updateGridTotal('" + Model.GridData.GridId + "') }"))
+                   .EnableCustomize(false)
+                   .HeaderSummary(@<text>@InpaymentFilter()</text>))
+    }
+    else
+    {
+        @(Html.FilterDynamicGrid(Model.GridData)
+                   .WithDefaultSettings()
+                   .Columns(c =>
+                   {
+                       c.For(m => m.Date).Order(1);
+                       c.For(m => m.Name).Link(m => Url.Action("Details", "Inpayment", new { id = m.Id })).Order(2);
+                       c.For(m => m.Sum).Order(3);
+                       c.For(m => m.ContractorName).Template(x => x.ContractorId > 0 
+                            ? Html.ActionLink(x.ContractorName ?? SR.Untitled, "Details", "ContractorLegal", new { area = CRMAreaRegistration.AREA_NAME, id = x.ContractorId }, null)
+                            : MvcHtmlString.Empty).Order(4);
+                       if (Model.GridData.DataFilter == null || !((IInpaymentFilter)Model.GridData.DataFilter.Filter).ShowOnlyMy)
+                       {
+                           c.For(m => m.ResponsibleShortName).Template(x => String.Format("<a href=\"javascript:showUserInfo('{0}');\">{1}</a>", x.ResponsibleId, x.ResponsibleShortName)).Order(5);
+                       }
+                   })
+                   .RowHtmlAttributes((x, g) => new { style = x.Status == InpaymentStatus.Cancelled ? "color: darkgray;" : x.Status == InpaymentStatus.Received ? "color: green;" : x.Date != null && x.Date < DateTime.Today ? "color: red;" : "" })
+                   .DefaultSortExpression("Date")
+                   .Action(Model.GridAction)
+                   .ExtendedAjaxProperty("TotalInPlanWithDate", Html.Display(m => m.TotalInPlanWithDate).ToHtmlString())
+                   .ExtendedAjaxProperty("TotalInPlanWithOutDate", Html.Display(m => m.TotalInPlanWithOutDate).ToHtmlString())
+                   .ExtendedAjaxProperty("TotalReceived", Html.Display(m => m.TotalReceived).ToHtmlString())
+                   .ExtendedAjaxProperty("Total", Html.Display(m => m.Total).ToHtmlString())
+                   .ClientEvents(c => c.OnDataBound(w => "function () { updateGridTotal('" + Model.GridData.GridId + "') }"))
+                   .EnableCustomize(false))
+    }
+    @Html.Partial("SubPanelGridTotal", Model)
+</div>
+
+<script type="text/javascript">
+    $('#filteringGridForm').append('@Html.Hidden(Model.StatusSetPrefix + ".InPlan")');
+    $('#filteringGridForm').append('@Html.Hidden(Model.StatusSetPrefix + ".Received")');
+    $('#filteringGridForm').append('@Html.Hidden(Model.StatusSetPrefix + ".Cancelled")');
+    $('#filteringGridForm').append('@Html.Hidden(Model.StatusSetPrefix + ".IsOverdue")');
+
+    $('#filteringGridForm > [name="@(Model.StatusSetPrefix).InPlan"]').val('@(Model.StatusFilterModel.InPlan && Model.CheckBoxInPlan)');
+    $('#filteringGridForm > [name="@(Model.StatusSetPrefix).Received"]').val('@(Model.StatusFilterModel.Received)');
+    $('#filteringGridForm > [name="@(Model.StatusSetPrefix).Cancelled"]').val('@(Model.StatusFilterModel.Cancelled)');
+    $('#filteringGridForm > [name="@(Model.StatusSetPrefix).IsOverdue"]').val('@(Model.StatusFilterModel.IsOverdue && Model.CheckBoxOverdue)');
+
+
+    $(document).delegate('#@(Model.GridData.GridId)CheckboxesDiv input[name="@(Model.StatusSetPrefix).InPlan"]:first', 'click', function () {
+        $('#filteringGridForm input[name="@(Model.StatusSetPrefix).InPlan"]').val($(this).prop('checked'));
+        applyFilterGrid('@(Model.GridData.GridId)', 'filteringGridForm');
+    });
+
+    $(document).delegate('#@(Model.GridData.GridId)CheckboxesDiv input[name="@(Model.StatusSetPrefix).Received"]:first', 'click', function () {
+        $('#filteringGridForm input[name="@(Model.StatusSetPrefix).Received"]').val($(this).prop('checked'));
+        applyFilterGrid('@(Model.GridData.GridId)', 'filteringGridForm');
+    });
+
+    $(document).delegate('#@(Model.GridData.GridId)CheckboxesDiv input[name="@(Model.StatusSetPrefix).Cancelled"]:first', 'click', function () {
+        $('#filteringGridForm input[name="@(Model.StatusSetPrefix).Cancelled"]').val($(this).prop('checked'));
+        applyFilterGrid('@(Model.GridData.GridId)', 'filteringGridForm');
+    });
+
+    $(document).delegate('#@(Model.GridData.GridId)CheckboxesDiv input[name="@(Model.StatusSetPrefix).IsOverdue"]:first', 'click', function () {
+        $('#filteringGridForm input[name="@(Model.StatusSetPrefix).IsOverdue"]').val($(this).prop('checked'));
+        applyFilterGrid('@(Model.GridData.GridId)', 'filteringGridForm');
+    });
+</script>

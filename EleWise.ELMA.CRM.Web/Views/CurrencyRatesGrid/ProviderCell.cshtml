@@ -1,0 +1,10 @@
+﻿@model IEnumerable<SelectListItem>
+@{
+    string name = "Provider";
+    var htmlAttrributes = new HtmlAttributes();
+    htmlAttrributes.style.width = "250px";
+
+}
+<div class="providerList">
+    @Html.DropDownList(name, Model ?? new List<SelectListItem>(), "Value", "Text", htmlAttrributes)
+</div>

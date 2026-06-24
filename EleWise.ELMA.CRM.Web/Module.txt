@@ -1,0 +1,15 @@
+﻿Name: EleWise.ELMA.CRM.Web
+Module: EleWise.ELMA.CRM
+AntiForgery: disabled
+DisplayName: Работа с клиентами
+Author: EleWise
+Website: http://www.elma-bpm.ru
+Version: 3.0.0
+OrchardVersion: 1.0.20
+Description: ELMA CRM Module
+Features:
+    EleWise.ELMA.CRM.Web:
+        Name: Работа с клиентами
+        Description: ELMA CRM Module
+        Category: ELMA Modules
+		Dependencies: EleWise.ELMA.BPM.Web.Common

@@ -1,0 +1,46 @@
+﻿@model GridData<IContractor>
+@using EleWise.ELMA
+@using EleWise.ELMA.CRM.Models
+@using EleWise.ELMA.CRM.Web
+
+@{
+    long maxPercent = ViewBag.MaxPercent;
+    IEnumerable<IDublicateContractor> dublicateContractors = ViewBag.DublicateContractors;
+    Func<IContractor, long> weight = contractor => dublicateContractors.Where(dc => dc.Dublicate == contractor).Select(dc => dc.Weight).FirstOrDefault();
+}
+
+@helper header()
+{
+    <div style="padding: 5px; font-size: 14px;">
+        <b>@SR.T("Контрагенты:")</b>
+    </div>
+}
+
+@(Html.DynamicGrid("ContractorDublicateSettingsProperty", Model)
+    .WithDefaultSettings()
+    .Columns(c =>
+    {
+        c.Insert(0, m => true, () => true)
+            .Template(m => string.Format("{0}%", weight(m)))
+            .Header(SR.T("Процент совпадения"))
+            .Width(100)
+            .CellHtmlAttributes((m, column) => new
+            {
+                style = weight(m) == maxPercent ? "font-weight: bold" : ""
+            });
+        c.For(x => x.Name).Link(m => Url.Entity(m));
+    })
+    .DefaultColumns()
+    .Columns(c => c.Insert(Model.GridModel.Columns.Count, m => true, () => true)
+            .Template(m => Html.ImageButton("#user_link.svg", SR.T("Привязать"), "ContractorAttachDublicate(" + m.Id + ", \'" + m.Name.Trim() + "\')", text: SR.T("Привязать"), anchorHtmlAttributes: new { @class = "t-button mb-ButtonLink confirm" }))
+        .Width(75))
+    .Header(!Html.ViewData.ContainsKey("first") || (bool)Html.ViewData["first"])
+    .Footer(false)
+    .Reorderable(false)
+    .Groupable(false)
+    .Sortable(false)
+    .Customizable(false)
+    .EnableCustomize(false)
+    .Resizeable(false)
+    .HeaderSummary(html => header())
+    .RouteValues(new RouteValueDictionary { { "gridId", "ContractorDublicateSettingsProperty" } }))

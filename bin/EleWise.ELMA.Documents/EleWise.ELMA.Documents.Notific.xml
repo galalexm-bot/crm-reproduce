@@ -1,0 +1,80 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+
+<Notifications description="Оповещения по документу">
+
+  <Default>
+    <Filter>
+      <Event>IEntityActionHandler.ActionExecuted</Event>
+      <Object>EleWise.ELMA.Documents.Models.DocumentLink</Object>
+    </Filter>
+    <RecipientSet>      
+      <User>{$WatchList}</User>
+    </RecipientSet>
+    <URL>
+      /Documents/Document/View/{$New.Document.Id}
+    </URL>
+    <ObjectId>{$New.Id}</ObjectId>
+  </Default>
+
+  <Notification description="Добавлена связь с документом">
+    <Filter>
+      <Action>UserCreate</Action>      
+    </Filter>
+    <Subject>
+      ({SR('Добавлена связь с документом')}) {$New.Document.Name}
+    </Subject>
+    <ShortMessage>
+      {$New.CreationAuthor} {SR('добавил связь в документе')} "{$New.Document.Name}" {SR('на')} "{$New.LinkedDocument.Name}"
+    </ShortMessage>
+    <FullMessage>
+      {TableStart()}
+      {PropertyRow({$New.Name})}
+      {PropertyRow({$New.Document})}
+      {PropertyRow({$New.LinkedDocument})}
+      {PropertyRow({$New.CreationAuthor})}
+      {PropertyRow({$New.CreationDate})}
+      {TableEnd()}
+    </FullMessage>
+  </Notification>
+
+  <Notification description="Удалена связь с документом">
+    <Filter>
+      <Action>UserDelete</Action>
+    </Filter>
+    <Subject>
+      ({SR('Удалена связь с документом')}) {$New.Document.Name}
+    </Subject>
+    <ShortMessage>
+      {SR('Удалена связь в документе')} "{$New.Document.Name}" {SR('на')} "{$New.LinkedDocument.Name}"
+    </ShortMessage>
+    <FullMessage>
+      {TableStart()}
+      {PropertyRow({$New.Name})}
+      {PropertyRow({$New.Document})}
+      {PropertyRow({$New.LinkedDocument})}
+      {TableEnd()}
+    </FullMessage>
+  </Notification>
+
+  <Notification description="Изменена связь с документом">
+    <Filter>
+      <Action>UserEdit</Action>
+    </Filter>
+    <Subject>
+      ({SR('Изменена связь с документом')}) {$New.Document.Name}
+    </Subject>
+    <ShortMessage>
+      {$New.ChangeAuthor} {SR('изменил связь в документе')} "{$New.Document.Name}" {SR('на')} "{$New.LinkedDocument.Name}"
+    </ShortMessage>
+    <FullMessage>
+      {TableStart()}
+      {PropertyRow({$New.Name})}
+      {PropertyRow({$New.Document})}
+      {PropertyRow({$New.LinkedDocument})}
+      {PropertyRow({$New.ChangeAuthor})}
+      {PropertyRow({$New.ChangeDate})}
+      {TableEnd()}
+    </FullMessage>
+  </Notification>
+
+</Notifications>

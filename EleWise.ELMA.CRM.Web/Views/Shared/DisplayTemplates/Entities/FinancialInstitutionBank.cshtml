@@ -1,0 +1,14 @@
+﻿@using EleWise.ELMA
+@model EleWise.ELMA.CRM.Models.BillingInformation.IFinancialInstitutionBank
+
+@if (Model != null && Model.IsDeleted)
+{
+    var name = Model.ToString();
+    name = !string.IsNullOrEmpty(name) ? name : SR.Untitled;
+
+    <span>@name</span> <span style="color: red">@SR.T("Удален")</span>
+}
+else
+{
+    @Html.Partial("DisplayTemplates/Entity")
+}

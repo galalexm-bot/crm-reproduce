@@ -1,0 +1,278 @@
+﻿@model IGridData<IContractor>
+@using EleWise.ELMA.Model.Metadata
+@using EleWise.ELMA.Security
+@using EleWise.ELMA.Model.Types.Settings
+@using EleWise.ELMA.Services
+@using EleWise.ELMA.Model.Services
+@using EleWise.ELMA.CRM
+@using EleWise.ELMA.CRM.Web
+@using EleWise.ELMA.CRM.Models
+@using EleWise.ELMA.Web.Mvc.ExtensionPoints.ActionItems
+@using EleWise.ELMA.CRM.Web.Attributes
+@using EleWise.ELMA
+@using EleWise.ELMA.BPM.Web.Common.Extensions
+@using EleWise.ELMA.Workflow.Web
+@using EleWise.ELMA.Workflow.Web.Models
+@using EleWise.ELMA.Web.Mvc.ExtensionPoints
+
+@{
+    Html.Title(SR.T("Контрагенты"));
+    var typeUid = InterfaceActivator.UID<IContractor>();
+    Html.RenderInZone("FilterModelLinkZone", d => Html.CurrentSearchLinkButton(typeUid));
+    var service = Locator.GetServiceNotNull<ISecurityService>();
+    bool canAdd =true;// CRMPermissionProvider.CheckAny(new[] { CRMPermissionProvider.CRMFullAccessPermission, CRMPermissionProvider.CRMCreatePermission });
+    bool canDelete = CRMPermissionProvider.CheckAny(new[] { CRMPermissionProvider.CRMFullAccessPermission, CRMPermissionProvider.CRMDeletePermission });
+}
+@{
+    bool allContractorsAvailable = false;
+    ClassMetadata classMetadata = null;
+    string availableUid;/* = Locator.GetService<CrmSettingsModule>().Settings.ContractorUidString;
+    if (string.IsNullOrEmpty(availableUid))
+    {*/
+        availableUid = InterfaceActivator.UID<IContractor>().ToString();
+        allContractorsAvailable = true;
+    /*}
+    else
+    {
+        if (availableUid == InterfaceActivator.UID<IContractor>().ToString())
+        {
+            allContractorsAvailable = true;
+        }
+        else
+        {
+            classMetadata = Locator.GetServiceNotNull<IMetadataRuntimeService>().GetMetadataList().Where(m => m is ClassMetadata && (m.Uid.ToString() == availableUid)).Cast<ClassMetadata>().Single();
+        }
+    }*/
+}
+@(Html.Toolbar().Group("toolbar-group-1")
+            .If(canAdd, b => b.ToolbarButton(allContractorsAvailable ? new ActionToolbarItem("toolbar-button-Add")
+                {
+                    IsMainAction = true,
+                    Text = SR.T("Создать"),
+                    IconUrl = "#add.svg",
+                    Items = new ActionItemList(Locator.GetServiceNotNull<IMetadataRuntimeService>()
+                        .GetMetadataList()
+                        .Where(m => m is ClassMetadata && (((ClassMetadata)m).BaseClassUid.ToString() == availableUid) && m is EntityMetadata &&( service.HasPermission(CRMPermissionProvider.GetCreateContractorPermission(((EntityMetadata)m).ImplementationUid)) || service.HasPermission(CRMPermissionProvider.CRMFullAccessPermission)))
+                        .Cast<ClassMetadata>()
+                        .Select(md => (IActionItem)new ActionToolbarItem("Contractors_add_" + md.Name + "_btn")
+                        {
+                            Text = SR.T(md.DisplayName),
+                            IconUrl = Url.Action("Object", "Images", new { area = SDKRouteProvider.AreaName, id = md.Uid, size = ObjectIconFormat.x16 }),
+                            Url = Url.EntityAction<ContractorCreateAttribute>(md.Uid)
+                        })
+                        .Where(i => ((ActionToolbarItem)i).Url != "/CRM")
+                        .OrderBy(i => ((ActionToolbarItem)i).Text)
+                        .ToArray())
+                } : new ActionToolbarItem("toolbar-action-AddContractor")
+                {
+                    Text = SR.Add,
+                    IconUrl = "#add.svg",
+                    Url = Url.EntityAction<ContractorCreateAttribute>(classMetadata.Uid),
+                    ToolTip = string.Format(SR.T("Добавить {0}"), SR.T(classMetadata.DisplayName))
+                }))
+            .ToolbarButton(new ActionToolbarItem("toolbar-button-SelectedActions")
+                {
+                    Text = SR.T("Выбранные"),
+                    IconUrl = "#select_all.svg",
+                    Items = new ActionItemList{
+                    new ActionToolbarItem("Contractors_add_call")
+                        {
+                            Text = SR.T("Добавить"), IconUrl = "#add.svg",
+                            Items = new ActionItemList {
+                                new ActionToolbarItem("Contractors_add_call_btn")
+                                {
+                                    Text = SR.T("Звонки"), IconUrl = "#add.svg",
+                                    Click = "AddCalls();"
+                                },
+                                new ActionToolbarItem("Contractors_add_meeting_btn")
+                                {
+                                    Text = SR.T("Встречи"), IconUrl = "#add_meeting.svg", Click = "AddMeetings();"
+                                },
+                                new ActionToolbarItem("Contractors_add_mail_btn")
+                                {
+                                    Text = SR.T("Письма"), IconUrl = "#add_message.svg", Click = "AddMails();"
+                                },
+                                new ActionToolbarItem("Contractors_set_merketing_btn")
+                                {
+                                    Text = SR.T("Маркетинговое мероприятие"),
+                                    IconUrl = "#target.svg",
+                                    Click = "SetMarketingActivity();"
+                                },
+                            }
+                        },
+                    new ActionToolbarItem("Contractors_delete_btn")
+                    {
+                        Text = SR.T("Удалить"), 
+                        IconUrl = "#basket.svg", 
+                        Click = "DeleteContractors();",
+                        Visible = canDelete
+                    },
+                }
+                })
+        )
+
+@Html.FilterEditButton(new EleWise.ELMA.BPM.Web.Common.Models.FilterEditButtonModel
+{
+    FilterId = Convert.ToInt64(Request["FilterId"]),
+    Area = RouteProvider.AreaName,
+    ControllerName = "Contractor",
+    BackUrl = Request.RawUrl
+}) 
+
+
+@Html.PopupWindow("PopUpDeleteContractors", SR.T("Подтверждение удаления"), @<text></text>, width: 400)
+@Html.PopupWindow("MarketingActivitySelectionPopup", SR.T("Выберите маркетинговое мероприятие"), @<text></text>)
+@Html.ExtensionZone("EleWise.ELMA.CRM.Workflow.Processes.Web.StartProcessContractors")
+
+<script type="text/javascript">
+
+    function SetMarketingActivity()
+    {
+        var url = '@Url.Action("AssignActivityToManyEntities", "MarketingActivity", new { area = CRMAreaRegistration.AREA_NAME })?';
+        var noSelectedEntitiesMsg = '@(SR.T("Нет выбранных контрагентов"))';
+        var entityName = '@System.Web.HttpUtility.UrlEncode(SR.T("контрагентам"))';
+        var entitiesNameForErrorMessage = '@System.Web.HttpUtility.UrlEncode(SR.T("контрагентов"))';
+        AssignMarketingActivity(url, '@typeUid', noSelectedEntitiesMsg, 'Index', 'Contractor', entityName, entitiesNameForErrorMessage);   
+    }
+
+    function DeleteContractors()
+    {
+        var selectedContractors = GetSelectedObjects();
+        if (selectedContractors.length == 0) {
+            jAlert('@(SR.T("Нет выбранных контрагентов"))', '@(SR.T("Предупреждение"))');
+            return;
+        }
+        var url = '@Url.Action("Delete", "Contractor", new { area = CRMAreaRegistration.AREA_NAME, popupId = "PopUpDeleteContractors" })';
+        if (selectedContractors.length > 0)
+        {
+            $.each(selectedContractors, function(i, d) {
+                url += '&contractorsId=' + d;
+            });
+            var window = $('#PopUpDeleteContractors').data("tWindow");
+            window.contentUrl = url;
+            window.loaded = false;
+            @(Html.OpenPopup("PopUpDeleteContractors"))
+        }
+    }
+
+    function AddCalls()
+    {
+        var selectedContractors = GetSelectedObjects();
+        if (selectedContractors.length == 0) {
+            jAlert('@(SR.T("Нет выбранных контрагентов"))', '@(SR.T("Предупреждение"))');
+            return;
+        }
+        
+        if (selectedContractors.length > 0)
+        {
+            var url = '@Url.Action("CreateMany", "RelationshipCall", new { area = CRMAreaRegistration.AREA_NAME })';
+            url += "?";
+            $.each(selectedContractors, function(i, d) {
+                url += '&contractorsId=' + d;
+            });
+            window.replaceUrl(url);
+        }
+    }
+        
+    function AddMeetings()
+    {
+        var selectedContractors = GetSelectedObjects();
+        if (selectedContractors.length == 0) {
+            jAlert('@(SR.T("Нет выбранных контрагентов"))', '@(SR.T("Предупреждение"))');
+            return;
+        }
+        
+        if (selectedContractors.length > 0)
+        {
+            var url = '@Url.Action("CreateMany", "RelationshipMeeting", new { area = CRMAreaRegistration.AREA_NAME })';
+            url += "?";
+            $.each(selectedContractors, function(i, d) {
+                url += '&contractorsId=' + d;
+            });
+            window.replaceUrl(url);
+        }
+    }
+    
+    function AddMails()
+    {
+        var selectedContractors = GetSelectedObjects();
+        if (selectedContractors.length == 0) {
+            jAlert('@(SR.T("Нет выбранных контрагентов"))', '@(SR.T("Предупреждение"))');
+            return;
+        }
+        
+        if (selectedContractors.length > 0)
+        {
+            var url = '@Url.Action("CreateMany", "RelationshipMail", new { area = CRMAreaRegistration.AREA_NAME })';
+            url += "?";
+            $.each(selectedContractors, function(i, d) {
+                url += '&contractorsId=' + d;
+            });
+            window.replaceUrl(url);
+        }
+    }
+    
+</script>
+ 
+<script type="text/javascript" src="@Url.Content("~/Modules/EleWise.ELMA.CRM.Web/Scripts/MarketingActivityAssigner.js")"></script>
+
+@Html.Partial("Grid")
+@{
+  //  classMetadata = Locator.GetServiceNotNull<IMetadataRuntimeService>().GetMetadataList().Where(m => m is ClassMetadata && (m.Uid.ToString() == availableUid)).Cast<ClassMetadata>().Single();
+  
+  var buttonInfo = new StartRouteButtonInfo
+            {
+                ObjectType = InterfaceActivator.UID<IContractor>(false),
+                
+                RelationType = RelationType.OneToMany,
+                ImageUrl = "#play.svg",
+                Caption = SR.T("Для запуска процесса введите название экземпляра процесса,<br/>выберите процесс и нажмите кнопку \"Отправить\" или Enter:"),
+                PopupId = "StartProcessByRoutePopup",
+                Name=SR.T("Запуск процесса")
+            };
+
+            var routeValues = new RouteValueDictionary {  
+                { "area", EleWise.ELMA.Workflow.Web.WorkflowRouteProvider.AreaName },
+                { "ObjectType", buttonInfo.ObjectType },
+                { "RelationType", buttonInfo.RelationType },
+                { "PopupId", buttonInfo.PopupId },                
+                { "Caption", buttonInfo.Caption },        
+                { "Name", buttonInfo.Name }
+
+};
+
+
+}
+@(Html.PopupWindow(buttonInfo.PopupId, SR.T("Запустить процесс"), Url.Action("StartRouteForm", "WorkflowInstance", routeValues)))
+<script>
+    function StartProcess() {
+        var selectedContractors = GetSelectedObjects();
+        if (selectedContractors.length == 0) {
+            jAlert('@(SR.T("Нет выбранных контрагентов"))', '@(SR.T("Предупреждение"))');
+            return;
+        }
+        
+        if (selectedContractors.length > 0) {
+            var url = '@MvcHtmlString.Create(Url.Action("StartRouteForm", "WorkflowInstance", routeValues))';
+            if (selectedContractors.length < 2)
+                url += '&RelationType=@buttonInfo.RelationType';
+            else
+                url += '&RelationType=@RelationType.ManyToMany';
+
+            var i = 0;
+            $.each(selectedContractors, function (i, d) {
+                url += '&objects[' + i + ']=' + d;
+                i++;
+            });
+
+            refreshPopup('@buttonInfo.PopupId', url);
+            //id, contentUrl, postData, title, onOpenScript, onCloseScript, useReferrer, closeOnClick, closeOnEsc
+                                        
+        }
+
+    }
+    
+
+    
+
+</script>

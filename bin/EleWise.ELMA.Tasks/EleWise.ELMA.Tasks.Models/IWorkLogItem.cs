@@ -1,0 +1,282 @@
+using System;
+using EleWise.ELMA.Common.Models;
+using EleWise.ELMA.ComponentModel;
+using EleWise.ELMA.Model.Attributes;
+using EleWise.ELMA.Model.Entities;
+using EleWise.ELMA.Model.Metadata;
+using EleWise.ELMA.Model.Types.Settings;
+using EleWise.ELMA.Model.Types.Validation;
+using EleWise.ELMA.Model.Views;
+using EleWise.ELMA.Security.Models;
+using EleWise.ELMA.Security.Types.Settings;
+using Iesi.Collections.Generic;
+
+namespace EleWise.ELMA.Tasks.Models;
+
+[MetadataType(typeof(EntityMetadata))]
+[Uid("20ccd3da-8fc7-41aa-af79-b18757be446a")]
+[DisplayName(typeof(__Resources_IWorkLogItem), "DisplayName")]
+[DisplayFormat(null)]
+[TitleProperty("c0058919-3afa-472f-9ca2-a10fff54c4f1")]
+[ShowInDesigner(false)]
+[InterfaceImplementation("EleWise.ELMA.Model.Entities.ISoftDeletable")]
+[Image(typeof(IWorkLogItem), "clock_worklog", 16, ImageFormatType.IconPack, false)]
+[CustomCode(typeof(IWorkLogItem), "EleWise.ELMA.Tasks.Models.WorkLogItem.CustomCodeTemplate.cs")]
+[TableView("<?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<TableView xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\">\r\n  <Uid>3f092be8-727e-49df-91cd-4aef415a513c</Uid>\r\n  <ViewType>List</ViewType>\r\n</TableView>")]
+[Entity("WorkLogItem")]
+[IdType("d90a59af-7e47-48c5-8c4c-dad04834e6e3")]
+[ShowInCatalogList(false)]
+[EntityMetadataType(EntityMetadataType.Interface)]
+[SaveHistory]
+[Filterable]
+[ImplementationUid("2ec4f892-0d70-4ded-b554-494f61d78a66")]
+[FilterType(typeof(IWorkLogItemFilter))]
+[ActionsType(typeof(WorkLogItemActions))]
+public interface IWorkLogItem : IEntity<long>, IEntity, IIdentified, ISoftDeletable
+{
+	[Uid("26401CA9-3D5A-4231-9E8C-2EA0DD04D121")]
+	[Order(2)]
+	[DisplayName(typeof(__Resources_IWorkLogItem1), "P_Name_DisplayName")]
+	string Name { get; }
+
+	[Uid("99334918-3FE6-465E-87C3-35363073B5AE")]
+	[Order(2)]
+	[DisplayName(typeof(__Resources_IWorkLogItem1), "P_PlanWorkTime_DisplayName")]
+	WorkTime? PlanWorkTime { get; }
+
+	[Uid("eb59714c-f1e5-4c2f-96e8-bd47bc735eb6")]
+	[NotNull]
+	[SystemProperty]
+	[Property("eb6e8ddc-fafe-4e0e-9018-1a7667012579")]
+	[GuidSettings(FieldName = "Uid")]
+	[DisplayName(typeof(__Resources_IWorkLogItem), "P_Uid_DisplayName")]
+	[View(ViewType = ViewType.All, ItemType = ItemType.Default, Visibility = Visibility.Hidden, ReadOnly = true)]
+	[EntityProperty]
+	Guid Uid { get; set; }
+
+	[Uid("98a53673-754a-4cfc-a639-f68299a5f52b")]
+	[Order(5)]
+	[NotNull]
+	[Property("dac9211e-e02b-47cd-8868-89a3bfc0f749")]
+	[DateTimeSettings(ShowTime = false, FieldName = "Date")]
+	[DisplayName(typeof(__Resources_IWorkLogItem), "P_Date_DisplayName")]
+	[View(ViewType = ViewType.Create, ItemType = ItemType.Default, Visibility = Visibility.Visible, ReadOnly = false)]
+	[View(ViewType = ViewType.Edit, ItemType = ItemType.Default, Visibility = Visibility.Visible, ReadOnly = false)]
+	[View(ViewType = ViewType.Display, ItemType = ItemType.Default, Visibility = Visibility.Visible, ReadOnly = true)]
+	[View(ViewType = ViewType.List, ItemType = ItemType.Default, Visibility = Visibility.Visible, ReadOnly = false)]
+	[Filterable]
+	[EntityProperty]
+	DateTime Date { get; set; }
+
+	[Uid("9b8978b0-8913-4fc1-ab7a-097a3f2d13cd")]
+	[Order(3)]
+	[CanBeNull]
+	[Property("cdd9f627-2a60-4e36-9c10-ecb492b1adad")]
+	[WorkTimeSettings(FieldName = "FactWorkTime")]
+	[DisplayName(typeof(__Resources_IWorkLogItem), "P_FactWorkTime_DisplayName")]
+	[View(ViewType = ViewType.Create, ItemType = ItemType.Default, Visibility = Visibility.Visible, ReadOnly = false)]
+	[View(ViewType = ViewType.Edit, ItemType = ItemType.Default, Visibility = Visibility.Visible, ReadOnly = false)]
+	[View(ViewType = ViewType.Display, ItemType = ItemType.Default, Visibility = Visibility.Visible, ReadOnly = true)]
+	[View(ViewType = ViewType.List, ItemType = ItemType.Default, Visibility = Visibility.Visible, ReadOnly = false)]
+	[EntityProperty]
+	WorkTime? FactWorkTime { get; set; }
+
+	[Uid("c5763282-4b89-4a26-9b30-f9dccd719aa5")]
+	[Order(8)]
+	[Property("9b9aac17-22bb-425c-aa93-9c02c5146965")]
+	[StringSettings(MaxValueString = "2000", MultiLine = true, FieldName = "Comment")]
+	[StringRangeLength(0, "2000")]
+	[DisplayName(typeof(__Resources_IWorkLogItem), "P_Comment_DisplayName")]
+	[View(ViewType = ViewType.Create, ItemType = ItemType.Default, Visibility = Visibility.Visible, ReadOnly = false)]
+	[View(ViewType = ViewType.Edit, ItemType = ItemType.Default, Visibility = Visibility.Visible, ReadOnly = false)]
+	[View(ViewType = ViewType.Display, ItemType = ItemType.Default, Visibility = Visibility.Visible, ReadOnly = true)]
+	[View(ViewType = ViewType.List, ItemType = ItemType.Default, Visibility = Visibility.Visible, ReadOnly = false)]
+	[FastSearch(true)]
+	[EntityProperty]
+	string Comment { get; set; }
+
+	[Uid("d671f637-3a5a-4c08-8b55-a1f3cb622027")]
+	[Order(1)]
+	[CanBeNull]
+	[Required(true)]
+	[Property("849c1ac9-4d46-4194-8cbb-43f84adf9c17", "2a9d14fe-1bcb-499f-bfd9-4a4767315adc")]
+	[EnumSettings(DefaultValueStr = "9f9089ad-fa1c-4ed5-a483-b760e385569c", FieldName = "Status")]
+	[RequiredField]
+	[DisplayName(typeof(__Resources_IWorkLogItem), "P_Status_DisplayName")]
+	[View(ViewType = ViewType.Create, ItemType = ItemType.Default, Visibility = Visibility.Visible, ReadOnly = false)]
+	[View(ViewType = ViewType.Edit, ItemType = ItemType.Default, Visibility = Visibility.Visible, ReadOnly = false)]
+	[View(ViewType = ViewType.Display, ItemType = ItemType.Default, Visibility = Visibility.Visible, ReadOnly = true)]
+	[View(ViewType = ViewType.List, ItemType = ItemType.Default, Visibility = Visibility.Visible, ReadOnly = false)]
+	[Filterable]
+	[EntityProperty]
+	WorkLogItemStatus? Status { get; set; }
+
+	[Uid("50417934-90c5-46b9-91be-d2935eceeabc")]
+	[Order(2)]
+	[Property("72ed98ca-f260-4671-9bcd-ff1d80235f47", "ceb2cfdd-65a1-41f1-bfd5-e2a610334bec")]
+	[EntitySettings(CascadeMode = CascadeMode.SaveUpdate, FieldName = "WorkLogActivity")]
+	[DisplayName(typeof(__Resources_IWorkLogItem), "P_WorkLogActivity_DisplayName")]
+	[View(ViewType = ViewType.Create, ItemType = ItemType.Default, Visibility = Visibility.Visible, ReadOnly = false)]
+	[View(ViewType = ViewType.Edit, ItemType = ItemType.Default, Visibility = Visibility.Visible, ReadOnly = false)]
+	[View(ViewType = ViewType.Display, ItemType = ItemType.Default, Visibility = Visibility.Visible, ReadOnly = true)]
+	[View(ViewType = ViewType.List, ItemType = ItemType.Default, Visibility = Visibility.Visible, ReadOnly = false)]
+	[Filterable]
+	[EntityProperty]
+	IWorkLogActivity WorkLogActivity { get; set; }
+
+	[Uid("c8f75f88-b2f0-4989-b518-29419e4479cd")]
+	[Order(12)]
+	[NotNull]
+	[Property("dac9211e-e02b-47cd-8868-89a3bfc0f749")]
+	[DateTimeSettings(SetCurrentDate = true, FieldName = "CreationDate")]
+	[DisplayName(typeof(__Resources_IWorkLogItem), "P_CreationDate_DisplayName")]
+	[PropertyHandler("d0c00d8a-e003-427d-9942-f52cfb77b0f0")]
+	[View(ViewType = ViewType.Create, ItemType = ItemType.Default, Visibility = Visibility.Hidden, ReadOnly = false)]
+	[View(ViewType = ViewType.Edit, ItemType = ItemType.Default, Visibility = Visibility.Hidden, ReadOnly = true)]
+	[View(ViewType = ViewType.Display, ItemType = ItemType.Default, Visibility = Visibility.Hidden, ReadOnly = true)]
+	[View(ViewType = ViewType.List, ItemType = ItemType.Default, Visibility = Visibility.Hidden, ReadOnly = false)]
+	[Filterable]
+	[EntityProperty]
+	DateTime CreationDate { get; set; }
+
+	[Uid("071aa2ca-f834-4c6d-b3a8-834384151094")]
+	[Order(16)]
+	[NotNull]
+	[Required(true)]
+	[Property("eb6e8ddc-fafe-4e0e-9018-1a7667012579")]
+	[GuidSettings(FieldName = "ObjectUID")]
+	[RequiredField]
+	[DisplayName(typeof(__Resources_IWorkLogItem), "P_ObjectUID_DisplayName")]
+	[View(ViewType = ViewType.Create, ItemType = ItemType.Default, Visibility = Visibility.Hidden, ReadOnly = false)]
+	[View(ViewType = ViewType.Edit, ItemType = ItemType.Default, Visibility = Visibility.Hidden, ReadOnly = false)]
+	[View(ViewType = ViewType.Display, ItemType = ItemType.Default, Visibility = Visibility.Hidden, ReadOnly = true)]
+	[View(ViewType = ViewType.List, ItemType = ItemType.Default, Visibility = Visibility.ForceHidden, ReadOnly = false)]
+	[Filterable]
+	[EntityProperty]
+	Guid ObjectUID { get; set; }
+
+	[Uid("1e1c49b7-1e72-4a12-bac0-17adbac6ffc7")]
+	[Order(15)]
+	[NotNull]
+	[Required(true)]
+	[Property("d90a59af-7e47-48c5-8c4c-dad04834e6e3")]
+	[Int64Settings(FieldName = "ObjectId")]
+	[RequiredField]
+	[DisplayName(typeof(__Resources_IWorkLogItem), "P_ObjectId_DisplayName")]
+	[View(ViewType = ViewType.Create, ItemType = ItemType.Default, Visibility = Visibility.Hidden, ReadOnly = false)]
+	[View(ViewType = ViewType.Edit, ItemType = ItemType.Default, Visibility = Visibility.Hidden, ReadOnly = false)]
+	[View(ViewType = ViewType.Display, ItemType = ItemType.Default, Visibility = Visibility.Hidden, ReadOnly = true)]
+	[View(ViewType = ViewType.List, ItemType = ItemType.Default, Visibility = Visibility.ForceHidden, ReadOnly = false)]
+	[View(ViewType = ViewType.Filter, ItemType = ItemType.Default, Visibility = Visibility.Visible, ReadOnly = false)]
+	[Filterable]
+	[EntityProperty]
+	long ObjectId { get; set; }
+
+	[Uid("898896d2-b8a1-4732-8236-f15caf719823")]
+	[Order(7)]
+	[Property("72ed98ca-f260-4671-9bcd-ff1d80235f47", "cfdeb03c-35e9-45e7-aad8-037d83888f73")]
+	[EntityUserSettings(CascadeMode = CascadeMode.SaveUpdate, FieldName = "Harmonizator")]
+	[DisplayName(typeof(__Resources_IWorkLogItem), "P_Harmonizator_DisplayName")]
+	[View(ViewType = ViewType.Create, ItemType = ItemType.Default, Visibility = Visibility.Visible, ReadOnly = false)]
+	[View(ViewType = ViewType.Edit, ItemType = ItemType.Default, Visibility = Visibility.Visible, ReadOnly = false)]
+	[View(ViewType = ViewType.Display, ItemType = ItemType.Default, Visibility = Visibility.Visible, ReadOnly = true)]
+	[View(ViewType = ViewType.List, ItemType = ItemType.Default, Visibility = Visibility.Visible, ReadOnly = false)]
+	[Filterable]
+	[EntityProperty]
+	IUser Harmonizator { get; set; }
+
+	[Uid("9a6d76f6-12d6-4c95-a5e0-31df13056be3")]
+	[Order(4)]
+	[CanBeNull]
+	[Property("cdd9f627-2a60-4e36-9c10-ecb492b1adad")]
+	[WorkTimeSettings(FieldName = "ApprovalWorkTime")]
+	[DisplayName(typeof(__Resources_IWorkLogItem), "P_ApprovalWorkTime_DisplayName")]
+	[View(ViewType = ViewType.Create, ItemType = ItemType.Default, Visibility = Visibility.Visible, ReadOnly = false)]
+	[View(ViewType = ViewType.Edit, ItemType = ItemType.Default, Visibility = Visibility.Visible, ReadOnly = false)]
+	[View(ViewType = ViewType.Display, ItemType = ItemType.Default, Visibility = Visibility.Visible, ReadOnly = true)]
+	[View(ViewType = ViewType.List, ItemType = ItemType.Default, Visibility = Visibility.Visible, ReadOnly = false)]
+	[EntityProperty]
+	WorkTime? ApprovalWorkTime { get; set; }
+
+	[Uid("0a9e47ef-dc4f-4915-aada-84c39619dbef")]
+	[Order(6)]
+	[Property("72ed98ca-f260-4671-9bcd-ff1d80235f47", "cfdeb03c-35e9-45e7-aad8-037d83888f73")]
+	[EntityUserSettings(FieldName = "CreationAuthor")]
+	[DisplayName(typeof(__Resources_IWorkLogItem), "P_CreationAuthor_DisplayName")]
+	[PropertyHandler("b05ac6bd-eb8b-474a-a796-b53831a9967e")]
+	[View(ViewType = ViewType.Create, ItemType = ItemType.Default, Visibility = Visibility.Hidden, ReadOnly = false)]
+	[View(ViewType = ViewType.Edit, ItemType = ItemType.Default, Visibility = Visibility.Visible, ReadOnly = true)]
+	[View(ViewType = ViewType.Display, ItemType = ItemType.Default, Visibility = Visibility.Visible, ReadOnly = true)]
+	[View(ViewType = ViewType.List, ItemType = ItemType.Default, Visibility = Visibility.Visible, ReadOnly = false)]
+	[EntityProperty]
+	IUser CreationAuthor { get; set; }
+
+	[Uid("1dc405e7-e503-4d05-98bf-339e81234a54")]
+	[Order(9)]
+	[Property("72ed98ca-f260-4671-9bcd-ff1d80235f47", "e70b68f9-15b1-4b31-8db4-9990152bb51d")]
+	[EntitySettings(RelationType = RelationType.ManyToMany, RelationTableName = "WorkLogItem_Comment", ParentColumnName = "WorkLogItem", ChildColumnName = "Comment", CascadeMode = CascadeMode.SaveUpdate, CopyAction = CopyAction.Ignore)]
+	[DisplayName(typeof(__Resources_IWorkLogItem), "P_Comments_DisplayName")]
+	[PropertyHandler("f05f5cd0-2f19-4a89-8920-f6a24c8ac94e")]
+	[View(ViewType = ViewType.Create, ItemType = ItemType.Default, Visibility = Visibility.Hidden, ReadOnly = false)]
+	[View(ViewType = ViewType.Edit, ItemType = ItemType.Default, Visibility = Visibility.Hidden, ReadOnly = false)]
+	[View(ViewType = ViewType.Display, ItemType = ItemType.Default, Visibility = Visibility.Hidden, ReadOnly = true)]
+	[View(ViewType = ViewType.List, ItemType = ItemType.Default, Visibility = Visibility.ForceHidden, ReadOnly = false)]
+	[View(ViewType = ViewType.Filter, ItemType = ItemType.Default, Visibility = Visibility.Visible, ReadOnly = false)]
+	[EntityProperty]
+	ISet<IComment> Comments { get; set; }
+
+	[Uid("0080955b-c134-4346-b385-e7d8cff72023")]
+	[Order(10)]
+	[NotNull]
+	[Property("9cd56a40-6192-4d8a-840c-c4bd4dfb88eb")]
+	[BoolSettings(FieldName = "IsDeleted")]
+	[DisplayName(typeof(__Resources_IWorkLogItem), "P_IsDeleted_DisplayName")]
+	[View(ViewType = ViewType.Create, ItemType = ItemType.Default, Visibility = Visibility.Hidden, ReadOnly = false)]
+	[View(ViewType = ViewType.Edit, ItemType = ItemType.Default, Visibility = Visibility.Hidden, ReadOnly = false)]
+	[View(ViewType = ViewType.Display, ItemType = ItemType.Default, Visibility = Visibility.Hidden, ReadOnly = true)]
+	[View(ViewType = ViewType.List, ItemType = ItemType.Default, Visibility = Visibility.ForceHidden, ReadOnly = false)]
+	[EntityProperty]
+	new bool IsDeleted { get; set; }
+
+	[Uid("174ee875-a76e-458f-a128-1a458d08b5b2")]
+	[Order(11)]
+	[NotNull]
+	[Property("9cd56a40-6192-4d8a-840c-c4bd4dfb88eb")]
+	[BoolSettings(FieldName = "HardDelete")]
+	[DisplayName(typeof(__Resources_IWorkLogItem), "P_HardDelete_DisplayName")]
+	[View(ViewType = ViewType.Create, ItemType = ItemType.Default, Visibility = Visibility.Hidden, ReadOnly = false)]
+	[View(ViewType = ViewType.Edit, ItemType = ItemType.Default, Visibility = Visibility.Hidden, ReadOnly = false)]
+	[View(ViewType = ViewType.Display, ItemType = ItemType.Default, Visibility = Visibility.Hidden, ReadOnly = true)]
+	[View(ViewType = ViewType.List, ItemType = ItemType.Default, Visibility = Visibility.ForceHidden, ReadOnly = false)]
+	[EntityProperty]
+	new bool HardDelete { get; set; }
+
+	[Uid("ef25e5be-d9bf-4bba-801d-4f2e91f7c0d8")]
+	[Order(13)]
+	[CanBeNull]
+	[Property("dac9211e-e02b-47cd-8868-89a3bfc0f749")]
+	[DateTimeSettings(FieldName = "ChangeDate")]
+	[DisplayName(typeof(__Resources_IWorkLogItem), "P_ChangeDate_DisplayName")]
+	[PropertyHandler("12a6c5c4-12f8-4b2e-b7ea-5438974a2d25")]
+	[View(ViewType = ViewType.Create, ItemType = ItemType.Default, Visibility = Visibility.Hidden, ReadOnly = false)]
+	[View(ViewType = ViewType.Edit, ItemType = ItemType.Default, Visibility = Visibility.Visible, ReadOnly = true)]
+	[View(ViewType = ViewType.Display, ItemType = ItemType.Default, Visibility = Visibility.Visible, ReadOnly = true)]
+	[View(ViewType = ViewType.List, ItemType = ItemType.Default, Visibility = Visibility.Hidden, ReadOnly = false)]
+	[Filterable]
+	[EntityProperty]
+	DateTime? ChangeDate { get; set; }
+
+	[Uid("8da43050-cfc2-4f03-9d2c-72cfa7291ee7")]
+	[Order(14)]
+	[Property("72ed98ca-f260-4671-9bcd-ff1d80235f47", "cfdeb03c-35e9-45e7-aad8-037d83888f73")]
+	[EntityUserSettings(FieldName = "ChangeAuthor")]
+	[DisplayName(typeof(__Resources_IWorkLogItem), "P_ChangeAuthor_DisplayName")]
+	[PropertyHandler("d152e660-1ee9-4b5f-a614-df280e5b3f98")]
+	[View(ViewType = ViewType.Create, ItemType = ItemType.Default, Visibility = Visibility.Hidden, ReadOnly = false)]
+	[View(ViewType = ViewType.Edit, ItemType = ItemType.Default, Visibility = Visibility.Visible, ReadOnly = true)]
+	[View(ViewType = ViewType.Display, ItemType = ItemType.Default, Visibility = Visibility.Visible, ReadOnly = true)]
+	[View(ViewType = ViewType.List, ItemType = ItemType.Default, Visibility = Visibility.Hidden, ReadOnly = false)]
+	[Filterable]
+	[EntityProperty]
+	IUser ChangeAuthor { get; set; }
+}

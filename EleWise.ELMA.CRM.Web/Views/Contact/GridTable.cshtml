@@ -1,0 +1,91 @@
+﻿@inherits DynamicViewControl<ContactGrid>
+@using EleWise.ELMA.CRM.Web.Models
+@using EleWise.ELMA.CRM.Web
+@using EleWise.ELMA.Services
+@using EleWise.ELMA.Security
+@using EleWise.ELMA.Security.Services
+@using EleWise.ELMA.CRM
+@using EleWise.ELMA.Web.Mvc.Html
+@using EleWise.ELMA
+@{
+    var service = Locator.GetServiceNotNull<ISecurityService>();
+    var e = Model.Data.DataSource.GetEnumerator();
+    var hasData = e.MoveNext();
+}
+
+
+<div class="crm-contact-tab table-form-columns-wrapper table-form-column-count-2 crm-contact-tab-info">
+    <div class="table-form-column crm-contact-tab-table">
+        @(DynamicGrid(Model.GridId, Model.Data).Columns(c =>
+        {        
+            c.For(m => m.Name).Template(t => string.Format("<a onclick='javascript:ShowContact({0}, this)'>{1}</a>", t.Id, t.Name))
+                .Header(SR.T("ФИО"));
+        
+            c.For(m => m.Department);
+            c.For(m => m.Position);
+
+            c.For(m => m)
+                .Template(m => 
+                    service.HasPermission(CRMPermissionProvider.EditContactPermission, m) || 
+                    service.HasPermission(CRMPermissionProvider.CRMContactFullAccessPermission, m) || 
+                    service.HasPermission(CRMPermissionProvider.CRMFullAccessPermission)? 
+                    Html.ImageButton(UIIcons.Edit).Url(Url.Action("Edit", "Contact", new { id = m.Id })).ToHtmlString()
+                    :"")
+            .Header(String.Empty)
+            .NotSortable()
+            .Width(75);
+        }).Customizable(false))
+    </div>
+    <div class="table-form-column crm-contact-tab-details" style="@(hasData ? "" : " display: none;")" id="contactDetails">
+        @if (hasData)
+        {
+            @Html.Partial("DetailsForm", e.Current)
+        }
+    </div>
+</div>
+
+@Html.PopupWindow("PopUpDeleteContact", SR.T("Удалить контакт"), @<text></text>)
+
+@(Html.AdaptivePopupWindow("ContactInfoPopup", SR.T("O контакте"),@<text>
+        @if (hasData)
+        {
+            <div id="contactDetailsPopup">
+                @Html.Partial("DetailsForm", e.Current)
+            </div>
+        }
+        <div class="popup-buttons">
+            @Html.Button().Text(SR.T("Закрыть")).Click("closeWindow(this)")
+        </div>
+    </text>, UIWindowSize.M))
+<script type="text/javascript">
+    jQuery(document).ready(function () {
+        if (elma.isMobile()) {
+            $("#contactDetails").hide();
+            return;
+        }
+        $('a[onclick*=ShowContact]:first').parent().parent().addClass('selectRowList');
+    });
+
+    function ShowContact(id, link)
+    {
+        var popup = "";
+        if (elma.isMobile()) {
+            popup = "Popup";
+        }
+
+        $.ajax({
+            url: '@Url.Action("DetailsForm", "Contact", new { area = CRMAreaRegistration.AREA_NAME })/'+id,
+            dataType: 'html',
+            type: 'GET',
+            success: function (data) {
+                $('#contactDetails' + popup).html(data);
+            }
+        });
+        $('tr.selectRowList').removeClass('selectRowList');
+        $(link).parent().parent().addClass('selectRowList');
+
+        if (elma.isMobile()) {
+            refreshPopup('ContactInfoPopup');
+        }
+    }
+</script>

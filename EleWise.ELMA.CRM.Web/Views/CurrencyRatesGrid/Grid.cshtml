@@ -1,0 +1,237 @@
+﻿@using EleWise.ELMA
+@using EleWise.ELMA.CRM.Web
+@model IEnumerable<EleWise.ELMA.CRM.Models.CurrencyImportGridRowModel>
+@{
+    var curenciesId = TagBuilder.CreateSanitizedId("Currencies");
+}
+<div class="t-widget t-grid">
+    <table class="width-default-settings t-grid-table exchangeRateImportGridTable" id="ExchangeRateImportGrid">
+        <thead class="t-grid-header">
+        <tr>
+            <th class="t-header t-first-header" style="width: 200px;"><span class="t-header-content">@SR.T("Пара для импорта")</span></th>
+            <th class="t-header"><span class="t-header-content">@SR.T("Провайдер")</span></th>
+            <th class="t-header" style="width: 60px;"><span class="t-header-content"></span></th>
+        </tr>
+        </thead>
+        <tbody>
+        @{
+            foreach (var item in Model)
+            {
+                @Html.Partial("CurrencyRatesGrid/DisplayGridRow", item)
+            }
+        }
+        </tbody>
+    </table>
+    <div class="t-toolbar t-grid-toolbar t-grid-top">
+        <a class="t-button t-grid-add green" onclick="addRow()"><span class="t-button-text">@SR.Add</span></a>
+    </div>
+</div> 
+@Html.Hidden("Items", "[]")
+@Html.Hidden("RemovedItems", "[]")
+<script type="text/javascript">
+
+    $(document).ready(function () {
+
+        @foreach (var item in Model)
+        {
+        @:addToHidden('@(item.EstimatedCode),@(item.ValuationCode)', @(item.Id), '@(item.Provider)', 0, '@(item.Uid)')
+        }
+
+        $('form').submit(function() {
+            if (!$('form').valid()) {
+                return;
+            }
+            var editedRow = $('.linkForSaveRow');
+            if (editedRow.length > 0) {
+                var rowNum = getRowNumForReplace(editedRow);
+                var provider = $('#Provider').val();
+                var currency = $('#Currencies').val();
+                replaceHiddenCurrencies(currency, 0, provider, rowNum);
+            }
+        });
+    });
+
+    function replaceHiddenCurrencies(value, id, provider, index) {
+        var items = JSON.parse($('#Items').val());
+        var item = items[index];
+        if (value != null && value !== "") {
+            item.EstimatedCode = value.split(',')[0];
+            item.ValuationCode = value.split(',')[1];
+        }
+        if (provider != null && provider !== "") {
+            item.Provider = provider;
+        }
+        if (id != null && id !== "") {
+            item.Id = id;
+        }
+        items[index] = item;
+        $('#Items').val(JSON.stringify(items));
+    }
+
+    function addToHidden(pair, id, provider, index, uid) {
+        var estimated = "";
+        var valuation = "";
+        if (typeof pair !== "undefined" && pair !== "") {
+            estimated = pair.split(',')[0];
+            valuation = pair.split(',')[1];
+        }
+        var parsed = [];
+        parsed = JSON.parse($('#Items').val());
+
+        var item = {
+            Id: id,
+            Provider: provider,
+            EstimatedCode: estimated,
+            ValuationCode: valuation,
+            Uid : uid != undefined ? uid : ""
+        }
+        if (index === 0) {
+            parsed.push(item);
+        } else {
+            parsed.splice(index, 1, item);
+        }
+
+        $('#Items').val(JSON.stringify(parsed));
+    }
+
+    function removeFromHiddenCurrencies(index) {
+        var items = $("#Items").val();
+        var parsed = [];
+        if (items != undefined && items !== "") {
+            parsed = JSON.parse(items);
+        }
+        if (parsed[index].Id != null && parsed[index].Id !== 0) {
+            var hiddens = JSON.parse($("#RemovedItems").val());
+            hiddens.push(parsed[index].Id);
+            $("#RemovedItems").val(JSON.stringify(hiddens));
+        }
+        if (parsed.length > index) {
+            parsed.splice(index, 1);
+            $('#Items').val(JSON.stringify(parsed));
+        }
+    }
+
+    function removeRow(a) {
+        var index = getRowNumForReplace(a);
+        var elem = $(a).parent('td').parent('tr').first();
+        elem.remove();
+        removeFromHiddenCurrencies(index);
+    }
+
+    function editRow(a) {
+        var currenciesInputIsAvalailable = $('#Currencies').length > 0;
+        if (currenciesInputIsAvalailable && !$('#Currencies').valid()) {
+            return;
+        }
+        var editedRow = $('.linkForSaveRow');
+        if (editedRow.length > 0) {
+            saveRow(editedRow);
+        }
+        var rowNum = getRowNumForReplace(a);
+        var elem = $(a).parent('td').parent('tr');
+        var items = $('#Items').val();
+        if (items == undefined || items === "") {
+            items = [];
+        } else {
+            items = JSON.parse(items);
+        }
+        var item = items[rowNum];
+        $.ajax({
+            url: '@(Url.Action("LoadRow", "CurrencyRatesGrid", new { area = RouteProvider.AreaName, edit = true }))',
+            type: "POST",
+            data: "Id=" + item.Id + "&EstimatedCode=" +
+                item.EstimatedCode + "&ValuationCode=" + item.ValuationCode +
+                "&Provider=" + item.Provider,
+            success: function (data) {
+                $(elem).replaceWith(data);
+                $('#@(curenciesId)').bind('dataBinding', function () {
+                    $('#@(curenciesId)').data('tComboBox').ajax.selectUrl = getSelectUrl();
+                });
+            }
+        });
+    }
+
+    function saveRow(a, addRowAfterSave) {
+        var currenciesInputIsAvalailable = $('#Currencies').length > 0;
+        if (currenciesInputIsAvalailable && !$('#Currencies').valid()) {
+            return;
+        }
+        elma.openPleaseWait(true);
+        var row = $(a).parent('td').parent('tr');
+        var rowNum = getRowNumForReplace(a);
+        var provider = $('#Provider').val();
+        var value = $('#Currencies').val();
+        replaceHiddenCurrencies(value, 0, provider, rowNum);
+        var items = JSON.parse($("#Items").val());
+        var item = items[rowNum];
+        $.ajax({
+            url: '@(Url.Action("LoadRow", "CurrencyRatesGrid", new { area = RouteProvider.AreaName }))',
+            type: "POST",
+            data: "Id=" + item.Id + "&EstimatedCode=" +
+                item.EstimatedCode + "&ValuationCode=" + item.ValuationCode +
+                "&Provider=" + item.Provider,
+            success: function (data) {
+                $(row).replaceWith(data);
+                if (addRowAfterSave) {
+                    addRowResponse();
+                }
+                elma.closePleaseWait(true);
+            }
+        });
+    }
+
+    function changeCurrencies(a, id, provider) {
+        var providerContainer = $(a.target).closest('tr.gridRow').children('.providerCell');
+        $.ajax({
+            url: '@(Url.Action("ProviderCell", "CurrencyRatesGrid", new { area = RouteProvider.AreaName }))',
+            type: "POST",
+            data: "providerGuid=" + provider + "&value=" + a.value,
+            success: function (data) {
+                $(providerContainer).html(data);
+            }
+        });
+    }
+
+    function getRowNumForReplace(elem) {
+        var row = $(elem).closest('tr.gridRow');
+        var rows = row.parent('tbody').children('tr');
+        return rows.index(row);
+    }
+
+    function getSelectUrl() {
+        var items = $('#Items').val();
+        var parsed = JSON.parse(items);
+        var selectedPairs = [];
+        for (var i = 0; i < parsed.length; i++) {
+            if (parsed[i].EstimatedCode !== "" && parsed[i].ValuationCode !== "") {
+                selectedPairs.push(parsed[i].EstimatedCode + "," + parsed[i].ValuationCode);
+            }
+        }
+        return '@(Url.Action("GetCurrencies", "CurrencyRatesGrid", new { area = RouteProvider.AreaName }))' + "?selectedPairs=" + JSON.stringify(selectedPairs);
+    }
+
+    function addRow() {
+        var editedRow = $('.linkForSaveRow');
+        if (editedRow.length > 0) {
+            saveRow(editedRow, true);
+        } else {
+            addRowResponse();
+        }
+    }
+
+    function addRowResponse()
+    {
+        $.ajax({
+            url: '@(Url.Action("LoadRow", "CurrencyRatesGrid", new { area = RouteProvider.AreaName, edit = true }))',
+            type: "POST",
+            success: function (data) {
+                $('#ExchangeRateImportGrid > tbody').append(data);
+                addToHidden(undefined, 0, null, 0);
+                elma.closePleaseWait(true);
+                $('#@(curenciesId)').bind('dataBinding', function () {
+                    $('#@(curenciesId)').data('tComboBox').ajax.selectUrl = getSelectUrl();
+                });
+            }
+        });
+    }
+</script>

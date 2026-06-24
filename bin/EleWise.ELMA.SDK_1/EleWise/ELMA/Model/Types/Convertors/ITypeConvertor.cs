@@ -1,0 +1,31 @@
+﻿// Decompiled with JetBrains decompiler
+// Type: EleWise.ELMA.Model.Types.Convertors.ITypeConvertor
+// Assembly: EleWise.ELMA.SDK, Version=1.0.0.0, Culture=neutral, PublicKeyToken=cb29d04eca9b031d
+// MVID: CEBF4313-ABB2-45F5-B9CA-100E053C346A
+// Assembly location: D:\ELMA-CE\Web\bin\EleWise.ELMA.SDK.dll
+// XML documentation location: D:\ELMA-CE\Web\bin\EleWise.ELMA.SDK.xml
+
+using EleWise.ELMA.ComponentModel;
+using System;
+using System.Collections.Generic;
+
+namespace EleWise.ELMA.Model.Types.Convertors
+{
+  /// <summary>Точка расширения для преобразователя типов</summary>
+  [ExtensionPoint(ComponentType.All)]
+  public interface ITypeConvertor
+  {
+    /// <summary>Uid исходного типа</summary>
+    List<Guid> SourceTypeUids { get; }
+
+    /// <summary>Uid конечного типа</summary>
+    List<Guid> TargetTypeUids { get; }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="obj"></param>
+    /// <returns></returns>
+    object DoConvert(object obj);
+  }
+}

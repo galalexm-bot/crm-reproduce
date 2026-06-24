@@ -1,0 +1,10 @@
+﻿@inherits ViewItemControl<RelationshipLinkedEntityViewItem, EleWise.ELMA.CRM.Web.Models.RelationshipModel, EleWise.ELMA.CRM.Models.IRelationship>
+@using EleWise.ELMA.CRM.ViewItems
+@using EleWise.ELMA.Web.Mvc.Views.ViewItem
+
+@if (ViewItem != null)
+{
+    Html.RemovePrefix("Entity");
+    @Html.Partial("Relationship/LinkedEntity", OriginalModel)
+    Html.AddPrefix("Entity");
+}

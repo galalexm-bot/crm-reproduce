@@ -1,0 +1,92 @@
+﻿@model LeadConvertModel
+@using EleWise.ELMA.CRM.Web.Models
+@using EleWise.ELMA
+@using EleWise.ELMA.CRM.Web
+@using EleWise.ELMA.CRM.Models
+@using EleWise.ELMA.Model.Services;
+
+@{
+    Html.Title(SR.T("Конвертация возможности"));
+}
+
+@if (Model.RuntimeVersion2 == true)
+{
+    @Html.Action("ConvertV2", "Lead", new { area = CRMAreaRegistration.AREA_NAME, id = Model.Entity.Id })
+}
+else
+{
+    var postMethod = Html.WizardPost("LeadConvert");
+    var meetingUid = InterfaceActivator.UID<IRelationshipMeeting>();
+
+    @Html.Toolbar()
+        @(Html.Toolbar().Group("toolbar-group-1")
+                .ToolbarButton(new ActionToolbarItem("WizardButtonPrev")
+                {
+                    Text = SR.T("Предыдущий шаг"),
+                    IconUrl = "#back.svg",
+                    ToolTip = SR.T("Вернуться к предыдущему шагу"),
+                    Click = Html.WizardButtonBack("LeadConvert").ToString()
+                })
+                .ToolbarButton(new ActionToolbarItem("WizardButtonNext")
+                {
+                    Text = SR.T("Следующий шаг"),
+                    IconUrl = "#forward.svg",
+                    ToolTip = SR.T("Перейти к следующему шагу"),
+                    Click = Html.WizardButtonNext("LeadConvert").ToString()
+                })
+                .ToolbarButton(new ActionToolbarItem("WizardButtonSave")
+                {
+                    Text = SR.Save,
+                    IconUrl = "#save.svg",
+                    Click = "onClick()"
+                }))
+
+        @Html.Partial("Convert/Wizard")
+
+        @Html.Partial("Relationship/RelationshipSubmitScript")
+
+        <script type="text/javascript">
+            $('#LeadConvert').bind("step_shown", function(event, data) {
+                var next = elma.toolbar.button('WizardButtonNext');
+                var prev = elma.toolbar.button('WizardButtonPrev');
+                var save = elma.toolbar.button('WizardButtonSave');
+                if (data.isFirstStep) {
+                    prev.hide();
+                    next.show();
+                    save.hide();
+                } else if (data.isLastStep || (!$("#LeadConvert_button_step_4").is(':visible') && data.currentStep == 'step_3')) {
+                    prev.show();
+                    next.hide();
+                    save.show();
+                } else {
+                    prev.show();
+                    next.show();
+                    save.hide();
+                }
+            });
+            $(document).ready(function () {
+                var prev = elma.toolbar.button('WizardButtonPrev');
+                var save = elma.toolbar.button('WizardButtonSave');
+                prev.hide();
+                save.hide();
+            });
+
+            function onClick()
+            {
+                if ('@meetingUid' === $('#ConvertUid').val())
+                {
+                    checkEventTimePeriodMeeting('RelationshipForm', 'Relationship', 'postMethod');
+                }
+                else
+                {
+                    @postMethod;
+                }
+            }
+
+            function postMethod()
+            {
+                @postMethod;
+            }
+        </script>
+}
+

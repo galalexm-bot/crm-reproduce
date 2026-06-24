@@ -1,0 +1,10 @@
+﻿@model IContact
+@using EleWise.ELMA.CRM.Models
+@using EleWise.ELMA.Model.Entities
+@using EleWise.ELMA.Model.Metadata
+
+@{
+    var metadata = EntityHelper.Metadata<EntityMetadata>(Model);
+    var formViewItem = metadata.DefaultForms.GetForm(new Guid("864f1ae7-b7e4-407b-8341-393391a42649"));
+}
+@Html.FormViewItem(formViewItem, Model)

@@ -1,0 +1,13 @@
+using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
+
+namespace CERTCLIENTLib;
+
+[ComImport]
+[CoClass(typeof(object))]
+[TypeIdentifier]
+[CompilerGenerated]
+[Guid("AFC8F92B-33A2-4861-BF36-2933B7CD67B3")]
+public interface CCertRequest : ICertRequest3
+{
+}

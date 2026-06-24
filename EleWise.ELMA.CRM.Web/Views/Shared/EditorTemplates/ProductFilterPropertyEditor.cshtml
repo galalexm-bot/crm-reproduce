@@ -1,0 +1,132 @@
+﻿@inherits EleWise.ELMA.Web.Mvc.Views.Inputs.InputControl<object, EleWise.ELMA.Model.Types.Settings.EntitySettings>
+@using EleWise.ELMA.Model.Entities
+@using EleWise.ELMA.Model.Metadata
+@using EleWise.ELMA.Model.Types.Settings
+@using EleWise.ELMA.Web.Mvc.Models.Boxes
+@using EleWise.ELMA.BPM.Web.Common.Controllers
+@using EleWise.ELMA.BPM.Web.Common.Extensions
+
+@{
+    var entityType = !ViewData.ModelMetadata.ModelType.IsGenericType ? ViewData.ModelMetadata.ModelType : ViewData.ModelMetadata.ModelType.GetGenericArguments().FirstOrDefault();
+    var metadata = entityType != null ? (ClassMetadata)EleWise.ELMA.Model.Metadata.MetadataLoader.LoadMetadata(entityType) : (ClassMetadata)null;
+    var multiSelect = Settings.RelationType != RelationType.OneToOne;
+    var selectedItems = new AutocompleteItem[0];
+    if (Model != null)
+    {
+        selectedItems = Model.GetType().IsGenericType
+                                ? ((IEnumerable<IEntity>)Model).Select(k => new AutocompleteItem { Value = k.GetId().ToString(), Text = k.ToString() }).ToArray()
+                                : new List<AutocompleteItem> { new AutocompleteItem { Value = ((IEntity)Model).GetId().ToString(), Text = Model.ToString() } }.ToArray();
+    }
+
+    HtmlAttributes.style.Default(s => s.width, "250px");
+    //HtmlAttributes.style["float"] = "left";
+    var typeUid = metadata != null ? metadata.Uid : Guid.Empty;
+    var inputName = ViewData.TemplateInfo.GetFullHtmlFieldName("Id");
+    var inputId = TagBuilder.CreateSanitizedId(inputName);
+    var popupId = "EntityPopup" + inputId;
+    var popupWidth = ViewAttributes.PopupWidth;
+    var routeValues = EntityController.CreateEntitySelectRouteValues(Settings, ViewAttributes);
+    routeValues.area = "EleWise.ELMA.CRM.Web";
+    var functionsId = inputId.Replace("_", "x");
+
+    var showOnlyGroups = Settings.ShowOnlyGroups;
+    var onChange = HtmlAttributes.onchange;
+    HtmlAttributes.Set(a => a.onchange = null);
+}
+@Html.AutocompleteEntityComboBox(new AutocompleteEntityComboBox
+                {
+                    AutocompleteActionUrl = Url.Action("GetProducts", "Product", new { area = "EleWise.ELMA.CRM.Web", uid = typeUid, showOnlyGroups = showOnlyGroups }),
+                    ActionName = "GetProducts",
+                    ControllerName = "Product",
+                    MultiSelect = multiSelect,
+                    Name = inputName,
+                    SelectorPostfix = "Id",
+                    Metadata = metadata,
+                    RouteValueDictionary = new RouteValueDictionary(routeValues),
+                    SelectedEntities = selectedItems,
+                    HtmlAttributes = HtmlAttributes,
+                    AutoFill = true,
+                    SelectImageUrl = Url.Image("#search.svg"),
+                    SelectImageOnClick = Html.OpenPopup(popupId, onCloseScript: string.Format("SetValue{0}()", inputId)).ToString(),
+                    CreateImageUrl = Url.Image("#add.svg"),
+                    OnChange = onChange,
+                    HideCreator = Settings.HideCreator,
+                })
+<script type="text/javascript">
+    function SetValue@(inputId)() {
+        var val = $('#@(inputId)_value').val();
+        var combobox = $('#@(inputId)').data("tComboBox");
+        combobox.reloadSelect(val);
+    }
+
+    function chooseFromExplorer_PF@(functionsId)(uid) {
+        $('#@(inputId)_value').val(uid);
+        $('#@(inputId)').val(uid);
+        @Html.ClosePopup(popupId);
+    }
+
+    function changeDirectory_PF@(functionsId)(url, rowId, parentPageId, up) {
+        var grid = $('#@EntityBaseController.GenerateGridId(typeUid, inputId)').data("tGrid");
+        var parentPage = "";
+        if (grid != undefined && (rowId == '' || up)) {
+            parentPage = parentPageId;
+            grid.currentPage = parentPageId;
+        } else {
+            parentPage = grid.currentPage;
+            grid.currentPage = 1;
+        }
+        refreshGrid('@EntityBaseController.GenerateGridId(typeUid, inputId)', function () { }, { justReload: true, parentId: rowId, searchQuery: "", parentPage: parentPage });
+        return;
+    }
+
+    function fieldClickEventHandler@(functionsId)(event, element, isgroup) {
+        var e = event || window.event;
+        var target = e.target || e.srcElement;
+        if ($(target).attr('href')) return;
+        var id = $(element).attr('id').split('_')[1];
+        var targetGroup = $(target).attr('isGroup');
+        var isFolderIcon = targetGroup || isgroup || ($(target).hasClass('folderIcon') || $(target).find('img').hasClass('folderIcon')) || ($(element).find('td img').hasClass('folderIcon') && (id == null || id == '' || id == 'up'));
+        if (id == null || id == '') {
+            if (isFolderIcon) {
+                id = "up";
+            } else {
+                return;
+            }
+        }
+        
+        @{
+        if (showOnlyGroups)
+        {
+            <text>
+        if (isFolderIcon || id == 'up') {
+            var parentPage = $(target).attr('parentPage');
+            var up = $(target).attr('isGroup') && $(target).attr('id').split('_')[1] == "up";
+            var gridUrl = $(element).attr('gridUrl');
+            changeDirectory_PF@(functionsId)(gridUrl, id, parentPage, up);
+        }
+        else {
+            chooseFromExplorer_PF@(functionsId)(id);
+        }
+        </text>
+        }
+        else
+        {
+            <text>
+        if (isFolderIcon || id == 'up') {
+            var gridUrl = $(element).attr('gridUrl');
+            var parentPage = $(target).attr('parentPage');
+            var up = $(target).attr('isGroup') && $(target).attr('id').split('_')[1] == "up";
+            changeDirectory_PF@(functionsId)(gridUrl, id, parentPage, up);
+        }
+        else {
+            chooseFromExplorer_PF@(functionsId)(id);
+        }
+
+        </text>
+        }
+        }
+    }
+
+</script>
+<input id="@(inputId)_value" type="hidden" />
+@Html.Explorer(popupId, inputId, typeUid, showOnlyGroups, !ViewAttributes.DisableEntityFilterProivderInExplorer && ViewAttributes.EntityFilterProvider != Guid.Empty ? ViewAttributes.EntityFilterProvider.ToString() : "", ViewAttributes.EntityFilterData, 1100, chooseHandler: string.Format("fieldClickEventHandler{0}", functionsId))

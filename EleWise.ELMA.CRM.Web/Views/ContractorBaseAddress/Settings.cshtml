@@ -1,0 +1,22 @@
+﻿@using EleWise.ELMA.Web.Mvc.Models.Buttons
+@using ContentHtmlExtensions = EleWise.ELMA.BPM.Web.Content.Extensions.HtmlExtensions
+@model IEnumerable<EleWise.ELMA.Model.Common.NamedValue<string>>
+
+@{
+    ContentHtmlExtensions.HeaderBreadcrumbsInZone(Html, EleWise.ELMA.SR.T("Настройки адресной базы контрагентов"));
+}
+
+@(Html.Toolbar())
+
+<div class="settings_page">
+    @{
+        foreach (var item in Model.OrderBy(p => p.Name))
+        {
+            @Html.LinkButton(new LinkButton {
+                Href = item.Value,
+                Text = item.Name,
+                Image = "#dictionary.svg"
+            })
+        }
+    }
+</div>

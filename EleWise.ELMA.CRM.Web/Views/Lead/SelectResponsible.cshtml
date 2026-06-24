@@ -1,0 +1,18 @@
+﻿@using EleWise.ELMA.CRM.Web.Models
+@using EleWise.ELMA.CRM.Web
+@using EleWise.ELMA
+@model LeadSelectResponsibleModel
+@using (Html.ELMAForm("SelectAndAssign", "Lead", new { area = CRMAreaRegistration.AREA_NAME }))
+{
+    for (int i = 0; i <= Model.LeadsId.Length - 1; i++)
+    {
+        @Html.HiddenFor(m => m.LeadsId[i])
+    }
+    <div class="form-label">
+        @Html.Editor(m => m.User)
+    </div>
+    <div class="popup-buttons">
+        <input type="submit" class="confirm" value="@SR.T("Установить")" />
+        <input type="button" value="@SR.Cancel" onclick="@Html.ClosePopup("PopUpSelectUser")" />
+    </div>
+}

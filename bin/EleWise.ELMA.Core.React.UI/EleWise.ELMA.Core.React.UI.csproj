@@ -1,0 +1,27 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <AssemblyName>EleWise.ELMA.Core.React.UI</AssemblyName>
+    <GenerateAssemblyInfo>False</GenerateAssemblyInfo>
+    <TargetFramework>net48</TargetFramework>
+  </PropertyGroup>
+  <PropertyGroup>
+    <LangVersion>Preview</LangVersion>
+    <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
+  </PropertyGroup>
+  <PropertyGroup>
+    <RootNamespace />
+  </PropertyGroup>
+  <ItemGroup>
+    <None Remove="EleWise.ELMA.Core.React.UI.js" />
+    <None Remove="EleWise.ELMA.Core.React.UI.min.js" />
+    <None Remove="Bridge.Resources.json" />
+    <EmbeddedResource Include="EleWise.ELMA.Core.React.UI.js" />
+    <EmbeddedResource Include="EleWise.ELMA.Core.React.UI.min.js" />
+    <EmbeddedResource Include="Bridge.Resources.json" />
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="Bridge" />
+    <Reference Include="Bridge.React" />
+    <Reference Include="Bridge.Html5" />
+  </ItemGroup>
+</Project>

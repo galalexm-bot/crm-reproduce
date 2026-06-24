@@ -1,0 +1,72 @@
+﻿@using EleWise.ELMA.CRM.Models
+@using EleWise.ELMA
+@using EleWise.ELMA.Web.Mvc.Models.Panels
+@using EleWise.ELMA.Extensions
+@model IRelationship
+@using (Html.CollapsiblePanel(new CollapsiblePanel() { Id = "ContractorContactsPanel_Contractor", Class = "separator-gray", 
+    Expanded = true, SaveState = false, Header = Model.Contractor != null ? Model.Contractor.Name.HtmlEncode() : Model.Contact != null
+                        ? Model.Contact.Name.HtmlEncode() : Model.Lead != null ? Model.Lead.Name.HtmlEncode() : ""}))
+{
+    @Html.TableFormStart(EleWise.ELMA.Model.Views.ViewType.Display)
+    <tr>
+        <td class="captionCell">@SR.T("Телефоны")</td>
+        <td>
+            @if (Model.Contractor != null)
+            {
+                @Html.Partial("DisplayTemplates/Entities/PhoneSet", Model.Contractor.Phone, new ViewDataDictionary() {{"ContractorId", Model.Contractor.Id}})
+            }
+            else if (Model.Contact != null)
+            {
+                @Html.Partial("DisplayTemplates/Entities/PhoneSet", Model.Contact.Phone, new ViewDataDictionary() {{"ContactId", Model.Contact.Id}})
+            }
+            else if (Model.Lead != null)
+            {
+                @Html.Partial("DisplayTemplates/Entities/PhoneSet", Model.Lead.Phone, new ViewDataDictionary() {{"LeadId", Model.Lead.Id}})
+            }
+        </td>
+    </tr>
+    <tr>
+        <td class="captionCell">@SR.T("E-mail")</td>
+        <td>
+            @if (Model.Contractor != null)
+            {
+                @Html.Display(m => m.Contractor.Email)
+            }
+            else if (Model.Contact != null)
+            {
+                @Html.Display(m => m.Contact.Email)
+            }
+            else if (Model.Lead != null)
+            {
+                @Html.Display(m => m.Lead.Email)
+            }
+        </td>
+    </tr>
+    @Html.TableFormEnd()
+}
+@if (Model.ContractorsContacts != null && Model.ContractorsContacts.Count > 0)
+{
+    int i = 0;
+    foreach (IContact contractorsContact in Model.ContractorsContacts)
+    {
+        using (Html.CollapsiblePanel(new CollapsiblePanel() { Id = String.Format("ContractorsContactsPanel_{0}", contractorsContact.Id), 
+            Class = "separator-gray", Expanded = true, SaveState = false, Header = contractorsContact.Name }))
+        {
+            @Html.TableFormStart(EleWise.ELMA.Model.Views.ViewType.Display)
+                <tr>
+                    <td class="captionCell">@SR.T("Телефоны")</td>
+                    <td>
+                        @Html.Partial("DisplayTemplates/Entities/PhoneSet", contractorsContact.Phone, new ViewDataDictionary() { { "ContactId", contractorsContact.Id } })
+                    </td>
+                </tr>
+                <tr>
+                    <td class="captionCell">@SR.T("E-mail")</td>
+                    <td>
+                        @Html.Partial("DisplayTemplates/Entities/EmailSet", contractorsContact.Email.ToList())
+                    </td>
+                </tr>
+            @Html.TableFormEnd()
+        }
+        i++;
+    }
+}

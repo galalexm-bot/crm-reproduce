@@ -1,0 +1,28 @@
+﻿@inherits ViewItemControl<SaleCategoriesViewItem, object, ISale>
+@using EleWise.ELMA.CRM.Models
+@using EleWise.ELMA.CRM.ViewItems
+@using EleWise.ELMA.Web.Mvc.Views.ViewItem
+
+@if (ViewItem != null && Model.Contractor != null &&
+    (!(ViewItem.FormViewItem == null || ViewItem.FormViewItem.HideEmptyChildProperties)
+    || ViewItem.Attributes.ShowEmpty
+    || Model.Contractor.Categories.Count > 0))
+{
+    @Html.Property("Contractor.Categories", ViewItem, a =>
+        {
+            a.ReadOnly = true;
+            a.Container(builderAction: b =>
+            {
+                if (b.TagName.ToLower() == "tr")
+                {
+                    if (HideCount > 0)
+                    { 
+                        b.AddCssClass("tr-hidden");
+                        b.Attributes["hideCount"] = HideCount.ToString();
+                    }
+                    b.Attributes["showScript"] = "elma.dynamics.showColumnPanelViewItem(this)";
+                }
+            });
+            a.TemplateName = ViewItem.CustomViewName;
+        })
+}

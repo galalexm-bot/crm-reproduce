@@ -1,0 +1,1260 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<root uid="{4050F7DA-16E4-4E8A-AA1C-C33C1CB0AA2A}" provider="PostgreSQL">
+
+  <procedures>
+
+    <procedure name="FindReferenceMetadata">
+      <mappings>
+        <hibernate-mapping xmlns="urn:nhibernate-mapping-2.2">
+          <sql-query name="FindReferenceMetadata">
+            <query-param name="emptyUid" type="System.Guid" />
+            <![CDATA[
+            with recursive ProcessHeaderContexts as
+            (
+              select &&Context&& from &&ProcessHeader&& union select &&InstanceMetrics&& from &&ProcessHeader&& union select &&ProcessMetrics&& from &&ProcessHeader&&
+              union all
+              select tp.&&Id&& from ProcessHeaderContexts phc
+              inner join &&TablePartMetadata&& tp on phc.&&Context&& = tp.&&TablePartOwner&&
+            )
+            select e.&&Uid&&, e.&&Namespace&&, e.&&Name&&, p.&&Name&& as &&PropertyName&&, p.&&Uid&& as &&PropertyUid&&, p.&&SubTypeUid&&, p.&&RelationTableName&&
+            from ProcessHeaderContexts phc
+            inner join &&MD_ENTITY&& e on e.&&Id&&=phc.&&Context&&
+            left join &&MD_ENTITY_PROPERTY&& p on p.&&OwnerId&&=e.&&Id&&
+            where p.&&SubTypeUid&&<>:emptyUid
+            ]]>
+          </sql-query>
+        </hibernate-mapping>
+      </mappings>
+      <text></text>
+    </procedure>
+
+    <procedure name="ReleaseWorkflowQueueItems">
+      <mappings>
+        <hibernate-mapping xmlns="urn:nhibernate-mapping-2.2">
+          <sql-query name="ReleaseWorkflowQueueItems" >
+            <query-param name="serverConnectionUid" type="System.Guid" />
+            <![CDATA[
+            with cte as 
+            (
+              select &&Id&& from &&WorkflowQueueItem&& where &&ServerConnectionUid&& = :serverConnectionUid for update skip locked
+            )
+            update &&WorkflowQueueItem&& wqi set &&ServerConnectionUid&& = null from cte where wqi.&&Id&& = cte.&&Id&&
+            ]]>
+          </sql-query>
+        </hibernate-mapping>
+      </mappings>
+      <text></text>
+    </procedure>
+
+    <procedure name="ReleaseWorkflowBackgroundItems">
+      <mappings>
+        <hibernate-mapping xmlns="urn:nhibernate-mapping-2.2">
+          <sql-query name="ReleaseWorkflowBackgroundItems" >
+            <query-param name="activeStatus" type="System.Int32" />
+            <query-param name="pendingStatus" type="System.Int32" />
+            <![CDATA[
+            with cte as 
+            (
+              select boi.&&Id&& from &&BackgroundOperationInfo&& boi
+              inner join &&WorkflowQueueItem&& wqi
+              on wqi.&&BackgroundOperation&& = boi.&&Id&&
+              where wqi.&&ServerConnectionUid&& is null and boi.&&Status&& = :activeStatus
+              for update skip locked
+            )
+            update &&BackgroundOperationInfo&& boi set &&Status&& = :pendingStatus from cte where boi.&&Id&& = cte.&&Id&&
+            ]]>
+          </sql-query>
+        </hibernate-mapping>
+      </mappings>
+      <text></text>
+    </procedure>
+
+    <procedure name="ReleaseTouchedItems">
+      <mappings>
+        <hibernate-mapping xmlns="urn:nhibernate-mapping-2.2">
+          <sql-query name="ReleaseTouchedItems" >
+            <query-param name="lastTouchDate" type="System.DateTime" />
+            <![CDATA[
+            with cte as 
+            (
+              select &&Id&& from &&WorkflowQueueItem&& where &&ServerConnectionUid&& is not null and &&LastTouchDate&& < :lastTouchDate for update skip locked
+            )
+            update &&WorkflowQueueItem&& wqi set &&ServerConnectionUid&& = null from cte where wqi.&&Id&& = cte.&&Id&&
+            ]]>
+          </sql-query>
+        </hibernate-mapping>
+      </mappings>
+      <text></text>
+    </procedure>
+    
+    <procedure name="GetWQIWithoutBackgroundOps">
+      <mappings>
+        <hibernate-mapping xmlns="urn:nhibernate-mapping-2.2">
+          <resultset name="GetWQIWithoutBackgroundOpsSet">
+            <return-scalar column="Id" type="System.Int64"/>
+            <return-scalar column="Instance" type="System.Int64"/>
+          </resultset>
+          <sql-query name="GetWQIWithoutBackgroundOps" resultset-ref="GetWQIWithoutBackgroundOpsSet">
+            <query-param name="serverConnectionUid" type="System.Guid" />
+            <query-param name="serverConnectionName" type="System.String" />
+            <query-param name="currentTimestamp" type="System.DateTime" />
+            <query-param name="count" type="System.Int32" />
+            <query-param name="attemptLength" type="System.Int32" />
+            <![CDATA[
+            with cte as
+            (
+              select wqi.&&Id&&, wqi.&&ServerConnectionUid&&, wqi.&&NextExecuteDate&&, wqi.&&Instance&&, wqi.&&ServerConnectionName&&
+              from &&WorkflowQueueItem&& wqi
+              where &&ServerConnectionUid&& is null
+                and &&BackgroundOperation&& is null
+                and &&NextExecuteDate&& <= :currentTimestamp
+                and &&Attempt&& < :attemptLength
+              order by wqi.&&Attempt&&, wqi.&&CreationDate&&
+              limit :count
+              for update skip locked
+            )
+            update &&WorkflowQueueItem&& wqi set &&ServerConnectionUid&& = :serverConnectionUid, &&LastTouchDate&& = :currentTimestamp, &&ServerConnectionName&& = :serverConnectionName
+            from cte where wqi.&&Id&& = cte.&&Id&&
+            returning cte.&&Id&&, cte.&&Instance&&
+            ]]>
+          </sql-query>
+        </hibernate-mapping>
+      </mappings>
+      <text></text>
+    </procedure>
+
+    <procedure name="GetWQIWithBackgroundOps">
+      <mappings>
+        <hibernate-mapping xmlns="urn:nhibernate-mapping-2.2">
+          <resultset name="GetWQIWithBackgroundOpsSet">
+            <return-scalar column="Id" type="System.Int64"/>
+            <return-scalar column="Instance" type="System.Int64"/>
+          </resultset>
+          <sql-query name="GetWQIWithBackgroundOps" resultset-ref="GetWQIWithBackgroundOpsSet">
+            <query-param name="serverConnectionUid" type="System.Guid" />
+            <query-param name="currentTimestamp" type="System.DateTime" />
+            <query-param name="serverConnectionName" type="System.String" />
+            <query-param name="count" type="System.Int32" />
+            <query-param name="attemptLength" type="System.Int32" />
+            <![CDATA[
+            with cte as
+            (
+              select wqi.&&Id&&, wqi.&&ServerConnectionUid&&, wqi.&&NextExecuteDate&&, wqi.&&Instance&&, wqi.&&ServerConnectionName&&
+              from &&WorkflowQueueItem&& wqi
+              where &&ServerConnectionUid&& is null
+                and not &&BackgroundOperation&& is null
+                and &&NextExecuteDate&& <= :currentTimestamp
+                and &&Attempt&& < :attemptLength
+              order by wqi.&&Attempt&&, wqi.&&CreationDate&&
+              limit :count
+              for update skip locked
+            )
+            update &&WorkflowQueueItem&& wqi set &&ServerConnectionUid&& = :serverConnectionUid, &&LastTouchDate&& = :currentTimestamp, &&ServerConnectionName&& = :serverConnectionName
+            from cte where wqi.&&Id&& = cte.&&Id&&
+            returning cte.&&Id&&, cte.&&Instance&&
+            ]]>
+          </sql-query>
+        </hibernate-mapping>
+      </mappings>
+      <text></text>
+    </procedure>
+
+    <procedure name="WorkflowQueueItemForcedLaunch">
+      <mappings>
+        <hibernate-mapping xmlns="urn:nhibernate-mapping-2.2">
+          <sql-query name="WorkflowQueueItemForcedLaunch" >
+            <query-param name="id" type="System.Int64" />
+            <query-param name="currentTimestamp" type="System.DateTime" />
+            <query-param name="attemptLength" type="System.Int32" />
+            <![CDATA[
+            with cte as
+            (
+              select &&Id&&
+              from &&WorkflowQueueItem&&
+              where &&ServerConnectionUid&& is null and &&Id&& = :id
+              for update skip locked
+            )
+            update &&WorkflowQueueItem&& wqi set &&Attempt&& = case
+              when &&Attempt&& = :attemptLength then &&Attempt&& - 1
+              else &&Attempt&&
+            end, &&NextExecuteDate&& = :currentTimestamp
+            from cte where wqi.&&Id&& = cte.&&Id&&;
+            ]]>
+          </sql-query>
+        </hibernate-mapping>
+      </mappings>
+      <text></text>
+    </procedure>
+
+    <procedure name="DeleteByWorkflowInstance">
+      <mappings>
+        <hibernate-mapping xmlns="urn:nhibernate-mapping-2.2">
+          <sql-query name="DeleteByWorkflowInstance" >
+            <return-scalar column="Id" type="System.Int64"/>
+            <query-param name="instance" type="System.Int64" />
+            <query-param name="statusActive" type="System.Int32" />
+            <query-param name="statusPending" type="System.Int32" />
+            <query-param name="statusPrepared" type="System.Int32" />
+            <![CDATA[
+            select * from DeleteByWorkflowInstance(:instance, :statusActive, :statusPending, :statusPrepared) Id
+            ]]>
+          </sql-query>
+        </hibernate-mapping>
+      </mappings>
+      <text>
+        <![CDATA[
+        create or replace function DeleteByWorkflowInstance(p_instance bigint, p_statusActive integer, p_statusPending integer, p_statusPrepared integer)
+        returns setof bigint as $$
+        begin
+          delete from &&WorkflowQueueItem&& where &&Id&& in (
+            select wqi.&&Id&& from &&WorkflowQueueItem&& wqi
+            left outer join &&BackgroundOperationInfo&& boi
+            on wqi.&&BackgroundOperation&& = boi.&&Id&&
+            where wqi.&&Instance&& = p_instance and (wqi.&&BackgroundOperation&& is null or boi.&&Status&& = p_statusPrepared)
+          );
+          delete from &&BackgroundOperationInfo&& where &&Status&& = p_statusPrepared;
+          return query with updated as
+          (
+            with cte as
+            (
+              select boi.&&Id&& from &&BackgroundOperationInfo&& boi where boi.&&Id&& in
+              (
+                select &&BackgroundOperation&& from &&WorkflowQueueItem&& where &&Instance&& = p_instance and not &&BackgroundOperation&& is null
+              ) and boi.&&Status&& = p_statusActive for update skip locked
+            )
+            update &&BackgroundOperationInfo&& boi set &&Status&& = p_statusPending from cte where boi.&&Id&& = cte.&&Id&&
+            returning cte.&&Id&&
+          ) select updated.&&Id&& from updated;
+        end
+        $$ language plpgsql
+        ]]>
+      </text>
+    </procedure>
+
+    <procedure name="GetWorkflowInstanceMigrationPackage">
+      <mappings>
+        <hibernate-mapping xmlns="urn:nhibernate-mapping-2.2">
+          <sql-query name="GetWorkflowInstanceMigrationPackage">
+            <return alias="wimp" class="EleWise.ELMA.Workflow.Models.WorkflowInstanceMigrationPackage, EleWise.ELMA.DynamicModel"/>
+            <query-param name="count" type="System.Int32" />
+            <![CDATA[
+            with cte as
+            (
+              select * from &&WfInstanceMigrationPackage&&
+              where &&Status&& in (0, 4)
+              order by &&CreationDate&& desc
+              limit :count
+              for update skip locked
+            )
+            update &&WfInstanceMigrationPackage&& {wimp} 
+            set &&Status&& = 1
+            from cte where {wimp}.&&Id&& = cte.&&Id&&
+            returning {wimp.*}
+            ]]>
+          </sql-query>
+        </hibernate-mapping>
+      </mappings>
+      <text></text>
+    </procedure>
+    
+    <procedure name="GetStartableProcesses">
+      <mappings>
+        <hibernate-mapping xmlns="urn:nhibernate-mapping-2.2">         
+          <sql-query name="GetStartableProcesses" >
+            <return-scalar column="Id" type="System.Int64"/>
+            <query-param name="orgitemtype" type="System.Guid" />
+            <query-param name="usergrouptype" type="System.Guid" />
+            <query-param name="userfilter" type="System.Int64[]" />
+            <query-param name="publishedStatus" type="System.Int32" />
+            <query-param name="runAvailability" type="WorkflowProcessRunAvailability[]" />
+
+            select ph.&amp;&amp;Id&amp;&amp;
+            from &amp;&amp;ProcessHeader&amp;&amp; ph
+            inner join &amp;&amp;ResponsibilityMatrixItem&amp;&amp; rm on rm.&amp;&amp;BPMNProcess&amp;&amp; = ph.&amp;&amp;Published&amp;&amp;
+            left join &amp;&amp;OrganizationItem&amp;&amp; dep on rm.&amp;&amp;WorkerType&amp;&amp; = :orgitemtype and dep.&amp;&amp;Id&amp;&amp; = rm.&amp;&amp;WorkerId&amp;&amp;
+            left join &amp;&amp;OrganizationItemUsers&amp;&amp; du on rm.&amp;&amp;WorkerType&amp;&amp; = :orgitemtype and du.&amp;&amp;OrganizationItemId&amp;&amp; = dep.&amp;&amp;Id&amp;&amp;
+            left join &amp;&amp;UserSecuritySetCache&amp;&amp; agu on rm.&amp;&amp;WorkerType&amp;&amp;=:usergrouptype and agu.&amp;&amp;GroupId&amp;&amp;=rm.&amp;&amp;WorkerId&amp;&amp;
+            where
+            ph.&amp;&amp;Parent&amp;&amp; is null and
+            ph.&amp;&amp;RunAvailability&amp;&amp; in(:RunAvailability)  and
+            ph.&amp;&amp;Status&amp;&amp; = :publishedStatus and
+            rm.&amp;&amp;HasStartEvent&amp;&amp; = 1 and
+            (
+            (dep.&amp;&amp;UserId&amp;&amp; in (:userfilter) or rm.&amp;&amp;WorkerType&amp;&amp; = :orgitemtype and du.&amp;&amp;UserId&amp;&amp; in (:userfilter)) or
+            (rm.&amp;&amp;WorkerType&amp;&amp; = :usergrouptype and agu.&amp;&amp;UserId&amp;&amp; in (:userfilter))
+            )
+          </sql-query>
+        </hibernate-mapping>
+      </mappings>
+      <text></text>
+    </procedure>
+    
+    <procedure name="LoadProcessGroupTree">
+      <mappings>
+        <hibernate-mapping xmlns="urn:nhibernate-mapping-2.2">
+          <resultset name="ProcessGroupResultSet">
+            <return-scalar column="Id" type="System.Int64"/>
+            <return-scalar column="Name" type="System.String"/>
+            <return-scalar column="ParentId" type="System.Int64"/>
+          </resultset>
+          <sql-query name="LoadProcessGroupTree" resultset-ref="ProcessGroupResultSet">
+            select &amp;&amp;Id&amp;&amp;, &amp;&amp;Name&amp;&amp;, &amp;&amp;ParentId&amp;&amp; from LoadProcessGroupTree() order by &amp;&amp;Name&amp;&amp;
+          </sql-query>
+        </hibernate-mapping>
+      </mappings>
+      <text>
+create or replace function LoadProcessGroupTree()
+returns table(
+  &amp;&amp;Id&amp;&amp; bigint,
+  &amp;&amp;Name&amp;&amp; text,
+  &amp;&amp;ParentId&amp;&amp; bigint
+)
+as
+$$
+  
+	with recursive t_Rec
+	as
+	(
+		select pg.&amp;&amp;Id&amp;&amp;, pg.&amp;&amp;Name&amp;&amp;, pg.&amp;&amp;Parent&amp;&amp; from &amp;&amp;ProcessGroup&amp;&amp; pg
+		where pg.&amp;&amp;Parent&amp;&amp; is null
+		union all
+		select pgt.&amp;&amp;Id&amp;&amp;, pgt.&amp;&amp;Name&amp;&amp;, pgt.&amp;&amp;Parent&amp;&amp; from &amp;&amp;ProcessGroup&amp;&amp; pgt 		
+		inner join t_Rec on t_Rec.&amp;&amp;Id&amp;&amp; = pgt.&amp;&amp;Parent&amp;&amp;
+	)
+	select &amp;&amp;Id&amp;&amp;, &amp;&amp;Name&amp;&amp;, &amp;&amp;Parent&amp;&amp; as &amp;&amp;ParentId&amp;&amp; from t_Rec
+
+$$
+language sql;
+      </text>    
+    </procedure>
+    
+    <procedure name="GetProcessMonitorHeaderInfo">
+      <mappings>
+        <hibernate-mapping xmlns="urn:nhibernate-mapping-2.2">
+          <sql-query name="GetProcessMonitorHeaderInfo" resultset-ref="ProcessHeaderInfoResultSetFull">
+            <query-param name="orgitemtype" type="System.Guid" />
+            <query-param name="usergrouptype" type="System.Guid" />
+            <query-param name="userId" type="System.Int64" />
+            <query-param name="responsibilityLevel" type="System.Int32[]" />
+            <query-param name="filterByResponsibilityLevel" type="System.Int32" />
+            <query-param name="filterByPermission" type="System.Int32" />
+            <query-param name="filterByCurator" type="System.Int32" />
+            <query-param name="isCurator" type="System.Int32" />
+            <query-param name="permissionId" type="System.Guid" />
+            <query-param name="publishedStatus" type="System.Int32" />
+            select 
+              distinct
+              ph.&amp;&amp;Id&amp;&amp; as &amp;&amp;Id&amp;&amp;, 
+              ph.&amp;&amp;Name&amp;&amp; as &amp;&amp;Name&amp;&amp;, 
+              ph.&amp;&amp;ParentGroup&amp;&amp; as &amp;&amp;ParentId&amp;&amp;,
+              ci.&amp;&amp;CurrentInstanceCount&amp;&amp; as &amp;&amp;AvailableCount&amp;&amp;,
+              ci.&amp;&amp;ActiveTasksCount&amp;&amp; as &amp;&amp;AssignToMeCount&amp;&amp;,
+              ci.&amp;&amp;CompletedInstanceCount&amp;&amp; as &amp;&amp;CompleteCount&amp;&amp;,
+              ci.&amp;&amp;TerminatedInstanceCount&amp;&amp; as &amp;&amp;InterruptedCount&amp;&amp;,
+              wp.&amp;&amp;ShowIndicatorMode&amp;&amp; as &amp;&amp;ShowIndicatorMode&amp;&amp;,
+              wp.&amp;&amp;ShowProblemMetric&amp;&amp; as &amp;&amp;ShowProblemMetric&amp;&amp;,
+              wp.&amp;&amp;HasProblemMetri&amp;&amp;c as &amp;&amp;HasProblemMetric&amp;&amp;,
+              wp.&amp;&amp;ShowWarningMetric&amp;&amp; as &amp;&amp;ShowWarningMetric&amp;&amp;,
+              wp.&amp;&amp;HasWarningMetric&amp;&amp; as &amp;&amp;HasWarningMetric&amp;&amp;,
+              wp.&amp;&amp;ShowGoodMetric&amp;&amp; as &amp;&amp;ShowGoodMetric&amp;&amp;
+            from &amp;&amp;ProcessHeader&amp;&amp; ph
+            inner join &amp;&amp;ResponsibilityMatrixItem&amp;&amp; rm on rm.&amp;&amp;BPMNProcess&amp;&amp; = ph.&amp;&amp;Published&amp;&amp;
+            left join &amp;&amp;MonitorCacheItem&amp;&amp; ci on ci.&amp;&amp;ProcessHeader&amp;&amp; = ph.&amp;&amp;Id&amp;&amp; and ci.&amp;&amp;User&amp;&amp; is null              
+            left join &amp;&amp;OrganizationItem&amp;&amp; dep on rm.&amp;&amp;WorkerType&amp;&amp; = :orgitemtype and dep.&amp;&amp;Id&amp;&amp; = rm.&amp;&amp;WorkerId&amp;&amp;
+            left join &amp;&amp;OrganizationItemUsers&amp;&amp; du on rm.&amp;&amp;WorkerType&amp;&amp; = :orgitemtype and du.&amp;&amp;OrganizationItemId&amp;&amp; = dep.&amp;&amp;Id&amp;&amp;
+            left join &amp;&amp;UserSecuritySetCache&amp;&amp; agu on rm.&amp;&amp;WorkerType&amp;&amp;=:usergrouptype and agu.&amp;&amp;GroupId&amp;&amp;=rm.&amp;&amp;WorkerId&amp;&amp;
+            left join &amp;&amp;WorkflowProcess&amp;&amp; wp on ph.&amp;&amp;Published&amp;&amp; = wp.&amp;&amp;Id&amp;&amp;
+            where 
+              (ph.&amp;&amp;Published&amp;&amp; is not null) and
+              (ph.&amp;&amp;Status&amp;&amp; = :publishedStatus) and
+              (:filterByResponsibilityLevel = 0  or rm.&amp;&amp;ResponsibilityLevel&amp;&amp; in (:responsibilityLevel) and (
+                (dep.&amp;&amp;UserId&amp;&amp; = :userId or rm.&amp;&amp;WorkerType&amp;&amp; = :orgitemtype and du.&amp;&amp;UserId&amp;&amp; = :userId) or
+                (rm.&amp;&amp;WorkerType&amp;&amp; = :usergrouptype and agu.&amp;&amp;UserId&amp;&amp; = :userId)
+              ))
+              and (:filterByCurator = 0 or rm.&amp;&amp;IsCurator&amp;&amp; = :isCurator and (
+                (dep.&amp;&amp;UserId&amp;&amp; = :userId or rm.&amp;&amp;WorkerType&amp;&amp; = :orgitemtype and du.&amp;&amp;UserId&amp;&amp; = :userId) or
+                (rm.&amp;&amp;WorkerType&amp;&amp; = :usergrouptype and agu.&amp;&amp;UserId&amp;&amp; = :userId)
+              ))             
+              and (:filterByPermission = 0 or ph.&amp;&amp;Id&amp;&amp; in (
+                  select p.&amp;&amp;ProcessHeader&amp;&amp; from &amp;&amp;ProcessHeaderPermission&amp;&amp; p
+                  inner join &amp;&amp;UserSecuritySetCache&amp;&amp; c on p.&amp;&amp;UserSecuritySetCacheId&amp;&amp; = c.&amp;&amp;SetId&amp;&amp;
+                  where c.&amp;&amp;UserId&amp;&amp; = :userId and p.&amp;&amp;PermissionId&amp;&amp; = :permissionId)
+            )
+            order by ph.&amp;&amp;Name&amp;&amp;
+          </sql-query>
+        </hibernate-mapping>
+      </mappings>
+    </procedure>
+
+    <procedure name="GetProcessMonitorAllHeaderInfo">
+      <mappings>
+        <hibernate-mapping xmlns="urn:nhibernate-mapping-2.2">
+          <resultset name="ProcessHeaderInfoResultSetMini">
+            <return-scalar column="Id" type="System.Int64"/>
+            <return-scalar column="Name" type="System.String"/>
+            <return-scalar column="ParentId" type="System.Int64"/>
+          </resultset>
+          <sql-query name="GetProcessMonitorAllHeaderInfo" resultset-ref="ProcessHeaderInfoResultSetMini">
+            <query-param name="orgitemtype" type="System.Guid" />
+            <query-param name="usergrouptype" type="System.Guid" />
+            <query-param name="userId" type="System.Int64" />
+            <query-param name="responsibilityLevel" type="System.Int32[]" />
+            <query-param name="isCurator" type="System.Int32" />
+            <query-param name="permissionId" type="System.Guid" />
+            <query-param name="publishedStatus" type="System.Int32" />
+            select
+            distinct
+            ph.&amp;&amp;Id&amp;&amp; as &amp;&amp;Id&amp;&amp;,
+            ph.&amp;&amp;Name&amp;&amp; as &amp;&amp;Name&amp;&amp;,
+            ph.&amp;&amp;ParentGroup&amp;&amp; as &amp;&amp;ParentId&amp;&amp;
+            from &amp;&amp;ProcessHeader&amp;&amp; ph
+            inner join &amp;&amp;ResponsibilityMatrixItem&amp;&amp; rm on rm.&amp;&amp;BPMNProcess&amp;&amp; = ph.&amp;&amp;Published&amp;&amp;
+            left join &amp;&amp;MonitorCacheItem&amp;&amp; ci on ci.&amp;&amp;ProcessHeader&amp;&amp; = ph.&amp;&amp;Id&amp;&amp; and ci.&amp;&amp;User&amp;&amp; is null
+            left join &amp;&amp;OrganizationItem&amp;&amp; dep on rm.&amp;&amp;WorkerType&amp;&amp; = :orgitemtype and dep.&amp;&amp;Id&amp;&amp; = rm.&amp;&amp;WorkerId&amp;&amp;
+            left join &amp;&amp;OrganizationItemUsers&amp;&amp; du on rm.&amp;&amp;WorkerType&amp;&amp; = :orgitemtype and du.&amp;&amp;OrganizationItemId&amp;&amp; = dep.&amp;&amp;Id&amp;&amp;
+            left join &amp;&amp;UserSecuritySetCache&amp;&amp; agu on rm.&amp;&amp;WorkerType&amp;&amp;=:usergrouptype and agu.&amp;&amp;GroupId&amp;&amp;=rm.&amp;&amp;WorkerId&amp;&amp;
+            where
+            (ph.&amp;&amp;Published&amp;&amp; is not null) and
+            (ph.&amp;&amp;Status&amp;&amp; = :publishedStatus) and
+            (rm.&amp;&amp;ResponsibilityLevel&amp;&amp; in (:responsibilityLevel) and (
+            (dep.&amp;&amp;UserId&amp;&amp; = :userId or rm.&amp;&amp;WorkerType&amp;&amp; = :orgitemtype and du.&amp;&amp;UserId&amp;&amp; = :userId) or
+            (rm.&amp;&amp;WorkerType&amp;&amp; = :usergrouptype and agu.&amp;&amp;UserId&amp;&amp; = :userId)
+            ))
+            or (rm.&amp;&amp;IsCurator&amp;&amp; = :isCurator and (
+            (dep.&amp;&amp;UserId&amp;&amp; = :userId or rm.&amp;&amp;WorkerType&amp;&amp; = :orgitemtype and du.&amp;&amp;UserId&amp;&amp; = :userId) or
+            (rm.&amp;&amp;WorkerType&amp;&amp; = :usergrouptype and agu.&amp;&amp;UserId&amp;&amp; = :userId)
+            ))
+            or (ph.&amp;&amp;Id&amp;&amp; in (
+            select p.&amp;&amp;ProcessHeader&amp;&amp; from ProcessHeaderPermission p
+            inner join &amp;&amp;UserSecuritySetCache&amp;&amp; c on p.&amp;&amp;UserSecuritySetCacheId&amp;&amp; = c.SetId
+            where c.&amp;&amp;UserId&amp;&amp; = :userId and p.&amp;&amp;PermissionId&amp;&amp; = :permissionId)
+            )
+          </sql-query>
+        </hibernate-mapping>
+      </mappings>
+    </procedure>
+
+    <procedure name="GetProcessResponsibilityItems">
+      <mappings>
+        <hibernate-mapping xmlns="urn:nhibernate-mapping-2.2">
+          <resultset name="ProcessResponsibilityItemResultSet">
+            <return-scalar column="Id" type="System.Int64"/>
+            <return-scalar column="ResponsibilityLevel" type="System.Int32"/>
+            <return-scalar column="IsCurator" type="System.Boolean"/>
+            <return-scalar column="ProcessHeader" type="System.Int64"/>
+          </resultset>
+          <sql-query name="GetProcessResponsibilityItems" resultset-ref="ProcessResponsibilityItemResultSet">
+            <query-param name="processId" type="System.Int64[]" />
+            <query-param name="userfilter" type="System.Int64[]" />
+            <query-param name="orgitemtype" type="System.Guid" />
+            <query-param name="usergrouptype" type="System.Guid" />
+            select
+            rm.&amp;&amp;Id&amp;&amp; as &amp;&amp;Id&amp;&amp;,
+            rm.&amp;&amp;ResponsibilityLevel&amp;&amp;,
+            rm.&amp;&amp;IsCurator&amp;&amp;,
+            wp.&amp;&amp;Header&amp;&amp; as &amp;&amp;ProcessHeader&amp;&amp;
+            from &amp;&amp;ResponsibilityMatrixItem&amp;&amp; rm
+            inner join &amp;&amp;WorkflowProcess&amp;&amp; wp on rm.&amp;&amp;BPMNProcess&amp;&amp; = wp.&amp;&amp;Id&amp;&amp;
+            left join &amp;&amp;OrganizationItem&amp;&amp; dep on rm.&amp;&amp;WorkerType&amp;&amp; = :orgitemtype and dep.&amp;&amp;Id&amp;&amp; = rm.&amp;&amp;WorkerId&amp;&amp;
+            left join &amp;&amp;OrganizationItemUsers&amp;&amp; du on rm.&amp;&amp;WorkerType&amp;&amp; = :orgitemtype and du.&amp;&amp;OrganizationItemId&amp;&amp; = dep.&amp;&amp;Id&amp;&amp;
+            left join &amp;&amp;UserSecuritySetCache&amp;&amp; agu on rm.&amp;&amp;WorkerType&amp;&amp;=:usergrouptype and agu.&amp;&amp;GroupId&amp;&amp;=rm.&amp;&amp;WorkerId&amp;&amp;
+            where
+            rm.&amp;&amp;BPMNProcess&amp;&amp; in (:processId) and
+            (
+            (dep.&amp;&amp;UserId&amp;&amp; in (:userfilter) or rm.&amp;&amp;WorkerType&amp;&amp; = :orgitemtype and du.&amp;&amp;UserId&amp;&amp;  in (:userfilter)) or
+            (rm.&amp;&amp;WorkerType&amp;&amp; = :usergrouptype and agu.&amp;&amp;UserId&amp;&amp; in (:userfilter))
+            )
+          </sql-query>
+        </hibernate-mapping>
+      </mappings>
+    </procedure>
+
+		<procedure name="CheckTableNameInWorkflow">
+			<mappings>
+				<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2">
+					<resultset name="CheckTableNameInWorkflowResultSet">
+						<return-scalar column="ProcessName" type="System.String"/>
+						<return-scalar column="TablePartName" type="System.String"/>
+						<return-scalar column="PropertyName" type="System.String"/>
+					</resultset>
+					<sql-query name="CheckTableNameInWorkflow" resultset-ref="CheckTableNameInWorkflowResultSet">
+						<query-param name="tableName" type="System.String" />
+						<query-param name="ownerUid" type="System.Guid" />
+with recursive t_Rec as
+(
+select ph.&amp;&amp;Name&amp;&amp;, cast(null as text) as &amp;&amp;TablePartName&amp;&amp;, e.&amp;&amp;Id&amp;&amp;, e.&amp;&amp;Uid&amp;&amp;, e.&amp;&amp;TableName&amp;&amp;
+from &amp;&amp;WorkflowProcess&amp;&amp; wp
+inner join &amp;&amp;ProcessContext&amp;&amp; pc on wp.Context=pc.&amp;&amp;Id&amp;&amp;
+inner join &amp;&amp;MD_ENTITY&amp;&amp; e on e.&amp;&amp;Id&amp;&amp;=pc.&amp;&amp;Id&amp;&amp;
+inner join &amp;&amp;ProcessHeader&amp;&amp; ph on wp.&amp;&amp;Header&amp;&amp; = ph.&amp;&amp;Id&amp;&amp;
+where (ph.&amp;&amp;Published&amp;&amp; = wp.&amp;&amp;Id&amp;&amp;) or ph.&amp;&amp;Current&amp;&amp; = wp.&amp;&amp;Id&amp;&amp;
+union all
+select t_Rec.&amp;&amp;Name&amp;&amp;, e.&amp;&amp;DisplayName&amp;&amp;, tp.&amp;&amp;Id&amp;&amp;, tp.&amp;&amp;TablePartPropertyUid&amp;&amp;, e.&amp;&amp;TableName&amp;&amp;
+from &amp;&amp;TablePartMetadata&amp;&amp; tp
+inner join t_Rec on t_Rec.&amp;&amp;Id&amp;&amp; = tp.&amp;&amp;TablePartOwner&amp;&amp;
+inner join &amp;&amp;MD_ENTITY&amp;&amp; e on e.&amp;&amp;Id&amp;&amp;=tp.&amp;&amp;Id&amp;&amp;
+)
+select t_Rec.&amp;&amp;Name&amp;&amp; as &amp;&amp;ProcessName&amp;&amp;, t_Rec.&amp;&amp;TablePartName&amp;&amp;, case when upper(ep.&amp;&amp;RelationTableName&amp;&amp;) = Upper(:tableName) then ep.&amp;&amp;DisplayName&amp;&amp; else null end as &amp;&amp;PropertyName&amp;&amp;
+from t_Rec
+left join &amp;&amp;MD_ENTITY_PROPERTY&amp;&amp; ep on ep.&amp;&amp;OwnerId&amp;&amp; = t_Rec.&amp;&amp;Id&amp;&amp; and ep.Uid&lt;&gt;:ownerUid
+where
+upper(t_Rec.&amp;&amp;TableName&amp;&amp;) = Upper(:tableName) and t_Rec.Uid&lt;&gt;:ownerUid
+or upper(ep.&amp;&amp;RelationTableName&amp;&amp;) = upper(:tableName)
+					</sql-query>
+				</hibernate-mapping>
+			</mappings>
+		</procedure>
+
+    <procedure name="CheckClassNameInWorkflow">
+      <mappings>
+        <hibernate-mapping xmlns="urn:nhibernate-mapping-2.2">
+          <resultset name="CheckClassNameInWorkflowResultSet">
+            <return-scalar column="ProcessName" type="System.String"/>
+            <return-scalar column="TablePartName" type="System.String"/>
+          </resultset>
+          <sql-query name="CheckClassNameInWorkflow" resultset-ref="CheckClassNameInWorkflowResultSet">
+            <query-param name="className" type="System.String" />
+            <![CDATA[
+with recursive t_Rec as
+(
+select ph.&&Name&& as pName, cast(null as text) as &&TablePartName&&, e.&&Id&&, e.&&Uid&&, e.&&Name&&
+from &&WorkflowProcess&& wp
+inner join &&ProcessContext&& pc on wp.Context=pc.&&Id&&
+inner join &&MD_ENTITY&& e on e.&&Id&&=pc.&&Id&&
+inner join &&ProcessHeader&& ph on wp.&&Header&& = ph.&&Id&&
+where (ph.&&Published&& = wp.&&Id&&) or ph.&&Current&& = wp.&&Id&&
+union all
+select t_Rec.&&pName&&, e.&&DisplayName&&, tp.&&Id&&, tp.&&TablePartPropertyUid&&, e.&&Name&&
+from &&TablePartMetadata&& tp
+inner join t_Rec on t_Rec.&&Id&& = tp.&&tablepartowner&&
+inner join &&MD_ENTITY&& e on e.&&Id&&=tp.&&Id&&
+)
+select t_Rec.&&pName&& as &&ProcessName&&, t_Rec.&&TablePartName&&
+from t_Rec
+where
+upper(t_Rec.&&Name&&) = Upper(:className)
+            ]]>
+          </sql-query>
+        </hibernate-mapping>
+      </mappings>
+    </procedure>
+
+    <procedure name="GetProcessHeaderInfo">
+      <mappings>
+        <hibernate-mapping xmlns="urn:nhibernate-mapping-2.2">
+          <resultset name="ProcessHeaderInfoResultSet">
+            <return-scalar column="Id" type="System.Int64"/>
+            <return-scalar column="Name" type="System.String"/>
+            <return-scalar column="ParentId" type="System.Int64"/>
+            <return-scalar column="AvailableCount" type="System.Int64"/>
+            <return-scalar column="AssignToMeCount" type="System.Int64"/>
+            <return-scalar column="CompleteCount" type="System.Int64"/>
+            <return-scalar column="InterruptedCount" type="System.Int64"/>
+          </resultset>
+          <resultset name="ProcessHeaderInfoResultSetFull">
+            <return-scalar column="Id" type="System.Int64"/>
+            <return-scalar column="Name" type="System.String"/>
+            <return-scalar column="ParentId" type="System.Int64"/>
+            <return-scalar column="AvailableCount" type="System.Int64"/>
+            <return-scalar column="AssignToMeCount" type="System.Int64"/>
+            <return-scalar column="CompleteCount" type="System.Int64"/>
+            <return-scalar column="InterruptedCount" type="System.Int64"/>
+            <return-scalar column="ShowIndicatorMode" type="System.Int32" />
+            <return-scalar column="ShowProblemMetric" type="System.Boolean" />
+            <return-scalar column="HasProblemMetric" type="System.Boolean" />
+            <return-scalar column="ShowWarningMetric" type="System.Boolean" />
+            <return-scalar column="HasWarningMetric" type="System.Boolean" />
+            <return-scalar column="ShowGoodMetric" type="System.Boolean" />
+          </resultset>
+          <sql-query name="GetProcessHeaderInfo" resultset-ref="ProcessHeaderInfoResultSet">
+            <query-param name="processHeaderId" type="System.Int64" />
+            <query-param name="currentUser" type="System.Int64" />
+            <query-param name="filterByMembers" type="System.Int32" />
+            <query-param name="publishedStatus" type="System.Int32" />
+            <query-param name="isEmulation" type="System.Int32" />
+
+            select
+            distinct
+            ph.&amp;&amp;Id&amp;&amp; as &amp;&amp;Id&amp;&amp;,
+            ph.&amp;&amp;Name&amp;&amp; as &amp;&amp;Name&amp;&amp;,
+            ph.&amp;&amp;ParentGroup&amp;&amp; as &amp;&amp;ParentId&amp;&amp;,
+            (case when :isEmulation = 0 then ci.&amp;&amp;CurrentInstanceCount&amp;&amp; else ci.&amp;&amp;CurrentInstanceEmlCount&amp;&amp; end) as &amp;&amp;AvailableCount&amp;&amp;,
+            (case when :isEmulation = 0 then ci.&amp;&amp;ActiveTasksCount&amp;&amp; else ci.&amp;&amp;ActiveTasksEmlCount&amp;&amp; end) as &amp;&amp;AssignToMeCount&amp;&amp;,
+            (case when :isEmulation = 0 then ci.&amp;&amp;CompletedInstanceCount&amp;&amp; else ci.&amp;&amp;CompletedInstanceEmlCount&amp;&amp; end) as &amp;&amp;CompleteCount&amp;&amp;,
+            (case when :isEmulation = 0 then ci.&amp;&amp;TerminatedInstanceCount&amp;&amp; else ci.&amp;&amp;TerminatedInstanceEmlCount&amp;&amp; end) as &amp;&amp;InterruptedCount&amp;&amp;
+            from &amp;&amp;ProcessHeader&amp;&amp; ph
+            left join &amp;&amp;MonitorCacheItem&amp;&amp; ci on ci.&amp;&amp;ProcessHeader&amp;&amp; = ph.&amp;&amp;Id&amp;&amp; and (:filterByMembers = 0 and ci.&amp;&amp;User&amp;&amp; is null or ci.&amp;&amp;User&amp;&amp; = :currentUser)
+            where
+            (:processHeaderId = 0 or ph.&amp;&amp;Id&amp;&amp; = :processHeaderId) and
+            (ph.&amp;&amp;Published&amp;&amp; is not null) and
+            (ph.&amp;&amp;Status&amp;&amp; = :publishedStatus) and
+            (:filterByMembers = 0 or exists(
+            select wi.&amp;&amp;Id&amp;&amp; from &amp;&amp;WorkflowInstance&amp;&amp; wi
+            inner join &amp;&amp;WorkflowInstanceMember&amp;&amp; wim on wim.&amp;&amp;User&amp;&amp; = :currentUser and wi.&amp;&amp;Id&amp;&amp; = wim.&amp;&amp;Instance&amp;&amp;
+            inner join &amp;&amp;WorkflowProcess&amp;&amp; wp on wp.&amp;&amp;Id&amp;&amp; = wi.&amp;&amp;Process&amp;&amp;
+            where wp.&amp;&amp;Header&amp;&amp; = ph.&amp;&amp;Id&amp;&amp;
+            ))
+            order by ph.&amp;&amp;Name&amp;&amp;
+          </sql-query>
+        </hibernate-mapping>
+      </mappings>
+    </procedure>
+
+    <procedure name="GetProcessHeaderPermissions">
+      <mappings>
+        <hibernate-mapping xmlns="urn:nhibernate-mapping-2.2">
+          <sql-query name="GetProcessHeaderPermissions">
+            <return-scalar column="PermissionId" type="System.Guid"/>
+            <query-param name="headerId" type="System.Int64" />
+            <query-param name="userfilter" type="System.Int64[]" />
+            select distinct p.&amp;&amp;PermissionId&amp;&amp; as &amp;&amp;PermissionId&amp;&amp; from &amp;&amp;ProcessHeaderPermission&amp;&amp; p
+            inner join &amp;&amp;UserSecuritySetCache&amp;&amp; c on p.&amp;&amp;UserSecuritySetCacheId&amp;&amp; = c.&amp;&amp;SetId&amp;&amp;
+            where
+            p.&amp;&amp;ProcessHeader&amp;&amp; = :headerId and
+            c.&amp;&amp;UserId&amp;&amp; in (:userfilter)
+          </sql-query>
+        </hibernate-mapping>
+      </mappings>
+    </procedure>
+
+    <procedure name="GetInstanceUpdateVersionInfo">
+      <mappings>
+        <hibernate-mapping xmlns="urn:nhibernate-mapping-2.2">
+          <resultset name="InstanceUpdateVersionResultSet">
+            <return-scalar column="WfiId" type="System.Int64"/>
+            <return-scalar column="ProcessId" type="System.Int64"/>
+          </resultset>
+          <sql-query name="GetInstanceUpdateVersionInfo" resultset-ref="InstanceUpdateVersionResultSet">
+            <query-param name="processId" type="System.Int64" />
+            <query-param name="instanceId" type="System.Int64" />
+            <query-param name="deleteStatuses" type="System.Int32[]" />
+            <![CDATA[
+            WITH RECURSIVE wfi AS
+            (
+            SELECT wi.&&Id&&, wp.&&Header&& as &&Header&&
+            FROM &&WorkflowInstance&& as wi, &&WorkflowProcess&& as wp
+            WHERE wi.&&Id&& = :instanceId AND wi.&&Process&& = wp.&&Id&& AND wi.&&Status&& not in (:deleteStatuses)
+            UNION ALL
+            SELECT wi.&&Id&&, wp.&&Header&& as &&Header&&
+            FROM &&WorkflowInstance&& as wi, wfi, &&WorkflowProcess&& as wp
+            WHERE wfi.&&Id&& = wi.&&ParentInstance&& AND wi.&&Process&& = wp.&&Id&&
+            ),
+            wfp AS
+            (
+            SELECT &&Id&&, &&Header&& as &&Header&&
+            FROM WorkflowProcess
+            WHERE &&Id&& = :processId
+            UNION ALL
+            SELECT wp.&&Id&&, wp.&&Header&& as &&Header&&
+            FROM &&WorkflowProcess&& as wp, wfp
+            WHERE wfp.&&Id&& = wp.&&Parent&&
+            )
+            SELECT wfi.&&Id&& as &&WfiId&&, wfp.&&Id&& as &&ProcessId&&
+            FROM wfi, wfp
+            WHERE wfi.&&Header&& = wfp.&&Header&&
+            ]]>
+          </sql-query>
+        </hibernate-mapping>
+      </mappings>
+    </procedure>
+    
+    <procedure name="LoadProcessHeadFullTree">
+      <mappings>
+        <hibernate-mapping xmlns="urn:nhibernate-mapping-2.2">
+          <resultset name="ProcessHeaderFullInfoResultSet">
+            <return-scalar column="Id" type="System.Int64"/>
+            <return-scalar column="Name" type="System.String"/>
+            <return-scalar column="ParentId" type="System.Int64"/>
+            <return-scalar column="ParentProcessId" type="System.Int64"/>
+            <return-scalar column="AvailableCount" type="System.Int64"/>
+            <return-scalar column="AssignToMeCount" type="System.Int64"/>
+            <return-scalar column="CompleteCount" type="System.Int64"/>
+            <return-scalar column="InterruptedCount" type="System.Int64"/>
+            <return-scalar column="OwnerId" type="System.Int64"/>
+            <return-scalar column="OwnerType" type="System.Guid"/>
+            <return-scalar column="OwnerName" type="System.String"/>
+            <return-scalar column="Status" type="System.Int32"/>
+          </resultset>
+          <sql-query name="LoadProcessHeadFullTree" resultset-ref="ProcessHeaderFullInfoResultSet">
+            <query-param name="AvailableStatus" type="System.Int32[]" />
+            <query-param name="CompleteStatus" type="System.Int32[]" />
+            <query-param name="InterruptedStatus" type="System.Int32[]" />
+            <query-param name="activeTaskStatuses" type="System.Guid[]" />
+            <query-param name="orgitemtype" type="System.Guid" />
+            <query-param name="usergroupitemtype" type="System.Guid" />
+            <query-param name="NameProcess" type="System.String" />
+            <query-param name="listUser" type="System.Int32[]" />
+            <query-param name="noSearchNameProcess" type="System.Int32[]" />
+            <query-param name="isemulationInstans" type="System.Int32[]" />
+            <query-param name="isemulationTask" type="System.Int32[]" />
+            select
+            ph.&amp;&amp;Id&amp;&amp; as &amp;&amp;Id&amp;&amp;,
+            ph.&amp;&amp;Name&amp;&amp; as &amp;&amp;Name&amp;&amp;,
+            ph.&amp;&amp;ParentGroup&amp;&amp; as &amp;&amp;ParentId&amp;&amp;,
+            ph.&amp;&amp;Parent&amp;&amp; as &amp;&amp;ParentProcessId&amp;&amp;,
+            subq.&amp;&amp;AvailableCount&amp;&amp; as &amp;&amp;AvailableCount&amp;&amp;,
+            subqt.&amp;&amp;AssignToMeCount&amp;&amp; as &amp;&amp;AssignToMeCount&amp;&amp;,
+            subq.&amp;&amp;CompleteCount&amp;&amp; as &amp;&amp;CompleteCount&amp;&amp;,
+            subq.&amp;&amp;InterruptedCount&amp;&amp; as &amp;&amp;InterruptedCount&amp;&amp;,
+            coalesce(dep.&amp;&amp;UserId&amp;&amp;,oiu.&amp;&amp;UserId&amp;&amp;) &amp;&amp;OwnerId&amp;&amp;,
+
+            case when rm.&amp;&amp;WorkerType&amp;&amp; = :usergroupitemtype
+            then
+            rm.&amp;&amp;WorkerType&amp;&amp;
+            else
+            case when us.&amp;&amp;Id&amp;&amp; is not null then  rm.&amp;&amp;WorkerType&amp;&amp; else null end end
+
+            &amp;&amp;OwnerType&amp;&amp;,
+            case when rm.&amp;&amp;WorkerType&amp;&amp; = :usergroupitemtype
+            then
+            du.&amp;&amp;Name&amp;&amp;
+            else
+            case when us.&amp;&amp;Id&amp;&amp; is not null then us.&amp;&amp;FullName&amp;&amp; else dep.&amp;&amp;Name&amp;&amp; end end &amp;&amp;OwnerName&amp;&amp;,
+            ph.&amp;&amp;Status&amp;&amp; &amp;&amp;Status&amp;&amp;
+
+            from &amp;&amp;ProcessHeader&amp;&amp; ph
+            left join (
+            select head.&amp;&amp;Id&amp;&amp; as &amp;&amp;Id&amp;&amp;,
+            sum(case when wi.&amp;&amp;Status&amp;&amp; in (:AvailableStatus) then 1 else 0 end) as &amp;&amp;AvailableCount&amp;&amp;,
+            sum(case when wi.&amp;&amp;Status&amp;&amp; in (:CompleteStatus) then 1 else 0 end) as &amp;&amp;CompleteCount&amp;&amp;,
+            sum(case when wi.&amp;&amp;Status&amp;&amp; in (:InterruptedStatus) then 1 else 0 end) as &amp;&amp;InterruptedCount&amp;&amp;
+            from &amp;&amp;WorkflowInstance&amp;&amp; wi
+            inner join &amp;&amp;WorkflowProcess&amp;&amp; wp on wp.&amp;&amp;Id&amp;&amp; = wi.&amp;&amp;Process&amp;&amp;
+            inner join &amp;&amp;ProcessHeader&amp;&amp; head on head.&amp;&amp;Id&amp;&amp; = wp.&amp;&amp;Header&amp;&amp;
+            where  coalesce(wi.&amp;&amp;IsEmulation&amp;&amp;,0)=:isemulationInstans
+            group by head.&amp;&amp;Id&amp;&amp;
+            ) as subq on subq.&amp;&amp;Id&amp;&amp; = ph.&amp;&amp;Id&amp;&amp;
+
+            left join (
+            select &amp;&amp;WorkerId&amp;&amp;, &amp;&amp;WorkerTyp&amp;&amp;e, &amp;&amp;BPMNProcess&amp;&amp; from &amp;&amp;ResponsibilityMatrixItem&amp;&amp;
+            where &amp;&amp;ResponsibilityLevel&amp;&amp; = 2
+            group by &amp;&amp;WorkerId&amp;&amp;, &amp;&amp;WorkerType&amp;&amp;, &amp;&amp;BPMNProcess&amp;&amp;
+            ) as rm on rm.&amp;&amp;BPMNProcess&amp;&amp;=ph.&amp;&amp;Published&amp;&amp;
+            left join &amp;&amp;OrganizationItem&amp;&amp; dep on rm.&amp;&amp;WorkerType&amp;&amp; = :orgitemtype and dep.&amp;&amp;Id&amp;&amp; = rm.&amp;&amp;WorkerId&amp;&amp;
+            left join &amp;&amp;User&amp;&amp; us on  dep.&amp;&amp;UserId&amp;&amp; = us.&amp;&amp;Id&amp;&amp;
+            left join &amp;&amp;OrganizationItemUsers&amp;&amp; oiu on dep.&amp;&amp;Id&amp;&amp;=oiu.&amp;&amp;OrganizationItemId&amp;&amp; and oiu.&amp;&amp;UserId&amp;&amp; = us.&amp;&amp;Id&amp;&amp;
+            left join &amp;&amp;UserGroup&amp;&amp; du on  rm.&amp;&amp;WorkerType&amp;&amp; = :usergroupitemtype and du.&amp;&amp;Id&amp;&amp; = rm.&amp;&amp;WorkerId&amp;&amp;
+
+            left join (
+            select phe.&amp;&amp;Id&amp;&amp; as &amp;&amp;Id&amp;&amp;, count(tb.&amp;&amp;Id&amp;&amp;) as &amp;&amp;AssignToMeCount&amp;&amp; from &amp;&amp;TaskBase&amp;&amp; tb
+            inner join &amp;&amp;WorkflowBookmark&amp;&amp; wb on wb.&amp;&amp;Id&amp;&amp; =  tb.&amp;&amp;WorkflowBookmark&amp;&amp;
+            inner join &amp;&amp;WorkflowInstance&amp;&amp; wi on wi.&amp;&amp;Id&amp;&amp; = wb.&amp;&amp;Instance&amp;&amp;
+            inner join &amp;&amp;WorkflowProcess&amp;&amp; wpr on wpr.&amp;&amp;Id&amp;&amp; = wi.&amp;&amp;Process&amp;&amp;
+            inner join &amp;&amp;ProcessHeader&amp;&amp; phe on phe.&amp;&amp;Id&amp;&amp; = wpr.&amp;&amp;Header&amp;&amp;
+            where (tb.&amp;&amp;Status&amp;&amp; in (:activeTaskStatuses)) and coalesce(tb.&amp;&amp;IsEmulation&amp;&amp;,0) = :isemulationTask
+            group by phe.&amp;&amp;Id&amp;&amp;
+            ) as subqt on subqt.&amp;&amp;Id&amp;&amp; = ph.&amp;&amp;Id&amp;&amp;
+            where ph.&amp;&amp;Published&amp;&amp; is not null
+            and (:noSearchNameProcess = 0 or upper(ph.&amp;&amp;Name&amp;&amp;) like :NameProcess)
+            and (0 in (:listUser)  or (rm.&amp;&amp;WorkerId&amp;&amp; in (
+            select distinct oi.&amp;&amp;Id&amp;&amp; from &amp;&amp;OrganizationItem&amp;&amp; oi
+            left join &amp;&amp;User&amp;&amp; u on oi.&amp;&amp;UserId&amp;&amp;=u.&amp;&amp;Id&amp;&amp; and u.&amp;&amp;Id&amp;&amp; in (:listUser)
+            left join &amp;&amp;OrganizationItemUsers&amp;&amp; oiu on oi.&amp;&amp;Id&amp;&amp;=oiu.&amp;&amp;OrganizationItemId&amp;&amp; and oiu.&amp;&amp;UserId&amp;&amp; in (:listUser)
+            where (oiu.&amp;&amp;UserId&amp;&amp; is not null or u.&amp;&amp;Id&amp;&amp; is not null)
+            ) and rm.&amp;&amp;WorkerType&amp;&amp; = :orgitemtype))
+            
+            order by &amp;&amp;Name&amp;&amp;
+          </sql-query>
+        </hibernate-mapping>
+      </mappings>
+      <text>
+      </text>
+    </procedure>
+
+    <procedure name="LoadDocumProcessHeadFullTree">
+      <mappings>
+        <hibernate-mapping xmlns="urn:nhibernate-mapping-2.2">
+          <resultset name="DocumProcessHeaderInfoResultSet">
+            <return-scalar column="Id" type="System.Int64"/>
+            <return-scalar column="Name" type="System.String"/>
+            <return-scalar column="ParentId" type="System.Int64"/>
+            <return-scalar column="ParentProcessId" type="System.Int64"/>
+            <return-scalar column="CreationDate" type="System.DateTime"/>
+            <return-scalar column="CreationAuthorId" type="System.Int64"/>
+            <return-scalar column="CreationAuthor" type="System.String"/>
+            <return-scalar column="WorkerId" type="System.Int64"/>
+            <return-scalar column="WorkerType" type="System.Guid"/>
+            <return-scalar column="WorkerName" type="System.String"/>
+            <return-scalar column="VersionNumber" type="System.Int64"/>
+            <return-scalar column="CurrentVersionId" type="System.Int64"/>
+            <return-scalar column="Status" type="System.Int32"/>
+          </resultset>
+          <sql-query name="LoadDocumProcessHeadFullTree" resultset-ref="DocumProcessHeaderInfoResultSet">
+            <query-param name="usergroupitemtype" type="System.Guid" />
+            <query-param name="orgitemtype" type="System.Guid" />
+            select
+            ph.&amp;&amp;Id&amp;&amp; as &amp;&amp;Id&amp;&amp;,
+            ph.&amp;&amp;Name&amp;&amp; as &amp;&amp;Name&amp;&amp;,
+            ph.&amp;&amp;CreationDate&amp;&amp; as &amp;&amp;CreationDate&amp;&amp;,
+            ph.&amp;&amp;CreationAuthor&amp;&amp; as &amp;&amp;CreationAuthorId&amp;&amp;,
+            u.&amp;&amp;FullName&amp;&amp; as "&amp;&amp;CreationAuthor&amp;&amp;",
+            ph.&amp;&amp;ParentGroup&amp;&amp; as &amp;&amp;ParentId&amp;&amp;,
+            ph.&amp;&amp;Parent&amp;&amp; as &amp;&amp;ParentProcessId&amp;&amp;,
+            coalesce(dep.&amp;&amp;UserId&amp;&amp;, oiu.&amp;&amp;UserId&amp;&amp;) &amp;&amp;WorkerId&amp;&amp;,
+            case when  rm.&amp;&amp;WorkerType&amp;&amp; = :usergroupitemtype
+            then
+            rm.&amp;&amp;WorkerType&amp;&amp;
+            else
+            case when us.&amp;&amp;Id&amp;&amp; is not null then  rm.&amp;&amp;WorkerType&amp;&amp; else null end end
+            &amp;&amp;WorkerType&amp;&amp;,
+            case when  rm.&amp;&amp;WorkerType&amp;&amp; = :usergroupitemtype
+            then
+            du.&amp;&amp;Name&amp;&amp;
+            else
+            case when us.&amp;&amp;Id&amp;&amp; is not null then  us.&amp;&amp;FullName&amp;&amp; else dep.&amp;&amp;Name&amp;&amp; end end
+            &amp;&amp;WorkerName&amp;&amp;,
+            wp.&amp;&amp;VersionNumber&amp;&amp; as &amp;&amp;VersionNumber&amp;&amp;,
+            ph.&amp;&amp;Published&amp;&amp; as &amp;&amp;CurrentVersionId&amp;&amp;,
+            ph.&amp;&amp;Status&amp;&amp; as &amp;&amp;Status&amp;&amp;
+            from &amp;&amp;ProcessHeader&amp;&amp; ph
+            inner join &amp;&amp;WorkflowProcess&amp;&amp; wp on wp.&amp;&amp;Id&amp;&amp; = ph.&amp;&amp;Published&amp;&amp;
+            inner join &amp;&amp;User&amp;&amp; u on u.&amp;&amp;Id&amp;&amp; = ph.&amp;&amp;CreationAuthor&amp;&amp;
+            left join (
+            select &amp;&amp;WorkerId&amp;&amp;, &amp;&amp;WorkerType&amp;&amp;, &amp;&amp;BPMNProcess&amp;&amp; from &amp;&amp;ResponsibilityMatrixItem&amp;&amp;
+            where &amp;&amp;ResponsibilityLevel&amp;&amp; = 2
+            group by &amp;&amp;WorkerId&amp;&amp;, &amp;&amp;WorkerType&amp;&amp;, &amp;&amp;BPMNProcess&amp;&amp;
+            ) rm
+            on rm.&amp;&amp;BPMNProcess&amp;&amp; = ph.&amp;&amp;Published&amp;&amp;
+            left join ORGANIZATIONITEM dep on rm.&amp;&amp;WorkerType&amp;&amp; = :orgitemtype and dep.&amp;&amp;Id&amp;&amp; = rm.&amp;&amp;WorkerId&amp;&amp;
+            left join &amp;&amp;UserGroup&amp;&amp; du on  rm.&amp;&amp;WorkerType&amp;&amp; = :usergroupitemtype and du.&amp;&amp;Id&amp;&amp; = rm.&amp;&amp;WorkerId&amp;&amp;
+            left join &amp;&amp;User&amp;&amp; us on dep.&amp;&amp;UserId&amp;&amp; = us.&amp;&amp;Id&amp;&amp;
+            left join OrganizationItemUsers oiu on dep.&amp;&amp;Id&amp;&amp;=oiu.OrganizationItemId and oiu.&amp;&amp;UserId&amp;&amp; = us.&amp;&amp;Id&amp;&amp;
+            where ph.&amp;&amp;Published&amp;&amp; is not null
+          </sql-query>
+        </hibernate-mapping>
+      </mappings>
+      <text>
+      </text>
+    </procedure>
+
+    <procedure name="LoadMyResponsibilityProcess">
+      <mappings>
+        <hibernate-mapping xmlns="urn:nhibernate-mapping-2.2">
+          <sql-query name="LoadMyResponsibilityProcess">
+            <return alias="processHeader" class="EleWise.ELMA.Workflow.Models.&amp;&amp;ProcessHeader&amp;&amp;, EleWise.ELMA.DynamicModel"/>
+            <query-param name="userfilter" type="System.Int64" />
+            <query-param name="orgitemtype" type="System.Guid" />
+            <query-param name="usergrouptype" type="System.Guid" />
+            select {processHeader.*}
+            from &amp;&amp;ProcessHeader&amp;&amp; {processHeader}
+            where {processHeader}.&amp;&amp;Published&amp;&amp; is not null and {processHeader}.&amp;&amp;Id&amp;&amp; in (
+            select wp.&amp;&amp;Header&amp;&amp;
+            from &amp;&amp;ResponsibilityMatrixItem&amp;&amp; rm
+            left join &amp;&amp;OrganizationItem&amp;&amp; dep on rm.&amp;&amp;WorkerType&amp;&amp; = :orgitemtype and dep.&amp;&amp;Id&amp;&amp; = rm.&amp;&amp;WorkerId&amp;&amp;
+            left join &amp;&amp;OrganizationItemUsers&amp;&amp; du on rm.&amp;&amp;WorkerType&amp;&amp; = :orgitemtype and du.&amp;&amp;OrganizationItemId&amp;&amp; = dep.&amp;&amp;Id&amp;&amp;
+            left join &amp;&amp;UserSecuritySetCache&amp;&amp; agu on rm.&amp;&amp;WorkerType&amp;&amp;=:usergrouptype and agu.&amp;&amp;GroupId&amp;&amp;=rm.&amp;&amp;WorkerId&amp;&amp;
+            inner join &amp;&amp;WorkflowProcess&amp;&amp; wp on rm.&amp;&amp;BPMNProcess&amp;&amp; = wp.&amp;&amp;Id&amp;&amp;
+            inner join &amp;&amp;ProcessHeader&amp;&amp; ph on ph.&amp;&amp;Id&amp;&amp; = wp.&amp;&amp;Header&amp;&amp;
+            where
+            ph.&amp;&amp;Published&amp;&amp; = wp.&amp;&amp;Id&amp;&amp; and (rm.&amp;&amp;ResponsibilityLevel&amp;&amp; = 2 or rm.&amp;&amp;IsCurator&amp;&amp; = 1) and
+            ((dep.&amp;&amp;UserId&amp;&amp; = :userfilter or rm.&amp;&amp;WorkerType&amp;&amp; = :orgitemtype and du.&amp;&amp;UserId&amp;&amp; = :userfilter) or (rm.&amp;&amp;WorkerType&amp;&amp; = :usergrouptype and agu.&amp;&amp;UserId&amp;&amp; = :userfilter))
+            )
+          </sql-query>
+        </hibernate-mapping>
+      </mappings>
+      <text>
+      </text>
+    </procedure>
+
+    <procedure name="GetMonitorCacheInfo">
+      <mappings>
+        <hibernate-mapping xmlns="urn:nhibernate-mapping-2.2">
+          <resultset name="GetMonitorCacheInfoResultSet">
+            <return-scalar column="Id" type="System.Int64"/>
+            <return-scalar column="AvailableCount" type="System.Int64"/>
+            <return-scalar column="AssignToMeCount" type="System.Int64"/>
+            <return-scalar column="CompleteCount" type="System.Int64"/>
+            <return-scalar column="InterruptedCount" type="System.Int64"/>
+          </resultset>
+          <sql-query name="GetMonitorCacheInfo" resultset-ref="GetMonitorCacheInfoResultSet">
+            <query-param name="AvailableStatus" type="System.Int32[]" />
+            <query-param name="CompleteStatus" type="System.Int32[]" />
+            <query-param name="InterruptedStatus" type="System.Int32[]" />
+            <query-param name="activeTaskStatuses" type="System.Guid[]" />
+            <![CDATA[
+           select
+              ph.&&Id&& as &&Id&&,
+              ph.&&Name&& as &&Name&&,              
+              subq.&&AvailableCount&& as &&AvailableCount&&,
+              subqt.&&AssignToMeCount&& as &&AssignToMeCount&&,
+              subq.&&CompleteCount&& as &&CompleteCount&&,
+              subq.&&InterruptedCount&& as &&InterruptedCount&&,
+              subq.&&AvailableCountEml&& as &&AvailableCountEml&&,
+              subqt.&&AssignToMeCountEml&& as &&AssignToMeCountEml&&,
+              subq.&&CompleteCountEml&& as &&CompleteCountEml&&,
+              subq.&&InterruptedCountEml&& as &&InterruptedCountEml &&             
+            from &&ProcessHeader&& ph
+            left join (
+              select head.&&Id&& as &&Id&&,
+                     sum(case when wi.&&Status&& in (:AvailableStatus) and coalesce(wi.&&IsEmulation&&,0)=0 then 1 else 0 end) as &&AvailableCount&&,
+                     sum(case when wi.&&Status&& in (:CompleteStatus) and coalesce(wi.&&IsEmulation&&,0)=0 then 1 else 0 end) as &&CompleteCount&&,
+                     sum(case when wi.&&Status&& in (:InterruptedStatus) and coalesce(wi.&&IsEmulation&&,0)=0 then 1 else 0 end) as &&InterruptedCount&&,
+                     sum(case when wi.&&Status&& in (:AvailableStatus) and coalesce(wi.&&IsEmulation&&,0)=1 then 1 else 0 end) as &&AvailableCountEml&&,
+                     sum(case when wi.&&Status&& in (:CompleteStatus) and coalesce(wi.&&IsEmulation&&,0)=1 then 1 else 0 end) as &&CompleteCountEml&&,
+                     sum(case when wi.&&Status&& in (:InterruptedStatus) and coalesce(wi.&&IsEmulation&&,0)=1 then 1 else 0 end) as &&InterruptedCountEml&&
+              from &&WorkflowInstance&& wi 
+              inner join &&WorkflowProcess&& wp on wp.&&Id&& = wi.&&Process&&
+              inner join &&ProcessHeader&& head on head.&&Id&& = wp.&&Header&&              
+              group by head.&&Id&&
+            ) as subq on subq.&&Id&& = ph.&&Id&&
+            left join (
+              select phe.&&Id&& as &&Id&&,
+                sum(case when coalesce(wi.&&IsEmulation&&,0)=0 then 1 else 0 end) as &&AssignToMeCount&&, 
+		            sum(case when coalesce(wi.&&IsEmulation&&,0)=1 then 1 else 0 end) as &&AssignToMeCountEml&&                                     
+              from &&TaskBase&& tb 
+              inner join &&WorkflowBookmark&& wb on wb.&&Id&& =  tb.&&WorkflowBookmark&&
+              inner join &&WorkflowInstance&& wi on wi.&&Id&& = wb.&&Instance&&
+              inner join &&WorkflowProcess&& wpr on wpr.&&Id&& = wi.&&Process&&
+              inner join &&ProcessHeader&& phe on phe.&&Id&& = wpr.&&Header&&
+              where
+               (tb.&&Status&& in (:activeTaskStatuses))               
+              group by phe.&&Id&&
+            ) as subqt on subqt.&&Id&& = ph.&&Id&&
+            left join &&WorkflowProcess&& wp on ph.&&Published&& = wp.&&Id&&
+            ]]>
+          </sql-query>
+        </hibernate-mapping>
+      </mappings>
+    </procedure>
+
+    <procedure name="GetMonitorInstanceByStatusCount">
+      <mappings>
+        <hibernate-mapping xmlns="urn:nhibernate-mapping-2.2">
+          <resultset name="ProcessCountResultSet">
+            <return-scalar column="CountRes" type="System.Int64"/>
+            <return-scalar column="CountResEml" type="System.Int64"/>
+          </resultset>
+          <sql-query name="GetMonitorInstanceByStatusCount" resultset-ref="ProcessCountResultSet">
+            <query-param name="wiStatus" type="System.Int32" />
+            <query-param name="ProcessHeaderId" type="System.Int64" />
+            <![CDATA[
+           select sum(case when coalesce(wi.&&IsEmulation&&, 0) = 0 then 1 else 0 end) as &&CountRes&&, 
+		              sum(case when coalesce(wi.&&IsEmulation&&, 0) = 1 then 1 else 0 end) as &&CountResEml&&                    
+           from &&WorkflowInstance&& wi 
+           inner join &&WorkflowProcess&& wp on wp.&&Id&& = wi.&&Process&&              
+           where wp.&&Header&& = :ProcessHeaderId and wi.&&Status&& = :wiStatus          
+            ]]>
+          </sql-query>
+        </hibernate-mapping>
+      </mappings>
+    </procedure>
+
+    <procedure name="GetMonitorInstanceByStatusCountByUser">
+      <mappings>
+        <hibernate-mapping xmlns="urn:nhibernate-mapping-2.2">
+          <sql-query name="GetMonitorInstanceByStatusCountByUser" resultset-ref="ProcessCountResultSet">
+            <query-param name="wiStatus" type="System.Int32" />
+            <query-param name="ProcessHeaderId" type="System.Int64" />
+            <query-param name="currentUser" type="System.Int64" />
+            <![CDATA[
+           select sum(case when coalesce(wi.&&IsEmulation&&, 0) = 0 then 1 else 0 end) as &&CountRes&&, 
+		              sum(case when coalesce(wi.&&IsEmulation&&, 0) = 1 then 1 else 0 end) as &&CountResEml&&                    
+           from &&WorkflowInstance&& wi 
+           inner join &&WorkflowProcess&& wp on wp.&&Id&& = wi.&&Process&&              
+           where wp.&&Header&& = :ProcessHeaderId and wi.&&Status&& = :wiStatus and
+              exists(select &&Id&& from &&WorkflowInstanceMember&& where &&User&& = :currentUser and Instance = wi.&&Id&&)
+            ]]>
+          </sql-query>
+        </hibernate-mapping>
+      </mappings>
+    </procedure>
+
+    <procedure name="GetMonitorInstanceByStatusCountByUsers">
+      <mappings>
+        <hibernate-mapping xmlns="urn:nhibernate-mapping-2.2">
+          <resultset name="ProcessCountByUserResultSet">
+            <return-scalar column="Id" type="System.Int64"/>
+            <return-scalar column="CountRes" type="System.Int64"/>
+          </resultset>
+          <sql-query name="GetMonitorInstanceByStatusCountByUsers" resultset-ref="ProcessCountByUserResultSet">
+            <query-param name="wiStatus" type="System.Int32" />
+            <query-param name="ProcessHeaderId" type="System.Int64" />
+            <query-param name="isEmulation" type="System.Int32" />
+            <![CDATA[
+           select m.&&User&& as &&Id&&, count(distinct wi.&&Id&&) as &&CountRes&&                    
+           from &&WorkflowInstance&& wi 
+           inner join &&WorkflowProcess&& wp on wp.&&Id&& = wi.&&Process&&
+           inner join &&WorkflowInstanceMember&& m on m.&&Instance&& = wi.&&Id&&
+           where wp.&&Header&& = :ProcessHeaderId and wi.&&Status&& = :wiStatus and coalesce(wi.&&IsEmulation&&, 0) = :isEmulation
+           group by m.&&User&&              
+            ]]>
+          </sql-query>
+        </hibernate-mapping>
+      </mappings>
+    </procedure>
+    
+    <procedure name="GetMonitorInstanceByStatusListCount">
+      <mappings>
+        <hibernate-mapping xmlns="urn:nhibernate-mapping-2.2">
+          <sql-query name="GetMonitorInstanceByStatusListCount" resultset-ref="ProcessCountResultSet">
+            <query-param name="wiStatus" type="System.Int32[]" />
+            <query-param name="ProcessHeaderId" type="System.Int64" />
+            <![CDATA[
+           select sum(case when coalesce(wi.&&IsEmulation&&, 0) = 0 then 1 else 0 end) as &&CountRes&&, 
+		              sum(case when coalesce(wi.&&IsEmulation&&, 0) = 1 then 1 else 0 end) as &&CountResEml&&                    
+           from &&WorkflowInstance&& wi 
+           inner join &&WorkflowProcess&& wp on wp.&&Id&& = wi.&&Process&&              
+           where wp.&&Header&& = :ProcessHeaderId and wi.&&Status&& in (:wiStatus)            
+            ]]>
+          </sql-query>
+        </hibernate-mapping>
+      </mappings>
+    </procedure>
+
+    <procedure name="GetMonitorInstanceByStatusListCountByUsers">
+      <mappings>
+        <hibernate-mapping xmlns="urn:nhibernate-mapping-2.2">
+          <sql-query name="GetMonitorInstanceByStatusListCountByUsers" resultset-ref="ProcessCountByUserResultSet">
+            <query-param name="wiStatus" type="System.Int32" />
+            <query-param name="ProcessHeaderId" type="System.Int64" />
+            <query-param name="isEmulation" type="System.Int32" />
+            <![CDATA[
+           select m.&&User&& as &&Id&&, count(distinct wi.&&Id&&) as &&CountRes&&                  
+           from &&WorkflowInstance&& wi 
+           inner join &&WorkflowProcess&& wp on wp.&&Id&& = wi.&&Process&&
+           inner join &&WorkflowInstanceMember&& m on m.&&Instance&& = wi.&&Id&&
+           where wp.&&Header&& = :ProcessHeaderId and wi.&&Status&& in (:wiStatus) and coalesce(wi.&&IsEmulation&&,0) = :isEmulation
+           group by m.&&User&&              
+            ]]>
+          </sql-query>
+        </hibernate-mapping>
+      </mappings>
+    </procedure>
+
+    <procedure name="GetMonitorInstanceByStatusListCountByUser">
+      <mappings>
+        <hibernate-mapping xmlns="urn:nhibernate-mapping-2.2">
+          <sql-query name="GetMonitorInstanceByStatusListCountByUser" resultset-ref="ProcessCountResultSet">
+            <query-param name="wiStatus" type="System.Int32[]" />
+            <query-param name="ProcessHeaderId" type="System.Int64" />
+            <query-param name="currentUser" type="System.Int64" />
+            <![CDATA[
+           select sum(case when coalesce(wi.&&IsEmulation&&, 0) = 0 then 1 else 0 end) as &&CountRes&&, 
+		              sum(case when coalesce(wi.&&IsEmulation&&, 0) = 1 then 1 else 0 end) as &&CountResEml&&                   
+           from &&WorkflowInstance&& wi 
+           inner join &&WorkflowProcess&& wp on wp.&&Id&& = wi.&&Process&&              
+           where wp.&&Header&& = :ProcessHeaderId and wi.&&Status&& in (:wiStatus) and
+              exists(select &&Id&& from &&WorkflowInstanceMember&& where &&User&& = :currentUser and &&Instance&& = wi.&&Id&&)
+            ]]>
+          </sql-query>
+        </hibernate-mapping>
+      </mappings>
+    </procedure>
+
+    <procedure name="GetMonitorTasksByStatusListCount">
+      <mappings>
+        <hibernate-mapping xmlns="urn:nhibernate-mapping-2.2">
+          <sql-query name="GetMonitorTasksByStatusListCount" resultset-ref="ProcessCountResultSet">
+            <query-param name="wiStatus" type="System.Guid[]" />
+            <query-param name="ProcessHeaderId" type="System.Int64" />
+            <![CDATA[
+           select sum(case when coalesce(tb.&&IsEmulation&&, 0) = 0 then 1 else 0 end) as &&CountRes&&, 
+		              sum(case when coalesce(tb.&&IsEmulation&&, 0) = 1 then 1 else 0 end) as &&CountResEml&&
+		       from &&TaskBase&& tb 
+           inner join &&WorkflowBookmark&& wb on wb.&&Id&& = tb.&&WorkflowBookmark&&
+           inner join &&WorkflowInstance&& wi on wi.&&Id&& = wb.&&Instance&&
+           inner join &&WorkflowProcess&& wpr on wpr.&&Id&& = wi.&&Process&&
+           where wpr.&&Header&& = :ProcessHeaderId and (tb.&&Status&& in (:wiStatus))
+            ]]>
+          </sql-query>
+        </hibernate-mapping>
+      </mappings>
+    </procedure>
+
+    <procedure name="GetMonitorTasksByStatusListCountByUser">
+      <mappings>
+        <hibernate-mapping xmlns="urn:nhibernate-mapping-2.2">
+          <sql-query name="GetMonitorTasksByStatusListCountByUser" resultset-ref="ProcessCountResultSet">
+            <query-param name="wiStatus" type="System.Guid[]" />
+            <query-param name="ProcessHeaderId" type="System.Int64" />
+            <query-param name="currentUser" type="System.Int64" />
+            <![CDATA[
+           select sum(case when coalesce(tb.&&IsEmulation&&, 0) = 0 then 1 else 0 end) as &&CountRes&&, 
+		              sum(case when coalesce(tb.&&IsEmulation&&, 0) = 1 then 1 else 0 end) as &&CountResEml&&
+		       from &&TaskBase&& tb 
+           inner join &&WorkflowBookmark&& wb on wb.&&Id&& = tb.&&WorkflowBookmark&&
+           inner join &&WorkflowInstance&& wi on wi.&&Id&& = wb.&&Instance&&
+           inner join &&WorkflowProcess&& wpr on wpr.&&Id&& = wi.&&Process&&
+           where wpr.&&Header&& = :ProcessHeaderId and (tb.&&Status&& in (:wiStatus)) and tb.&&Executor&& = :currentUser              
+            ]]>
+          </sql-query>
+        </hibernate-mapping>
+      </mappings>
+    </procedure>
+
+    <procedure name="GetMonitorTasksByStatusListCountByUsers">
+      <mappings>
+        <hibernate-mapping xmlns="urn:nhibernate-mapping-2.2">
+          <sql-query name="GetMonitorTasksByStatusListCountByUsers" resultset-ref="ProcessCountByUserResultSet">
+            <query-param name="wiStatus" type="System.Guid[]" />
+            <query-param name="ProcessHeaderId" type="System.Int64" />
+            <query-param name="isEmulation" type="System.Int32" />
+            <![CDATA[           
+           select tb.&&Executor&& as &&Id&&, count(tb.&&Id&&) as &&CountRes&&
+		       from &&TaskBase&& tb 
+           inner join &&WorkflowBookmark&& wb on wb.&&Id&& = tb.&&WorkflowBookmark&&
+           inner join &&WorkflowInstance&& wi on wi.&&Id&& = wb.&&Instance&&
+           inner join &&WorkflowProcess&& wpr on wpr.&&Id&& = wi.&&Process&&
+		       where wpr.&&Header&& = :ProcessHeaderId and (tb.&&Status&& in (:wiStatus)) and coalesce(tb.&&IsEmulation&&, 0) = :isEmulation
+		       group by tb.&&Executor&&
+            ]]>
+          </sql-query>
+        </hibernate-mapping>
+      </mappings>
+    </procedure>
+
+    <procedure name="EntityModelHistoryWorkflowInstanceTasksUpdated">
+      <mappings>
+        <hibernate-mapping xmlns="urn:nhibernate-mapping-2.2">
+          <sql-query name="EntityModelHistoryWorkflowInstanceTasksUpdated" >
+            <query-param name="CreationDate" type="System.DateTime" />
+            <query-param name="CreationAuthor" type="System.Int64" />
+            <query-param name="ActionTypeUid" type="System.Guid" />
+            <query-param name="Instance" type="System.Int64" />
+            <![CDATA[
+            insert into &&EntityModelHistory&&(&&Id&&, &&CreationDate&&, &&CreationAuthor&&, &&ActionTypeUid&&, &&ObjectTypeUid&&, &&ObjectUid&&, &&ObjectId&&)
+            select nextval('g_entitymodelhistory') , :CreationDate, :CreationAuthor, :ActionTypeUid, t.&&TypeUid&&, t.&&Uid&&, t.&&Id&&
+            from &&TaskBase&& t
+            left join &&WorkflowBookmark&& b on b.&&Id&&=t.&&WorkflowBookmark&&
+            where b.&&Instance&&=:Instance
+            ]]>
+          </sql-query>
+        </hibernate-mapping>
+      </mappings>
+    </procedure>
+
+    <procedure name="FindProcessesByHeaderUid">
+      <mappings>
+        <hibernate-mapping xmlns="urn:nhibernate-mapping-2.2">
+          <resultset name="FindProcessesByHeaderUidResultSet">
+            <return-scalar column="ProcessUid" type="System.Guid"/>
+          </resultset>
+          <sql-query name="FindProcessesByHeaderUid" >
+            <query-param name="ProcessHeaderUid" type="System.Guid" />
+            select * from FindProcessesByHeaderUid(:ProcessHeaderUid)
+          </sql-query>
+        </hibernate-mapping>
+      </mappings>
+      <text>
+        <![CDATA[
+create or replace function FindProcessesByHeaderUid(ProcessHeaderUid uuid)
+returns setof uuid as
+$$
+declare
+resultProcessUid uuid;
+begin
+	for resultProcessUid in select &&Uid&& from (
+		with recursive &&RootHeader&& as 
+		(
+		      select p.&&Uid&&, p.&&Parent&&, 0 as lvl
+		      from &&ProcessHeader&& p
+		      where p.&&Uid&& = ProcessHeaderUid
+		      union all
+		      select ph.&&Uid&&, ph.&&Parent&&, &&RootHeader&&.lvl + 1
+		      from &&ProcessHeader&& ph
+		      inner join &&RootHeader&& on &&RootHeader&&.&&Parent&& = ph.&&Id&&
+		), &&TopRecord&& as 
+		(
+		      select &&RootHeader&&.&&Uid&&, &&RootHeader&&.lvl
+		      from &&RootHeader&&
+		      order by &&RootHeader&&.lvl desc
+		      limit 1
+		), &&FindProcesses&& as 
+		(
+		      select p.&&Id&&, wp.&&Uid&&
+		      from &&ProcessHeader&& p
+		      inner join &&WorkflowProcess&& wp on wp.&&Id&& = p.&&Current&&
+		      inner join &&TopRecord&& tr on tr.&&Uid&& = p.&&Uid&&
+		      union all
+		      select ph.&&Id&&, wp.&&Uid&&
+		      from &&ProcessHeader&& ph
+		      inner join &&WorkflowProcess&& wp on wp.&&Id&& = ph.&&Current&&
+		      inner join &&FindProcesses&& on &&FindProcesses&&.&&Id&& = ph.&&Parent&&
+		)
+		select &&Uid&& from &&FindProcesses&&
+	) as &&AllProcesses&&
+	loop
+		return next resultProcessUid;
+	end loop;
+	return;
+end
+$$ language plpgsql;
+        ]]>
+      </text>
+    </procedure>
+
+    <procedure name="DeleteFakeDependencies">
+      <mappings>
+        <hibernate-mapping xmlns="urn:nhibernate-mapping-2.2">
+          <sql-query name="DeleteFakeDependencies" >
+            <query-param name="ProcessUids" type="System.Guid[]" />
+            <![CDATA[
+              delete from &&FormDependencies&&
+              where &&DependObjectUid&& is null
+              and &&DependObjectFormUid&& is null
+              and &&UsesObjectFormUid&& is null
+              and &&Type&& is null
+              and &&UsesObjectUid&& in (:ProcessUids)
+            ]]>
+          </sql-query>
+        </hibernate-mapping>
+      </mappings>
+    </procedure>
+
+  </procedures>
+
+  <scripts>
+
+    <script ExecuteTime="OnComplete" name="FillWorkflowInstanceParents1" TransformationInVersion="3.15.7">
+      <text>
+        <![CDATA[
+        with recursive Rec as
+        (
+          select &&Id&& &&Child&&, &&ParentInstance&& &&Parent&& from &&WorkflowInstance&&
+          where not &&ParentInstance&& is null
+          union all 
+          select Rec.&&Child&&, wi.&&ParentInstance&& from &&WorkflowInstance&& wi
+          inner join Rec on Rec.&&Parent&& = wi.&&Id&& and not wi.&&ParentInstance&& is null
+        )
+        insert into &&WorkflowInstanceParents&& (&&Child&&, &&Parent&&, &&Internal&&) 
+        select rec.&&Child&&, rec.&&Parent&&, (case when ph.&&Parent&& is null then 0 else 1 end)
+        from Rec rec
+        inner join &&WorkflowInstance&& wi on rec.&&Child&& = wi.&&Id&&
+        inner join &&WorkflowProcess&& wp on wi.&&Process&& = wp.&&Id&&
+        inner join &&ProcessHeader&& ph on wp.&&Header&& = ph.&&Id&&
+        ]]>
+      </text>
+    </script>
+
+    <script ExecuteTime="OnComplete" name="UpdateInternalWorkflowInstanceParents" TransformationInVersion="3.15.7">
+      <text>
+        <![CDATA[
+        update &&WorkflowInstanceParents&& wip
+        set &&Internal&& = 1
+        from &&WorkflowInstanceParents&& rec
+        inner join &&WorkflowInstance&& wi on rec.&&Child&& = wi.&&Id&&
+        inner join &&WorkflowProcess&& wp on wi.&&Process&& = wp.&&Id&&
+        inner join &&ProcessHeader&& ph on wp.&&Header&& = ph.&&Id&&
+        where ph.&&Parent&& is not null and rec.&&Parent&& = wip.&&Parent&& and rec.&&Child&& = wip.&&Child&& and wip.&&Parent&& != wip.&&Child&&;
+        ]]>
+      </text>
+    </script>
+
+    <script ExecuteTime="OnComplete" name="FillWorkflowInstanceParents2" TransformationInVersion="3.15.7">
+      <text>
+        <![CDATA[
+        insert into &&WorkflowInstanceParents&& (&&Child&&, &&Parent&&) select &&Id&&, &&Id&& from &&WorkflowInstance&&
+        ]]>
+      </text>
+    </script>
+
+  </scripts>
+
+  <indexes>
+    <index name="Idx_TaskBase_Status" tableName="TaskBase" columns="Status" />
+    <index name="Idx_WorkflowInstance_Emul" tableName="WorkflowInstance" columns="IsEmulation" />
+    <index name="IX_PROCESSHEADER_N1" tableName="ProcessHeader" columns="Status" />
+    <index name="Idx_TSKEXWFISEML" tableName="TaskBase" columns="Status, Executor, WorkflowBookmark, IsEmulation" />
+  </indexes>
+
+</root>

@@ -1,0 +1,1344 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<root uid="{AF39D430-945D-46AC-B740-A30E8440CB0B}" provider="SqlServer">
+
+  <procedures>
+
+    <procedure name="FolderTreeForUser">
+      <mappings>
+        <hibernate-mapping xmlns="urn:nhibernate-mapping-2.2">
+          <resultset name="FolderNodeResultSet">
+            <return-scalar column="Id" type="System.Int64"/>
+            <return-scalar column="Name" type="System.String"/>
+            <return-scalar column="CreationDate" type="System.DateTime"/>
+            <return-scalar column="FolderId" type="System.Int64"/>
+            <return-scalar column="CreationAuthor" type="System.Int64"/>
+            <return-scalar column="NodeTypeUid" type="System.Guid"/>
+            <return-scalar column="ImageUrl" type="System.String"/>
+            <return-scalar column="Virtual" type="System.Boolean"/>
+            <return-scalar column="PermissionId" type="System.Guid"/>
+            <return-scalar column="Expanded" type="System.Boolean"/>
+            <return-scalar column="HasChild" type="System.Boolean"/>
+            <return-scalar column="Depth" type="System.Int64"/>
+          </resultset>
+          <sql-query name="FOLDERTREEFORUSER" resultset-ref="FolderNodeResultSet">
+            <query-param name="rootId" type="long" />
+            <query-param name="userId" type="long" />
+            <query-param name="treeId" type="string" />
+            <![CDATA[
+select &&Id&&, &&Name&&, &&CreationDate&&, ft.&&Folder&& as &&FolderId&&, &&CreationAuthor&&, &&NodeTypeUid&&, ft.&&ImageUrl&& as &&ImageUrl&&, ft.&&Virtual&& as &&Virtual&&,
+ft.&&PermissionId&& as &&PermissionId&&, ft.&&Expanded&& as &&Expanded&&, ft.&&HasChild&&, ft.&&Depth&&
+from FOLDERTREEFORUSER(:rootId, :userId, :treeId) ft
+order by isnull(ft.&&Folder&&, 0) asc, isnull(ft.&&SortType&&, 0) asc, &&Name&& asc
+            ]]>
+          </sql-query>
+        </hibernate-mapping>
+      </mappings>
+      <text>
+        <![CDATA[
+create function &&FOLDERTREEFORUSER&&(@rootId bigint, @userId bigint, @treeId nvarchar(32))
+        RETURNS @result TABLE(
+  Id bigint,
+  Name nvarchar(max),
+  Folder bigint,
+  CreationAuthor bigint,
+        CreationDate datetime,
+        NodeTypeUid uniqueidentifier,
+        ImageUrl nvarchar(max),
+        Virtual bit,
+  PermissionId uniqueidentifier,
+  SortType bigint,
+  Expanded bit,
+  HasChild bit,
+  Depth bigint)
+        as
+        begin
+  insert into @result
+  select distinct
+      d.Id,
+      d.&&Name&&,
+      d.Folder,
+      d.CreationAuthor,
+      d.CreationDate,
+      d.TypeUid NodeTypeUid,
+      f.ImageUrl,
+      d.Virtual,
+      p.PermissionId,
+      d.SortTypeId,
+      s1.Expanded,
+      f.HasChildFolders HasChild,
+      r1.Depth
+  from sys_DmsObjectRelation r1
+  inner join sys_DmsObjectTreeNodeState s on s.dmsobject = r1.Child
+  inner join sys_DmsObjectRelation r2 on r2.Parent = s.dmsobject
+  inner join Folder f on f.Id = r2.Child
+  inner join DmsObject d on d.Id = f.Id
+  inner join DmsObjectPermission p on p.DmsObject = f.Id
+  inner join UserSecuritySetCache c on c.SetId = p.UserSecuritySetCacheId
+  left join sys_DmsObjectTreeNodeState s1 on s1.TreeId = @treeId and s1.&&User&& = @userId and s1.DmsObject = f.id and s1.Expanded = 1 and s1.ParentExpanded = 1
+  where
+      (d.IsDeleted is null or d.IsDeleted = 0)
+      and c.UserId = @userId
+      and r1.Parent = @rootId
+      and s.TreeId = @treeId
+      and s.&&User&& = @userId
+      and s.Expanded = 1
+      and s.ParentExpanded = 1
+      and r2.Depth < 2
+      and r2.&&Owner&& in (@userId, 0)
+        return
+        end
+        ]]>
+      </text>
+    </procedure>
+
+    <procedure name="FolderTreeForAdmin">
+      <mappings>
+        <hibernate-mapping xmlns="urn:nhibernate-mapping-2.2">
+          <sql-query name="FOLDERTREEFORADMIN" resultset-ref="FolderNodeResultSet">
+            <query-param name="rootId" type="long" />
+            <query-param name="userId" type="long" />
+            <query-param name="treeId" type="string" />
+            <![CDATA[
+select &&Id&&, &&Name&&, &&CreationDate&&, ft.&&Folder&& as &&FolderId&&, &&CreationAuthor&&, &&NodeTypeUid&&, ft.&&ImageUrl&& as &&ImageUrl&&, ft.&&Virtual&& as &&Virtual&&, null as &&PermissionId&&, ft.&&Expanded&& as &&Expanded&&, ft.&&HasChild&&, ft.&&Depth&&
+from FOLDERTREEFORADMIN(:rootId, :userId, :treeId) ft
+order by isnull(ft.&&Folder&&, 0) asc, isnull(ft.&&SortType&&, 0) asc, &&Name&& asc
+            ]]>
+          </sql-query>
+        </hibernate-mapping>
+      </mappings>
+      <text>
+        <![CDATA[
+create function &&FOLDERTREEFORADMIN&&(@rootId bigint, @userId bigint, @treeId nvarchar(32))
+RETURNS @result TABLE(
+  Id bigint,
+  Name nvarchar(max),
+  Folder bigint,
+  CreationAuthor bigint,
+  CreationDate datetime,
+  NodeTypeUid uniqueidentifier,
+  ImageUrl nvarchar(max),
+  Virtual bit,
+  SortType bigint,
+  Expanded bit,
+  HasChild bit,
+  Depth bigint)
+as
+begin
+  insert into @result
+  select distinct
+      d.Id,
+      d.&&Name&&,
+      d.Folder,
+      d.CreationAuthor,
+      d.CreationDate,
+      d.TypeUid NodeTypeUid,
+      f.ImageUrl,
+      d.Virtual,
+      d.SortTypeId,
+      s1.expanded,
+      f.HasChildFolders HasChild,
+      r1.Depth
+  from sys_DmsObjectRelation r1
+  inner join sys_DmsObjectTreeNodeState s on s.dmsobject = r1.Child
+  inner join sys_DmsObjectRelation r2 on r2.Parent = s.DmsObject
+  inner join Folder f on f.Id = r2.Child
+  inner join DmsObject d on d.Id = f.id
+  left join sys_DmsObjectTreeNodeState s1 on s1.treeId = @treeId and s1.&&User&& = @userId and s1.DmsObject = f.Id and s1.Expanded = 1 and s1.ParentExpanded = 1
+  where
+      (d.IsDeleted is null or d.IsDeleted = 0)
+      and r1.Parent = @rootId
+      and s.TreeId = @treeId
+      and s.&&User&& = @userId
+      and s.Expanded = 1
+      and s.ParentExpanded = 1
+      and r2.Depth < 2
+      and r2.&&Owner&& in (@userId, 0)
+  return
+end
+        ]]>
+      </text>
+    </procedure>
+
+    <procedure name="FolderFullTreeForUser">
+      <mappings>
+        <hibernate-mapping xmlns="urn:nhibernate-mapping-2.2">
+          <sql-query name="FOLDERFULLTREEFORUSER" resultset-ref="FolderNodeResultSet">
+            <query-param name="rootId" type="long" />
+            <query-param name="userId" type="long" />
+            <query-param name="treeId" type="string" />
+            <![CDATA[
+select &&Id&&, &&Name&&, &&CreationDate&&, ft.&&Folder&& as &&FolderId&&, &&CreationAuthor&&, &&NodeTypeUid&&, ft.&&ImageUrl&& as &&ImageUrl&&, ft.&&Virtual&& as &&Virtual&&,
+ft.&&PermissionId&& as &&PermissionId&&, ft.&&Expanded&& as &&Expanded&&, ft.&&HasChild&&, ft.&&Depth&&
+from FOLDERFULLTREEFORUSER(:rootId, :userId, :treeId) ft
+order by isnull(ft.&&Folder&&, 0) asc, isnull(ft.&&SortType&&, 0) asc, &&Name&& asc
+            ]]>
+          </sql-query>
+        </hibernate-mapping>
+      </mappings>
+      <text>
+        <![CDATA[
+create function &&FOLDERFULLTREEFORUSER&&(@rootId bigint, @userId bigint, @treeId nvarchar(32))
+RETURNS @result TABLE(
+  Id bigint,
+  Name nvarchar(max),
+  Folder bigint,
+  CreationAuthor bigint,
+  CreationDate datetime,
+  NodeTypeUid uniqueidentifier,
+  ImageUrl nvarchar(max),
+  Virtual bit,
+  PermissionId uniqueidentifier,
+  SortType bigint,
+  Expanded bit,
+  HasChild bit,
+  Depth bigint)
+as
+begin
+  insert into @result
+  select
+      d.Id,
+      d.&&Name&&,
+      d.Folder,
+      d.CreationAuthor,
+      d.CreationDate,
+      d.TypeUid NodeTypeUid,
+      f.ImageUrl,
+      d.Virtual,
+      p.PermissionId,
+      d.SortTypeId,
+      s.Expanded,
+      f.HasChildFolders HasChild,
+      r.Depth
+  from sys_DmsObjectRelation r
+  inner join Folder f on f.Id = r.Child
+  inner join DmsObject d on d.Id = f.Id
+  inner join DmsObjectPermission p on p.DmsObject = f.Id
+  inner join UserSecuritySetCache c on c.SetId = p.UserSecuritySetCacheId
+  left join sys_DmsObjectTreeNodeState s on s.TreeId = @treeId and s.&&User&& = @userId and s.DmsObject = f.Id and s.Expanded = 1 and s.ParentExpanded = 1
+  where
+      (d.IsDeleted is null or d.IsDeleted = 0)
+      and c.UserId = @userId
+      and r.Parent = @rootId
+      and r.&&Owner&& in (@userId, 0)
+  return
+end
+        ]]>
+      </text>
+    </procedure>
+
+    <procedure name="FolderFullTreeForAdmin">
+      <mappings>
+        <hibernate-mapping xmlns="urn:nhibernate-mapping-2.2">
+          <sql-query name="FOLDERFULLTREEFORADMIN" resultset-ref="FolderNodeResultSet">
+            <query-param name="rootId" type="long" />
+            <query-param name="userId" type="long" />
+            <query-param name="treeId" type="string" />
+            <![CDATA[
+select &&Id&&, &&Name&&, &&CreationDate&&, ft.&&Folder&& as &&FolderId&&, &&CreationAuthor&&, &&NodeTypeUid&&, ft.&&ImageUrl&& as &&ImageUrl&&, ft.&&Virtual&& as &&Virtual&&, null as &&PermissionId&&, ft.&&Expanded&& as &&Expanded&&, ft.&&HasChild&&, ft.&&Depth&&
+from FOLDERFULLTREEFORADMIN(:rootId, :userId, :treeId) ft
+order by isnull(ft.&&Folder&&, 0) asc, isnull(ft.&&SortType&&, 0) asc, &&Name&& asc
+            ]]>
+          </sql-query>
+        </hibernate-mapping>
+      </mappings>
+      <text>
+        <![CDATA[
+create function &&FOLDERFULLTREEFORADMIN&&(@rootId bigint, @userId bigint, @treeId nvarchar(32))
+RETURNS @result TABLE(
+  Id bigint,
+  Name nvarchar(max),
+  Folder bigint,
+  CreationAuthor bigint,
+  CreationDate datetime,
+  NodeTypeUid uniqueidentifier,
+  ImageUrl nvarchar(max),
+  Virtual bit,
+  SortType bigint,
+  Expanded bit,
+  HasChild bit,
+  Depth bigint)
+as
+begin
+  insert into @result
+  select
+      d.Id,
+      d.&&Name&&,
+      d.Folder,
+      d.CreationAuthor,
+      d.CreationDate,
+      d.TypeUid NodeTypeUid,
+      f.ImageUrl,
+      d.Virtual,
+      d.SortTypeId,
+      s.Expanded,
+      f.HasChildFolders HasChild,
+      r.Depth
+  from sys_DmsObjectRelation r
+  inner join Folder f on f.Id = r.Child
+  inner join DmsObject d on d.Id = f.Id
+  left join sys_DmsObjectTreeNodeState s on s.TreeId = @treeId and s.&&User&& = @userId and s.DmsObject = f.Id and s.Expanded = 1 and s.ParentExpanded = 1
+  where
+      (d.IsDeleted is null or d.IsDeleted = 0)
+      and r.Parent = @rootId
+      and r.&&Owner&& in (@userId, 0)
+  return
+end
+        ]]>
+      </text>
+    </procedure>
+
+    <procedure name="FolderFullTree">
+      <mappings>
+        <hibernate-mapping xmlns="urn:nhibernate-mapping-2.2">
+          <sql-query name="FolderFullTree" resultset-ref="FolderNodeResultSet">
+            <query-param name="rootId" type="long" />
+            <![CDATA[
+select Id, Name, CreationDate, ft.Folder as FolderId, CreationAuthor, NodeTypeUid, ft.ImageUrl as ImageUrl, ft.Virtual as Virtual, null as PermissionId, null as Expanded, ft.HasChild, ft.&&Depth&&
+from FOLDERFULLTREE(:rootId) ft
+            ]]>
+          </sql-query>
+        </hibernate-mapping>
+      </mappings>
+      <text>
+        <![CDATA[
+create function &&FOLDERFULLTREE&&(@rootId bigint)
+RETURNS @result TABLE(
+  Id bigint,
+  Name nvarchar(max),
+  Folder bigint,
+  CreationAuthor bigint,
+  CreationDate datetime,
+  NodeTypeUid uniqueidentifier,
+  ImageUrl nvarchar(max),
+  Virtual bit,
+  SortType bigint,
+  HasChild bit,
+  Depth bigint)
+as
+begin
+  insert into @result
+  select
+      d.Id,
+      d.&&Name&&,
+      d.Folder,
+      d.CreationAuthor,
+      d.CreationDate,
+      d.TypeUid NodeTypeUid,
+      f.ImageUrl,
+      d.Virtual,
+      d.SortTypeId,
+      f.HasChildFolders HasChild,
+      r.Depth
+  from sys_DmsObjectRelation r
+  inner join Folder f on f.Id = r.Child
+  inner join DmsObject d on d.Id = f.Id
+  where
+      (d.IsDeleted is null or d.IsDeleted = 0)
+      and r.Parent = @rootId
+  return
+end
+        ]]>
+      </text>
+    </procedure>
+
+    <procedure name="GetRootQuery">
+      <mappings>
+        <hibernate-mapping xmlns="urn:nhibernate-mapping-2.2">
+          <resultset name="FolderRootNodeResultSet">
+            <return-scalar column="Id" type="System.Int64"/>
+            <return-scalar column="Name" type="System.String"/>
+            <return-scalar column="FolderId" type="System.Int64"/>
+            <return-scalar column="FolderType" type="System.Int32"/>
+            <return-scalar column="CreationAuthor" type="System.Int64"/>
+          </resultset>
+          <sql-query name="GETROOTQUERY" resultset-ref="FolderRootNodeResultSet">
+            <query-param name="folderId" type="long" />
+            <![CDATA[
+            select Id, Name, FolderId, FolderType, CreationAuthor from GETROOTFOLDER(:folderId)
+            ]]>
+          </sql-query>
+        </hibernate-mapping>
+      </mappings>
+      <text>
+<![CDATA[
+create function [GETROOTFOLDER](@folder bigint)
+RETURNS @result TABLE(
+Id bigint,
+Name nvarchar(max),
+FolderId bigint,
+FolderType int,
+CreationAuthor bigint
+)
+as
+begin        
+    insert into @result
+        select 
+            d.id,
+            d.name,
+            d.folder,
+            f.foldertype,
+            d.creationauthor
+    from sys_dmsobjectrelation r
+    inner join folder f on f.id=r.Parent
+    inner join dmsobject d on d.id=f.id
+    where r.child = @folder
+    order by r.depth 
+  return
+end
+]]>
+      </text>
+    </procedure>   
+    
+    <procedure name="GetSubfoldersQuery">
+      <mappings>
+        <hibernate-mapping xmlns="urn:nhibernate-mapping-2.2">          
+          <sql-query name="GetSubfoldersQuery">
+            <query-param name="folderId" type="long" />
+            <![CDATA[
+            select Id from GetSubfolders(:folderId)
+            ]]>
+          </sql-query>
+        </hibernate-mapping>
+      </mappings>
+      <text>
+<![CDATA[
+create function [GetSubfolders](@folderId bigint)
+RETURNS @result TABLE(ID bigint)
+as
+begin
+    insert into @result
+    select r.child from sys_dmsobjectrelation r
+    where r.parent = @folderId
+    order by r.depth
+    return
+end
+]]>
+      </text>
+    </procedure>
+    
+    <procedure name="GetSubDmsObjectsQuery">
+      <mappings>
+        <hibernate-mapping xmlns="urn:nhibernate-mapping-2.2">
+          <resultset name="FolderSubNodeResultSet">
+            <return-scalar column="Id" type="System.Int64"/>
+            <return-scalar column="NodeTypeUid" type="System.Guid"/>
+            <return-scalar column="FolderId" type="System.Int64"/>
+          </resultset>
+          <sql-query name="GetSubDmsObjectsQuery"  resultset-ref="FolderSubNodeResultSet">
+            <query-param name="folderId" type="long"  />
+            <![CDATA[
+            select Id, NodeTypeUid, FolderId from GetSubDmsObjectsQuery(:folderId)
+            ]]>
+          </sql-query>
+        </hibernate-mapping>
+      </mappings>
+      <text>
+<![CDATA[
+create function [GetSubDmsObjectsQuery](@folder bigint)
+returns @result TABLE (
+  Id bigint,
+  NodeTypeUid uniqueidentifier,
+  FolderId bigint
+)
+as
+begin  
+  insert into @result
+  select d.id, d.typeuid, d.folder from sys_dmsobjectrelation r
+  inner join dmsobject d on d.folder = r.child
+  where r.Parent = @folder
+  return
+end
+]]>
+      </text>
+    </procedure>    
+    
+    <procedure name="UpdateInheritDmsObjectPermissions">
+      <mappings>
+        <hibernate-mapping xmlns="urn:nhibernate-mapping-2.2">
+          <sql-query name="ExecUpdateInheritDmsObjectPermissions" >
+            exec UpdateInheritDmsObjectPermissions @objId=:objId , @onlyChildren=:onlyChildren
+          </sql-query>
+        </hibernate-mapping>
+      </mappings>
+      <text>
+<![CDATA[
+CREATE procedure [UpdateInheritDmsObjectPermissions]
+(
+	@objId bigint, -- это идентификатор объекта для которого нужно обновить привилегии
+	@onlyChildren bit -- обновлять только в дочерних элементах
+)
+as
+begin
+
+declare @usermask bigint;
+set @usermask = 72057594037927936; -- побитовый сдвиг влево 1 на 56 разрядов (2 ^ 56) 1[0]55
+declare @objqueue table (id bigint, folder bigint, creationAuthor bigint);
+
+with rec(Id, Folder, CreationAuthor) as 
+(
+	select d.Id, d.Folder, d.CreationAuthor from DmsObject d where d.Id = @objId
+	union all 
+	select dc.Id, dc.Folder, dc.CreationAuthor from DmsObject dc 
+	inner join rec  on rec.Id = dc.Folder and dc.InheritPermissions = 1
+)
+insert into @objqueue (id, folder, creationAuthor)
+select * from rec where @onlyChildren = 0 or id != @objId
+
+while((select COUNT(*) from @objqueue) > 0)
+begin
+	declare @currentId bigint, @parentId bigint, @creationAuthor bigint;
+	select top 1 @currentId = id, @parentId = folder, @creationAuthor = creationAuthor from @objqueue
+	
+	if @parentId is not null
+	begin
+		-- TODO использовать merge для минимизации изменений!
+		delete from DmsObjectPermission where DmsObject = @currentId and InheritedFromFolder is not null;
+
+    declare @insTable table (
+			[Id] [bigint] NOT NULL Primary KEY,
+			[Uid] [uniqueidentifier] NULL,
+			[DmsObject] [bigint] NULL,
+			[PermissionId] [uniqueidentifier] NULL,
+			[User] [bigint] NULL,
+			[Group] [bigint] NULL,
+			[OrganizationItemPosition] [bigint] NULL,
+			[OrganizationItemEmployee] [bigint] NULL,
+			[UserSecuritySetCacheId] [bigint] NULL,
+			[PermissionRole] [uniqueidentifier] NULL,
+			[InheritedFromFolder] [bigint] NULL
+		);
+
+		declare @insCounter bigint, @insStartId bigint, @insEndId bigint;
+		
+		insert into @insTable ([Id], [Uid], DmsObject, [Group], InheritedFromFolder, OrganizationItemEmployee, 
+			OrganizationItemPosition, PermissionId, PermissionRole, [User], UserSecuritySetCacheId)
+		select
+			ROW_NUMBER() over (order by [Id]) - 1,
+			NEWID(),
+			@currentId, 
+			pdp.[Group], 
+			case when pdp.InheritedFromFolder is null then @parentId else pdp.InheritedFromFolder end, 
+			pdp.OrganizationItemEmployee, 
+			pdp.OrganizationItemPosition, 
+			pdp.PermissionId, 
+			pdp.PermissionRole, 
+			(case when pdp.PermissionRole = 'B4565CC1-7CB3-4201-B7BD-15872D1E7F92' then @creationAuthor else pdp.[User] end) as [User],
+			(case when pdp.PermissionRole = 'B4565CC1-7CB3-4201-B7BD-15872D1E7F92' then (@creationAuthor|@usermask) else pdp.UserSecuritySetCacheId end) as UserSecuritySetCacheId			
+			from DmsObjectPermission pdp where pdp.DmsObject = @parentId;
+
+		SELECT @insCounter = COUNT(Id) FROM @insTable;
+
+		EXECUTE [G_GenId] 'DmsObjectPermission', @insCounter, @insStartId out, @insEndId out;
+		
+		insert into DmsObjectPermission ([Id], [Uid], DmsObject, [Group], InheritedFromFolder, OrganizationItemEmployee, 
+			OrganizationItemPosition, PermissionId, PermissionRole, [User], UserSecuritySetCacheId )
+		select @insStartId + [Id], [Uid], DmsObject, [Group], InheritedFromFolder, OrganizationItemEmployee, 
+			OrganizationItemPosition, PermissionId, PermissionRole, [User], UserSecuritySetCacheId from @insTable;
+
+    delete from @insTable;
+  end
+	delete from @objqueue where id = @currentId;
+end
+end
+
+]]>
+      </text>
+    </procedure>
+
+    <procedure name="UpdateInheritDmsObjectPermissionsPatch">
+      <mappings>
+        <hibernate-mapping xmlns="urn:nhibernate-mapping-2.2">
+          <sql-query name="ExecUpdateInheritDmsObjectPermissionsPatch" >
+            exec UpdateInheritDmsObjectPermissionsPatch @objId=:objId , @permsStr=:permsStr
+          </sql-query>
+        </hibernate-mapping>
+      </mappings>
+      <text>
+<![CDATA[
+CREATE procedure [UpdateInheritDmsObjectPermissionsPatch]
+(
+  @objId bigint,
+  @permsStr varchar(max)
+)
+as
+begin
+declare @addPatch int = 0;
+declare @remPatch int = 1;
+
+create table #permsTableTemp (
+	[PermissionId] [uniqueidentifier] NULL,
+	[User] [bigint] NULL,
+	[Group] [bigint] NULL,
+	[OrganizationItemPosition] [bigint] NULL,
+	[OrganizationItemEmployee] [bigint] NULL,
+	[UserSecuritySetCacheId] [bigint] NULL,
+	[PermissionRole] [uniqueidentifier] NULL,
+	[InheritedFromFolder] [bigint] NULL,
+	[PatchType] [int] NULL
+);
+create index IX_permsTableTempIndex ON #permsTableTemp ([PatchType]);
+create table #dmsObjects (id bigint not null Primary KEY, folder bigint, CreationAuthor bigint);
+
+declare @separator int;
+declare @itemStr varchar(max);
+
+declare @permissionId uniqueidentifier;
+declare @userId bigint;
+declare @groupId bigint;
+declare @orgItemPos bigint;
+declare @orgItemEmp bigint;
+declare @setCacheId bigint;
+declare @permissionRole uniqueidentifier;
+declare @inheritedFromFolder bigint;
+declare @patchType int;
+
+ -- parse permsStr
+while patindex('%;%', @permsStr) > 0
+begin
+	set @separator = patindex('%;%', @permsStr);
+	set @itemStr = left(@permsStr, @separator - 1);
+	set @permsStr = stuff(@permsStr, 1, @separator, '');
+
+	set @separator = patindex('%:%', @itemStr);
+	if (@separator > 0)
+	begin
+		-- permission
+		set @permissionId = cast(left(@itemStr, @separator - 1) as uniqueidentifier);
+		set @itemStr = stuff(@itemStr, 1 , @separator, '');
+
+		-- user
+		set @separator = patindex('%:%', @itemStr);
+		set @userId = cast(nullif(left(@itemStr, @separator - 1), '') as bigint);
+		set @itemStr = stuff(@itemStr, 1, @separator, '');
+
+		-- group
+		set @separator = patindex('%:%', @itemStr);
+		set @groupId = cast(nullif(left(@itemStr, @separator - 1), '') as bigint);
+		set @itemStr = stuff(@itemStr, 1, @separator, '');
+
+		-- org item pos
+		set @separator = patindex('%:%', @itemStr);
+		set @orgItemPos = cast(nullif(left(@itemStr, @separator - 1), '') as bigint);
+		set @itemStr = stuff(@itemStr, 1, @separator, '');
+
+		-- org item emp
+		set @separator = patindex('%:%', @itemStr);
+		set @orgItemEmp = cast(nullif(left(@itemStr, @separator - 1), '') as bigint);
+		set @itemStr = stuff(@itemStr, 1, @separator, '');
+
+		-- set cache id
+		set @separator = patindex('%:%', @itemStr);
+		set @setCacheId = cast(left(@itemStr, @separator - 1) as bigint);
+		set @itemStr = stuff(@itemStr, 1, @separator, '');
+		
+		-- permission role
+		set @separator = patindex('%:%', @itemStr);
+		set @permissionRole = cast(left(@itemStr, @separator - 1) as uniqueidentifier);
+		set @itemStr = stuff(@itemStr, 1, @separator, '');
+
+		-- inhertited from folder
+		set @separator = patindex('%:%', @itemStr);
+		set @inheritedFromFolder = cast(nullif(left(@itemStr, @separator - 1), '') as bigint);
+
+		-- patch type
+		set @patchType = cast(stuff(@itemStr, 1, @separator, '') as int);
+
+		insert into #permsTableTemp values(@permissionId, @userId, @groupId, @orgItemPos, @orgItemEmp, @setCacheId, @permissionRole, @inheritedFromFolder, @patchType);
+	end	
+end
+
+ if (exists(select * from #permsTableTemp))
+ begin
+	declare @creationAuthor bigint;
+	declare @insCounter bigint, @insStartId bigint, @insEndId bigint;
+	declare @usermask bigint = 72057594037927936; -- 1 << 56;
+
+	-- unroll from root 
+	with rec(Id, Folder, CreationAuthor) as 
+	(
+		select d.Id, d.Folder, d.CreationAuthor from DmsObject d where d.Id = @objId
+		union all 
+		select dc.Id, dc.Folder, dc.CreationAuthor from DmsObject dc 
+		inner join rec  on rec.Id = dc.Folder and dc.InheritPermissions = 1
+	)
+	insert into #dmsObjects (id, folder, CreationAuthor)
+	select * from rec where id != @objId
+
+	if (exists(select * from #permsTableTemp where PatchType = @remPatch))
+	begin
+		-- remove
+		delete p from DmsObjectPermission p
+		inner join #dmsObjects d on d.Id = p.DmsObject 
+		inner join #permsTableTemp r on (
+			p.[PermissionId] = r.[PermissionId] and
+			(p.[User] = (case when r.PermissionRole = 'B4565CC1-7CB3-4201-B7BD-15872D1E7F92' then d.CreationAuthor else r.[User] end) or p.[User] is null and r.[User] is null) and
+			(p.[Group] = r.[Group] or p.[Group] is null and r.[Group] is null) and
+			(p.OrganizationItemPosition = r.OrganizationItemPosition or p.OrganizationItemPosition is null and r.OrganizationItemPosition is null) and
+			(p.OrganizationItemEmployee = r.OrganizationItemEmployee or p.OrganizationItemEmployee is null and r.OrganizationItemEmployee is null) and
+			p.UserSecuritySetCacheId = (case when r.PermissionRole = 'B4565CC1-7CB3-4201-B7BD-15872D1E7F92' then (d.CreationAuthor|@usermask) else r.UserSecuritySetCacheId end) and
+			p.PermissionRole = r.PermissionRole and
+			p.InheritedFromFolder = case when r.InheritedFromFolder is null then @objId else r.InheritedFromFolder end)
+		where r.PatchType = @remPatch
+	end
+
+	-- insert
+	if (exists(select * from #permsTableTemp where PatchType = @addPatch))
+	begin
+		declare @insTable table (
+			[Id] [bigint] NOT NULL Primary KEY,
+			[DmsObject] [bigint] NULL,
+			[PermissionId] [uniqueidentifier] NULL,
+			[User] [bigint] NULL,
+			[Group] [bigint] NULL,
+			[OrganizationItemPosition] [bigint] NULL,
+			[OrganizationItemEmployee] [bigint] NULL,
+			[UserSecuritySetCacheId] [bigint] NULL,
+			[PermissionRole] [uniqueidentifier] NULL,
+			[InheritedFromFolder] [bigint] NULL
+		);
+		insert into @insTable 
+		select 
+			ROW_NUMBER() over(order by [Id]) - 1,
+			d.[Id],
+			a.PermissionId,
+			(case when a.PermissionRole = 'B4565CC1-7CB3-4201-B7BD-15872D1E7F92' then d.CreationAuthor else a.[User] end) as [User],
+			a.[Group],
+			a.OrganizationItemPosition, 
+			a.OrganizationItemEmployee, 
+			(case when a.PermissionRole = 'B4565CC1-7CB3-4201-B7BD-15872D1E7F92' then (d.CreationAuthor|@usermask) else a.UserSecuritySetCacheId end) as UserSecuritySetCacheId,			
+			a.PermissionRole,
+			case when a.InheritedFromFolder is null then @objId else a.InheritedFromFolder end
+		from #dmsObjects d
+		cross join #permsTableTemp a
+		where a.PatchType = @addPatch
+
+		delete t from @insTable t 
+		inner join DmsObjectPermission p
+			on t.DmsObject = p.DmsObject
+			and t.PermissionId = p.PermissionId
+			and (t.[User] = p.[User] or t.[User] is null and p.[User] is null) 
+			and (t.[Group] = p.[Group] or t.[Group] is null and p.[Group] is null)
+			and (t.OrganizationItemPosition = p.OrganizationItemPosition or t.OrganizationItemPosition is null and p.OrganizationItemPosition is null)
+			and (t.OrganizationItemEmployee = p.OrganizationItemEmployee or t.OrganizationItemEmployee is null and p.OrganizationItemEmployee is null)
+			and t.UserSecuritySetCacheId = p.UserSecuritySetCacheId
+			and t.PermissionRole = p.PermissionRole
+			and (t.InheritedFromFolder = p.InheritedFromFolder or t.InheritedFromFolder is null and p.InheritedFromFolder is null) 
+
+		select @insCounter = count(Id) FROM @insTable;
+
+		execute [G_GenId] 'DmsObjectPermission', @insCounter, @insStartId out, @insEndId out;
+		
+		insert into DmsObjectPermission (
+			[Id], 
+			[Uid],
+			DmsObject,
+			[Group],
+			InheritedFromFolder,
+			OrganizationItemEmployee, 
+			OrganizationItemPosition,
+			PermissionId,
+			PermissionRole,
+			[User],
+			UserSecuritySetCacheId)
+		select 
+			@insStartId + (ROW_NUMBER() over (order by [Id]) - 1),
+			NEWID(),
+			t.DmsObject,
+			t.[Group],
+			t.InheritedFromFolder,
+			t.OrganizationItemEmployee, 
+			t.OrganizationItemPosition, 
+			t.PermissionId, 
+			t.PermissionRole, 
+			t.[User],
+			t.UserSecuritySetCacheId			
+		from @insTable t
+	end
+	drop table #dmsObjects;
+	drop table #permsTableTemp;
+end
+
+end
+]]>
+      </text>
+    </procedure>
+
+    
+
+    <procedure name="GetSubgroupsMGroups">
+      <mappings>
+        <hibernate-mapping xmlns="urn:nhibernate-mapping-2.2">
+          <sql-query name="GetSubgroupsMGroups">
+            <query-param name="groupId" type="long" />
+            <![CDATA[
+            select Id from GetSubgroupsMGroups(:groupId)
+            ]]>
+          </sql-query>
+        </hibernate-mapping>
+      </mappings>
+      <text>
+        create function [GetSubgroupsMGroups](@groupId bigint)
+        RETURNS @result TABLE(ID bigint)
+        as
+        begin
+        with Rec as (
+        select Id, ParentGroup from [DocumentMetadataGroup]
+        where Id = @groupId
+        union all
+        select dm.Id, dm.ParentGroup
+        from DocumentMetadataGroup dm
+        inner join Rec on Rec.Id = dm.ParentGroup
+        )
+        INSERT @result select Rec.Id as Id from Rec
+        return
+        end
+      </text>
+    </procedure>
+
+    <procedure name="GetPermissionToAdd">
+      <mappings>
+        <hibernate-mapping xmlns="urn:nhibernate-mapping-2.2">
+          <resultset name="GetPermissionToAddSet">
+            <return-scalar column="UserId" type="System.Int64"/>
+            <return-scalar column="GroupId" type="System.Int64"/>
+            <return-scalar column="OrganizationItemPositionId" type="System.Int64"/>
+            <return-scalar column="OrganizationItemEmployeeId" type="System.Int64"/>
+          </resultset>
+          <sql-query name="GetPermissionToAdd" resultset-ref="GetPermissionToAddSet">
+            <query-param name="leftObject" type="long" />
+            <query-param name="rightObject" type="long" />
+            <![CDATA[
+            select UserId, GroupId, OrganizationItemPositionId, OrganizationItemEmployeeId from GetPermissionToAdd(:leftObject, :rightObject)
+            ]]>
+          </sql-query>
+        </hibernate-mapping>
+      </mappings>
+      <text>
+CREATE FUNCTION GetPermissionToAdd(@leftObject bigint, @rightObject bigint)
+RETURNS @result TABLE (		
+	[UserId] [bigint] NULL,
+	[GroupId] [bigint] NULL,
+	[OrganizationItemPositionId] [bigint] NULL,
+	[OrganizationItemEmployeeId] [bigint] NULL	
+)
+AS
+begin
+    declare 
+	   @DmsObject bigint,
+	   @PermissionId uniqueidentifier,
+	   @User bigint,
+	   @Group bigint,
+	   @OrganizationItemPosition bigint,
+	   @OrganizationItemEmployee bigint,
+	   @UserSecuritySetCacheId bigint,
+	   @PermissionRole uniqueidentifier;   
+
+	declare @tmpCount bigint, @tmpId bigint, @hasPermission int, @readPermission uniqueidentifier;
+	declare @includeInGroup bigint, @hasChild bigint;
+
+	set @readPermission = 'EBD6105A-AB44-404D-8B03-1D260EBB2881';
+
+	DECLARE leftObjectPermissions CURSOR 
+		LOCAL STATIC READ_ONLY FORWARD_ONLY
+	FOR   
+    select [PermissionId], [User], [Group], [OrganizationItemPosition], 
+		[OrganizationItemEmployee], [UserSecuritySetCacheId], [PermissionRole] 
+	from DmsObjectPermission  where [PermissionId] = @readPermission and [DmsObject] = @leftObject;
+
+	OPEN leftObjectPermissions
+	FETCH NEXT FROM leftObjectPermissions INTO @PermissionId, @User, @Group, @OrganizationItemPosition, @OrganizationItemEmployee, @UserSecuritySetCacheId, @PermissionRole
+	WHILE @@FETCH_STATUS = 0
+	BEGIN 
+		if (@User is not null) 
+		begin 
+		   set @hasPermission = (select count(*) from DmsObjectPermission p
+                    inner join UserSecuritySetCache c on p.UserSecuritySetCacheId = c.SetId
+                    where DmsObject = @rightObject and c.UserId = @User and p.PermissionId = @readPermission);			
+		end
+		else if (@OrganizationItemPosition is not null)
+	    begin		 
+		    set @includeInGroup = (select count(*) from DmsObjectPermission p 
+			inner join (
+				select g.ParentGroupId, om.OrgItemId from GetGroups() g
+				inner join UserGroup_OrgItem_Map om on om.GroupId = g.ParentGroupId) mm on mm.ParentGroupId = p.[Group]
+			where DmsObject = @rightObject and mm.OrgItemId = @OrganizationItemPosition)
+
+			set @hasChild = (select count(*) from DmsObjectPermission where DmsObject = @rightObject 
+				    and PermissionRole = @PermissionRole
+					and OrganizationItemPosition in (select OrgItemId from GetOrgItemChilds(@OrganizationItemPosition)));					
+
+			set @hasPermission = @includeInGroup + @hasChild;
+		end
+		else if (@OrganizationItemEmployee is not null)
+		begin				
+		    set @includeInGroup = (select count(*) from DmsObjectPermission p 
+			inner join (
+				select g.ParentGroupId, om.OrgItemId from GetGroups() g
+				inner join UserGroup_OrgItem_Map om on om.GroupId = g.ParentGroupId) mm on mm.ParentGroupId = p.[Group]
+			where DmsObject = @rightObject and mm.OrgItemId = @OrganizationItemEmployee)
+
+			set @hasChild = (select count(*) from DmsObjectPermission where DmsObject = @rightObject 
+				    and PermissionRole = @PermissionRole
+					and OrganizationItemEmployee in (select OrgItemId from GetOrgItemChilds(@OrganizationItemEmployee)));
+
+			set @hasPermission = @includeInGroup + @hasChild;
+	    end		
+		else if (@Group is not null)
+		begin
+			set @hasPermission = (select count(*) from DmsObjectPermission p 
+				inner join (select g.ParentGroupId, g.ChildGroupId from GetGroups() g) gg on gg.ChildGroupId = p.[Group]
+				where DmsObject = @rightObject and PermissionRole = @PermissionRole 
+				and gg.ParentGroupId = @Group)
+		end;
+		if (@hasPermission = 0)
+	    begin
+			insert into @result values(@User, @Group, @OrganizationItemPosition, @OrganizationItemEmployee);
+		end;
+		FETCH NEXT FROM leftObjectPermissions INTO @PermissionId, @User, @Group, @OrganizationItemPosition, @OrganizationItemEmployee, @UserSecuritySetCacheId, @PermissionRole
+	END
+	CLOSE leftObjectPermissions
+	DEALLOCATE leftObjectPermissions	
+	return
+end
+      </text>
+    </procedure>
+
+    <procedure name="GetDmsObjectPermissionUpdateQueueItems">
+      <mappings>
+        <hibernate-mapping xmlns="urn:nhibernate-mapping-2.2">
+          <sql-query name="GetDmsObjectPermissionUpdateQueueItems">
+            <query-param name="serverConnectionUid" type="System.Guid" />
+            <query-param name="currentTimestamp" type="System.DateTime" />
+            <query-param name="count" type="System.Int32" />
+            <query-param name="attemptLength" type="System.Int32" />
+            <![CDATA[
+            WITH cte AS
+            (
+              SELECT TOP(:count) pruqi.*
+              FROM [DmsObjectPermissionUpdateQueueItem] pruqi WITH (ROWLOCK, READPAST)
+              WHERE [ServerConnectionUid] IS NULL 
+                AND [Attempt] < :attemptLength 
+                AND [NextUpdateDate] <= :currentTimestamp
+            )
+            UPDATE cte SET [ServerConnectionUid] = :serverConnectionUid, [LastUpdateDate] = :currentTimestamp
+            OUTPUT inserted.[Id],
+                   inserted.[Patch],
+                   inserted.[DmsObject],
+                   inserted.[Attempt],
+                   inserted.[User],
+                   inserted.[FolderId],
+                   inserted.[FolderName]
+            ]]>
+          </sql-query>
+        </hibernate-mapping>
+      </mappings>
+      <text></text>
+    </procedure>
+    
+    <procedure name="ReleaseDmsObjectPermissionUpdateQueueItems">
+      <mappings>
+        <hibernate-mapping xmlns="urn:nhibernate-mapping-2.2">
+          <sql-query name="ReleaseDmsObjectPermissionUpdateQueueItems" >
+            <query-param name="serverConnectionUid" type="System.Guid" />
+            <![CDATA[
+            WITH cte AS
+            (
+              SELECT [ServerConnectionUid] FROM [DmsObjectPermissionUpdateQueueItem] WITH (ROWLOCK, READPAST) WHERE [ServerConnectionUid] = :serverConnectionUid
+            ) UPDATE cte SET [ServerConnectionUid] = null
+            ]]>
+          </sql-query>
+        </hibernate-mapping>
+      </mappings>
+      <text></text>
+    </procedure>
+
+    <procedure name="GetDocumentsFromFolder">
+      <mappings>
+        <hibernate-mapping xmlns="urn:nhibernate-mapping-2.2">
+          <sql-query name="GetDocumentsFromFolder" >
+            <query-param name="folderId" type="long" />
+            <![CDATA[
+            select Id from GetDocumentsFromFolder(:folderId)
+            ]]>
+          </sql-query>
+        </hibernate-mapping>
+      </mappings>
+      <text>
+        <![CDATA[
+        create function [GetDocumentsFromFolder](@folderId bigint)
+        RETURNS @result TABLE(id bigint not null Primary KEY, folder bigint, CreationAuthor bigint)
+        as
+        begin
+       with rec(&&Id&&, &&Folder&&, &&CreationAuthor&&) as 
+	(
+		select d.&&Id&&, d.&&Folder&&, d.&&CreationAuthor&& from &&DmsObject&& d where d.&&Id&& = @folderId
+		union all 
+		select dc.&&Id&&, dc.&&Folder&&, dc.&&CreationAuthor&& from &&DmsObject&& dc 
+		inner join rec  on rec.&&Id&& = dc.&&Folder&& and dc.&&InheritPermissions&& = 1
+	)
+	insert into @result (id, folder, CreationAuthor)
+	select * from rec where &&id&& != @folderId
+        return
+        end
+        ]]>
+      </text>
+    </procedure>
+
+    <procedure name="DmsObjectPermissionPatch">
+      <mappings>
+        <hibernate-mapping xmlns="urn:nhibernate-mapping-2.2">
+          <sql-query name="ExecDmsObjectPermissionPatch" >
+            exec DmsObjectPermissionPatch @objId=:objId , @permsStr=:permsStr
+          </sql-query>
+        </hibernate-mapping>
+      </mappings>
+      <text>
+        <![CDATA[
+        CREATE procedure [DmsObjectPermissionPatch]
+(
+  @objId bigint,
+  @permsStr varchar(max)
+)
+as
+begin
+declare @addPatch int = 0;
+declare @remPatch int = 1;
+
+create table #permsTableTemp (
+	[PermissionId] [uniqueidentifier] NULL,
+	[User] [bigint] NULL,
+	[Group] [bigint] NULL,
+	[OrganizationItemPosition] [bigint] NULL,
+	[OrganizationItemEmployee] [bigint] NULL,
+	[UserSecuritySetCacheId] [bigint] NULL,
+	[PermissionRole] [uniqueidentifier] NULL,
+	[InheritedFromFolder] [bigint] NULL,
+	[PatchType] [int] NULL
+);
+create index IX_permsTableTempIndex ON #permsTableTemp ([PatchType]);
+create table #dmsObjects (&&id&& bigint not null Primary KEY, &&folder&& bigint, &&CreationAuthor&& bigint);
+
+declare @separator int;
+declare @itemStr varchar(max);
+
+declare @permissionId uniqueidentifier;
+declare @userId bigint;
+declare @groupId bigint;
+declare @orgItemPos bigint;
+declare @orgItemEmp bigint;
+declare @setCacheId bigint;
+declare @permissionRole uniqueidentifier;
+declare @inheritedFromFolder bigint;
+declare @patchType int;
+
+ -- parse permsStr
+while patindex('%;%', @permsStr) > 0
+begin
+	set @separator = patindex('%;%', @permsStr);
+	set @itemStr = left(@permsStr, @separator - 1);
+	set @permsStr = stuff(@permsStr, 1, @separator, '');
+
+	set @separator = patindex('%:%', @itemStr);
+	if (@separator > 0)
+	begin
+		-- permission
+		set @permissionId = cast(left(@itemStr, @separator - 1) as uniqueidentifier);
+		set @itemStr = stuff(@itemStr, 1 , @separator, '');
+
+		-- user
+		set @separator = patindex('%:%', @itemStr);
+		set @userId = cast(nullif(left(@itemStr, @separator - 1), '') as bigint);
+		set @itemStr = stuff(@itemStr, 1, @separator, '');
+
+		-- group
+		set @separator = patindex('%:%', @itemStr);
+		set @groupId = cast(nullif(left(@itemStr, @separator - 1), '') as bigint);
+		set @itemStr = stuff(@itemStr, 1, @separator, '');
+
+		-- org item pos
+		set @separator = patindex('%:%', @itemStr);
+		set @orgItemPos = cast(nullif(left(@itemStr, @separator - 1), '') as bigint);
+		set @itemStr = stuff(@itemStr, 1, @separator, '');
+
+		-- org item emp
+		set @separator = patindex('%:%', @itemStr);
+		set @orgItemEmp = cast(nullif(left(@itemStr, @separator - 1), '') as bigint);
+		set @itemStr = stuff(@itemStr, 1, @separator, '');
+
+		-- set cache id
+		set @separator = patindex('%:%', @itemStr);
+		set @setCacheId = cast(left(@itemStr, @separator - 1) as bigint);
+		set @itemStr = stuff(@itemStr, 1, @separator, '');
+		
+		-- permission role
+		set @separator = patindex('%:%', @itemStr);
+		set @permissionRole = cast(left(@itemStr, @separator - 1) as uniqueidentifier);
+		set @itemStr = stuff(@itemStr, 1, @separator, '');
+
+		-- inhertited from folder
+		set @separator = patindex('%:%', @itemStr);
+		set @inheritedFromFolder = cast(nullif(left(@itemStr, @separator - 1), '') as bigint);
+
+		-- patch type
+		set @patchType = cast(stuff(@itemStr, 1, @separator, '') as int);
+
+		insert into #permsTableTemp values(@permissionId, @userId, @groupId, @orgItemPos, @orgItemEmp, @setCacheId, @permissionRole, @inheritedFromFolder, @patchType);
+	end	
+end
+
+ if (exists(select * from #permsTableTemp))
+ begin
+	declare @creationAuthor bigint;
+	declare @insCounter bigint, @insStartId bigint, @insEndId bigint;
+	declare @usermask bigint = 72057594037927936; -- 1 << 56;
+
+	-- unroll from root 
+	insert into #dmsObjects (&&id&&, &&folder&&, &&CreationAuthor&&)
+	select &&Id&&, &&Folder&&, &&CreationAuthor&& from &&DmsObject&& where &&id&& = @objId
+
+	if (exists(select * from #permsTableTemp where &&PatchType&& = @remPatch))
+	begin
+		-- remove
+		delete p from &&DmsObjectPermission&& p
+		inner join #dmsObjects d on d.Id = p.&&DmsObject&& 
+		inner join #permsTableTemp r on (
+			p.&&PermissionId&& = r.&&PermissionId&& and
+			(p.&&User&& = (case when r.&&PermissionRole&& = 'B4565CC1-7CB3-4201-B7BD-15872D1E7F92' then d.&&CreationAuthor&& else r.&&User&& end) or p.&&User&& is null and r.&&User&& is null) and
+			(p.&&Group&& = r.&&Group&& or p.&&Group&& is null and r.&&Group&& is null) and
+			(p.&&OrganizationItemPosition&& = r.&&OrganizationItemPosition&& or p.&&OrganizationItemPosition&& is null and r.&&OrganizationItemPosition&& is null) and
+			(p.&&OrganizationItemEmployee&& = r.&&OrganizationItemEmployee&& or p.&&OrganizationItemEmployee&& is null and r.&&OrganizationItemEmployee&& is null) and
+			p.&&UserSecuritySetCacheId&& = (case when r.&&PermissionRole&& = 'B4565CC1-7CB3-4201-B7BD-15872D1E7F92' then (d.&&CreationAuthor&&|@usermask) else r.&&UserSecuritySetCacheId&& end) and
+			p.&&PermissionRole&& = r.&&PermissionRole&& and
+			p.&&InheritedFromFolder&& = case when r.&&InheritedFromFolder&& is null then (select &&Folder&& From &&DmsObject&& where &&Id&& = @objId) else r.&&InheritedFromFolder&& end)
+		where r.&&PatchType&& = @remPatch
+	end
+
+	-- insert
+	if (exists(select * from #permsTableTemp where PatchType = @addPatch))
+	begin
+		declare @insTable table (
+			[Id] [bigint] NOT NULL Primary KEY,
+			[DmsObject] [bigint] NULL,
+			[PermissionId] [uniqueidentifier] NULL,
+			[User] [bigint] NULL,
+			[Group] [bigint] NULL,
+			[OrganizationItemPosition] [bigint] NULL,
+			[OrganizationItemEmployee] [bigint] NULL,
+			[UserSecuritySetCacheId] [bigint] NULL,
+			[PermissionRole] [uniqueidentifier] NULL,
+			[InheritedFromFolder] [bigint] NULL
+		);
+		insert into @insTable 
+		select 
+			ROW_NUMBER() over(order by [Id]) - 1,
+			d.&&Id&&,
+			a.&&PermissionId&&,
+			(case when a.&&PermissionRole&& = 'B4565CC1-7CB3-4201-B7BD-15872D1E7F92' then d.&&CreationAutho&&r else a.&&User&& end) as &&User&&,
+			a.&&Group&&,
+			a.&&OrganizationItemPosition&&, 
+			a.&&OrganizationItemEmployee&&, 
+			(case when a.&&PermissionRole&& = 'B4565CC1-7CB3-4201-B7BD-15872D1E7F92' then (d.&&CreationAuthor&&|@usermask) else a.&&UserSecuritySetCacheId&& end) as &&UserSecuritySetCacheId&&,			
+			a.&&PermissionRole&&,
+			case when a.&&InheritedFromFolder&& is null then (select &&Folder&& From &&DmsObject&& where &&Id&& = @objId) else a.&&InheritedFromFolder&& end
+		from #dmsObjects d
+		cross join #permsTableTemp a
+		where a.&&PatchType&& = @addPatch
+
+		delete t from @insTable t 
+		inner join &&DmsObjectPermission&& p
+			on t.&&DmsObject&& = p.&&DmsObject&&
+			and t.&&PermissionId&& = p.&&PermissionId&&
+			and (t.&&User&& = p.&&User&& or t.&&User&& is null and p.&&User&& is null) 
+			and (t.&&Group&& = p.&&Group&& or t.&&Group&& is null and p.&&Group&& is null)
+			and (t.&&OrganizationItemPosition&& = p.&&OrganizationItemPosition&& or t.&&OrganizationItemPosition&& is null and p.&&OrganizationItemPosition&& is null)
+			and (t.&&OrganizationItemEmployee&& = p.&&OrganizationItemEmployee&& or t.&&OrganizationItemEmployee&& is null and p.&&OrganizationItemEmployee&& is null)
+			and t.&&UserSecuritySetCacheId&& = p.&&UserSecuritySetCacheId&&
+			and t.&&PermissionRole&& = p.&&PermissionRole&&
+			and (t.&&InheritedFromFolder&& = p.&&InheritedFromFolder&& or t.&&InheritedFromFolder&& is null and p.&&InheritedFromFolder&& is null) 
+
+		select @insCounter = count(Id) FROM @insTable;
+
+		execute [G_GenId] 'DmsObjectPermission', @insCounter, @insStartId out, @insEndId out;
+		
+		insert into DmsObjectPermission (
+			&&Id&&, 
+			&&Uid&&,
+			&&DmsObject&&,
+			&&Group&&,
+			&&InheritedFromFolder&&,
+			&&OrganizationItemEmployee&&, 
+			&&OrganizationItemPosition&&,
+			&&PermissionId&&,
+			&&PermissionRole&&,
+			&&User&&,
+			&&UserSecuritySetCacheId&&)
+		select 
+			@insStartId + (ROW_NUMBER() over (order by [Id]) - 1),
+			NEWID(),
+			t.&&DmsObject&&,
+			t.&&Group&&,
+			t.&&InheritedFromFolder&&,
+			t.&&OrganizationItemEmployee&&, 
+			t.&&OrganizationItemPosition&&, 
+			t.&&PermissionId&&, 
+			t.&&PermissionRole&&, 
+			t.&&User&&,
+			t.&&UserSecuritySetCacheId&&			
+		from @insTable t
+	end
+	drop table #dmsObjects;
+	drop table #permsTableTemp;
+end
+
+end
+]]>
+
+      </text>
+    </procedure>
+    
+  </procedures>
+
+  <scripts>
+    <!-- Создание DocumentLoadPermission -->
+    <script ExecuteTime="OnComplete"  name="CreateLoadPermissions">
+      <text>
+        <![CDATA[
+        declare @insCounter bigint, @insStartId bigint, @insEndId bigint;
+        SELECT @insCounter = COUNT(*) FROM  DmsObjectPermission where PermissionId = 'EBD6105A-AB44-404D-8B03-1D260EBB2881';
+        EXECUTE [G_GenId] 'DmsObjectPermission', @insCounter, @insStartId out, @insEndId out;
+        INSERT INTO DmsObjectPermission (
+            [Id],
+            [Uid],
+            DmsObject,
+            PermissionId,
+            [User],
+            [Group],
+            OrganizationItemPosition,
+            OrganizationItemEmployee,
+            UserSecuritySetCacheId,
+            PermissionRole,
+            InheritedFromFolder
+        )
+        SELECT
+            @insStartId + ROW_NUMBER() over (order by (SELECT 1)) - 1,
+            NEWID(),
+            DmsObject,
+            '8DD6E1D3-08B3-46CA-9B0C-FEEB98FCF20D',
+            [User],
+            [Group],
+            OrganizationItemPosition,
+            OrganizationItemEmployee,
+            UserSecuritySetCacheId,
+            PermissionRole,
+            InheritedFromFolder
+        from DmsObjectPermission p
+        where p.PermissionId = 'EBD6105A-AB44-404D-8B03-1D260EBB2881'
+        ]]>
+      </text>
+    </script>
+  </scripts>
+
+  <indexes>
+    <index name="IX_DmsObjectPermission_PermissionId_DmsoObject" tableName="DmsObjectPermission">
+      <text>
+        CREATE NONCLUSTERED INDEX [IX_DmsObjectPermission_PermissionId_DmsoObject] ON [DmsObjectPermission]
+        (
+        DmsObject ASC,
+          [PermissionId] ASC
+        )
+        include(UserSecuritySetCacheId)
+        WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, IGNORE_DUP_KEY = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+      </text>
+    </index>
+    <index name="IX_SortTypeId_DmsObject" tableName="DmsObject" columns="SortTypeId" />
+
+    <index name="IX_DmsObjectRelationPC" tableName="Sys_DmsObjectRelation">
+      <text>
+        CREATE NONCLUSTERED INDEX [IX_DmsObjectRelationPC] ON [Sys_DmsObjectRelation]
+        (
+          [Parent] ASC,
+          [Child] ASC
+        )
+      </text>
+    </index>
+
+    <index name="IX_DmsObjectRelationPDO" tableName="Sys_DmsObjectRelation">
+      <text>
+        CREATE NONCLUSTERED INDEX [IX_DmsObjectRelationPDO] ON [Sys_DmsObjectRelation]
+        (
+        [Parent] ASC,
+        [Depth] ASC,
+        [Owner] ASC
+        ) INCLUDE ([Child])
+      </text>
+    </index>
+
+    <index name="IX_DmsObjectRelationCD" tableName="Sys_DmsObjectRelation">
+      <text>
+        CREATE NONCLUSTERED INDEX [IX_DmsObjectRelationCD] ON [Sys_DmsObjectRelation]
+        (
+        [Child] ASC,
+        [Depth] ASC
+        ) INCLUDE ([Parent])
+      </text>
+    </index>
+
+    <index name="IX_DmsObjectTree_TUD" tableName="Sys_DmsObjectTreeNodeState">
+      <text>
+        CREATE NONCLUSTERED INDEX [IX_DmsObjectTree_TUD] ON [Sys_DmsObjectTreeNodeState]
+        (
+        [TreeId] ASC,
+        [User] ASC,
+        [DmsObject] ASC
+        )
+      </text>
+    </index>
+
+    <index name="IX_DmsObjTreeState_DmsObj" tableName="Sys_DmsObjectTreeNodeState">
+      <text>
+        CREATE NONCLUSTERED INDEX [IX_DmsObjTreeState_DmsObj] ON [Sys_DmsObjectTreeNodeState]
+        (
+        [DmsObject] ASC
+        )
+      </text>
+    </index>
+
+    <index name="IX_DmsObjTreeState_TUEP" tableName="Sys_DmsObjectTreeNodeState">
+      <text>
+        CREATE NONCLUSTERED INDEX [IX_DmsObjTreeState_TUEP] ON [Sys_DmsObjectTreeNodeState]
+        (
+        [TreeId] ASC,
+        [User] ASC,
+        [Expanded] ASC,
+        [ParentExpanded] ASC
+        ) INCLUDE([DmsObject])
+      </text>
+    </index>
+
+    <index name="IX_DmsObjTreeState_Timestamp" tableName="Sys_DmsObjectTreeNodeState">
+      <text>
+        CREATE NONCLUSTERED INDEX [IX_DmsObjTreeState_Timestamp] ON [Sys_DmsObjectTreeNodeState]
+        (
+        [Timestamp] ASC,
+        [TreeId] ASC
+        )
+      </text>
+    </index>
+    
+    <index name="IX_DmsObject_Folder" tableName="DmsObject">
+      <text>
+        CREATE NONCLUSTERED INDEX [IX_DmsObject_Folder] ON [DmsObject]
+        (
+        [Folder] ASC,
+        [InheritPermissions] ASC
+        ) INCLUDE([CreationAuthor])
+      </text>
+    </index>
+    <index name="IX_DocumentVersion_File" tableName="DocumentVersion" columns="File" />
+  </indexes>
+
+  <methods>
+    <method name="UpdateDocumentMetadata" TransformationInVersion="" />
+  </methods>
+
+</root>

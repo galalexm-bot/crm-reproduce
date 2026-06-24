@@ -1,0 +1,12 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<root uid="{FA6EF4E6-A650-4A35-903F-003E1D731456}" provider="SqlServer">
+
+  <indexes>
+    <index name="U_Schedule_Owner" tableName="Schedule">
+      <text>
+        create UNIQUE index [U_Schedule_Owner] on [dbo].[Schedule] ( [Owner] ) where [Owner] is not null
+      </text>
+    </index>
+  </indexes>
+  
+</root>

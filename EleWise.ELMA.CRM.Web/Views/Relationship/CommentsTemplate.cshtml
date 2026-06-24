@@ -1,0 +1,38 @@
+﻿@using EleWise.ELMA.BPM.Web.Security.Extensions
+@using EleWise.ELMA
+@model EleWise.ELMA.CRM.Models.IRelationship
+
+@{
+    if (!Model.Comments.Any())
+    {
+        <div class="no-comments"></div>
+    }
+    else
+    {
+        foreach (var comment in Model.Comments.OrderBy(c => c.CreationDate))
+        {
+            <div class="history-item">
+                <div class="history-item-image">
+                    @Html.UserPhotoWithoutSize(comment.CreationAuthor, "history-item-image")
+                </div>
+                <div class="history-item-container">
+                    <div class="history-item-content">
+                        <div class="history-item-title"></div>
+                        <div class="history-type-comment history-item-ext history-comment-content">
+                            <div class="history-comment-angle"></div>
+                            <span class="display-string">@comment.Text</span>
+                        </div>
+                    </div>
+                    <div class="history-additional-info">
+                    <div class="history-action-author">
+                        @Html.Partial("DisplayTemplates/Entities/User", comment.CreationAuthor)
+                    </div>
+                    <div class="history-action-date">
+                        @(comment.CreationDate.HasValue ? comment.CreationDate.Value.ToClientDateTime() : (DateTime?)null)
+                    </div>
+                 </div>
+                </div>
+            </div>
+        }
+    }
+}

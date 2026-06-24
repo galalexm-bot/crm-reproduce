@@ -1,0 +1,282 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<root uid="{FFA9E337-DC34-48D5-A884-444024FD4175}" provider="SqlServer">
+
+  <scripts>
+
+    <script ExecuteTime="OnTablesCreated" AlwaysExecute="true" name="CreateHistoryObjectObserverTableType">
+      <text>
+        <![CDATA[
+          BEGIN
+            IF (OBJECT_ID('HistoryObjectObserversUpsert', 'P') IS NOT NULL)
+            BEGIN
+              DROP PROCEDURE [HistoryObjectObserversUpsert];
+            END;
+
+	          IF (TYPE_ID('HistoryObjectObserverTableType') IS NOT NULL)
+            BEGIN
+              DROP TYPE [HistoryObjectObserverTableType];
+            END;
+
+            CREATE TYPE [HistoryObjectObserverTableType]
+            AS TABLE (
+              [Parent] NVARCHAR(70),
+              [Child] NVARCHAR(70));
+          END;
+        ]]>
+      </text>
+    </script>
+    
+    <script ExecuteTime="OnTablesCreated" AlwaysExecute="true" name="CreateHistoryObjectTableType">
+      <text>
+        <![CDATA[
+          BEGIN
+            IF (OBJECT_ID('HistoryObjectsUpsert', 'P') IS NOT NULL)
+            BEGIN
+              DROP PROCEDURE [HistoryObjectsUpsert];
+            END;
+
+	          IF (TYPE_ID('HistoryObjectTableType') IS NOT NULL)
+            BEGIN
+              DROP TYPE [HistoryObjectTableType];
+            END;
+
+            CREATE TYPE [HistoryObjectTableType]
+            AS TABLE (
+              [Id] BIGINT,
+              [Uid] UNIQUEIDENTIFIER,
+              [Object] NVARCHAR(70),
+              [Model] NVARCHAR(MAX),
+              [ActionDate] DATETIME,
+              [ActionTypeUid] UNIQUEIDENTIFIER,
+              [CreationAuthor] BIGINT,
+              [EventArgsUid] UNIQUEIDENTIFIER,
+              [SessionUid] UNIQUEIDENTIFIER,
+              [UnitOfWorkUid] UNIQUEIDENTIFIER,
+              [IsRelatedEvent] BIT);
+          END;
+        ]]>
+      </text>
+    </script>
+
+    <script ExecuteTime="OnTablesCreated" AlwaysExecute="true" name="CreateHistoryUpdateQueueItemTableType">
+      <text>
+        <![CDATA[
+          BEGIN
+            IF (OBJECT_ID('HistoryUpdateQueueItemsUpsert', 'P') IS NOT NULL)
+            BEGIN
+              DROP PROCEDURE [HistoryUpdateQueueItemsUpsert];
+            END;
+
+	          IF (TYPE_ID('HistoryUpdateQueueItemTableType') IS NOT NULL)
+            BEGIN
+              DROP TYPE [HistoryUpdateQueueItemTableType];
+            END;
+
+            CREATE TYPE [HistoryUpdateQueueItemTableType]
+            AS TABLE (
+              [Id] BIGINT,
+              [ObjectId] BIGINT,
+              [ObjectTypeUid] UNIQUEIDENTIFIER,
+              [DeleteRelated] BIT,
+              [CreationDate] DATETIME,
+              [NextUpdateDate] DATETIME);
+          END;
+        ]]>
+      </text>
+    </script>
+    
+  </scripts>
+  
+  <procedures>
+
+    <procedure name="UpdateCachedHistoryObjects">
+      <mappings>
+        <hibernate-mapping xmlns="urn:nhibernate-mapping-2.2">
+          <sql-query name="UpdateCachedHistoryObjects">
+            <query-param name="tableName" type="System.String" />
+            <query-param name="oldObject" type="System.String" />
+            <query-param name="newObject" type="System.String" />
+            EXEC UpdateCachedHistoryObjects @tableName=:tableName, @oldObject=:oldObject, @newObject=:newObject
+          </sql-query>
+        </hibernate-mapping>
+      </mappings>
+      <text>
+        <![CDATA[
+          CREATE PROCEDURE [UpdateCachedHistoryObjects]
+	          @tableName NVARCHAR(100),
+            @oldObject NVARCHAR(70),
+            @newObject NVARCHAR(70)
+          AS
+          BEGIN
+            DECLARE @query NVARCHAR(250) = N'UPDATE ' + @tableName + ' SET [Object] = ''' + @newObject + ''' WHERE [Object] = ''' + @oldObject + ''';';
+	          EXECUTE sp_executesql @query;
+	          UPDATE [HistoryObjectObserver] SET [Parent] = @newObject WHERE [Parent] = @oldObject;
+	          UPDATE [HistoryObjectObserver] SET [Child] = @newObject WHERE [Child] = @oldObject;
+          END
+        ]]>
+      </text>
+    </procedure>
+
+    <procedure name="DeleteHistoryObserversByType">
+      <mappings>
+        <hibernate-mapping xmlns="urn:nhibernate-mapping-2.2">
+          <sql-query name="DeleteHistoryObserversByType">
+            <query-param name="likeCondition" type="System.String" />
+            <![CDATA[
+              DELETE FROM [HistoryObjectObserver]
+              OUTPUT deleted.[Parent]
+              WHERE [Parent] LIKE :likeCondition
+              OR [Child] LIKE :likeCondition;
+            ]]>
+          </sql-query>
+        </hibernate-mapping>
+      </mappings>
+      <text></text>
+    </procedure>
+
+    <procedure name="GetHistoryUpdateQueueItems">
+      <mappings>
+        <hibernate-mapping xmlns="urn:nhibernate-mapping-2.2">
+          <sql-query name="GetHistoryUpdateQueueItems">
+            <query-param name="serverConnectionUid" type="System.Guid" />
+            <query-param name="currentTimestamp" type="System.DateTime" />
+            <query-param name="count" type="System.Int32" />
+            <query-param name="attemptLength" type="System.Int32" />
+            <![CDATA[
+              WITH cte AS
+              (
+                SELECT TOP(:count) huqi.*
+                FROM [HistoryUpdateQueueItem] huqi WITH (ROWLOCK, READPAST)
+                WHERE [ServerConnectionUid] IS NULL 
+                  AND [Attempt] < :attemptLength 
+                  AND [NextUpdateDate] <= :currentTimestamp
+              )
+              UPDATE cte SET [ServerConnectionUid] = :serverConnectionUid, [LastUpdateDate] = :currentTimestamp
+              OUTPUT inserted.[Id],
+                     inserted.[ObjectId],
+                     inserted.[ObjectTypeUid],
+                     inserted.[LastActionDate],
+                     inserted.[DeleteRelated],
+                     inserted.[Attempt]
+            ]]>
+          </sql-query>
+        </hibernate-mapping>
+      </mappings>
+      <text></text>
+    </procedure>
+
+    <procedure name="ReleaseHistoryUpdateQueueItems">
+      <mappings>
+        <hibernate-mapping xmlns="urn:nhibernate-mapping-2.2">
+          <sql-query name="ReleaseHistoryUpdateQueueItems" >
+            <query-param name="serverConnectionUid" type="System.Guid" />
+            <![CDATA[
+              WITH cte AS
+              (
+                SELECT [ServerConnectionUid]
+                FROM [HistoryUpdateQueueItem] WITH (ROWLOCK, READPAST)
+                WHERE [ServerConnectionUid] = :serverConnectionUid
+              )
+              UPDATE cte SET [ServerConnectionUid] = NULL
+            ]]>
+          </sql-query>
+        </hibernate-mapping>
+      </mappings>
+      <text></text>
+    </procedure>
+
+    <procedure name="HistoryObjectObserversUpsert">
+      <mappings>
+        <hibernate-mapping xmlns="urn:nhibernate-mapping-2.2">
+          <sql-query name="HistoryObjectObserversUpsert" >
+            <query-param name="tvp" type="HistoryObjectTableType" />
+            EXEC HistoryObjectObserversUpsert @tvp=:tvp
+          </sql-query>
+        </hibernate-mapping>
+      </mappings>
+      <text>
+        <![CDATA[
+          CREATE PROCEDURE [HistoryObjectObserversUpsert]
+            @tvp [HistoryObjectObserverTableType] READONLY
+          AS
+          BEGIN
+            SET NOCOUNT ON;
+ 
+            BEGIN TRANSACTION;
+ 
+            INSERT INTO [HistoryObjectObserver] ([Parent], [Child])
+            SELECT [Parent], [Child] FROM @tvp AS tvp
+            WHERE NOT EXISTS (SELECT 1 FROM [HistoryObjectObserver] WITH (UPDLOCK, SERIALIZABLE) WHERE [Parent] = tvp.[Parent] AND [Child] = tvp.[Child]);
+ 
+            COMMIT TRANSACTION;
+          END
+        ]]>
+      </text>
+    </procedure>
+
+    <procedure name="HistoryObjectsUpsert">
+      <mappings>
+        <hibernate-mapping xmlns="urn:nhibernate-mapping-2.2">
+          <sql-query name="HistoryObjectsUpsert" >
+            <query-param name="tableName" type="System.String" />
+            <query-param name="tvp" type="HistoryObjectTableType" />
+            EXEC HistoryObjectsUpsert @tableName = :tableName, @tvp=:tvp
+          </sql-query>
+        </hibernate-mapping>
+      </mappings>
+      <text>
+        <![CDATA[
+          CREATE PROCEDURE [HistoryObjectsUpsert]
+	          @tableName NVARCHAR(100),
+	          @tvp [HistoryObjectTableType] READONLY
+          AS
+          BEGIN
+            DECLARE @sqlCommand nvarchar(max);
+
+            SET NOCOUNT ON;
+ 
+            BEGIN TRANSACTION;
+ 
+            set @sqlCommand = 'INSERT INTO ' + @tableName + ' ([Id], [Uid], [Object], [Model], [ActionDate], [ActionTypeUid], [CreationAuthor], [EventArgsUid], [SessionUid], [UnitOfWorkUid], [IsRelatedEvent])
+            SELECT [Id], [Uid], [Object], [Model], [ActionDate], [ActionTypeUid], [CreationAuthor], [EventArgsUid], [SessionUid], [UnitOfWorkUid], [IsRelatedEvent] FROM @tvp AS tvp
+            WHERE NOT EXISTS (SELECT 1 FROM ' + @tableName + ' WITH (UPDLOCK, SERIALIZABLE) WHERE [Id] = tvp.[Id]);';
+            
+            EXECUTE sp_executesql @sqlCommand, N'@tvp [HistoryObjectTableType] READONLY', @tvp = @tvp
+ 
+            COMMIT TRANSACTION;
+          END
+        ]]>
+      </text>
+    </procedure>
+
+    <procedure name="HistoryUpdateQueueItemsUpsert">
+      <mappings>
+        <hibernate-mapping xmlns="urn:nhibernate-mapping-2.2">
+          <sql-query name="HistoryUpdateQueueItemsUpsert" >
+            <query-param name="tvp" type="HistoryUpdateQueueItemTableType" />
+            EXEC HistoryUpdateQueueItemsUpsert @tvp=:tvp
+          </sql-query>
+        </hibernate-mapping>
+      </mappings>
+      <text>
+        <![CDATA[
+          CREATE PROCEDURE [HistoryUpdateQueueItemsUpsert]
+            @tvp [HistoryUpdateQueueItemTableType] READONLY
+          AS
+          BEGIN
+            SET NOCOUNT ON;
+ 
+            BEGIN TRANSACTION;
+ 
+            INSERT INTO [HistoryUpdateQueueItem] ([Id], [ObjectId], [ObjectTypeUid], [LastActionDate], [DeleteRelated], [CreationDate], [Attempt], [LastUpdateDate], [NextUpdateDate], [ServerConnectionUid])
+            SELECT [Id], [ObjectId], [ObjectTypeUid], NULL, [DeleteRelated], [CreationDate], 0, NULL, [NextUpdateDate], NULL FROM @tvp AS tvp
+            WHERE NOT EXISTS (SELECT 1 FROM [HistoryUpdateQueueItem] WITH (UPDLOCK, SERIALIZABLE) WHERE [ObjectId] = tvp.[ObjectId] AND [ObjectTypeUid] = tvp.[ObjectTypeUid]);
+ 
+            COMMIT TRANSACTION;
+          END
+        ]]>
+      </text>
+    </procedure>
+    
+  </procedures>
+</root>

@@ -1,0 +1,91 @@
+﻿@inherits DynamicViewControl<LeadContactGrid>
+@using EleWise.ELMA.CRM.Web.Models
+@using EleWise.ELMA.CRM.Models
+@using EleWise.ELMA
+@using EleWise.ELMA.Services
+@using EleWise.ELMA.Security
+@using EleWise.ELMA.CRM
+@using EleWise.ELMA.CRM.Web
+@using EleWise.ELMA.Model.Managers
+@using EleWise.ELMA.Web.Mvc.Html.Forms
+
+@{
+    var lead = EntityManager<ILead>.Instance.Load(Model.LeadId);
+    var service = Locator.GetServiceNotNull<ISecurityService>();
+    var createElementpermission =
+        service.HasPermission(CRMPermissionProvider.CRMLeadCreateElementPermission, lead) ||
+        service.HasPermission(CRMPermissionProvider.CRMLeadFullAccessPermission, lead) ||
+        service.HasPermission(CRMPermissionProvider.EditLeadPermission, lead) ||
+        service.HasPermission(CRMPermissionProvider.CRMFullAccessPermission);
+}
+<div class="table-form-columns-wrapper crm-contact-tab">
+        <div class="table-form-column crm-contact-tab-table">
+            @(DynamicGrid(Model.GridId, Model.Data).Columns(c =>
+            {
+                c.For(m => MvcHtmlString.Create(string.Format("<a href='javascript:void(0)' onclick='ShowContact(\"contact_{0}\", this)'>{1}</a>", m.Id, m.Name))).Header(SR.T("ФИО")).NotSortable();
+                c.For(m => m.Position);
+                if (createElementpermission){
+                    c.For(m => m)
+                        .Template(
+                        @<text>
+                            @Html.ImageButton(UIIcons.Edit).Url(Url.Action("Edit", "LeadContact", new { id = item.Id }))
+                        </text>)
+                        .Width(55);
+                    c.For(m => m)
+                        .Template(
+                        @<text>
+                            @Html.ImageButton(UIIcons.Basket).Click(string.Format("DeleteContact({0})", item.Id))
+                        </text>)
+                        .Width(55);
+                }
+            }).Customizable(false))
+        </div>
+        <div class="table-form-column">
+        @foreach (ILeadContact contact in Model.Data.DataSource)
+        {
+            <div class="crm-contact-tab-details" id="contact_@(contact.Id)">
+                @Html.BuildFormForModel(contact, EleWise.ELMA.Model.Views.ViewType.Display,
+                    b =>
+                    {
+                        b.HideAllProperties();
+
+                        b.PropertyRow(m => m.Name);
+                        b.PropertyRow(m => m.Position);
+                        b.PropertyRow(m => m.Email);
+                        b.PropertyRow(m => m.ICQ);
+                        b.PropertyRow(m => m.Skype);
+                        b.PropertyRow(m => m.Phone).ValueTemplate(x => Html.Partial("DisplayTemplates/Entities/PhoneSet", x.Phone, new ViewDataDictionary() { { "LeadId", x.Lead.Id } }));
+
+                        b.UserProperties();
+                    }
+                )
+            </div>
+        }
+        </div>
+</div>
+
+@Html.PopupWindow("PopUpDeleteContact", SR.T("Удалить контакт"), @<text></text>)
+<script type="text/javascript">
+    function DeleteContact(id)
+    {
+        var url = '@Url.Action("Delete", "LeadContact", new { area = CRMAreaRegistration.AREA_NAME })' + '?id=' + id;
+        var window = $('#PopUpDeleteContact').data("tWindow");
+        window.contentUrl = url;
+        window.loaded = false;
+        @(Html.OpenPopup("PopUpDeleteContact"))
+    }
+
+    jQuery(document).ready(function () {
+        $('.crm-contact-tab-details[id^=contact_]:gt(0)').hide();
+        $('a[onclick*=ShowContact]:first').parent().parent().addClass('selectRowList');
+        });
+
+    function ShowContact(id, link)
+    {
+        $('.crm-contact-tab-details[id^=contact_]:visible').hide();
+        $('#'+id).show();
+
+        $('tr.selectRowList').removeClass('selectRowList');
+        $(link).parent().parent().addClass('selectRowList');
+    }
+</script>

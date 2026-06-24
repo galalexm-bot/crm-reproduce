@@ -1,0 +1,264 @@
+﻿@model SaleModel
+@using EleWise.ELMA
+@using EleWise.ELMA.BPM.Web.Tasks.Extensions
+@using EleWise.ELMA.BPM.Web.Tasks.Models
+@using EleWise.ELMA.CRM
+@using EleWise.ELMA.CRM.Extensions
+@using EleWise.ELMA.CRM.Web
+@using EleWise.ELMA.CRM.Models
+@using EleWise.ELMA.CRM.Web.Code
+@using EleWise.ELMA.CRM.Web.Controllers
+@using EleWise.ELMA.CRM.Web.Models
+@using EleWise.ELMA.Extensions
+@using EleWise.ELMA.BPM.Web.Common.Models
+@using EleWise.ELMA.BPM.Web.Common.Mvc.html
+@using EleWise.ELMA.BPM.Web.Common.Extensions
+@using EleWise.ELMA.Security
+@using EleWise.ELMA.Security.Services
+@using EleWise.ELMA.Services
+@using EleWise.ELMA.Web.Content
+@using ViewType = EleWise.ELMA.Model.Views.ViewType
+
+@{
+    Html.LabeledHeader(SR.T("Сделка - {0}", Model.Entity.Name), Model.Entity);
+    var commentTip = string.Format("<b>{0}</b><br>{1}", SR.T("Добавить новый комментарий"), SR.T("Перейти к странице создания комментария"));
+    var editTip = string.Format("<b>{0}</b><br>{1}", SR.T("Изменить атрибуты сделки"), SR.T("Перейти к странице редактирования сделки"));
+    var metadata = EleWise.ELMA.Model.Metadata.MetadataLoader.LoadMetadata(Model.Entity.GetType());
+    var securityService = Locator.GetServiceNotNull<ISecurityService>();
+
+    var service = Locator.GetServiceNotNull<ISecurityService>();
+    var createElementpermission = service.HasPermission(CRMPermissionProvider.CRMSaleCreateElementPermission, Model.Entity) || service.HasPermission(CRMPermissionProvider.CRMSaleFullAccessPermission, Model.Entity) || service.HasPermission(CRMPermissionProvider.CRMFullAccessPermission);
+
+    var editPerm = service.HasPermission(CRMPermissionProvider.EditSalePermission, Model.Entity);
+    var allPerm = service.HasPermission(CRMPermissionProvider.CRMSaleFullAccessPermission, Model.Entity);
+    var fullPerm = service.HasPermission(CRMPermissionProvider.CRMFullAccessPermission);
+    bool canEdit = editPerm || allPerm || fullPerm;
+    bool canDelete = CRMPermissionProvider.CheckAny(new[] { CRMPermissionProvider.CRMFullAccessPermission, CRMPermissionProvider.CRMDeletePermission });
+    bool canCloseSaleStatus= CRMPermissionProvider.CheckAny(new[] { CRMPermissionProvider.CRMFullAccessPermission, CRMPermissionProvider.CRMChangeSaleStatusPermission });
+        
+    bool closed = Model.Entity.SaleClosed();
+
+    bool canChangeStatus = canEdit && (!closed || (canCloseSaleStatus && closed)); 
+    bool canChangeStage = canEdit && !closed && Model.Entity.SaleType != null;
+
+    var list = new List<ActionToolbarItem>();
+    var createRelationships = false;
+    if (!closed)
+    {
+        createRelationships = createElementpermission;// Locator.GetServiceNotNull<ISecurityService>().HasPermission(RelationshipModel<IRelationship>.RelationshipEditPermission, Model.Entity);
+    }
+
+    if (canEdit)
+    {
+        if (!closed)
+        {
+            list.Add(new ActionToolbarItem("Sale_edit_btn") { Text = SR.Edit, ToolTip = editTip, IconUrl = "#edit.svg", Url = Url.Action<EleWise.ELMA.CRM.Web.Controllers.SaleController>(c => c.Edit(Model.Entity.Id)) });
+        }
+    }
+    if (canDelete)
+    {
+        list.Add(new ActionToolbarItem("Sale_delete_btn") { Text = SR.Delete, ToolTip = SR.T("Удалить сделку"), IconUrl = "#basket.svg", Click = "SaleDelete();" });
+    }
+    list.Add(new ActionToolbarSeparator());
+    list.Add(new ActionToolbarItem("toolbar-click-AddComment") { Text = SR.T("Добавить комментарий"), IconUrl = "#comment_outline.svg", Click = Html.AddComment("AddCommentPopup"), ToolTip = commentTip });
+    list.Add(new ActionToolbarItem("toolbar-click-AddQuestion") { Text = SR.T("Задать вопрос"), IconUrl = "#question.svg", Click = Html.OpenPopup("AddQuestionPopup").ToString() });
+}
+@if (Model.LockEditPermission)
+{
+    <div class="note" style="margin-bottom: 10px;">
+        <div style="padding: 10px;">
+            @Html.Raw(SR.T("Производится перерасчет разрешений. Изменение заблокировано. Пожалуйста попробуйте позже."))
+        </div>
+    </div>
+}
+@(Html.Toolbar()
+        .AdditionalButton(a =>
+        {
+            list.ForEach(b => a.Add(b));
+        })
+        .Group(ToolbarGroupUids.FrequentlyUsedButtonsGroupUid)
+        .If(canChangeStatus || canChangeStage, b => b.Button(bo => bo
+            .Uid("toolbar-change-button-actions")
+            .Text(SR.T("Изменить"))
+            .IconUrl("#change.svg")
+            .Items(new ActionItemList
+            {
+                new ActionToolbarItem
+                {
+                    Uid = "toolbar-click-ChangeStatus",
+                    Text = SR.T("Статус"),
+                    IconUrl = "#change.svg",
+                    Click = Html.OpenPopup("ChangeStatusPopup").ToString(),
+                    ToolTip = SR.T("Изменить статус сделки"),
+                    Visible = canChangeStatus
+                },
+                new ActionToolbarItem
+                {
+                    Uid = "toolbar-click-ChangeStage",
+                    Text = SR.T("Стадию"),
+                    IconUrl = "#change.svg",
+                    Click = Html.OpenPopup("ChangeStagePopup").ToString(),
+                    ToolTip = SR.T("Изменить стадию сделки"),
+                    Visible = canChangeStage
+                }
+            })
+            )
+        )
+        .Button(b =>
+        {
+            b.Uid("toolbar-add-button");
+            b.Text(SR.T("Добавить"));
+            b.Buttons(buttons =>
+            {
+                buttons.If(!closed, taskButton =>
+                {
+                    taskButton.Button(bb =>
+                        bb.Uid("toolbar-action-CreateTask")
+                        .Text(SR.T("Задачу"))
+                        .ToolTipHeader(SR.T("Создать задачу"))
+                        .ToolTip(SR.T("Создать задачу по данной сделке"))
+                        .IconUrl("#create.svg")
+                        .Url(Url.Action("Create", "Task", new { area = CRMAreaRegistration.AREA_NAME, id = Model.Entity.Id, typeUid = metadata.Uid }))
+                        .Visible(!closed)
+                    );
+                });
+                buttons.If(!closed, bb => bb.If(createRelationships, b2 => b2
+                    .ToolbarCreateRelationships(new { SaleId = Model.Entity.Id })));
+                if (!closed && createRelationships)
+                {
+                    var items = EleWise.ELMA.CRM.Web.UIExtensions.ToolbarCreateRelationshipsToActionsList(Html, new { SaleId = Model.Entity.Id }).OfType<ActionToolbarItem>().Reverse();
+                    foreach (var button in items)
+                    {
+                        buttons.Add(button);
+                    }
+                }
+                buttons.If(createElementpermission, bb =>
+                        bb.Button(b1 => 
+                            b1.Uid("toolbar-click-AttachDocument2")
+                            .Text(SR.T("Документ"))
+                            .ToolTipHeader(SR.T("Прикрепить документ"))
+                            .ToolTip(SR.T("Добавить документы или файлы данной сделке"))
+                            .IconUrl("#add.svg")
+                            .Click(Html.OpenPopup("AddAttachmentPopup").ToString())
+                    ));
+            });
+        })
+        .Group("toolbar-group-2")
+        .Group("toolbar-group-3")
+
+        .If(!closed, b => b
+            .Group("toolbar-group-4"))
+)
+
+@Html.ExtensionZone("StartRouteExtensionZone")
+
+@(Html.AddCommentPopup(new CommentWithAttachments
+{
+    ShowAttachment = false,
+    PopupId = "AddCommentPopup",
+    ObjectId = Model.Entity.Id,
+    ObjectTypeUid = metadata.Uid,
+    AddCommentActionUid = SaleActions.AddCommentGuid,
+    RedirectUrl = Url.Action("Details", "Sale", new { area = CRMAreaRegistration.AREA_NAME, id = Model.Entity.Id })
+}))
+
+@(Html.AddQuestionPopup(new QuestionModel
+{   
+    PopupId = "AddQuestionPopup",
+    ObjectId = Model.Entity.Id,
+    ObjectTypeUid = metadata.Uid,
+    AddQuestionActionUid = SaleActions.AddQuestionGuid,
+    RedirectUrl = Url.Action("Details", "Sale", new { area = CRMAreaRegistration.AREA_NAME, id = Model.Entity.Id } ) 
+}))
+
+@(Html.PopupWindow("ChangeStatusPopup", SR.T("Изменить статус сделки"),
+    @<text>
+    @Html.Partial("Editors/SaleStatusEdit", new SaleChangeStatusModel
+            {
+                PostAction = "ChangeStatus",
+                PostController = "Sale",
+                PostArea = CRMAreaRegistration.AREA_NAME,
+                Id = "ChangeStatusPopupForm",
+                EntityId = Model.Entity.Id,
+                PopupId = "ChangeStatusPopup",
+                Status = Model.Entity.SaleStatus,
+                ShortStatus = Model.Entity.ShortStatus,
+                RedirectUrl = this.Url.Action("Details", "Sale", new { id = Model.Entity.Id })
+            })
+    </text>, width: 436
+    ))
+
+@(Html.PopupWindow("ChangeStagePopup", SR.T("Изменить стадию сделки"),
+@<text>
+@Html.Partial("Editors/SaleStageEdit", new SaleChangeStageModel
+        {
+            PostAction = "ChangeStage",
+            PostController = "Sale",
+            PostArea = CRMAreaRegistration.AREA_NAME,
+            Id = "ChangeSaleStagePopupForm",
+            EntityId = Model.Entity.Id,
+            PopupId = "ChangeStagePopup",
+            Stage = Model.Entity.SaleStage,
+            ShortStatus = Model.Entity.ShortStatus,
+            RedirectUrl = this.Url.Action("Details", "Sale", new { id = Model.Entity.Id })
+        })
+</text>, width: 436
+))
+
+@(Html.Partial("Attachment/Create", new CrmAttachment
+{
+    PopupId = "AddAttachmentPopup",
+    EntityId = Model.Entity.Id,
+    EntityTypeUid = metadata.Uid,
+    RedirectUrl = Url.Action("Details", "Sale", new { area = CRMAreaRegistration.AREA_NAME, id = Model.Entity.Id, tabIndex = 4 })
+}))
+
+@if (true/*Model.Entity.IsAvailableDelete*/)
+{
+    using (Html.ELMAForm("Delete", "Sale", new { area = CRMAreaRegistration.AREA_NAME, id = Model.Entity.Id }, FormMethod.Get, new { id = "SaleDeleteForm" }))
+    {
+    }
+	
+    <script type="text/javascript">
+        function SaleDelete() {
+            jConfirm('@SR.T("Вы действительно хотите удалить сделку?")', '@SR.T("Подтверждение удаления")', function (r) {
+                if (r) {
+                    $('#SaleDeleteForm').submit();
+                }
+            });
+        }
+    </script>
+}
+
+@if (DirectoryMapVirtualPathProvider.AnyConfigFile("~/Modules/EleWise.ELMA.CRM.Web/Views/Sale/TabView.cshtml", "~/Modules/EleWise.ELMA.CRM.Web/Views/Sale/TasksTab.cshtml"))
+{
+    @Html.Partial("TabView", Model)
+}
+else
+{
+    using (Html.LabeledContainer(SR.T("Сделка"))) 
+    { 
+        using (Html.ElmaDynamicForm("SaleDynamicForm", Model.Entity.Uid))
+        {
+            var formViewItem = Model.View;
+            @Html.DynamicFormSettings(Model.DynamicFormSettings)
+            if (formViewItem != null)
+            {
+                if (metadata != null)
+                {
+                    @Html.Hidden("Entity.TypeUid", metadata.Uid)
+                }
+                if (Model.Entity.Id != null)
+                {
+                    @Html.HiddenFor(m => m.Entity.Id)
+                }
+                @Html.FormViewItem(formViewItem, m => m.Entity, new ActionRoute("AsyncViewItem", "Sale", new {area = CRMAreaRegistration.AREA_NAME, id = Model.Entity.Id, viewType = Model.ViewType, formUid = Model.FormUid }), Model.ViewType,
+                    Model.ItemType,
+                    EntityObjectViewItemProvider.UID, Model.ViewItemId,
+                    Model.DynamicFormSettings != null ? Model.DynamicFormSettings.DynamicFormsProviderUid : Guid.Empty,
+                    Model.DynamicFormSettings != null ? Model.DynamicFormSettings.DynamicFormsProviderData : null,
+                    Model.FormId)
+            }
+        }
+    }
+}

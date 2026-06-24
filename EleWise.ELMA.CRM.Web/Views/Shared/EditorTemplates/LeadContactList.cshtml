@@ -1,0 +1,9 @@
+﻿@using EleWise.ELMA.CRM.Web.Models
+@using EleWise.ELMA.Model.Types.Settings
+@model LeadContactListModel
+
+@Html.Editor(m => m.LeadContacts, a =>
+{
+    a.TypeSettingsAction = s => ((EntitySettings)s).FilterQuery = Model.FilterQuery;
+    a.TemplateName = "Entity_Vertical";
+})

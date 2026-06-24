@@ -1,0 +1,23 @@
+﻿@model EleWise.ELMA.CRM.Web.Models.BankDetailsSWIFTModel
+@using EleWise.ELMA.CRM.Web
+@using EleWise.ELMA.Extensions
+@using EleWise.ELMA.Web.Content
+
+@Html.ValidationSummary(false)
+@using (Html.DynamicForm("BankDetailsSWIFTDynamicForm", Guid.NewGuid()))
+{
+    @Html.DynamicFormSettings(Model.DynamicFormSettings)
+
+    @Html.HiddenFor(m => m.Entity.TypeUid)
+    if (Model.Entity.Id != null)
+    {
+        @Html.HiddenFor(m => m.Entity.Id)
+    }
+
+    @Html.FormViewItem(Model.View, m => m.Entity, new ActionRoute("AsyncViewItem", "BankDetailsSWIFT", new { area = CRMAreaRegistration.AREA_NAME, id = Model.Entity.Id, Model.ViewType, Model.FormUid }), Model.ViewType,
+        Model.ItemType,
+        EntityObjectViewItemProvider.UID, Model.ViewItemId,
+        Model.DynamicFormSettings != null ? Model.DynamicFormSettings.DynamicFormsProviderUid : Guid.Empty,
+        Model.DynamicFormSettings != null ? Model.DynamicFormSettings.DynamicFormsProviderData : null,
+        Model.FormId)
+}

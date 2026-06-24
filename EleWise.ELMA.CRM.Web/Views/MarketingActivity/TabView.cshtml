@@ -1,0 +1,393 @@
+﻿@inherits DynamicViewControl<MarketingActivityModel>
+@using EleWise.ELMA
+@using EleWise.ELMA.Common.Models
+@using EleWise.ELMA.CRM
+@using EleWise.ELMA.CRM.Managers
+@using EleWise.ELMA.CRM.Models
+@using EleWise.ELMA.CRM.Web
+@using EleWise.ELMA.CRM.Web.Models
+@using EleWise.ELMA.Model.Services
+@using EleWise.ELMA.Security
+@using EleWise.ELMA.Services
+@using EleWise.ELMA.Web.Mvc.Html.Forms
+@using EleWise.ELMA.BPM.Web.Common.Extensions
+@using EleWise.ELMA.Web.Mvc.Models.Panels
+@{
+    const string contractorsTabId = "marketingActivityContractorsTab";
+    const string leadsTabId = "marketingActivityLeadsTab";
+    const string salesTabId = "marketingActivitySalesTab";
+    const string statisticTabId = "marketingActivityStatisticTab";
+    const string permissionsTabId = "marketingActivityPermissionsTab";
+
+    var selectedTab = Convert.ToInt32(ViewData["SelectedTab"] ?? 0); 
+
+    var tabCustompropCount = 0;
+    var hasTabView = Model.HasCustomFormViews(EleWise.ELMA.Model.Views.ViewType.Display, true);
+    var tabFormView = Model.GetCustomFormView(EleWise.ELMA.Model.Views.ViewType.Display, true);
+    var tabCustomView = !hasTabView || tabFormView.UseRazorView
+                         ? MvcHtmlString.Empty
+                         : Html.BuildFormForModel(Model.Entity, EleWise.ELMA.Model.Views.ViewType.Display,
+                                                  b =>
+                                                      {
+                                                          b.HideForm();
+                                                          b.Prefix("Entity");
+                                                          b.Layout(new TwoColumnsFormLayout());
+                                                          b.LayoutConfig<TwoColumnsFormLayout>(
+                                                              l =>
+                                                                  {
+                                                                      l.LeftTableAttributes.Html.@class = "viewGroup";
+                                                                      l.RightTableAttributes.Html.@class = "viewGroup";
+                                                                      l.LeftTableAttributes.Html.style.width = "100%";
+                                                                      l.RightTableAttributes.Html.style.width = "100%";
+                                                                  });
+                                                          b.ShowOnlyUserProperties();
+                                                          b.EachPropertyRow(r => { if (r.Visible) tabCustompropCount++; });
+                                                      });
+
+    if (hasTabView && tabFormView.UseRazorView)
+    {
+        var vd = new ViewDataDictionary(ViewData) { TemplateInfo = { HtmlFieldPrefix = ViewData.TemplateInfo.GetFullHtmlFieldName("Entity") } };
+        tabCustomView = Html.Partial(tabFormView.RazorTabViewName, Model.Entity, vd);
+        tabCustompropCount = 1;
+    }
+    
+    var hasCommonView = Model.HasCustomFormViews(EleWise.ELMA.Model.Views.ViewType.Display, false);
+    var commonFormView = Model.GetCustomFormView(EleWise.ELMA.Model.Views.ViewType.Display, false);
+
+    var sumBudget = MarketingBaseManager.Instance.CalcMarketingBudget(Model.Entity);
+
+    var service = Locator.GetServiceNotNull<ISecurityService>();
+
+    var hasFullRights = CRMPermissionProvider.CheckAny(new[] { CRMPermissionProvider.CRMFullAccessPermission, CRMPermissionProvider.MarketingFullAccessPermission });
+    var canControlBudget = hasFullRights || service.HasPermission(CRMPermissionProvider.CRMMarketingBudgetControlPermission, Model.Entity);
+
+    var filter = InterfaceActivator.Create<ILeadFilter>();
+    filter.MarketingObjects.Add(Model.Entity);
+    var leadCounts = LeadManager.Instance.SummaryLeadCounts(filter);
+
+    var aboutHelperUid = new Guid();
+
+    var cp = new CollapsiblePanel()
+    {
+        Id = "MarketingActivityInfoRightPanel",
+        Header = SR.T("Дополнительно"),
+        Expanded = true,
+        Class = "separator-gray general-info-container-right  marketing-info-right-panel",
+        SaveState = false
+    };
+}
+
+@helper ShowMoneyHelper(double value)
+{
+    @Html.HtmlHelperFunc((Money) (value), helper => helper.Display(x => x))
+}
+
+@helper BudgetHeaderHelper(double sumBudget, bool canControlBudget)
+{
+    <div class="budget-panel-header">
+        <div>
+            @SR.T("Бюджет")
+        </div>
+        <div>
+            @if (Model.Entity.BudgetType == MarketingBudgetType.Manual)
+            {
+                if (sumBudget > 0)
+                {
+                    <span class="budget-sum">
+                        @ShowMoneyHelper(sumBudget)
+                    </span>
+
+                    if (canControlBudget)
+                    {
+                        @(Html.ImageButton(UIIcons.Edit)
+                            .Url(Url.Action("BudgetEdit", "MarketingActivity", new {
+                                area = CRMAreaRegistration.AREA_NAME,
+                                id = Model.Entity.Id
+                            }))
+                            .Attributes(new {  tooltiptext = SR.T("Редактировать бюджет") })
+                        )
+                    }
+                }
+                else if (canControlBudget)
+                {
+                    @(Html.Button()
+                        .Text(string.Format("0 ({0})", SR.T("указать")))
+                        .Url(Url.Action("BudgetEdit", "MarketingActivity", new { area = CRMAreaRegistration.AREA_NAME, id = Model.Entity.Id }))
+                        .AsLink()
+                    )
+                }
+                
+            }
+            else
+            {
+                if (sumBudget > 0)
+                {
+                    <span class="budget-sum" tooltiptext="@SR.T("Сумма бюджетов вложенных объектов")">
+                        @ShowMoneyHelper(sumBudget)
+                    </span>
+                }
+            }
+        </div>
+    </div>
+}
+
+@helper MarketingActivityBudgetPanel(double sumBudget, bool canControlBudget)
+{ 
+    @Html.CollapsiblePanel().HeaderExt(MvcHtmlString.Create(BudgetHeaderHelper(sumBudget, canControlBudget).ToString())).Expanded(true).SaveState(false).Id("MarketingActivityBudgetPanel").Class("separator-top-blue").Content(@<text>
+        @if (Model.Entity.BudgetType != MarketingBudgetType.Manual)
+        {
+            <div class="base-element-margin-bottom">
+                @Html.Action("GridPayment", "MarketingActivity", new { area = CRMAreaRegistration.AREA_NAME, marketingActivityId = Model.Entity.Id })
+            </div>
+            if (canControlBudget)
+            {
+                @Html.Button().Text(SR.T("Добавить")).IconUrl("#add.svg").Click(Html.OpenPopup("AddPaymentPopup").ToString())
+            }
+        }
+        else {
+            @Html.InfoPanel(SR.T("Бюджет вводится вручную."))
+        }
+    </text>).Render()
+}
+
+@helper MarketingActivityLeadPanel(LeadCounts leadCounts, double sumBudget)
+{ 
+    @Html.CollapsiblePanel().Header(SR.T("Возможности")).Expanded(true).SaveState(false).Id("MarketingActivityLeadPanel").Class("separator-top-blue").Content(@<text>
+    <div class="t-widget t-grid">
+        <div class="t-grid-table-container">
+            <table style="width: 100%" class="t-grid-table marketingCountersTable">
+                <tbody>
+                    <tr>
+                        <td>@SR.T("Все")</td>
+                        <td>@ShowMoneyHelper(leadCounts.AllCount == 0 ? 0 : sumBudget / leadCounts.AllCount)</td>
+                        <td>@leadCounts.AllCount</td>
+                    </tr>
+                    <tr>
+                        <td>@SR.T("Новые")</td>
+                        <td>@ShowMoneyHelper(leadCounts.NewCount == 0 ? 0 : sumBudget / leadCounts.NewCount)</td>
+                        <td>@leadCounts.NewCount</td>
+                    </tr>
+                    <tr>
+                        <td>@SR.T("В работе")</td>
+                        <td>@ShowMoneyHelper(leadCounts.InHandCount == 0 ? 0 : sumBudget / leadCounts.InHandCount)</td>
+                        <td>@leadCounts.InHandCount</td>
+                    </tr>
+                    <tr>
+                        <td>@SR.T("Квалифицированные")</td>
+                        <td>@ShowMoneyHelper(leadCounts.QualifiedCount == 0 ? 0 : sumBudget / leadCounts.QualifiedCount)</td>
+                        <td>@leadCounts.QualifiedCount</td>
+                    </tr>
+                    <tr>
+                        <td>@SR.T("Неквалифицированные")</td>
+                        <td>@ShowMoneyHelper(leadCounts.UnqualifiedCount == 0 ? 0 : sumBudget / leadCounts.UnqualifiedCount)</td>
+                        <td>@leadCounts.UnqualifiedCount</td>
+                    </tr>
+                    <tr>
+                        <td>@SR.T("Дубль")</td>
+                        <td>@ShowMoneyHelper(leadCounts.DublicateCount == 0 ? 0 : sumBudget / leadCounts.DublicateCount)</td>
+                        <td>@leadCounts.DublicateCount</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    </text>).Render()
+}
+
+@helper MarketingActivityDealPanel()
+{ 
+    @Html.CollapsiblePanel().Header(SR.T("Сделки")).Expanded(true).SaveState(false).Id("MarketingActivityDealPanel").Class("separator-top-blue").Content(@<text>
+    <div class="t-widget t-grid">
+        <div class="t-grid-table-container">
+            <table style="width: 100%" class="t-grid-table marketingCountersTable">
+                <tbody>
+                    <tr>
+                        <td>@SR.T("Всего")</td>
+                        <td>@Html.Display(m => m.Entity.CreatedSaleCost)</td>
+                        <td>@Html.Display(m => m.Entity.CreatedSaleCount)</td>
+                    </tr>
+                    <tr>
+                        <td>@SR.T("Успех")</td>
+                        <td>@Html.Display(m => m.Entity.PositiveSaleCost)</td>
+                        <td>@Html.Display(m => m.Entity.PositiveSaleCount)</td>
+                    </tr>
+                    <tr>
+                        <td>@SR.T("Неуспех")</td>
+                        <td>@Html.Display(m => m.Entity.NegativeSaleCost)</td>
+                        <td>@Html.Display(m => m.Entity.NegativeSaleCount)</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    </text>).Render()
+}
+
+@(TabPanel("MarketingActivityInfo").Items(tabs =>
+{
+    tabs.Add(
+        new EleWise.ELMA.Web.Mvc.Models.Selectors.TabPanelItem
+        {
+            Text = Model.Entity is IMarketingEffect ? SR.T("О маркетинговом воздействии") : Model.Entity is IMarketingActivity ? SR.T("О маркетинговом мероприятии") : SR.T("О группе маркетинговых мероприятий"),
+            Selected = selectedTab == 0,
+            TabIndex = 0,
+        }).Content(@<text>
+@if (hasCommonView && commonFormView.UseRazorView)
+{
+    var vd = new ViewDataDictionary(ViewData) { TemplateInfo = { HtmlFieldPrefix = ViewData.TemplateInfo.GetFullHtmlFieldName("Entity") } };
+    @Html.Partial(commonFormView.RazorCommonViewName, Model.Entity, vd)
+}
+else
+{
+    <div class="general-info-container">
+        <div class="general-info-container-left marketing-info-left-panel">
+    @Html.BuildFormForModel(Model.Entity, EleWise.ELMA.Model.Views.ViewType.Display,
+    b =>
+    {
+        b.HideAllProperties();
+
+        b.PropertyRow(m => m.Name).Order(1);
+        b.PropertyRow(m => m.Description).Order(2);
+
+        if (Model.Entity is IMarketingActivity)
+        {
+            b.PropertyRow(m => ((IMarketingActivity)m).MarketingGroup).Order(3);
+        }
+        if (Model.Entity is IMarketingEffect)
+        {
+            b.PropertyRow(m => ((IMarketingEffect)m).MarketingActivity).Order(3);
+        }
+        
+        b.PropertyRow(m => m.Responsible).Order(4);
+
+        if (Model.Entity is IMarketingActivity)
+        {
+            b.PropertyRow(m => ((IMarketingActivity)m).StartDate).Order(5);
+            b.PropertyRow(m => ((IMarketingActivity)m).EndDate).Order(6);
+        }
+        if (Model.Entity is IMarketingEffect)
+        {
+            b.PropertyRow(m => ((IMarketingEffect)m).StartDate).Order(5);
+            b.PropertyRow(m => ((IMarketingEffect)m).EndDate).Order(6);
+        }
+        
+        if (Model.Entity is IMarketingGroup)
+        {
+            b.PropertyRow(m => ((IMarketingGroup) m).GroupType).Order(7);
+        }
+        if (Model.Entity is IMarketingActivity)
+        {
+            b.PropertyRow(m => ((IMarketingActivity)m).ActivityType).Order(7);
+        }
+        if (Model.Entity is IMarketingEffect)
+        {
+            b.PropertyRow(m => ((IMarketingEffect)m).EffectType).Order(7);
+        }
+        b.PropertyRow(m => m.Tags).Order(8);
+        b.PropertyRow(m => m.Status).Order(9);
+        b.PropertyRow(m => m.BudgetType).Order(10);
+
+        if (hasCommonView && !commonFormView.UseRazorView)
+        {
+            b.UserProperties();
+            b.UserPropertiesOrder(11, 1);
+        }
+    })
+        </div>
+            @Html.CollapsiblePanelBegin(cp)
+                <div class="brickPanel">
+                    @MarketingActivityBudgetPanel(sumBudget, canControlBudget)
+                </div>
+                <div class="brickPanel">
+                    @MarketingActivityLeadPanel(leadCounts, sumBudget)
+                </div>
+                <div class="brickPanel">
+                    @MarketingActivityDealPanel()
+                </div>
+
+            @Html.CollapsiblePanelEnd(cp)
+    </div>
+}
+<div>
+    @if (Model.Entity is IMarketingGroup)
+    {
+    @Html.Action("GroupActivitiesGrid", "MarketingActivity", new { marketingGroupId = Model.Entity.Id })
+    }
+    else if (Model.Entity is IMarketingActivity)
+    {
+    @Html.Action("ActivityEffectsGrid", "MarketingActivity", new { marketingActivityId = Model.Entity.Id })
+    }
+</div>
+<div class="marketing-event-history-container">@Html.EventHistory(Model.Entity, true)</div></text>);
+
+    if (hasTabView && tabCustompropCount > 0)
+    {
+        tabs.Add(
+            new EleWise.ELMA.Web.Mvc.Models.Selectors.TabPanelItem
+            {
+                Text = string.IsNullOrWhiteSpace(tabFormView.ViewInTabName) ? SR.T("Дополнительные поля") : tabFormView.ViewInTabName
+            }).Content(@<text> @tabCustomView </text>);
+    }
+
+    tabs.Add(
+         new EleWise.ELMA.Web.Mvc.Models.Selectors.TabPanelItem
+         {
+             Text = SR.T("Контрагенты"),
+         }).Content(@<text>
+            <div>
+                @Html.Action("MarketingActivityContractors", "MarketingActivity", new { marketingActivityId = Model.Entity.Id, tabId = contractorsTabId })
+            </div>
+        </text>).HtmlAttributes(new Dictionary<string, object> { { "id", contractorsTabId } });
+
+    tabs.Add(
+         new EleWise.ELMA.Web.Mvc.Models.Selectors.TabPanelItem
+         {
+             Text = SR.T("Возможности"),
+         }).Content(@<text>
+            <div>
+                @Html.Action("MarketingActivityLeads", "MarketingActivity", new { marketingActivityId = Model.Entity.Id, tabId = leadsTabId })
+            </div>
+        </text>).HtmlAttributes(new Dictionary<string, object> { { "id", leadsTabId } });
+
+    tabs.Add(
+         new EleWise.ELMA.Web.Mvc.Models.Selectors.TabPanelItem
+         {
+             Text = SR.T("Сделки"),
+         }).Content(@<text>
+            <div>
+                @Html.Action("MarketingActivitySales", "MarketingActivity", new { marketingActivityId = Model.Entity.Id, tabId = salesTabId })
+            </div>
+        </text>).HtmlAttributes(new Dictionary<string, object> { { "id", salesTabId } });
+
+    tabs.Add(
+         new EleWise.ELMA.Web.Mvc.Models.Selectors.TabPanelItem
+         {
+             Text = SR.T("Статистика"),
+         }).Content(@<text>
+            <div>
+                @Html.Action("MarketingActivityStatistic", "MarketingActivity", new { marketingActivityId = Model.Entity.Id, tabId = statisticTabId })
+            </div>
+        </text>).HtmlAttributes(new Dictionary<string, object> { { "id", statisticTabId } });
+
+    tabs.Add(
+         new EleWise.ELMA.Web.Mvc.Models.Selectors.TabPanelItem
+         {
+             Text = SR.T("Доступ"),
+         }).Content(@<text>
+            <div>
+                @Html.Action("PermissionSettings", "MarketingActivity", new { marketingActivityId = Model.Entity.Id, tabId = permissionsTabId })
+            </div>
+        </text>).HtmlAttributes(new Dictionary<string, object> { { "id", permissionsTabId } });
+
+}).Render())
+
+@(Html.PopupWindow("AddPaymentPopup", SR.T("Добавить платеж"),
+    @<text>
+        @Html.Action("AddPayment", "MarketingActivity", new { area = CRMAreaRegistration.AREA_NAME, marketingId = Model.Entity.Id})
+    </text>))
+
+<script>
+    function addPayment() {
+        window.navigateToUrl('@Url.Action("AddPayment", "MarketingActivity", new { area = CRMAreaRegistration.AREA_NAME, marketingId = Model.Entity.Id })');
+    }
+</script>

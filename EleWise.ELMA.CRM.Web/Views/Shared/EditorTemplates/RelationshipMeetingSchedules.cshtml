@@ -1,0 +1,42 @@
+﻿@using EleWise.ELMA
+@using EleWise.ELMA.BPM.Web.Calendar
+@using EleWise.ELMA.CRM.Web.Models
+@using RouteProvider = EleWise.ELMA.CRM.Web.RouteProvider
+@model RelationshipMeetingModel
+
+@if (Model.SchedulesList.Any())
+{
+    Html.RegisterScriptSrc(Html.Url().Content("~/Modules/EleWise.ELMA.BPM.Web.Calendar/Scripts/ELMA.Calendar.js"));
+
+    Html.RenderInZone("Toolbar", @<text>
+        @(Html.Toolbar().Group("toolbar-group-1")
+        .If(Model.SchedulesList.Any(), b =>
+            b.ToolbarClick(SR.T("Общие календари"), SR.T("Показать/Скрыть общие календари"),
+                "#calendar.svg", "$(this).toggleClass('active'); $('#trSchedules').toggle($(this).hasClass('active'))",
+                @checked: Model.ShowSchedules, itemUid: "toolbar-click-ToggleCommonCalendars")))
+    </text>);
+
+    Html.RegisterContent("SchedulesList",
+        @<text>
+             <script type="text/javascript">
+                 function openSchedulePopup(scheduleId, userId) {
+                     var window = createWindow("schedulePopup", { title: "@(SR.T("Календарь"))", html: "", widthMode: 'xl', height: elma.getSchedulePopupContentHeight()});
+                     if (window != null && (scheduleId != null || userId != null)) {
+                         var dateStr = '?date=' + $("#@(Html.IDFor(m => m.Entity.StartDate))").val();
+                         var url = scheduleId != null ?
+                             '@(Url.Action("PopupView", "Scheduler", new {area = CalendarAreaRegistration.AREA_NAME, id = ""}))/' + scheduleId
+                             : '@(Url.Action("PopupUserView", "Scheduler", new {area = CalendarAreaRegistration.AREA_NAME, id = ""}))/' + userId;
+                         url += dateStr;
+                         refreshPopup("schedulePopup", url);
+                     } else {
+                         @(Html.MessageBox("").Error(SR.T("Не удается открыть окно календаря."), SR.T("Ошибка")).Render())
+                     }
+                 }
+             </script>
+         </text>);
+
+    <tr id="trSchedules" style="display: @(Model.ShowSchedules ? "" : "none")">
+        <td class="captionCell">@Html.Caption(m => m.Entity.Schedules)</td>
+        <td>@Html.CheckBoxList(Html.NameFor(m => m.Schedules).ToString(), Model.SchedulesList, null, false, 2, "javascript: openSchedulePopup('{0}', null)")</td>
+    </tr>
+}

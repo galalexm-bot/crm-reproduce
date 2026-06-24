@@ -1,0 +1,9 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<root uid="{0BAE19AD-0A90-403A-BADC-F9D21EF16C5A}">
+
+  <methods>
+    <method name="CreateDeletedIntegrationFolder" />
+	<method name="ReplaceActivityUids" ExecuteTime="OnComplete"  />
+  </methods>
+
+</root>

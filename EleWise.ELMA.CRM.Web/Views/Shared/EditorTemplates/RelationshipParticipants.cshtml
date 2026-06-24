@@ -1,0 +1,18 @@
+﻿@model EleWise.ELMA.CRM.Web.Models.RelationshipModel
+@using EleWise.ELMA
+@using EleWise.ELMA.Security.Types.Settings
+
+<tr>
+    <td class="captionCell">@Html.Caption(m => m.PartyUsers, a => a.Name = SR.Partisipants)</td>
+    <td>
+        @Html.Editor(m => m.PartyUsers, a =>
+        {
+            a.Name = SR.Partisipants;
+            a.TypeSettingsAction = settingsAction =>
+            {
+                var userSettings = (EntityUserSettings)settingsAction;
+                userSettings.CheckReplacement = true;
+            };
+        })
+    </td>
+</tr>

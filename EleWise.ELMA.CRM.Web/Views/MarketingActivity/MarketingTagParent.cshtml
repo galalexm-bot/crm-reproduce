@@ -1,0 +1,46 @@
+﻿@model IMarketingBase
+
+@using EleWise.ELMA
+@using EleWise.ELMA.CRM.Models
+
+@{
+    var marketingGroupModel = Model as IMarketingGroup;
+    if (marketingGroupModel != null && marketingGroupModel.Tags.Count > 0)
+    {
+        <div>
+            <span class="parent-utm-label">@SR.T("utm_source"): </span>
+        </div>
+        foreach (var item in Model.Tags)
+        {
+            @Html.FilterButton().CloseIconHide(true).Text(item.Name)
+        }
+    }
+    else
+    {
+        var marketingActivityModel = Model as IMarketingActivity;
+        if (marketingActivityModel != null)
+        {
+            if (marketingActivityModel.MarketingGroup != null && marketingActivityModel.MarketingGroup.Tags.Count > 0)
+            {
+                <div>
+                    <span class="parent-utm-label">@SR.T("utm_source"): </span>
+                </div>
+                foreach (var item in ((IMarketingActivity)Model).MarketingGroup.Tags)
+                {
+                    @Html.FilterButton().CloseIconHide(true).Text(item.Name)
+                }
+            }
+            if (marketingActivityModel.Tags.Count > 0)
+            {
+                <div>
+                    <span class="parent-utm-label">@SR.T("utm_medium"): </span>
+                </div>
+                foreach (var item in Model.Tags)
+                {
+                    @Html.FilterButton().CloseIconHide(true).Text(item.Name)
+                }
+            }
+        }
+    }
+}
+

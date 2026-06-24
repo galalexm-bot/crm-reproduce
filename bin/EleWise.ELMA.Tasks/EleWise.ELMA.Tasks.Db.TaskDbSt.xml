@@ -1,0 +1,28 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<root uid="{CEA3DD87-7C89-4E1F-A7BF-7F08FB18899D}">
+	<methods>
+		<method name="CreateCompulsoryWorklogGroup" />
+    <method name="CreateAdminWorklogGroup" />
+    <method name="CreateDefaultMyWorkLogItemFiltersForAllUsers1" />
+    <method name="CreateAutoApproveMyWorklogGroup" />
+    <method name="RemoveTaskGridSettings" /> 
+    <method name="ChangeWorkLogSettings" />
+    <method name="TaskControlFiltersUpdate" TransformationInVersion="3.11" />
+    <method name="UpdateWorkLogItemsDateTimeZones" TransformationInVersion="3.15.12" />
+	<method name="CopyTaskAttachments" TransformationInVersion="3.15.52" />
+  </methods>
+  
+  <indexes>
+    <index name="IX_TaskBaseESN" tableName="TaskBase" columns="Executor,Status,NotShowInLists,IsEmulation,WorkflowBookmark" />
+    <index name="IX_WorkLogItemStatus" tableName="WorkLogItem" columns="Status" />
+    <index name="IX_TBP_Chief" tableName="TaskBasePermission" columns="AllowChief" />
+    <index name="IX_TBP_TargUserChiefRole" tableName="TaskBasePermission" columns="Target,UserId,TypeRole,AllowChief" />
+    <index name="IX_TB_ListStatus" tableName="TaskBase" columns="NotShowInLists,Status,Id" />
+    <index name="IX_WLS_Approve" tableName="WorkLogItem" columns="Status,ObjectUID,ObjectId,IsDeleted" />
+    <index name="IX_WLI_ApproveAllGet" tableName="WorkLogItem" columns="Status,Harmonizator,ObjectUID,ObjectId" />
+    <index name="IX_TC_TaskComm" tableName="Task_Comment" columns="Task,Comment" />
+    <index name="IX_TaskBaseIS" tableName="TaskBase" columns="Id, Status" />
+    <index name="IX_TBP_TypeRole" tableName="TaskBasePermission" columns="TypeRole, UserId" />
+  </indexes>
+  
+</root>

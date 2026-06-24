@@ -1,0 +1,30 @@
+﻿@using System.Threading
+@using EleWise.ELMA
+@using EleWise.ELMA.CRM.Models
+@using EleWise.ELMA.CRM.Web.Models
+@model SlaveActionContractorHistoryModel
+
+@{
+    var str = "";
+    var routes = "";
+    var Name = "";
+    var DisplayName = "";
+    if (Model.SlaveObject != null)
+    {
+        DisplayName = Model.SlaveObject.ObjectDispalyName;
+        Name = Model.SlaveObject.Object.ToString();
+        if (Model.ActionUid == ContractorActions.AddSlaveGuid)
+        {
+            str = SR.T("Установлена связь с объектом ", DisplayName);
+        }
+        if (Model.ActionUid == ContractorActions.DelSlaveGuid)
+        {
+            str = SR.T("Разорвана связь с объектом ");
+        }
+        routes = Url.Entity(Model.SlaveObject.Object);
+    }
+}
+
+<div class="history-type-action history-item-ext">
+    @str<b>@DisplayName</b>&nbsp;<a href="@routes">@Name</a>
+</div>

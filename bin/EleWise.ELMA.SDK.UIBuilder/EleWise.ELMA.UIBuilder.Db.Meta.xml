@@ -1,0 +1,9 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root uid="{420143B9-6BEC-4FA1-9620-B25AA3F8DBFB}">
+
+    <methods>
+        <method name="UpdateClientScriptModules" TransformationInVersion="" />
+        <method name="ClearDynamicPropertyForms" TransformationInVersion="" />
+    </methods>
+
+</root>

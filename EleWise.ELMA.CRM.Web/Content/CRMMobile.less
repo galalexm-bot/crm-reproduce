@@ -1,0 +1,48 @@
+﻿.mobile-mode {
+    .crm-attachment-container {
+        flex-direction: column;
+
+        & > div:last-of-type {
+            padding-left: 0;
+            padding-top: @base-element-size--3-4;
+        }
+    }
+
+    #saleInpaymentsGridContainer .sale-inpayment-money-table-container {
+        flex-direction: column;
+
+        .sale-inpayment-money-table {
+            width: inherit;
+            padding-right:inherit;
+        }
+    }
+
+    .crm-contact-tab {
+        flex-direction: column;
+
+        .crm-contact-tab-table {
+            width: 100%;
+        }
+
+        .crm-contact-tab-details {
+            padding-top: @base-element-size--1-2;
+        }
+    }
+
+    .marketing-info-left-panel.general-info-container-left{
+        width:100%;
+    }
+
+    .general-info-container-right.marketing-info-right-panel {
+        #MarketingActivityBudgetPanel .budget-panel-header > div:last-of-type {
+            padding-right: 0;
+            width: auto;
+        }
+    }
+
+    #MarketingPaymentGrid {
+        &.t-grid table.t-grid-table > tbody > tr > td {
+            word-break: normal;
+        }
+    }
+}

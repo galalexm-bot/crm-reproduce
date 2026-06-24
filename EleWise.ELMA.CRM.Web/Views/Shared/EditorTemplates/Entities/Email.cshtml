@@ -1,0 +1,14 @@
+﻿@model EleWise.ELMA.CRM.Models.IEmail
+
+@if (Model != null && !Model.IsNew())
+{
+    @Html.HiddenFor(m => m.Id)
+}
+@Html.EditorFor(m => m.EmailString, new { ViewAttributes = new WebViewAttributes { Html = { @class = "email" } } })
+@Html.Hidden("", null, new { @class = "deleted validationMoveField", moveTo = ViewData.TemplateInfo.GetFullHtmlFieldId("EmailString") })
+<script type="text/javascript">
+    $(document).ready(function () {
+        elma.ValidationRulesManager.add('@ViewData.TemplateInfo.GetFullHtmlFieldId("")');
+        elma.ValidationRulesManager.executeMove();
+    });
+</script>

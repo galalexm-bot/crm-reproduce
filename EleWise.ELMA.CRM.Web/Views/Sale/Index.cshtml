@@ -1,0 +1,112 @@
+﻿@model IGridData<ISale>
+@using EleWise.ELMA
+@using EleWise.ELMA.Model.Services
+@using EleWise.ELMA.CRM.Models
+@using EleWise.ELMA.CRM
+@using EleWise.ELMA.CRM.Web
+@using EleWise.ELMA.BPM.Web.Common.Extensions
+@using EleWise.ELMA.Workflow.Web.Models
+@using EleWise.ELMA.Model.Types.Settings
+@{
+    Html.Title(EleWise.ELMA.SR.T("Сделки"));
+    var typeUid = InterfaceActivator.UID<ISale>();
+    Html.RenderInZone("FilterModelLinkZone", d => Html.CurrentSearchLinkButton(typeUid));
+    bool canAdd = CRMPermissionProvider.CheckAny(new[] { CRMPermissionProvider.CRMFullAccessPermission, CRMPermissionProvider.CRMSaleCreatePermission });
+}
+
+    @(Html.Toolbar().Group()
+                            .If(canAdd, b=> b.ToolbarButton(new ActionToolbarItem()
+                            {
+                                Text = SR.Create,
+                                IconUrl = "#add.svg",
+                                Url = Url.Action("Create", "Sale"),
+                                IsMainAction = true
+                            }))
+                            .Button(bDo => bDo
+                                .Uid("toolbar-button-SelectedActions")
+                                .Text(SR.T("Выбранные"))
+                                .IconUrl("#select_all.svg")
+                                .Buttons(t => {
+                                    t.Button(b => b
+                                        .Uid("Sales_install_btn")
+                                        .Text(SR.T("Добавить маркетинговое мероприятие"))
+                                        .Click("SetMarketingActivity();")
+                                        .IconUrl("#target.svg")
+                                        );
+                                })
+    )) 
+       
+
+@Html.PopupWindow("MarketingActivitySelectionPopup", SR.T("Выберите маркетинговое мероприятие"), @<text></text>)
+
+@Html.FilterEditButton(new EleWise.ELMA.BPM.Web.Common.Models.FilterEditButtonModel {        
+    FilterId = Convert.ToInt64(Request["FilterId"]),
+    Area = RouteProvider.AreaName,
+    ControllerName = "Sale",
+    BackUrl = Request.RawUrl
+}) 
+
+<script type="text/javascript">
+    function SetMarketingActivity()
+    {
+        var url = '@Url.Action("AssignActivityToManyEntities", "MarketingActivity", new { area = CRMAreaRegistration.AREA_NAME })?';
+        var noSelectedEntitiesMsg = '@(SR.T("Нет выбранных сделок"))';
+        var entityName = '@System.Web.HttpUtility.UrlEncode(SR.T("сделкам"))';
+        var entitiesNameForErrorMessage = '@System.Web.HttpUtility.UrlEncode(SR.T("сделок"))';
+        AssignMarketingActivity(url, '@typeUid', noSelectedEntitiesMsg, 'Index', 'Sale', entityName, entitiesNameForErrorMessage);   
+    }
+</script>
+
+<script type="text/javascript" src="@Url.Content("~/Modules/EleWise.ELMA.CRM.Web/Scripts/MarketingActivityAssigner.js")"></script>
+
+@Html.Partial("Grid")
+
+@{
+    var buttonInfo = new StartRouteButtonInfo
+    {
+        ObjectType = InterfaceActivator.UID<ISale>(false),
+
+        RelationType = RelationType.OneToMany,
+        Caption = SR.T("Для запуска процесса введите название экземпляра процесса,<br/>выберите процесс и нажмите кнопку \"Отправить\" или Enter:"),
+        PopupId = "StartProcessByRoutePopup",
+        Name = SR.T("Запуск процесса")
+    };
+
+    var routeValues = new RouteValueDictionary
+    {
+        { "area", EleWise.ELMA.Workflow.Web.WorkflowRouteProvider.AreaName },
+        { "ObjectType", buttonInfo.ObjectType },
+        { "RelationType", buttonInfo.RelationType },
+        { "PopupId", buttonInfo.PopupId },
+        { "Caption", buttonInfo.Caption },
+        { "Name", buttonInfo.Name }
+
+    };
+}
+
+@(Html.PopupWindow(buttonInfo.PopupId, SR.T("Запустить процесс"), Url.Action("StartRouteForm", "WorkflowInstance", routeValues)))
+<script>
+    function StartProcess() {
+        var selectedSales = GetSelectedObjects();
+        if (selectedSales.length == 0) {
+            jAlert('@(SR.T("Нет выбранных сделок"))', '@(SR.T("Предупреждение"))');
+            return;
+        }
+
+        if (selectedSales.length > 0) {
+            var url = '@MvcHtmlString.Create(Url.Action("StartRouteForm", "WorkflowInstance", routeValues))';
+            if (selectedSales.length == 1)
+                url += '&RelationType=@buttonInfo.RelationType';
+            else
+                url += '&RelationType=@RelationType.ManyToMany';
+
+            var i = 0;
+            $.each(selectedSales, function (i, d) {
+                url += '&objects[' + i + ']=' + d;
+                i++;
+            });
+
+            refreshPopup('@buttonInfo.PopupId', url);
+        }
+    }
+</script>

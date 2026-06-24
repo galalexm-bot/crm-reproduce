@@ -1,0 +1,19 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<root uid="{839753D9-0077-492D-9023-48F66DBD63DF}">
+
+  <methods>
+    
+    <method name="ScheduleBaseToXml" />
+    <method name="DeleteCalendarEventUsersByUidEmpty" />
+    <method ExecuteTime="OnTablesDeleted" name="PrepareScheduleUnique" />
+    <method ExecuteTime="OnTablesDeleting" name="FillCalendarEventPeriodicalTable" />
+    <method name="ScheduleXmlToBase" />
+    <method name="FillWithBaseIntervals" />
+  </methods>
+
+  <indexes>
+    <index name="IX_ResourceCalendarIsCatalog" tableName="ResourceCalendar" columns="IsCatalog" />
+    <index name="IX_CalendarEventStartDate" tableName="CalendarEvent" columns="StartDate" />
+    <index name="IX_CalendarEventEndDate" tableName="CalendarEvent" columns="EndDate" />
+  </indexes>
+</root>

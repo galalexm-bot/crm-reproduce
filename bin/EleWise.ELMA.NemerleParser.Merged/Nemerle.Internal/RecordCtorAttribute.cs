@@ -1,0 +1,8 @@
+using System;
+
+namespace Nemerle.Internal;
+
+[AttributeUsage(AttributeTargets.Constructor, AllowMultiple = false)]
+public class RecordCtorAttribute : Attribute
+{
+}

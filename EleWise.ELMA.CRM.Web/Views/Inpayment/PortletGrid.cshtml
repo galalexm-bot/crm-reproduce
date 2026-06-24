@@ -1,0 +1,41 @@
+﻿@using System.ComponentModel
+@using EleWise.ELMA.BPM.Web.Common.Extensions
+@using EleWise.ELMA.CRM.Models
+@using EleWise.ELMA.CRM.Web.Models
+@using EleWise.ELMA
+@model InpaymentSubPanelModel
+
+@(Html.FilterDynamicGrid(Model.GridData)
+    .Columns(c =>
+    {
+        c.For(m => m.Date).Order(1);
+        c.For(m => m.Name).Link(m => Url.Action("Details", "Inpayment", new { id = m.Id })).Order(2);
+        c.For(m => m.Sum).Order(3);
+        c.For(m => m.ContractorName).Order(4);
+        if (Model.GridData.DataFilter == null || !((IInpaymentFilter)Model.GridData.DataFilter.Filter).ShowOnlyMy)
+        {
+            c.For(m => m.ResponsibleShortName);
+        }
+    })
+    .Action("PortletGrid").EnableCustomize(false).DefaultSortExpression("Date").DefaultSortDirection(ListSortDirection.Ascending)
+    .ExtendedAjaxProperty("TotalInPlanWithDate", Html.Display(m => m.TotalInPlanWithDate).ToHtmlString())
+    .ExtendedAjaxProperty("TotalInPlanWithOutDate", Html.Display(m => m.TotalInPlanWithOutDate).ToHtmlString())
+    .ExtendedAjaxProperty("TotalReceived", Html.Display(m => m.TotalReceived).ToHtmlString())
+    .ExtendedAjaxProperty("Total", Html.Display(m => m.Total).ToHtmlString())
+    .ClientEvents(c => c.OnDataBound(w => "function () { updateGridTotal('" + Model.GridData.GridId + "') }"))    
+    .RowHtmlAttributes((x, g) => new { style = x.Status == InpaymentStatus.Cancelled ? "color: darkgray;" : x.Status == InpaymentStatus.Received ? "color: green;" : x.Date != null && x.Date < DateTime.Today ? "color: red;" : "" }))
+    
+@Html.Partial("SubPanelGridTotal", Model)
+
+@{
+    Html.RegisterContent("updateGridTotalContent", @<text>
+<script type="text/javascript">
+    function updateGridTotal(gridId) {
+        var ajaxData = $('#' + gridId).data('tGrid').ajaxData;
+        $('#' + gridId + '_total #TotalInPlanWithDate').html(ajaxData.TotalInPlanWithDate);
+        $('#' + gridId + '_total #TotalInPlanWithOutDate').html(ajaxData.TotalInPlanWithOutDate);
+        $('#' + gridId + '_total #TotalReceived').html(ajaxData.TotalReceived);
+        $('#' + gridId + '_total #Total').html(ajaxData.Total);    
+    }
+</script></text>);
+}

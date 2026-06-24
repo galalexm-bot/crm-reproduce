@@ -1,0 +1,45 @@
+﻿@inherits AddressComboBoxItemControl
+@using EleWise.ELMA.CRM.Web
+@using EleWise.ELMA.CRM.Web.Code
+@using EleWise.ELMA.CRM.Web.Controllers
+@using EleWise.ELMA.CRM.Web.Models
+
+@{
+    var item = !string.IsNullOrWhiteSpace(Model) ? AddressController.GetAddressItem(Model, (int)CurrentType, CountryCode) ?? new AddressItem { Text = Model, Value = Model } : null;
+
+    var attributes = new Dictionary<string, object>();
+    var htmlFieldPrefix = ViewData.TemplateInfo.HtmlFieldPrefix;
+    ViewData.TemplateInfo.HtmlFieldPrefix = htmlFieldPrefix.Remove(Math.Max(0, htmlFieldPrefix.Length - ViewData.ModelMetadata.PropertyName.Length - 1));
+    attributes.Add("zipid", ViewData.TemplateInfo.GetFullHtmlFieldId("Zip"));
+    if (ParentType != null)
+    {
+        attributes.Add("parentid", ViewData.TemplateInfo.GetFullHtmlFieldId(string.Concat(ParentType, "Id")));
+    }
+    if (ChildType != null)
+    {
+        attributes.Add("childid", ViewData.TemplateInfo.GetFullHtmlFieldId(string.Concat(ChildType, "Id")));
+    }
+    ViewData.TemplateInfo.HtmlFieldPrefix = htmlFieldPrefix;
+}
+@(Html.Telerik().ComboBox()
+    .ShowDropDownIcon(ShowDropDown)
+    .Name(string.Concat(ViewData.TemplateInfo.GetFullHtmlFieldName(""), "Id"))
+    .InputHtmlAttributes(new { name = ViewData.TemplateInfo.GetFullHtmlFieldName("") })
+    .BindTo(item != null ? new[] { item } : Enumerable.Empty<AddressItem>())
+    .Value(item != null ? item.Value : null)
+    .AutoFill(ShowDropDown)
+    .HighlightFirstMatch(false)
+    .DataBinding(d => d
+        .Ajax()
+        .Select("GetAddressItems", "Address", new { area = CRMAreaRegistration.AREA_NAME, type = (int)CurrentType, CountryCode, parent = Parent })
+        .Cache(false))
+    .ClientEvents(events => events
+        .OnChange("function(e){addrComboBoxChange(e);}"))
+    .ShowDeleteIcon(true)
+    .DeleteImageUrl(Url.Image("#delete.svg"))
+    .DeleteOnClick("addrComboBoxClear(this)")
+    .HtmlAttributes(attributes))
+
+@{
+    Parent = item != null ? item.Uid : Parent;
+}

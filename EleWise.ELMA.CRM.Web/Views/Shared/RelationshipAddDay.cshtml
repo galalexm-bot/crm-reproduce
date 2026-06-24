@@ -1,0 +1,105 @@
+﻿@model RelationshipAddDayModel
+@using EleWise.ELMA.CRM.Managers
+@using EleWise.ELMA.CRM.Web.Models
+@using EleWise.ELMA
+@using EleWise.ELMA.Helpers
+
+@{
+    var currentDateTimeFormat = DateTimeFormatHelper.GetCurrentFullFormat(forTelerik: false);
+    Html.RegisterContent("AddDay_CheckTimePeriod", @<text>    
+        <script type="text/javascript">
+            function addday_getEndDate(startDate) {
+                var endDate = new Date(startDate);
+                var end = $("#@(Model.PopupId)Form #EndDate").val();
+                if (end != undefined) {
+                    endDate = $.telerik.datetime.parse({ value: end, format: "@(currentDateTimeFormat)" }).value;
+                }
+                else {
+                    endDate.setMinutes(endDate.getMinutes() + @(RelationshipManager.GetDefaultDurationByEntityTypeUid(Model.EntityTypeUid)));
+                }
+                return endDate;
+            }
+            function addday_checkEventTimePeriod() {
+                $("#@(Model.PopupId)Form").validate();
+                if (!$("#@(Model.PopupId)Form").valid())
+                    return;
+                var start = $("#@(Model.PopupId)Form #StartDate").val();
+                if (start != undefined) {
+                    var startDate = $.telerik.datetime.parse({ value: start, format: "@(currentDateTimeFormat)" }).value;
+                    var endDate = addday_getEndDate(startDate);
+                    if (startDate > endDate) {
+                        jAlert("@(SR.T("Время начала события позже времени окончания!"))", "@(SR.T("Неверное время начала события"))");
+                        return;
+                    }
+                    var today = new Date();
+                    if (endDate < today) {
+                        jConfirm("@(SR.T("Событие назначено на прошедшее время. Продолжить сохранение?"))", "@(SR.T("Подтвердите время"))", function(r) {
+                            if (r) {
+                                addday_checkCrossedEvents(startDate, endDate);
+                            }
+                        });
+                    } else {
+                        addday_checkCrossedEvents(startDate, endDate);
+                    }
+                } else {
+                    $("#@(Model.PopupId)Form").submit();
+                }
+            }
+
+            function addday_checkCrossedEvents(startDate, endDate) {
+                var model = {
+                    StartDate: startDate,
+                    EndDate: endDate,
+                    CurrentId: ($("#@(Html.IDFor(m => m.EntityId))").length > 0 ? $("#@(Html.IDFor(m => m.EntityId))").val() : null),
+                    CurrentTypeUid: "@Model.EntityTypeUid",
+                    UserIds: null,
+                    ScheduleIds: null,
+                    SubmitForm: "@(Model.PopupId)Form",
+                    OnSubmitScript: "addday_selectNewTime(this);",
+                };
+
+                var url = '@(Url.Action("CrossingEvents", "Event", new {area = EleWise.ELMA.BPM.Web.Calendar.CalendarAreaRegistration.AREA_NAME}))';
+                elma.openPleaseWait(true);
+                $.post(url, { model: $.toJSON(model) }, function(data, textStatus) {
+                    if (data == "") {
+                        $("#@(Model.PopupId)Form").submit();
+                    } else {
+                        $(".elma-window-content", $("#CrossedEventsWindow")).html(data);
+                        elma.closePleaseWait(false);
+                        @(Html.OpenPopup("CrossedEventsWindow"))
+                    }
+                }, "html");
+            }
+
+            function addday_selectNewTime(button) {
+                var selector = $(button).closest("#CrossedEventsWindow").find('form .t-state-selected');
+                var newStartDate = selector.attr('startdate');
+                var newEndDate = selector.attr('enddate');
+                if (newStartDate && newEndDate) {
+                    var startDateInput = $("#@(Model.PopupId)Form #StartDate").val(newStartDate);
+                    var endDateInput = $("#@(Model.PopupId)Form #EndDate").val(newEndDate);
+                    var useDates = $("#@(Model.PopupId)Form #UseDates").val(true);
+                }
+            }
+        </script></text>);
+}
+
+@(Html.PopupWindow("CrossedEventsWindow", SR.T("Найдены пересечения"), @<text><div class="elma-window-content" style="min-width: 650px;"></div>></text>))
+
+@using (Html.ModelForm(Model))
+{
+    @Html.HiddenFor(m => m.RedirectUrl)
+    @Html.HiddenFor(m => m.EntityId)
+    @Html.ModernHidden(m => m.StartDate)
+    @Html.ModernHidden(m => m.EndDate)
+    @Html.ModernHidden(m => m.UseDates)
+    <div>@SR.T("Комментарий")</div>
+    <div style="padding: 5px;">
+        @Html.TextAreaFor(m => m.Comment, new { style = "height:150px;width:100%;width:400px;", @class = "text-box" })
+    </div>
+    
+    <div class="popup-buttons">
+        <input type="button" class="confirm" value="@SR.T("Отложить")" onclick="addday_checkEventTimePeriod()" />
+        <input type="button" value="@SR.Cancel" onclick="@Html.ClosePopup(Model.PopupId)" />
+    </div>
+}

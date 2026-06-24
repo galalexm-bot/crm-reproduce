@@ -1,0 +1,187 @@
+﻿@using EleWise.ELMA
+@using EleWise.ELMA.CRM.Managers
+@using EleWise.ELMA.Helpers
+
+@{
+    var currentDateTimeFormat = DateTimeFormatHelper.GetCurrentFullFormat();
+
+    Html.RegisterContent("checkEventTime",
+        @<text>
+            <script type="text/javascript">
+            function getPrefixFullName(p)
+            {
+                var prefix = p;
+                if (!p || p == ""){
+                    return function(field){
+                        return field;
+                    }
+                }else{
+                    return function(field, newPrefix){
+                        var t = prefix && prefix !== null ? prefix : newPrefix;
+                        return t + "_" + field;
+                    }
+                }
+            }
+
+            function checkEventTimePeriod(formId, prefix) {
+                var getField = getPrefixFullName(prefix);
+                var form = $("#" + formId);
+                form.validate();
+                if (!form.valid())
+                    return;
+                var start = form.find("#" + getField("Entity_StartDate")).val();
+                if (start != undefined)
+                {
+                    var startDate = $.telerik.datetime.parse({ value: start, format: "@(currentDateTimeFormat)" }).value;
+                    var endDate = new Date(startDate);
+                    endDate.setMinutes(endDate.getMinutes() + 10);
+                    var today = new Date();
+                    if (endDate < today) {
+                        jConfirm("@(SR.T("Событие назначено на прошедшее время. Продолжить сохранение?"))",
+                            "@(SR.T("Подтвердите время"))",
+                            function(r)
+                            {
+                                if (r)
+                                {
+                                    checkCrossedEvents(form, formId, getField, startDate, endDate);
+                                }
+                            });
+                    } else {
+                        checkCrossedEvents(form, formId, getField, startDate, endDate);
+                    }
+                } else {
+                    form.submit();
+                }
+            }
+
+            function checkEventTimePeriodMeeting(formId, prefix, post) {
+                var getField = getPrefixFullName(prefix);
+                var form = $("#" + formId);
+                reassignDate(form, getField);
+                form.validate();
+                if (!form.valid())
+                {
+                    return;
+                }
+                var start = form.find("#" + getField("Entity_StartDate")).val();
+                var end = form.find("#" + getField("Entity_EndDate")).val();
+                if (start != undefined && end != undefined && start && end) {
+                    var startDate = $.telerik.datetime.parse({ value: start, format: "@(currentDateTimeFormat)" }).value;
+                    var endDate = $.telerik.datetime.parse({ value: end, format: "@(currentDateTimeFormat)" }).value;
+                    if (form.find("#" + getField("WholeDay")).is(':checked'))
+                    {
+                        startDate.setHours(0, 0, 10);
+                        endDate.setHours(23, 59, 50);
+                    }
+                    if (startDate >= endDate) {
+                        jAlert("@(SR.T("Время начала события позже времени окончания!"))", "@(SR.T("Неверное время начала события"))");
+                        return;
+                    }
+                    var today = new Date();
+                    if (form.find('#' + getField("TimeNotSet")).is(':checked'))
+                    {
+                        today.setHours(0, 0, 0, 0);
+                    }
+
+                    if (endDate < today)
+                    {
+                        jConfirm("@(SR.T("Встреча назначена на прошедшее время. Продолжить сохранение?"))", "@(SR.T("Подтвердите время"))",
+                        function(r)
+                        {
+                            if (r)
+                            {
+                                checkCrossedEvents(form, formId, getField, startDate, endDate, post ? post : '', prefix);
+                            }
+                        });
+                    } else if (!form.find('#' + getField("TimeNotSet")).is(':checked')) {
+                        checkCrossedEvents(form, formId, getField, startDate, endDate, post ? post : '', prefix);
+                    } else {
+                        post ? window[post]() : form.submit();
+                    }
+                } else {
+                    post ? window[post]() : form.submit();
+                }
+            }
+
+            function reassignDate(form, getField) {
+                var start = form.find("#" + getField("Entity_StartDate_date")).val() + " " + form.find("#" + getField("Entity_StartDate_time")).val();
+                var end = form.find("#" + getField("Entity_EndDate_date")).val() + " " + form.find("#" + getField("Entity_EndDate_time")).val();
+                form.find("#" + getField("Entity_StartDate")).val(start);
+                form.find("#" + getField("Entity_EndDate")).val(end);
+            }
+
+            function checkCrossedEvents(form, formId, getField, startDate, endDate, post, prefix) {
+                var entityId = form.find("#"+ getField("Entity_Id"));
+                if (entityId.length > 0)
+                {
+                    entityId = entityId.val();
+                }else{
+                    entityId = null;
+                }
+
+                var model = {
+                    StartDate: startDate,
+                    EndDate: endDate,
+                    CurrentId: entityId,
+                    CurrentTypeUid: form.find("#" + getField("Entity_TypeUid")).val(),
+                    UserIds: null,
+                    ScheduleIds: null,
+                    SubmitForm: formId,
+                    PopupId: "CrossedEventsWindow",
+                    OnSubmitScript: "selectNewTime(this, '" + formId + "', " + getField + ", '" + prefix + "');",
+                    SubmitScript: post
+                };
+                if (form.find("."+getField("PartyUsers")+"_Id_json").length > 0)
+                {
+                    model.UserIds = new Array();
+                }
+
+                if (form.find("#"  + getField("trSchedules")).length > 0)
+                {
+                    model.ScheduleIds = new Array();
+                }
+
+                var userStr = form.find("."+getField("PartyUsers")+"_Id_json").val();
+                var userIds = userStr != undefined && userStr != "" ? $.evalJSON(userStr) : new Array();
+                for (var i = 0; i < userIds.length; i++)
+                {
+                    model.UserIds.push(userIds[i].Value);
+                }
+                form.find("#"  + getField("trSchedules")).find("input:checkbox:checked").each(
+                                                                function()
+                                                                {
+                                                                    model.ScheduleIds.push($(this).val());
+                                                                });
+
+                var url = '@(Url.Action("CrossingEvents", "Event", new { area = EleWise.ELMA.BPM.Web.Calendar.CalendarAreaRegistration.AREA_NAME }))';
+                elma.openPleaseWait(true);
+                $.post(url, { model: $.toJSON(model) }, function(data, textStatus) {
+                    if (data == "") {
+                        post ? window[post]() : form.submit();
+                    } else {
+                        $(".elma-window-content", $("#CrossedEventsWindow")).html(data);
+                        elma.closePleaseWait(false);
+                        @(Html.OpenPopup("CrossedEventsWindow"))
+                    }
+                }, "html");
+            }
+
+            function selectNewTime(button, formId, getField, prefix) {
+                var selector = $(button).closest("#CrossedEventsWindow").find('form .t-state-selected');
+                var newStartDate = Date.parse(selector.attr('startdate'));
+                var newEndDate = Date.parse(selector.attr('enddate'));
+                if (newStartDate && newEndDate) {
+                    var startDateInput = $("#" + formId).find("#" + getField("Entity_StartDate", prefix));
+                    if (startDateInput && startDateInput.length) {
+                        setDateTime(startDateInput, newStartDate);
+                    }
+                    var endDateInput = $("#" + formId).find("#" + getField("Entity_EndDate", prefix));
+                    if (endDateInput && endDateInput.length) {
+                        setDateTime(endDateInput, newEndDate);
+                    }
+                }
+            }
+            </script>
+        </text>);
+
+}

@@ -1,0 +1,52 @@
+﻿@model GridData<MarketingPaymentModel>
+
+@using System.ComponentModel
+@using EleWise.ELMA
+@using EleWise.ELMA.CRM.Web
+@using EleWise.ELMA.CRM.Web.Models
+@using EleWise.ELMA.CRM.Models
+@using EleWise.ELMA.Extensions
+
+@{
+    var canControlBudget = (bool?)ViewData["CanControlBudget"] ?? false;
+}
+
+@(Html.DynamicGrid("MarketingPaymentGrid", Model)
+      .WithDefaultSettings()
+      .Columns(c =>
+      {
+            c.For(x => x.Entity).Template(m => m.Entity is IMarketingPayment
+                ? MvcHtmlString.Create(((IMarketingPayment)m.Entity).Name.HtmlEncode())
+                : MvcHtmlString.Create(string.Format("<a href='{0}'><span class='marketing-budget-collapse expandImage'></span>{1}</a>", Url.Entity(m.Entity), ((IMarketingBase)m.Entity).Name))).Width("30%").HtmlAttributes(new { @class = "payment-name" });
+            c.For(x => MvcHtmlString.Create(x.CreationDate.ToShortDateString())).HtmlAttributes(new { @class = "color-black--400" });
+            c.For(x => x.Budget).Width("20%");
+            c.For(x => MvcHtmlString.Create(canControlBudget && x.Entity is IMarketingPayment ? Html.ImageButton("#edit.svg").Url(Url.Action("EditPayment", "MarketingActivity", new { area = CRMAreaRegistration.AREA_NAME, id = x.Entity.GetId() })).ToHtmlString() : ""))
+                .HtmlAttributes(new { @class = "budget-edit-td" });
+            c.For(x => MvcHtmlString.Create(canControlBudget && x.Entity is IMarketingPayment ? Html.ImageButton("#basket.svg").Click("deletePayment(" + x.Entity.GetId() + ")").ToHtmlString() : ""))
+                .HtmlAttributes(new { @class = "budget-delete-td" });
+      })
+      .Header(false)
+      .DefaultSortExpression("CreationDate")
+      .DefaultSortDirection(ListSortDirection.Ascending)
+      .Customizable(false)
+      .DefaultColumns()
+      .EnableCustomize(false)
+      .Resizeable(false))
+
+<script type="text/javascript">
+    function deletePayment(id) {
+        jConfirm('@(SR.T("Вы действительно хотите удалить платеж?"))', '@(SR.T("Удаление"))', function (r) {
+            if (r) {
+                $.ajax({
+                    url: '@(Url.Action("DeletePayment", "MarketingActivity", new { area = CRMAreaRegistration.AREA_NAME }))/' + id,
+                    type: "POST",
+                    dataType: 'html',
+                    cache: false,
+                    success: function() {
+                         window.reloadPage();
+                    }
+                });
+            }
+        });
+    }
+</script>

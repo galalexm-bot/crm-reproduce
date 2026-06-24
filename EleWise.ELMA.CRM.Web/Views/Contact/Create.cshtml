@@ -1,0 +1,15 @@
+﻿@using EleWise.ELMA
+@using EleWise.ELMA.CRM.Web
+@using EleWise.ELMA.CRM.Web.Models
+@model ContactModel
+
+@{
+    Html.Header(SR.T("Новый контакт"));
+}
+
+@(Html.Toolbar()
+    .Group("toolbar-group-1")
+        .ToolbarSubmit(SR.Save, "#save.svg", "toolbar-action-Save")
+        .ToolbarLink(SR.Cancel, "#close_outline.svg", "javascript:history.back(-1);", "toolbar-action-Cancel"))
+
+@Html.Partial("Editors/ContactEdit")

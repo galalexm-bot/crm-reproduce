@@ -1,0 +1,164 @@
+﻿@using EleWise.ELMA
+@using EleWise.ELMA.CRM.Web
+@using EleWise.ELMA.CRM.Web.Models
+@model SaleInpaymentsModel
+
+@{ 
+    var gridContainer = "saleInpaymentsGridContainer";
+    var setDatePopupId = "SetInpaymentDatePopup";
+    var setStatusPopupId = "SetInpaymentStatusPopup";
+}
+
+@(Html.PopupWindow("AddInpaymentPopup", SR.T("Поступление"), url: null, width: 660))
+
+<div id="@(gridContainer)">
+    @Html.Partial("SaleInpayments/Grid", Model)
+</div>
+
+@Html.PopupWindow(setDatePopupId, SR.T("Дата поступления"), 
+                        @<text>
+                             @Html.Partial("SetInpaymentDatePopup",
+                                                new InpaymentChangeDateModel { Name = SR.T("Укажите дату:"), OnClick = "setInpaymentDate()", PopupId = setDatePopupId },
+                                                new ViewDataDictionary { TemplateInfo = new TemplateInfo { HtmlFieldPrefix = setDatePopupId } })
+                         </text>, width: 320)
+                         
+@Html.PopupWindow(setStatusPopupId, SR.T("Статус поступления"), @<text></text>, width: 600)
+
+<script type="text/javascript">
+
+    function setInpaymentInvoiceClick(id) {
+        jConfirm('@SR.T("Счёт выставлен?")', '@SR.T("Счет")', function (r) {
+            if (r == true) {
+                $.ajax({
+                    url: '@(Url.Action("SetInpaymentInvoice", "Inpayment", new { area = RouteProvider.AreaName }))/' + id,
+                    type: "POST",
+                    dataType: 'html',
+                    cache: false,
+                    success: function (data) {
+                        $('#@(gridContainer)').html(data);
+                    }
+                });
+            }
+        });
+    }
+
+    function setInpaymentDateClick(id) {
+        openWindow('@(setDatePopupId)');
+        $('#@(setDatePopupId)_InpaymentId').val(id);
+    }
+
+    function setInpaymentDate() {
+        closeWindow('@(setDatePopupId)');
+        var id = $('#@(setDatePopupId)_InpaymentId').val();
+        var date = $('#@(setDatePopupId)_Value').val();
+        $.ajax({
+            url: '@(Url.Action("SetInpaymentDate", "Inpayment", new { area = RouteProvider.AreaName }))/' + id + '?date='+date,
+            type: "POST",
+            dataType: 'html',
+            cache: false,
+            success: function (data) {
+                $('#@(gridContainer)').html(data);
+            }
+        });
+    }
+
+    function setInpaymentStatusClick(id) {
+        refreshPopup('@(setStatusPopupId)', '@(Url.Action("SetInpaymentStatus", "Inpayment", new { area = RouteProvider.AreaName }))/' + id + '?prefix=@(setStatusPopupId)', null, '@SR.T("Изменение статуса")', null, setInpaymentStatus);
+    }
+
+    function setInpaymentStatus(closeData) {
+        if (!closeData)
+            return;
+
+        $.ajax({
+            url: '@(Url.Action("SetInpaymentStatus", "Inpayment", new { area = RouteProvider.AreaName }))',
+            type: "POST",
+            dataType: 'html',
+            data: {
+                'InpaymentId' : $('#@(setStatusPopupId)_InpaymentId').val(),
+                'Value' : $('#@(setStatusPopupId)_Value').val(),
+                'ActualDate': $('#@(setStatusPopupId)_ActualDate').val(),
+                'Comment' : $('#@(setStatusPopupId)_Comment').val()
+            },
+            cache: false,
+            success: function (data) {
+                $('#@(gridContainer)').html(data);
+                refreshSalesVolume();
+            }
+        });
+    }
+
+   function deleteInpayment(id) {
+        if (id != undefined && id != null) {
+            $.ajax({
+                url: '@(Url.Action("DeleteInpayment", "Inpayment", new { area = RouteProvider.AreaName }))/' + id,
+                type: "GET",
+                dataType: 'html',
+                cache: false,
+                success: function (data) {
+                    $('#@(gridContainer)').html(data);
+                    refreshSalesVolume();
+                }
+            });
+        }
+    }
+
+    function onEditInpaymentClick(id)
+    {
+        if (id != undefined && id != null) {
+            $.ajax({
+                url: '@(Url.Action("EditInpayment", "Inpayment", new { area = RouteProvider.AreaName }))/' + id,
+                type: "GET",
+                dataType: 'html',
+                cache: false,
+                success: function (data) {
+                    $('#@(gridContainer)').html(data);
+                    refreshSalesVolume();
+                }
+            });
+        }
+    }
+
+    function onDeleteInpaymentClick(id) {
+        jConfirm('@SR.T("Удалить поступление?")', '@SR.T("Удаление")', function (r) {
+            if (r == true) {
+                deleteInpayment(id);
+            }
+        });
+    }
+
+    function editInpayment(id)
+    {
+        refreshPopup('AddInpaymentPopup', '@(Url.Action("EditInpayment", "Inpayment", new { area = RouteProvider.AreaName }))/' + id, null, '@SR.T("Редактирование поступления")');
+    }
+
+    function addInpayment()
+    {
+        refreshPopup('AddInpaymentPopup', '@(Url.Action("AddInpayment", "Inpayment", new { area = RouteProvider.AreaName, saleId = Model.Sale.Id}))', null, '@SR.T("Добавление поступления")');
+    }
+
+    function refreshInpaymentsTable() {
+        refreshInpaymentsGrid();
+        @(Html.ClosePopup("AddInpaymentPopup"))
+    }
+
+    function refreshSalesVolume() {
+        $("#SalesVolumeValueDiv").html($("#SalesVolumeHiddenDiv").html());
+        $("[id^='Entity_SalesVolume_'][id$='_ValueContainer']").html($("#SalesVolumeHiddenDiv").html());
+    }
+
+    function refreshInpaymentsGrid()
+    {
+        $.ajax({
+                url: '@(Url.Action("UpdateInpaymentsGrid", "Inpayment", new { area = RouteProvider.AreaName }))/' + @(Model.Sale.Id),
+                type: "GET",
+                dataType: 'html',
+                cache: false,
+                success: function (data) {
+                    $('#@(gridContainer)').html(data);
+                    refreshSalesVolume();
+                }
+            });
+    }
+
+</script>

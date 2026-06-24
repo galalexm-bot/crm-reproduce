@@ -1,0 +1,155 @@
+using System;
+using EleWise.ELMA.ComponentModel;
+using EleWise.ELMA.Model.Attributes;
+using EleWise.ELMA.Model.Entities;
+using EleWise.ELMA.Model.Metadata;
+using EleWise.ELMA.Model.Types.Settings;
+using EleWise.ELMA.Model.Views;
+
+namespace EleWise.ELMA.FullTextSearch.Model;
+
+[Filterable]
+[TableView("<?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<TableView xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\">\r\n  <Uid>909aea07-74c0-411f-abb2-224da9aa18e3</Uid>\r\n  <ViewType>List</ViewType>\r\n</TableView>")]
+[ShowInDesigner(false)]
+[ShowInTypeTree(false)]
+[Entity("IndexQueue")]
+[EntityMetadataType(EntityMetadataType.Interface)]
+[ShowInCatalogList(false)]
+[IdType("d90a59af-7e47-48c5-8c4c-dad04834e6e3")]
+[DisplayName(typeof(__Resources_IIndexQueue), "DisplayName")]
+[Uid("2bcb7aec-2849-4e47-bbb9-4d10d2b105c5")]
+[MetadataType(typeof(EntityMetadata))]
+[Description(typeof(__Resources_IIndexQueue), "Description")]
+[DisplayFormat(null)]
+[ImplementationUid("4a10ebc1-edd2-46fc-b8b7-64f435b52e59")]
+[FilterType(typeof(IIndexQueueFilter))]
+public interface IIndexQueue : IEntity<long>, IEntity, IIdentified
+{
+	[EntityProperty]
+	[GuidSettings(FieldName = "Uid")]
+	[View(ViewType = ViewType.All, ItemType = ItemType.Default, Visibility = Visibility.Hidden, ReadOnly = true)]
+	[SystemProperty]
+	[Property("eb6e8ddc-fafe-4e0e-9018-1a7667012579")]
+	[NotNull]
+	[DisplayName(typeof(__Resources_IIndexQueue), "P_Uid_DisplayName")]
+	[Uid("ac7b3f5e-dbfa-4d7e-a278-def5c7fd8597")]
+	Guid Uid { get; set; }
+
+	[CanBeNull]
+	[Property("d90a59af-7e47-48c5-8c4c-dad04834e6e3")]
+	[Order(4)]
+	[Uid("9d73d403-933f-422b-ad46-bae872c9a768")]
+	[EntityProperty]
+	[Int64Settings(FieldName = "ObjectId")]
+	[View(ViewType = ViewType.Create, ItemType = ItemType.Default, Visibility = Visibility.Visible, ReadOnly = false)]
+	[DisplayName(typeof(__Resources_IIndexQueue), "P_ObjectId_DisplayName")]
+	[View(ViewType = ViewType.Display, ItemType = ItemType.Default, Visibility = Visibility.Visible, ReadOnly = true)]
+	[View(ViewType = ViewType.Edit, ItemType = ItemType.Default, Visibility = Visibility.Visible, ReadOnly = false)]
+	[View(ViewType = ViewType.Filter, ItemType = ItemType.Default, Visibility = Visibility.Visible, ReadOnly = false)]
+	[View(ViewType = ViewType.List, ItemType = ItemType.Default, Visibility = Visibility.Hidden, ReadOnly = false)]
+	[Filterable]
+	long? ObjectId { get; set; }
+
+	[View(ViewType = ViewType.Display, ItemType = ItemType.Default, Visibility = Visibility.Visible, ReadOnly = true)]
+	[EntityProperty]
+	[DisplayName(typeof(__Resources_IIndexQueue), "P_DirtyValues_DisplayName")]
+	[StringSettings(FieldName = "DirtyValues")]
+	[View(ViewType = ViewType.Create, ItemType = ItemType.Default, Visibility = Visibility.Visible, ReadOnly = false)]
+	[View(ViewType = ViewType.List, ItemType = ItemType.Default, Visibility = Visibility.Hidden, ReadOnly = false)]
+	[View(ViewType = ViewType.Edit, ItemType = ItemType.Default, Visibility = Visibility.Visible, ReadOnly = false)]
+	[Uid("394a4b3b-c139-4123-a031-6aadf7e451a0")]
+	[View(ViewType = ViewType.Filter, ItemType = ItemType.Default, Visibility = Visibility.Visible, ReadOnly = false)]
+	[Property("9b9aac17-22bb-425c-aa93-9c02c5146965")]
+	[Order(5)]
+	string DirtyValues { get; set; }
+
+	[EnumSettings(RelationType = EnumRelationType.Many, FieldName = "QueueType")]
+	[View(ViewType = ViewType.Create, ItemType = ItemType.Default, Visibility = Visibility.Visible, ReadOnly = false)]
+	[DisplayName(typeof(__Resources_IIndexQueue), "P_QueueType_DisplayName")]
+	[View(ViewType = ViewType.Edit, ItemType = ItemType.Default, Visibility = Visibility.Visible, ReadOnly = false)]
+	[Filterable]
+	[View(ViewType = ViewType.List, ItemType = ItemType.Default, Visibility = Visibility.Hidden, ReadOnly = false)]
+	[View(ViewType = ViewType.Display, ItemType = ItemType.Default, Visibility = Visibility.Visible, ReadOnly = true)]
+	[Property("849c1ac9-4d46-4194-8cbb-43f84adf9c17", "0169be84-5ba8-45d1-a112-2db1a1ffdc56")]
+	[View(ViewType = ViewType.Filter, ItemType = ItemType.Default, Visibility = Visibility.Visible, ReadOnly = false)]
+	[EntityProperty]
+	[Uid("d0dfe16d-8f42-44e6-9858-2a6a40713a98")]
+	[CanBeNull]
+	[Order(1)]
+	IndexQueueType? QueueType { get; set; }
+
+	[View(ViewType = ViewType.Edit, ItemType = ItemType.Default, Visibility = Visibility.Visible, ReadOnly = false)]
+	[View(ViewType = ViewType.Create, ItemType = ItemType.Default, Visibility = Visibility.Visible, ReadOnly = false)]
+	[View(ViewType = ViewType.Display, ItemType = ItemType.Default, Visibility = Visibility.Visible, ReadOnly = true)]
+	[Filterable]
+	[View(ViewType = ViewType.Filter, ItemType = ItemType.Default, Visibility = Visibility.Visible, ReadOnly = false)]
+	[View(ViewType = ViewType.List, ItemType = ItemType.Default, Visibility = Visibility.Hidden, ReadOnly = false)]
+	[EntityProperty]
+	[DisplayName(typeof(__Resources_IIndexQueue), "P_ObjectTypeUid_DisplayName")]
+	[Order(3)]
+	[Uid("ac76f034-df46-45c0-9e89-7ad65789e0fb")]
+	[CanBeNull]
+	[GuidSettings(FieldName = "ObjectTypeUid")]
+	[Property("eb6e8ddc-fafe-4e0e-9018-1a7667012579")]
+	Guid? ObjectTypeUid { get; set; }
+
+	[View(ViewType = ViewType.Edit, ItemType = ItemType.Default, Visibility = Visibility.Visible, ReadOnly = false)]
+	[View(ViewType = ViewType.List, ItemType = ItemType.Default, Visibility = Visibility.Hidden, ReadOnly = false)]
+	[View(ViewType = ViewType.Display, ItemType = ItemType.Default, Visibility = Visibility.Visible, ReadOnly = true)]
+	[View(ViewType = ViewType.Create, ItemType = ItemType.Default, Visibility = Visibility.Visible, ReadOnly = false)]
+	[EntityProperty]
+	[Filterable]
+	[View(ViewType = ViewType.Filter, ItemType = ItemType.Default, Visibility = Visibility.Visible, ReadOnly = false)]
+	[Description(typeof(__Resources_IIndexQueue), "P_CardTypeUid_Description")]
+	[CanBeNull]
+	[Order(2)]
+	[Uid("fcf39d3e-72b6-437e-9c0b-de6fc64c045b")]
+	[Property("eb6e8ddc-fafe-4e0e-9018-1a7667012579")]
+	[DisplayName(typeof(__Resources_IIndexQueue), "P_CardTypeUid_DisplayName")]
+	[GuidSettings(FieldName = "CardTypeUid")]
+	Guid? CardTypeUid { get; set; }
+
+	[Property("d90a59af-7e47-48c5-8c4c-dad04834e6e3")]
+	[Int64Settings(FieldName = "CreationAuthorId")]
+	[View(ViewType = ViewType.Create, ItemType = ItemType.Default, Visibility = Visibility.Visible, ReadOnly = false)]
+	[Uid("6112526b-327a-4755-9332-2e813d75401a")]
+	[Order(6)]
+	[CanBeNull]
+	[View(ViewType = ViewType.Filter, ItemType = ItemType.Default, Visibility = Visibility.Visible, ReadOnly = false)]
+	[EntityProperty]
+	[DisplayName(typeof(__Resources_IIndexQueue), "P_CreationAuthorId_DisplayName")]
+	[View(ViewType = ViewType.List, ItemType = ItemType.Default, Visibility = Visibility.Hidden, ReadOnly = false)]
+	[View(ViewType = ViewType.Edit, ItemType = ItemType.Default, Visibility = Visibility.Visible, ReadOnly = false)]
+	[View(ViewType = ViewType.Display, ItemType = ItemType.Default, Visibility = Visibility.Visible, ReadOnly = true)]
+	long? CreationAuthorId { get; set; }
+
+	[View(ViewType = ViewType.Filter, ItemType = ItemType.Default, Visibility = Visibility.Visible, ReadOnly = false)]
+	[View(ViewType = ViewType.List, ItemType = ItemType.Default, Visibility = Visibility.Hidden, ReadOnly = false)]
+	[CanBeNull]
+	[Property("9cd56a40-6192-4d8a-840c-c4bd4dfb88eb")]
+	[BoolSettings(FieldName = "VisualData")]
+	[Uid("e0b9b211-93c1-48b8-919a-1b6b8af228e4")]
+	[EntityProperty]
+	[Filterable]
+	[View(ViewType = ViewType.Edit, ItemType = ItemType.Default, Visibility = Visibility.Visible, ReadOnly = false)]
+	[View(ViewType = ViewType.Display, ItemType = ItemType.Default, Visibility = Visibility.Visible, ReadOnly = true)]
+	[Order(7)]
+	[DisplayName(typeof(__Resources_IIndexQueue), "P_VisualData_DisplayName")]
+	[Description(typeof(__Resources_IIndexQueue), "P_VisualData_Description")]
+	[View(ViewType = ViewType.Create, ItemType = ItemType.Default, Visibility = Visibility.Visible, ReadOnly = false)]
+	bool? VisualData { get; set; }
+
+	[DisplayName(typeof(__Resources_IIndexQueue), "P_Attempt_DisplayName")]
+	[View(ViewType = ViewType.Create, ItemType = ItemType.Default, Visibility = Visibility.Visible, ReadOnly = false)]
+	[Order(8)]
+	[Int64Settings(FieldName = "Attempt")]
+	[Uid("69d0c84d-2511-4de1-a814-1042a5341aec")]
+	[NotNull]
+	[Property("d90a59af-7e47-48c5-8c4c-dad04834e6e3")]
+	[View(ViewType = ViewType.Display, ItemType = ItemType.Default, Visibility = Visibility.Visible, ReadOnly = true)]
+	[View(ViewType = ViewType.List, ItemType = ItemType.Default, Visibility = Visibility.Hidden, ReadOnly = false)]
+	[View(ViewType = ViewType.Filter, ItemType = ItemType.Default, Visibility = Visibility.Visible, ReadOnly = false)]
+	[View(ViewType = ViewType.Edit, ItemType = ItemType.Default, Visibility = Visibility.Visible, ReadOnly = false)]
+	[EntityProperty]
+	long Attempt { get; set; }
+}

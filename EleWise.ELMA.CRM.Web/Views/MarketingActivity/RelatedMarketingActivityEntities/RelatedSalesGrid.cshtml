@@ -1,0 +1,43 @@
+﻿@model GridData<ISale>
+@using EleWise.ELMA.CRM.Models
+@using EleWise.ELMA.CRM.Web
+@{
+    const string gridId = "MarketingActivityRelatedSaleGrid";
+    var tabId = (string) ViewData["TabId"];
+}
+@(Html.DynamicGrid(gridId, Model).Columns(c =>
+{
+    c.For(m => m.Name).Link(m => Url.Entity(m));
+    c.For(m => m.Responsible);
+    c.For(m => Html.Image("#basket.svg", "", new { @class="vertical-middle" })).Width(30)
+        .Link(m => String.Format("javascript:void(removeSale({0}))", m.Id))
+        .NotSortable()
+        .Order(int.MaxValue);
+})
+)
+@if (!String.IsNullOrEmpty(tabId))
+{
+    <script type="text/javascript">
+        $('#@gridId').bind("load dataBound", function() {
+            $('#@tabId > a').html('@EleWise.ELMA.SR.T("Сделки")' + '<span class="counter">' + $('#@gridId').data('tGrid').total + '</span>');
+        });
+    </script>
+}
+<script type="text/javascript">
+    function removeSale(id) {
+        jConfirm('@EleWise.ELMA.SR.T("Вы действительно хотите удалить сделку из маркетингового мероприятия?")', '@EleWise.ELMA.SR.T("Подтверждение удаления")', function (r) {
+            if (r) {
+                $.ajax({
+                    url: '@Url.Action("RemoveSale", "MarketingActivity", new { area = CRMAreaRegistration.AREA_NAME })/' + id,
+                    type: 'POST',
+                    success: function () {
+                        refreshSalesGird();
+                    }
+                });
+            }
+        });
+    }
+    function refreshSalesGird() {
+        $('#@gridId').data('tGrid').ajaxRequest();
+    }     
+</script>

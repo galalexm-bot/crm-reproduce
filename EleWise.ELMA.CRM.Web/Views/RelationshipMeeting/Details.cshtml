@@ -1,0 +1,174 @@
+﻿@model RelationshipMeetingModel
+@using EleWise.ELMA
+@using EleWise.ELMA.BPM.Web.Common.Extensions
+@using EleWise.ELMA.BPM.Web.Common.Mvc.html
+@using EleWise.ELMA.BPM.Web.Common.Models
+@using EleWise.ELMA.CRM.Managers
+@using EleWise.ELMA.CRM.Models
+@using EleWise.ELMA.CRM.Web.Models
+@using EleWise.ELMA.CRM.Web.Controllers
+@using EleWise.ELMA.CRM.Web
+@using EleWise.ELMA.Extensions
+
+@{
+    var metadata = EleWise.ELMA.Model.Metadata.MetadataLoader.LoadMetadata(Model.Entity.GetType());
+
+    var title = SR.T("{0}{1}", Model.Entity.Theme,
+        Model.Entity.Contractor != null ?
+        " - " + Model.Entity.Contractor.Name : Model.Entity.Contact != null ?
+        " - " + Model.Entity.Contact.Name : Model.Entity.Sale != null ?
+        " - " + Model.Entity.Sale.Name : Model.Entity.Lead != null ?
+        " - " + Model.Entity.Lead.Name : "");
+    Html.Title(title);
+    Html.LabeledHeader(title);
+
+    var list = new List<ActionToolbarItem>();
+    list.Add(new ActionToolbarItem
+    {
+        Uid = "toolbar-click-AddComment",
+        Text = SR.T("Добавить комментарий"),
+        IconUrl = "#comment_outline.svg",
+        Click = Html.AddComment("AddCommentPopup"),
+        Visible = Model.CanComment
+    });
+    list.Add(new ActionToolbarSeparator() { Visible = Model.CanComment });
+    if (Model.CanEdit)
+    {
+        if (Model.IsAvailableTimeChanging)
+        {
+            list.Add(new ActionToolbarItem("relationshipMeeting_changetime_btn") { Text = SR.T("Изменить время"), IconUrl = "#change_time.svg", Click = Html.OpenPopup("ChangeTimePopup").ToString() });
+        }
+
+        if (Model.IsAvailableDayAdding)
+        {
+            list.Add(new ActionToolbarItem("relationshipMeeting_addday_btn")
+            {
+                Text = SR.T("Отложить на день"),
+                Click = Html.OpenPopup("AddDayPopup").ToString()
+            });
+        }
+
+        list.Add(new ActionToolbarItem("toolbar-action-Edit") { Text = SR.Edit, IconUrl = "#edit.svg", Url = Url.Action<RelationshipMeetingController>(c => c.Edit(Model.Entity.Id)) });
+
+        list.Add(new ActionToolbarItem("relationshipMeeting_delete_btn") { Text = SR.Delete, ToolTip = SR.T("Удалить встречу"), IconUrl ="#basket.svg", Click = "RelationshipMeetingDelete();", Visible = Model.CanDelete });
+    }
+}
+
+@(Html.Toolbar()
+        .AdditionalButton(a =>
+        {
+            list.ForEach(b => a.Add(b));
+        })
+        .If(Model.CanEdit && (Model.IsAvailableCompleting || Model.IsAvailableDayAdding || Model.IsAvailableTimeChanging), b => b
+            .Group("toolbar-group-2")
+                .If(Model.IsAvailableCompleting && Model.CanExecute, b2 => b2
+                    .ToolbarButton(new ActionToolbarItem("relationshipMeeting_completed_btn")
+                    {
+                        Text = SR.T("Выполнено"),
+                        IconUrl = "#complete.svg",
+                        Click = Html.OpenPopup("CompletePopup").ToString()
+                    })))
+        .Group("toolbar-group-1"))
+
+@(Html.AddCommentPopup(new CommentWithAttachments
+{
+    DenyEmptyComments = true,
+    ShowAttachment = false,
+    PopupId = "AddCommentPopup",
+    ObjectId = Model.Entity.Id,
+    ObjectTypeUid = metadata.Uid,
+    AddCommentActionUid = RelationshipActions.AddCommentGuid,
+    RedirectUrl = Url.Action("Details", "RelationshipMeeting", new { area = CRMAreaRegistration.AREA_NAME, id = Model.Entity.Id, tabIndex = 0 })
+}))
+@if (Model.CanDelete)
+{
+    using (Html.ELMAForm("Delete", "RelationshipMeeting", new { area = CRMAreaRegistration.AREA_NAME, id = Model.Entity.Id }, FormMethod.Get, new { id = "RelationshipMeetingDeleteForm" }))
+    {
+    }
+	
+    <script type="text/javascript">
+        function RelationshipMeetingDelete() {
+            jConfirm('@SR.T("Вы действительно хотите удалить взаимоотношение \"Встреча\"?")', '@SR.T("Подтверждение удаления")', function (r) {
+                if (r) {
+                    $('#RelationshipMeetingDeleteForm').submit();
+                }
+            });
+        }
+    </script>
+}
+@if (Model.IsAvailableCompleting)
+{
+    @(Html.PopupWindow("CompletePopup", SR.T("Завершение"),
+    @<text>
+    @Html.Partial("RelationshipComplete", new RelationshipCompleteModel
+            {
+                PostAction = "Complete",
+                PostController = "RelationshipMeeting",
+                PostArea = CRMAreaRegistration.AREA_NAME,
+                Id = "CompletedPopupForm",
+                Entity = Model.Entity,
+                EntityId = Model.Entity.Id,
+                RedirectUrl = this.Url.Action("Details", "RelationshipMeeting", new { id = Model.Entity.Id })
+            })
+    </text>
+    ))
+}
+
+@if (Model.IsAvailableDayAdding)
+{
+    @(Html.PopupWindow("AddDayPopup", SR.T("Отложить на день"),
+    @<text>
+    @Html.Partial("RelationshipAddDay", new RelationshipAddDayModel
+            {
+                PostAction = "AddDay",
+                PostController = "RelationshipMeeting",
+                PostArea = CRMAreaRegistration.AREA_NAME,
+                Id = "AddDayPopupForm",
+                EntityId = Model.Entity.Id,
+                EntityTypeUid = Model.Entity.TypeUid,
+                StartDate = Model.Entity.StartDate.AddDays(1),
+                EndDate = Model.Entity.EndDate.AddDays(1),
+                PopupId = "AddDayPopup",
+                RedirectUrl = this.Url.Action("Details", "RelationshipMeeting", new { id = Model.Entity.Id })
+            })
+    </text>
+    ))
+}
+
+@if (Model.IsAvailableTimeChanging)
+{
+    @(Html.PopupWindow("ChangeTimePopup", SR.T("Изменение времени"),
+    @<text>
+    @Html.Partial("RelationshipMeeting/RelationshipMeetingChangeTime", new RelationshipMeetingChangeTimeModel
+            {
+                PostAction = "ChangeTime",
+                PostController = "RelationshipMeeting",
+                PostArea = CRMAreaRegistration.AREA_NAME,
+                Id = "ChangeTimePopupForm",
+                EntityId = Model.Entity.Id,
+                EntityTypeUid = Model.Entity.TypeUid,
+                PopupId = "ChangeTimePopup",
+                StartDate = Model.Entity.StartDate,
+                EndDate = Model.Entity.TimeNotSet ? Model.Entity.StartDate.AddMinutes(RelationshipManager.DEFAULT_MEETING_DURATION) : Model.Entity.EndDate,
+                WholeDay = Model.WholeDay,
+                RedirectUrl = this.Url.Action("Details", "RelationshipMeeting", new { id = Model.Entity.Id })
+            })
+    </text>
+    ))
+}
+
+@using (Html.LabeledContainer(SR.T("Встреча")))
+{
+    if (DirectoryMapVirtualPathProvider.AnyConfigFile(
+        "~/Modules/EleWise.ELMA.CRM.Web/Views/RelationshipMeeting/TabView.cshtml",
+        "~/Modules/EleWise.ELMA.CRM.Web/Views/Shared/Relationship/ContactInfo.cshtml",
+        "~/Modules/EleWise.ELMA.CRM.Web/Views/Shared/RelationshipUsersList.cshtml",
+        "~/Modules/EleWise.ELMA.CRM.Web/Views/Shared/RelationshipSchedulesList.cshtml"))
+    {
+        @Html.Partial("TabView", Model)
+    }
+    else
+    {
+        @Html.Partial("RelationshipMeeting/RelationshipMeetingEditForm")
+    }
+}

@@ -1,0 +1,17 @@
+﻿@using EleWise.ELMA
+@using EleWise.ELMA.CRM.Models.BillingInformation
+@using EleWise.ELMA.Model.Types.Settings
+@using EleWise.ELMA.Web.Mvc.Views.Inputs
+@inherits InputControl<IPaymentSystem, EntitySettings>
+
+@if (Model != null && Model.IsDeleted)
+{
+    var name = Model.ToString();
+    name = !string.IsNullOrEmpty(name) ? name : SR.Untitled;
+
+    <span>@name</span> <span style="color: red">@SR.T("Удален")</span>
+}
+else
+{
+    @Html.Partial("DisplayTemplates/Entity")
+}

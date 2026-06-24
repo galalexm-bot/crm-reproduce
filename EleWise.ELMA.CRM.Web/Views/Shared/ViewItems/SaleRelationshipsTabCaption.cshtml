@@ -1,0 +1,21 @@
+﻿@inherits TabCaptionViewItemControl<ISale, TabViewItem>
+@using EleWise.ELMA
+@using EleWise.ELMA.CRM.Managers
+@using EleWise.ELMA.CRM.Models
+@using EleWise.ELMA.Model.Services
+@using EleWise.ELMA.Model.Views
+@using EleWise.ELMA.Web.Mvc.Views.ViewItem
+
+@if (ViewItem != null && Model != null)
+{
+    var relFilter = InterfaceActivator.Create<IRelationshipFilter>();
+    relFilter.DisableSecurity = true;
+    relFilter.Sale = Model;
+    Counter = RelationshipManager.Instance.Count(relFilter);
+
+    @(ViewItem.Caption ?? SR.T("Взаимоотношения"))
+}
+else
+{
+    @SR.T("Взаимоотношения")
+}

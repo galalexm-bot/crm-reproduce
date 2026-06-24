@@ -1,0 +1,16 @@
+﻿@inherits TabCaptionViewItemControl<ISale, TabViewItem>
+@using EleWise.ELMA
+@using EleWise.ELMA.CRM.Models
+@using EleWise.ELMA.Model.Views
+@using EleWise.ELMA.Web.Mvc.Views.ViewItem
+
+@if (ViewItem != null && Model != null)
+{
+    Counter = Model.Products.Count(p => !p.IsDeleted);
+    
+    @(ViewItem.Caption ?? SR.T("Продукты"))
+}
+else
+{
+    @SR.T("Продукты")
+}

@@ -1,0 +1,18 @@
+﻿@model EleWise.ELMA.CRM.Web.Models.ContractorIndividualModel
+@using EleWise.ELMA
+@using EleWise.ELMA.CRM.Web
+
+@{
+    Html.Header(SR.T("Создать физическое лицо"));
+}
+
+@(Html.Toolbar()
+    .Group("toolbar-group-1")
+        .ToolbarSubmit("toolbar-action-Save", b => b
+            .MainAction(true)
+            .Text(SR.Save)
+            .IconUrl("#save.svg")
+        )
+        .ToolbarLink(SR.Cancel, "#close_outline.svg", "javascript:history.back(-1);", "toolbar-action-Cancel"))
+
+@Html.Partial("Editors/ContractorIndividualEdit")

@@ -1,0 +1,41 @@
+﻿@model RelationshipModel
+@using EleWise.ELMA.CRM.Enums
+@using EleWise.ELMA.CRM.Web.Models
+@using EleWise.ELMA.Web.Mvc.Models.Panels
+
+@{
+    var number = Model.Entity.RelationshipUsers.Count(eu => eu.Status == RelationshipUserStatus.Participant);
+    if (number > 0)
+    {
+        <tr class="full-row">
+            <td colspan="3" style="border-bottom: none; padding: 0;">
+                <div class="brickPanel">
+                    @{
+                        var icon = "#complete.svg";
+                        var iconText = "";
+                    }
+
+                    @using (Html.CollapsiblePanel(new CollapsiblePanel
+                    {
+                        Id = "relationshipParticipants",
+                        Expanded = true,
+                        Header = EleWise.ELMA.SR.Partisipants + " (" + number + ")",
+                        Class = "brickTitle",
+                        LoadMode = DynamicLoadMode.Client
+                    }))
+                    {
+                        <table>
+                            @foreach (var ev in Model.Entity.RelationshipUsers.Where(eu => eu.Status == RelationshipUserStatus.Participant))
+                            {
+                                <tr>
+                                    <td style="width: 20px; white-space: nowrap">@(Html.Image(icon, iconText))</td>
+                                    <td>@Html.HtmlHelperFunc(ev, helper => helper.Display(u => u.User))</td>
+                                </tr>
+                            }
+                        </table>
+                    }
+                </div>
+            </td>
+        </tr>
+    }
+}

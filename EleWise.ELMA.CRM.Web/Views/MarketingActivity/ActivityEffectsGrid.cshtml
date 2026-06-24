@@ -1,0 +1,23 @@
+﻿@model GridData<IMarketingEffect, IMarketingEffectFilter>
+@using EleWise.ELMA
+@using EleWise.ELMA.CRM.Models
+@using EleWise.ELMA.Web.Mvc.ExtensionPoints
+@{
+    string gridId = Model.IsPageable ? "MarketingActivityEffectGrid" : String.Format("MarketingActivityEffectGrid_{0}", Guid.NewGuid().ToString("N"));
+}
+@(Html.DynamicGrid(gridId, Model).Columns(c =>
+{
+    c.For(m => m.TypeUid)
+        .Header(SR.T("Тип"))
+        .Template(m => Html.Image(Html.Url().ObjectIcon(ObjectIconFormat.x16, m), "", new { tooltiptext = m.Status == MarketingObjectStatus.Active ? SR.T("Активное") : SR.T("В архиве") }))
+        .Width(30);
+    c.For(m => m.Name).Link(m => Url.Entity(m)).Width("auto");
+    c.For(m => m.Responsible);
+    c.For(m => m.CreationDate).Header(SR.T("Создано"));
+    c.For(m => m.DirtyLeadCount).Header(SR.T("Возможности"));
+    c.For(m => m.CreatedSaleCount).Header(SR.T("Сделки"));
+    c.For(m => m.ArchiveDate).Visible(false);
+})
+.RouteValues(new { marketingActivityId = Model.DataFilter.MarketingActivity.Id })
+.Customizable(false)
+.DefaultColumns(true))

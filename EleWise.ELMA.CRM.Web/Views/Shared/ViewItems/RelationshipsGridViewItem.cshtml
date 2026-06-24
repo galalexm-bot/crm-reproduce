@@ -1,0 +1,30 @@
+﻿@model IEntity<long>
+@using EleWise.ELMA.CRM.Models
+@using EleWise.ELMA.CRM.Web
+@using EleWise.ELMA.Model.Entities
+
+@if (Model != null)
+{
+    var routeValues = new RouteValueDictionary { { "area", CRMAreaRegistration.AREA_NAME } };
+    if (Model is IContractor)
+    {
+        routeValues.Add("ContractorId", Model.Id);
+        routeValues.Add("GridId", "ContractorRelationships_" + Model.Id);
+    }
+    if (Model is IContact)
+    {
+        routeValues.Add("ContactId", Model.Id);
+        routeValues.Add("GridId", "ContactRelationships_" + Model.Id);
+    }
+    if (Model is ILead)
+    {
+        routeValues.Add("LeadId", Model.Id);
+        routeValues.Add("GridId", "LeadRelationships_" + Model.Id);
+    }
+    if (Model is ISale)
+    {
+        routeValues.Add("SaleId", Model.Id);
+        routeValues.Add("GridId", "SaleRelationships_" + Model.Id);
+    }
+    @Html.Action("Grid", "Relationship", routeValues)
+}

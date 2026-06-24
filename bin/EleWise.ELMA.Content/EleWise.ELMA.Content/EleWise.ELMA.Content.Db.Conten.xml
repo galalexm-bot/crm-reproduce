@@ -1,0 +1,49 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<root uid="{3E5A9709-37B5-470B-B73C-7E92C2C5CAE2}">
+
+  <methods>
+    <method name="UpdateMenu" ExecuteTime="OnTablesDeleting" />
+    <method name="UpdateWorkPlaces" ExecuteTime="OnTablesDeleting" />
+    <method name="CreateDefaultMenu" />
+    <method name="CreateStartMenu" />
+    <method name="CreateDefaultWorkPlase" />
+    <method name="CreateDefaultMobileWorkPlace" />
+    <method name="CreateDefaultLiteWorkPlace" />
+    <method name="ConvertPageFoldersSettings" />
+    <method name="AssignDefaultWorkplacePages2" />
+    <method name="AssignDefaultMenu2" />
+    <method name="AssignDefaultWorkPlace" />
+    <method name="HomePageUsers" />
+    <method name="FixHomePageSettings" />
+    <method name="Convert_HomePageSetting_Page" ExecuteTime="OnTablesDeleting" />
+    <method name="RemovePortletProfile" />
+    <method name="FixFilterActionLink" ExecuteTime="OnTablesDeleting" />
+    <method name="ConvertMenuItemColumns" ExecuteTime="OnTablesCreating" />
+    <method name="RemoveSecurityHomePagePortlets" />
+    <method name="DisableUserPanelActions" />
+    <method name="UpdateColors" />
+    <method name="UpdateColorSchemes5" />
+    <method name="CreateDefaultColorSchemes1" />
+    <method name="ConvertColorScheme" />
+    <method name="CreateWorkplaceColorSchemes" />
+    <method name="UpdateDefaultColorSchemes4" />
+    <method name="UpdateWorkplaceColorScheme" />
+
+  </methods>
+
+  <scripts>
+    <script name="SetPortletPageSortId">
+      <text>
+        update PortalObject set SortTypeId = 1
+      </text>
+    </script>
+  
+  </scripts>
+
+  <indexes>
+    <index name="IX_MenuItem_MenuUid" tableName="MenuItem" columns="MenuUid" />
+    <index name="IX_MenuItem_TAA" tableName="MenuItem" columns="Type, ActionId, ActionTypeProviderId" />
+    <index name="IX_MenuItem_Code" tableName="MenuItem" columns="Code" />
+  </indexes>
+
+</root>

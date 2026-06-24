@@ -1,0 +1,14 @@
+﻿@using EleWise.ELMA
+@using ContentHtmlExtensions = EleWise.ELMA.BPM.Web.Content.Extensions.HtmlExtensions
+@model EleWise.ELMA.CRM.Web.Models.CategoryRulesIndexModel
+
+@{
+    ContentHtmlExtensions.HeaderBreadcrumbsInZone(Html, SR.T("Правила автоматического присвоения категорий"));
+}
+@(Html.Toolbar())
+
+<div style="padding-left: 4px;">
+    @Html.Partial("CategoryRulesList", Model.RulesForContractors)
+    <div style="height: 20px;"></div>
+    @Html.Partial("CategoryRulesList", Model.RulesForLeads)
+</div>

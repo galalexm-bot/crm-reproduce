@@ -1,0 +1,87 @@
+﻿@model CalendarModel
+@using System.Globalization
+@using EleWise.ELMA.CRM.Web.Models.SalesPlan
+@*@inherits EleWise.ELMA.Web.Mvc.DynamicViewControl<GridData<EleWise.ELMA.CRM.Models.IPayment, EleWise.ELMA.CRM.Models.IPaymentFilter>>*@
+
+@*@(DynamicGrid("SalesPlan", Model)
+    .Columns(c =>
+        {
+            c.For(m => m.PaymentDate.ToString("dd.MM"))
+                .Template(m => Html.Telerik().TreeView()
+                    .Name("SalesPlan")
+                    .Items(view => { view.Add().Text(m.PaymentDate.ToString("dd.MM")); })
+                    .ShowLines(false)
+                    .ToHtmlString());           
+        })
+    .Action("Grid")
+    .Customizable(false)
+    .Sortable(false)
+    .Groupable(false)
+)*@
+
+<style>
+    table.salesprogram
+    {
+        border: 2px solid #91B6E6;
+        width: 50%;
+    }
+    span.month
+    {
+        font-size: 20px;
+        font-weight:bold;
+        color:#003366;
+    }
+    td.month 
+    {
+        border-top: 1px solid #CCCCCC;
+        border-right: 2px solid #91B6E6;
+    }
+    td.week-container
+    {
+        width:100%;
+    }
+    td.week-container-hover
+    {
+        background-color: #D7F6D3;
+    }
+</style>
+
+<script type="text/javascript">
+    $(function () {
+        $("[data-id^='p-container-']").draggable({
+            accept: "[data-id^='week-']",
+            helper: 'clone'
+        });
+        $("[data-id^='week-']").droppable({
+            accept: function (item) {
+                return $(item).attr("data-container-date") != $(this).attr("data-date");
+            },
+            drop: function (event, ui) {
+                var drop = $(this);
+                var drag = $(ui.draggable);
+                jConfirm("@(EleWise.ELMA.SR.T("Переместить платеж?"))", "@(EleWise.ELMA.SR.T("Подтверждение"))", 
+                    function(r) {
+                        if(r)
+                            $(drop).append(drag);
+                    });
+            },
+            hoverClass: 'week-container-hover',
+            tolerance: 'pointer'
+        });
+    });
+</script>
+
+<table class="salesprogram">
+    @foreach (var m in Model.Months)
+    {
+        <tr>
+            <td class="month">
+                <span class="month">@m.Name</span>
+            </td>
+            <td class="week-container">
+                @Html.Partial("Week", m.Weeks)
+            </td>
+        </tr>
+    }
+</table>
+

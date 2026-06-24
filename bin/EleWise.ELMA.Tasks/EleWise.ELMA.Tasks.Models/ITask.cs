@@ -1,0 +1,233 @@
+using System;
+using EleWise.ELMA.Calendar.Models;
+using EleWise.ELMA.ComponentModel;
+using EleWise.ELMA.Model.Attributes;
+using EleWise.ELMA.Model.Entities;
+using EleWise.ELMA.Model.Metadata;
+using EleWise.ELMA.Model.Types.Settings;
+using EleWise.ELMA.Model.Types.Validation;
+using EleWise.ELMA.Model.Views;
+using EleWise.ELMA.Security.Models;
+using EleWise.ELMA.Security.Types.Settings;
+using Iesi.Collections.Generic;
+
+namespace EleWise.ELMA.Tasks.Models;
+
+[MetadataType(typeof(EntityMetadata))]
+[Uid("df6e5691-a60b-4911-9b28-dbdc9e699143")]
+[DisplayName(typeof(__Resources_ITask), "DisplayName")]
+[Description(typeof(__Resources_ITask), "Description")]
+[BaseClass("0f338330-068c-4135-be4e-95797a209c4e")]
+[AllowCreateHeirs(true)]
+[DisplayFormat("{$Subject}")]
+[InterfaceImplementation("EleWise.ELMA.Tasks.Models.ITaskControlImplementation, EleWise.ELMA.Tasks")]
+[Image(typeof(ITask), "task", 16, ImageFormatType.IconPack, false)]
+[FormView("<?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<FormView xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\">\r\n  <Uid>00000000-0000-0000-0000-000000000000</Uid>\r\n  <ViewType>Display</ViewType>\r\n  <CanUseCommonView>true</CanUseCommonView>\r\n  <CanUseCommonRazorView>true</CanUseCommonRazorView>\r\n  <CanUseTabView>true</CanUseTabView>\r\n  <CanUseTabRazorView>true</CanUseTabRazorView>\r\n  <ViewInCommon>true</ViewInCommon>\r\n</FormView>")]
+[FormView("<?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<FormView xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\">\r\n  <Uid>00000000-0000-0000-0000-000000000000</Uid>\r\n  <ViewType>Create</ViewType>\r\n  <CanUseCommonView>true</CanUseCommonView>\r\n  <ViewInCommon>true</ViewInCommon>\r\n</FormView>")]
+[FormView("<?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<FormView xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\">\r\n  <Uid>00000000-0000-0000-0000-000000000000</Uid>\r\n  <ViewType>Edit</ViewType>\r\n  <CanUseCommonView>true</CanUseCommonView>\r\n  <ViewInCommon>true</ViewInCommon>\r\n</FormView>")]
+[TableView("<?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<TableView xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\">\r\n  <Uid>e95e5810-9754-485e-b70a-c6afd1ccd663</Uid>\r\n  <ViewType>List</ViewType>\r\n</TableView>")]
+[Entity("Task")]
+[IdType("d90a59af-7e47-48c5-8c4c-dad04834e6e3")]
+[ShowInCatalogList(false)]
+[EntityMetadataType(EntityMetadataType.Interface)]
+[Filterable]
+[ImplementationUid("298b2c71-619f-463c-95b2-8e029085680d")]
+[FilterType(typeof(ITaskFilter))]
+[ActionsType(typeof(TaskActions))]
+public interface ITask : ITaskBase, IEntity<long>, IEntity, IIdentified, IInheritable, ITaskControlImplementation
+{
+	[Uid("52640620-f808-45d3-9cc9-989f4275ca90")]
+	[OwnerPropertyUid("cb8d1c8d-2399-42f1-b5b5-a894f46bdc66")]
+	[Property("72ed98ca-f260-4671-9bcd-ff1d80235f47", "cfdeb03c-35e9-45e7-aad8-037d83888f73")]
+	[EntityUserSettings(FieldName = "ControlUserReplaced")]
+	[DisplayName(typeof(__Resources_ITask), "P_ControlUserReplaced_DisplayName")]
+	[View(ViewType = ViewType.All, ItemType = ItemType.Default, Visibility = Visibility.ForceHidden, ReadOnly = true)]
+	[EntityProperty]
+	IUser ControlUserReplaced { get; set; }
+
+	[Uid("91575da2-82d2-4812-8f81-c56ac9eb70af")]
+	[Order(1)]
+	[NotNull]
+	[Required(true)]
+	[Property("9cd56a40-6192-4d8a-840c-c4bd4dfb88eb")]
+	[BoolSettings(FieldName = "UnderControl")]
+	[RequiredField]
+	[DisplayName(typeof(__Resources_ITask), "P_UnderControl_DisplayName")]
+	[Description(typeof(__Resources_ITask), "P_UnderControl_Description")]
+	[View(ViewType = ViewType.Create, ItemType = ItemType.Default, Visibility = Visibility.Visible, ReadOnly = false)]
+	[View(ViewType = ViewType.Edit, ItemType = ItemType.Default, Visibility = Visibility.Visible, ReadOnly = false)]
+	[View(ViewType = ViewType.Display, ItemType = ItemType.Default, Visibility = Visibility.Visible, ReadOnly = true)]
+	[View(ViewType = ViewType.List, ItemType = ItemType.Default, Visibility = Visibility.Hidden, ReadOnly = false)]
+	[View(ViewType = ViewType.Filter, ItemType = ItemType.Default, Visibility = Visibility.Visible, ReadOnly = false)]
+	[EntityProperty]
+	new bool UnderControl { get; set; }
+
+	[Uid("cb8d1c8d-2399-42f1-b5b5-a894f46bdc66")]
+	[Order(2)]
+	[Property("72ed98ca-f260-4671-9bcd-ff1d80235f47", "cfdeb03c-35e9-45e7-aad8-037d83888f73")]
+	[EntityUserSettings(Replaceable = true, ReplacedUserPropertyUidStr = "52640620-f808-45d3-9cc9-989f4275ca90", CascadeMode = CascadeMode.SaveUpdate, FieldName = "ControlUser")]
+	[DisplayName(typeof(__Resources_ITask), "P_ControlUser_DisplayName")]
+	[Description(typeof(__Resources_ITask), "P_ControlUser_Description")]
+	[View(ViewType = ViewType.Create, ItemType = ItemType.Default, Visibility = Visibility.Visible, ReadOnly = false)]
+	[View(ViewType = ViewType.Edit, ItemType = ItemType.Default, Visibility = Visibility.Visible, ReadOnly = false)]
+	[View(ViewType = ViewType.Display, ItemType = ItemType.Default, Visibility = Visibility.Visible, ReadOnly = true)]
+	[View(ViewType = ViewType.List, ItemType = ItemType.Default, Visibility = Visibility.Hidden, ReadOnly = false)]
+	[View(ViewType = ViewType.Filter, ItemType = ItemType.Default, Visibility = Visibility.Visible, ReadOnly = false)]
+	[Filterable]
+	[EntityProperty]
+	new IUser ControlUser { get; set; }
+
+	[Uid("cf91fc64-017f-40b5-9a93-91340def2997")]
+	[Order(3)]
+	[NotNull]
+	[Property("849c1ac9-4d46-4194-8cbb-43f84adf9c17", "5b489918-cb58-437d-a876-c6b55124d08f")]
+	[EnumSettings(FieldName = "ControlType")]
+	[DisplayName(typeof(__Resources_ITask), "P_ControlType_DisplayName")]
+	[Description(typeof(__Resources_ITask), "P_ControlType_Description")]
+	[View(ViewType = ViewType.Create, ItemType = ItemType.Default, Visibility = Visibility.Visible, ReadOnly = false)]
+	[View(ViewType = ViewType.Edit, ItemType = ItemType.Default, Visibility = Visibility.Visible, ReadOnly = false)]
+	[View(ViewType = ViewType.Display, ItemType = ItemType.Default, Visibility = Visibility.Visible, ReadOnly = true)]
+	[View(ViewType = ViewType.List, ItemType = ItemType.Default, Visibility = Visibility.Hidden, ReadOnly = false)]
+	[Filterable]
+	[EntityProperty]
+	new TaskControlType ControlType { get; set; }
+
+	[Uid("25574fd4-2b90-47a5-862b-4b6d616102b3")]
+	[Order(4)]
+	[NotNull]
+	[Required(true)]
+	[Property("9cd56a40-6192-4d8a-840c-c4bd4dfb88eb")]
+	[BoolSettings(FieldName = "ControlNotifyMe")]
+	[RequiredField]
+	[DisplayName(typeof(__Resources_ITask), "P_ControlNotifyMe_DisplayName")]
+	[Description(typeof(__Resources_ITask), "P_ControlNotifyMe_Description")]
+	[View(ViewType = ViewType.Create, ItemType = ItemType.Default, Visibility = Visibility.Hidden, ReadOnly = false)]
+	[View(ViewType = ViewType.Edit, ItemType = ItemType.Default, Visibility = Visibility.Visible, ReadOnly = false)]
+	[View(ViewType = ViewType.Display, ItemType = ItemType.Default, Visibility = Visibility.Visible, ReadOnly = true)]
+	[View(ViewType = ViewType.List, ItemType = ItemType.Default, Visibility = Visibility.ForceHidden, ReadOnly = false)]
+	[EntityProperty]
+	bool ControlNotifyMe { get; set; }
+
+	[Uid("989ef75a-5a55-49aa-8478-bc1d5cd3d4ec")]
+	[Order(5)]
+	[NotNull]
+	[Property("849c1ac9-4d46-4194-8cbb-43f84adf9c17", "d65cf401-216e-4ed0-9050-ab0c3cc575f8")]
+	[EnumSettings(FieldName = "Period")]
+	[DisplayName(typeof(__Resources_ITask), "P_Period_DisplayName")]
+	[Description(typeof(__Resources_ITask), "P_Period_Description")]
+	[View(ViewType = ViewType.Create, ItemType = ItemType.Default, Visibility = Visibility.Visible, ReadOnly = false)]
+	[View(ViewType = ViewType.Edit, ItemType = ItemType.Default, Visibility = Visibility.Visible, ReadOnly = false)]
+	[View(ViewType = ViewType.Display, ItemType = ItemType.Default, Visibility = Visibility.Visible, ReadOnly = true)]
+	[View(ViewType = ViewType.List, ItemType = ItemType.Default, Visibility = Visibility.ForceHidden, ReadOnly = false)]
+	[Filterable]
+	[EntityProperty]
+	CalendarEventPeriod Period { get; set; }
+
+	[Uid("1ad59193-9fe0-4146-8b12-6f7801f609e9")]
+	[Order(6)]
+	[CanBeNull]
+	[Property("dac9211e-e02b-47cd-8868-89a3bfc0f749")]
+	[DateTimeSettings(ShowTime = false, SetCurrentDate = true, FieldName = "UntilDate")]
+	[DisplayName(typeof(__Resources_ITask), "P_UntilDate_DisplayName")]
+	[View(ViewType = ViewType.Create, ItemType = ItemType.Default, Visibility = Visibility.Hidden, ReadOnly = false)]
+	[View(ViewType = ViewType.Edit, ItemType = ItemType.Default, Visibility = Visibility.Visible, ReadOnly = false)]
+	[View(ViewType = ViewType.Display, ItemType = ItemType.Default, Visibility = Visibility.Visible, ReadOnly = true)]
+	[View(ViewType = ViewType.List, ItemType = ItemType.Default, Visibility = Visibility.ForceHidden, ReadOnly = false)]
+	[EntityProperty]
+	DateTime? UntilDate { get; set; }
+
+	[Uid("fdc7468a-7000-407d-b5ca-eea6b3b3e8f3")]
+	[Order(7)]
+	[CanBeNull]
+	[Property("9cd56a40-6192-4d8a-840c-c4bd4dfb88eb")]
+	[BoolSettings(FieldName = "InformAboutExpiration")]
+	[DisplayName(typeof(__Resources_ITask), "P_InformAboutExpiration_DisplayName")]
+	[Description(typeof(__Resources_ITask), "P_InformAboutExpiration_Description")]
+	[View(ViewType = ViewType.Create, ItemType = ItemType.Default, Visibility = Visibility.Hidden, ReadOnly = false)]
+	[View(ViewType = ViewType.Edit, ItemType = ItemType.Default, Visibility = Visibility.Visible, ReadOnly = false)]
+	[View(ViewType = ViewType.Display, ItemType = ItemType.Default, Visibility = Visibility.Visible, ReadOnly = true)]
+	[View(ViewType = ViewType.List, ItemType = ItemType.Default, Visibility = Visibility.ForceHidden, ReadOnly = false)]
+	[EntityProperty]
+	bool? InformAboutExpiration { get; set; }
+
+	[Uid("39b669a6-bb1b-49eb-880e-dcae2ea8d485")]
+	[Order(8)]
+	[CanBeNull]
+	[Property("dac9211e-e02b-47cd-8868-89a3bfc0f749")]
+	[DateTimeSettings(SetCurrentDate = true, FieldName = "PauseDate")]
+	[DisplayName(typeof(__Resources_ITask), "P_PauseDate_DisplayName")]
+	[View(ViewType = ViewType.Create, ItemType = ItemType.Default, Visibility = Visibility.Hidden, ReadOnly = false)]
+	[View(ViewType = ViewType.Edit, ItemType = ItemType.Default, Visibility = Visibility.Visible, ReadOnly = false)]
+	[View(ViewType = ViewType.Display, ItemType = ItemType.Default, Visibility = Visibility.Visible, ReadOnly = true)]
+	[View(ViewType = ViewType.List, ItemType = ItemType.Default, Visibility = Visibility.ForceHidden, ReadOnly = false)]
+	[EntityProperty]
+	DateTime? PauseDate { get; set; }
+
+	[Uid("9c994c02-8238-40e4-9f59-0dcfc904d545")]
+	[Order(9)]
+	[Property("72ed98ca-f260-4671-9bcd-ff1d80235f47", "df6e5691-a60b-4911-9b28-dbdc9e699143")]
+	[EntitySettings(CascadeMode = CascadeMode.SaveUpdate, FieldName = "PeriodTemplate")]
+	[DisplayName(typeof(__Resources_ITask), "P_PeriodTemplate_DisplayName")]
+	[View(ViewType = ViewType.Create, ItemType = ItemType.Default, Visibility = Visibility.Hidden, ReadOnly = false)]
+	[View(ViewType = ViewType.Edit, ItemType = ItemType.Default, Visibility = Visibility.Hidden, ReadOnly = false)]
+	[View(ViewType = ViewType.Display, ItemType = ItemType.Default, Visibility = Visibility.Hidden, ReadOnly = true)]
+	[View(ViewType = ViewType.List, ItemType = ItemType.Default, Visibility = Visibility.ForceHidden, ReadOnly = false)]
+	[Filterable]
+	[EntityProperty]
+	ITask PeriodTemplate { get; set; }
+
+	[Uid("dfba711f-37f9-46bf-9e30-c3cf15f5814d")]
+	[Order(10)]
+	[NotNull]
+	[Property("9cd56a40-6192-4d8a-840c-c4bd4dfb88eb")]
+	[BoolSettings(FieldName = "IsTemplate")]
+	[DisplayName(typeof(__Resources_ITask), "P_IsTemplate_DisplayName")]
+	[View(ViewType = ViewType.Create, ItemType = ItemType.Default, Visibility = Visibility.Hidden, ReadOnly = false)]
+	[View(ViewType = ViewType.Edit, ItemType = ItemType.Default, Visibility = Visibility.Hidden, ReadOnly = false)]
+	[View(ViewType = ViewType.Display, ItemType = ItemType.Default, Visibility = Visibility.Hidden, ReadOnly = true)]
+	[View(ViewType = ViewType.List, ItemType = ItemType.Default, Visibility = Visibility.ForceHidden, ReadOnly = false)]
+	[Filterable]
+	[EntityProperty]
+	bool IsTemplate { get; set; }
+
+	[Uid("2adae720-d926-4576-a2b2-4e7196941846")]
+	[Order(11)]
+	[NotNull]
+	[Property("d6b44bce-b236-424d-aa74-d80da3c8db75")]
+	[Int32Settings(MinValue = 0, DefaultValueStr = "0", FieldName = "NextTasksCreationCount")]
+	[RangeValue(0, int.MaxValue)]
+	[DisplayName(typeof(__Resources_ITask), "P_NextTasksCreationCount_DisplayName")]
+	[View(ViewType = ViewType.Create, ItemType = ItemType.Default, Visibility = Visibility.Hidden, ReadOnly = false)]
+	[View(ViewType = ViewType.Edit, ItemType = ItemType.Default, Visibility = Visibility.Visible, ReadOnly = false)]
+	[View(ViewType = ViewType.Display, ItemType = ItemType.Default, Visibility = Visibility.Visible, ReadOnly = true)]
+	[View(ViewType = ViewType.List, ItemType = ItemType.Default, Visibility = Visibility.Hidden, ReadOnly = false)]
+	[View(ViewType = ViewType.Filter, ItemType = ItemType.Default, Visibility = Visibility.Visible, ReadOnly = false)]
+	[EntityProperty]
+	int NextTasksCreationCount { get; set; }
+
+	[Uid("9e9f7ff1-3fa8-4333-824d-8993fce4a25b")]
+	[Order(12)]
+	[CanBeNull]
+	[Property("dac9211e-e02b-47cd-8868-89a3bfc0f749")]
+	[DateTimeSettings(FieldName = "LastPeriodTaskDate")]
+	[DisplayName(typeof(__Resources_ITask), "P_LastPeriodTaskDate_DisplayName")]
+	[View(ViewType = ViewType.Create, ItemType = ItemType.Default, Visibility = Visibility.Hidden, ReadOnly = false)]
+	[View(ViewType = ViewType.Edit, ItemType = ItemType.Default, Visibility = Visibility.Hidden, ReadOnly = false)]
+	[View(ViewType = ViewType.Display, ItemType = ItemType.Default, Visibility = Visibility.Hidden, ReadOnly = true)]
+	[View(ViewType = ViewType.List, ItemType = ItemType.Default, Visibility = Visibility.ForceHidden, ReadOnly = false)]
+	[EntityProperty]
+	DateTime? LastPeriodTaskDate { get; set; }
+
+	[Uid("de42e78f-d698-4e60-9355-9e4fcf3b0533")]
+	[Order(13)]
+	[Property("72ed98ca-f260-4671-9bcd-ff1d80235f47", "cfdeb03c-35e9-45e7-aad8-037d83888f73")]
+	[EntityUserSettings(RelationType = RelationType.ManyToMany, RelationTableName = "M_Task_CurrentControllers", ParentColumnName = "TaskId", ChildColumnName = "UserId", CascadeMode = CascadeMode.SaveUpdate)]
+	[DisplayName(typeof(__Resources_ITask), "P_CurrentControllers_DisplayName")]
+	[View(ViewType = ViewType.Create, ItemType = ItemType.Default, Visibility = Visibility.Hidden, ReadOnly = true)]
+	[View(ViewType = ViewType.Edit, ItemType = ItemType.Default, Visibility = Visibility.Hidden, ReadOnly = false)]
+	[View(ViewType = ViewType.Display, ItemType = ItemType.Default, Visibility = Visibility.Visible, ReadOnly = true)]
+	[View(ViewType = ViewType.List, ItemType = ItemType.Default, Visibility = Visibility.ForceHidden, ReadOnly = false)]
+	[View(ViewType = ViewType.Filter, ItemType = ItemType.Default, Visibility = Visibility.Hidden, ReadOnly = false)]
+	[EntityProperty]
+	new ISet<IUser> CurrentControllers { get; set; }
+}

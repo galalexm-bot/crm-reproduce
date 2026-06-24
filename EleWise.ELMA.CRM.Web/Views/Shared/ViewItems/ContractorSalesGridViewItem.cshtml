@@ -1,0 +1,8 @@
+﻿@model IContractor
+@using EleWise.ELMA.CRM.Models
+@using EleWise.ELMA.CRM.Web
+
+@if (Model != null)
+{
+    @Html.Action("SalesOfContractor", "Sale", new { area = CRMAreaRegistration.AREA_NAME, contractorId = Model.Id })
+}

@@ -1,0 +1,14 @@
+﻿@using EleWise.ELMA.Model.Entities
+@model EleWise.ELMA.CRM.Models.IRelationshipMeeting
+
+@if (Model != null)
+{
+    if (Model.IsNew() || Model.IsDeleted)
+    {
+        <span><img src="@Url.Action("Object", "Images", new {area = SDKAreaRegistration.AREA_NAME, id = Model.TypeUid})" />&nbsp;@Model.GetTitleOrDefault(m => m.Theme)</span>
+    }
+    else
+    {
+        <a href="@Url.Entity(Model)"><img src="@Url.Action("Object", "Images", new { area = SDKAreaRegistration.AREA_NAME, id = Model.TypeUid })">&nbsp;@Model.GetTitleOrDefault(m => m.Theme)</a>
+    }
+}

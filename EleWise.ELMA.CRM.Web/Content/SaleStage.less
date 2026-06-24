@@ -1,0 +1,29 @@
+﻿@crm-sale-stage-margin: 6px;
+@crm-sale-stage-container-margin: 4px;
+@crm-sale-stage-width: 24px;
+@crm-sale-stage-height: 12px;
+@crm-sale-stage-element-color: @grey;
+
+table.table-form > tbody > tr > td {
+    &.property-value-container,
+    &.edit-property-value-container,
+    &.captionCell + td {
+        .crm-sale-stage-name {
+            margin-top: 0px;
+        }
+    }
+}
+
+.crm-sale-stage-container {
+    display: flex;
+    flex-wrap: wrap;
+    margin-top: @crm-sale-stage-container-margin;
+
+    .crm-sale-stage-element {
+        margin-bottom: @base-element-size--1-8;
+        min-width: @crm-sale-stage-width;
+        height: @crm-sale-stage-height;
+        background-color: @crm-sale-stage-element-color;
+        border: 1px solid @separator-color;
+    }
+}

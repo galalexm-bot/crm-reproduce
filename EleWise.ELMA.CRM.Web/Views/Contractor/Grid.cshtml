@@ -1,0 +1,69 @@
+﻿@model GridDataFilter<IContractor>
+@using EleWise.ELMA.BPM.Web.Common.Extensions
+@using EleWise.ELMA.BPM.Web.Common.Models
+@using EleWise.ELMA.CRM
+@using EleWise.ELMA.CRM.Models
+@using EleWise.ELMA
+@using EleWise.ELMA.Security
+@using EleWise.ELMA.Services
+@using EleWise.ELMA.Web.Mvc.Models.ActionItems.Menu
+@using EleWise.ELMA.Web.Mvc.Models.Buttons
+@using EleWise.ELMA.CRM.Web.Extensions
+@using EleWise.ELMA.FullTextSearch.Services
+@using EleWise.ELMA.CRM.FullTextSearch
+@using EleWise.ELMA.FullTextSearch.Settings
+@using EleWise.ELMA.FullTextSearch.Manager
+@using EleWise.ELMA.CRM.Web.Menu
+
+<script type="text/javascript" src="@Url.Content("~/Scripts/Elma/Elma.Grids.ObjectSelectColumn.js")"></script>
+
+@{
+    var checkedMenu = new ActionMenu("checkedobject_menu") {
+        Items = {
+             new ActionMenuItem("btnSelectContacts") {
+                Text = SR.T("Выбрать всех контрагентов"),                
+                Click = "SelectAll($('#ObjectSelectCheckbox'))"           
+             }
+        }
+    };
+    
+    var showFullTextInAttachments = CRMFullTextSearchSettingsModule.IndexingContractorAttachmentsIsOn;
+}
+
+@Html.Partial("Filter/FilterModel", Model.DataFilter.Builder()
+    .SubmitText(SR.T("Найти контрагентов"))
+    .GridAction(Url.Action("Grid"))
+    .ApplayFilterScript(string.Format("applyFilterGrid('{0}', 'filteringGridForm')", Model.GridId))
+    .FilterUrl(Url.Action("Index") + "?FilterId=")
+    .ShowOnlyMyProperty("ShowOnlyMy", SR.T("Только мои"))
+    .Header(SR.T("Контрагенты"))
+    .FilterMenuItemCode(CRMMenuItems.CONTRACTORS_MENU)
+    .ShowFullTextInAttachments(showFullTextInAttachments, SR.T("Во вложениях"))
+    .Model,
+    new ViewDataDictionary { TemplateInfo = new TemplateInfo { HtmlFieldPrefix = "DataFilter" } })
+
+<div style="height:10px"></div>
+@Html.ActionMenu(checkedMenu)
+
+@(Html.FilterDynamicGrid(Model)
+        .WithDefaultSettings()
+        .Columns(c =>
+        {            
+            c.For(m => Html.ModernCheckBox(false).Name("objectid").Value(m.Id))
+                .Header(Html.SmartCheckbox(new SmartCheckBox
+                {
+                    Menu = checkedMenu,
+                    Id = "ObjectSelectCheckbox",
+                    DefaultScript = "ToggleCheckbox(this)"
+                }).ToString()).NotSortable().NotResizable().Width(50).Order(int.MinValue + 1);
+            c.For(m => m.Name).Link(m => Url.Entity(m));
+
+            c.For(m => m.NextRelationship).Visible(false)
+                .Template(m => Html.NextRelationshipLink(m.NextRelationship));
+
+            c.For(m => m.Site).Template(x => x.Site != null ? Html.Partial("DisplayTemplates/Uri", x.Site) : MvcHtmlString.Empty);
+        })
+        .DefaultColumns(true)
+        .Resizeable(true)
+        .ExportExcel(Locator.GetServiceNotNull<ISecurityService>().HasPermission(CRMPermissionProvider.CRMExportPermission), SR.T("Контрагенты"))
+        .Action("Grid"))

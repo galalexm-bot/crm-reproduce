@@ -1,0 +1,99 @@
+﻿@model ISale
+@using EleWise.ELMA.CRM.Enums
+@using EleWise.ELMA.CRM.Models
+@using EleWise.ELMA.Helpers
+@using EleWise.ELMA.Web.Mvc.Models.Panels
+@using EleWise.ELMA
+
+<script type="text/javascript">
+    $(function () {
+        $("[id^='headerText_Sale'] a").click(function (event) { event.stopPropagation ? event.stopPropagation() : (event.cancelBubble = true) }); 
+    });
+</script>
+
+@helper PaymentTable(IPayment payment, string color, bool linethrough = false)
+{
+    <table class="sale-payment" style="width:100%;color:@color">
+        <tr>
+            <td style="text-align:left">@payment.Name</td>
+            <td style="text-align:right">
+                @if(payment.PaymentDate != DateTime.MinValue)
+                {
+                    @payment.PaymentDate.ToCurrentFullFormatNotYear()
+                }
+                else 
+                {
+                    <div></div>
+                }
+            </td>
+            <td style="text-align:right">@payment.Sum</td>
+        </tr>
+    </table>
+}
+
+<div id="sale">
+    @using (Html.CollapsiblePanel(new CollapsiblePanel
+    {
+        Id = "Sale" + Model.Id,
+        Expanded = false,
+        Header = "<div data-sale-id=\"s-container-" + Model.Id + "\">" + Html.ActionLink(String.IsNullOrEmpty(Model.Name) ? SR.Untitled : Model.Name, "Details", "Sale", new { id = Model.Id }, null).ToHtmlString() + ", " + "<a href=\"" + Url.Entity(Model.Contractor) + "\">" + Model.Contractor.Name + "</a></div>",
+        SaveState = true,
+        PlusMinus = Model.Payments.Count > 0,
+    }))
+    {
+        <div style="background-color: #FAEEC3">
+            @foreach (var p in Model.Payments)
+            {
+                if (p.PaymentDate == DateTime.MinValue)
+                {
+                    @PaymentTable(p, "gray")
+                }
+                else
+                {
+                    if (p.PaymentDate < DateTime.Today)
+                    {
+                        @PaymentTable(p, "red")
+                    }
+                    else
+                    {
+                        switch (p.PaymentStatus)
+                        {
+                            case PaymentStatus.Planned:
+                                @PaymentTable(p, "black")
+                                break;
+                            case PaymentStatus.Billed:
+                                @PaymentTable(p, "green")
+                                break;
+                            case PaymentStatus.Paid:
+                                @PaymentTable(p, "green", true)
+                                break;
+                            case PaymentStatus.Canceled:
+                                @PaymentTable(p, "black", true)
+                                break;
+                        }
+                    }
+                }
+            }
+        </div>
+    }
+</div>
+
+<style type="text/css">
+    #sale .collapsible-panel {
+        border-bottom: 1px solid #F9D97A;
+        margin-top: 10px;
+        color: Black;
+    }
+    #sale .collapsible-panel-header {
+        cursor:pointer;
+        background-color: #F9D97A;
+        padding: 5px;
+        color: #FFF;
+        display:block;
+        width: 250px !important;
+        color: Black;
+    }
+    #sale .collapsible-panel-header img {
+        /*margin-bottom: 30px;*/
+    }
+</style>

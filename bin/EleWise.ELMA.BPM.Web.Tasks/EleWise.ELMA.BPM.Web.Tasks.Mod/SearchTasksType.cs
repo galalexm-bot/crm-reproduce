@@ -1,0 +1,36 @@
+namespace EleWise.ELMA.BPM.Web.Tasks.Models;
+
+public enum SearchTasksType
+{
+	Search,
+	ForMeCurrent,
+	ForMeExpired,
+	ForMeCurrentControl,
+	ForMeExecutionControl,
+	ForMeCompleted,
+	FromMeCurrent,
+	FromMeExpired,
+	FromMeCompleted,
+	ForDepartmentCurrent,
+	ForDepartmentExpired,
+	ForDepartmentControl,
+	FromDepartmentCurrent,
+	FromDepartmentExpired,
+	FromDepartmentCompleted,
+	DepartmentCoExecutorCurrent,
+	DepartmentCoExecutorExpired,
+	PeriodCurrent,
+	PeriodClosed,
+	ClosePeriodTasks,
+	ForMeClosed,
+	FromMeClosed,
+	ForDepartmentClosed,
+	FromDepartmentClosed,
+	Incoming,
+	Outgoing,
+	CurrentControl,
+	ExecutionControl,
+	ForICoExecutorExpired,
+	ForICoExecutorCurrent,
+	CoExecutorCurrent
+}

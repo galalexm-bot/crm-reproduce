@@ -1,0 +1,23 @@
+﻿@model SaleProductsModel
+@using EleWise.ELMA.CRM.Web
+@using EleWise.ELMA.CRM.Web.Components
+@using EleWise.ELMA.CRM.Web.Models
+@using EleWise.ELMA
+@using EleWise.ELMA.Web.Content
+@using ViewType = EleWise.ELMA.Model.Views.ViewType
+    @{
+        var viewType = Model.Entity.IsNew() ? ViewType.Create : ViewType.Edit;
+    }
+
+    @using (Html.AjaxForm(Model.Entity.IsNew() ? "AddProduct" : "SaveEditedProduct", "Sale", new { area = RouteProvider.AreaName }, callback: "RefreshProductsTable();"))
+    {
+        @Html.HiddenFor(m => m.Entity.Id)
+        @Html.HiddenFor(m => m.Sale.Id)
+        @Html.FormViewItem(Model.View, m => m.Entity, new ActionRoute("AsyncViewItem", "Sale", new { area = CRMAreaRegistration.AREA_NAME, id = Model.Entity.Id, viewType, Model.FormUid }), viewType)
+        <div class="popup-buttons">
+            <input type="submit" class="confirm" value="@(Model.Entity.IsNew() ? SR.T("Добавить") : SR.T("Сохранить"))" />
+            <input type="button" value="@SR.Cancel" onclick="@Html.ClosePopup("ProductPopupDiv")" />
+        </div>
+    }
+
+

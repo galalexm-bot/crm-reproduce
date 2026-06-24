@@ -1,0 +1,8 @@
+﻿@using EleWise.ELMA.Helpers
+@model Tuple<int, DateTime>
+           
+<input id="droppedWeekFromDate" type="hidden" />
+@for (int i = 1; i <= Model.Item1; i++)
+{
+    <a id="day-num-@Model" href="javascript:void(0)" class="link-button" style="@(i>5?"color:gray":string.Empty)" onclick="showForm('@(Model.Item2.AddDays(i - 1))');">@(DateTime.MinValue.AddDays(i - 1).ToString("ddd "))<span>@Model.Item2.AddDays(i - 1).ToCurrentFullFormatNotYear()</span></a>
+}

@@ -1,0 +1,71 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<FormViewItemTransformation xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <Uid>ce4f5e8f-4cd1-4614-bece-9ebbd831a1dd</Uid>
+  <FormName>ViewForm</FormName>
+  <Items>
+    <ViewItemTransformation xsi:type="ViewItemTransformationAdd">
+      <Uid>3b9c1b0b-4fba-4e59-a8d3-4bcbdbce4571</Uid>
+      <Item xsi:type="TabLayoutViewItem">
+        <Name>TabLayout1</Name>
+        <Uid>d4902f64-0ab6-4cb6-8c4d-29dd4a6c3fab</Uid>
+      </Item>
+    </ViewItemTransformation>
+    <ViewItemTransformation xsi:type="ViewItemTransformationAdd">
+      <Uid>d4902f64-0ab6-4cb6-8c4d-29dd4a6c3fab</Uid>
+      <Item xsi:type="TabViewItem">
+        <Name>Tab1</Name>
+        <Uid>97c32e29-0cbf-4fed-a034-983f7f992e6f</Uid>
+        <Caption>О событии</Caption>
+      </Item>
+    </ViewItemTransformation>
+    <ViewItemTransformation xsi:type="ViewItemTransformationAdd">
+      <Uid>d4902f64-0ab6-4cb6-8c4d-29dd4a6c3fab</Uid>
+      <Item xsi:type="TabViewItem">
+        <Name>Tab2</Name>
+        <Uid>f64711a7-8d6c-41c2-af8b-7a88fd28de48</Uid>
+        <Caption>События</Caption>
+      </Item>
+      <AfterItem>97c32e29-0cbf-4fed-a034-983f7f992e6f</AfterItem>
+    </ViewItemTransformation>
+    <ViewItemTransformation xsi:type="ViewItemTransformationMove">
+      <Uid>97c32e29-0cbf-4fed-a034-983f7f992e6f</Uid>
+      <MoveItemUid>bc0fce00-d978-4dd9-b236-70de0879f6e6</MoveItemUid>
+    </ViewItemTransformation>
+    <ViewItemTransformation xsi:type="ViewItemTransformationAdd">
+      <Uid>97c32e29-0cbf-4fed-a034-983f7f992e6f</Uid>
+      <Item xsi:type="PanelViewItem">
+        <Name>Panel5</Name>
+        <Uid>3ab1eba7-2323-43e0-87bb-761371eb0bae</Uid>
+        <Caption />
+        <Style>None</Style>
+        <AsyncLoading>ExpandAsyncLoading</AsyncLoading>
+        <CustomViewName>ViewItems/CalendarEventGeneralInfo</CustomViewName>
+      </Item>
+      <BeforeItem>bc0fce00-d978-4dd9-b236-70de0879f6e6</BeforeItem>
+    </ViewItemTransformation>
+    <ViewItemTransformation xsi:type="ViewItemTransformationMove">
+      <Uid>3ab1eba7-2323-43e0-87bb-761371eb0bae</Uid>
+      <MoveItemUid>f995743d-1f47-483a-8e8b-cfdc6ecbddb4</MoveItemUid>
+    </ViewItemTransformation>
+    <ViewItemTransformation xsi:type="ViewItemTransformationAdd">
+      <Uid>f64711a7-8d6c-41c2-af8b-7a88fd28de48</Uid>
+      <Item xsi:type="GridViewItem">
+        <Name>Grid1</Name>
+        <Uid>c2aa95c9-19ec-4cd0-9dc4-3d4434101801</Uid>
+        <TableView>
+          <Uid>1c43b26e-030d-406a-9a04-82be5fb2a65d</Uid>
+          <ViewType>List</ViewType>
+        </TableView>
+        <Entity>6fb5a4a7-8b40-4b17-a2ae-3fdd0b04945c</Entity>
+        <Property>faf4841d-9c52-4ed7-add7-ee2bcdb87e72</Property>
+        <SortDescriptors>
+          <TableViewSortDescriptor>
+            <PropertyUid>5e474dcb-75a6-43fe-b91c-7f9a0cc97a2e</PropertyUid>
+            <Direction>Ascending</Direction>
+          </TableViewSortDescriptor>
+        </SortDescriptors>
+        <EnableSelection>false</EnableSelection>
+      </Item>
+    </ViewItemTransformation>
+  </Items>
+</FormViewItemTransformation>

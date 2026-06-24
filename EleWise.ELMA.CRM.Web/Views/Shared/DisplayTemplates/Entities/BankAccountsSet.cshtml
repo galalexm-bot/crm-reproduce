@@ -1,0 +1,22 @@
+﻿@using EleWise.ELMA
+@using EleWise.ELMA.CRM.Models.BillingInformation
+@using EleWise.ELMA.CRM.Web
+@inherits EleWise.ELMA.Web.Mvc.Views.Inputs.InputControl<IEnumerable<IBankAccount>, EleWise.ELMA.Model.Types.Settings.EntitySettings>
+@{
+    string tableId = string.Format("Bind{0}Table", Guid.NewGuid().ToString("N"));
+}
+
+@(Html.DynamicGrid(tableId, new GridData<IBankAccount>
+{
+    Count = Model.Count(),
+    DataSource = Model,
+    IsPageable = false
+})
+.Sortable(false)
+.Customizable(false)
+.RowStyle((s, g) => (s.BankDetails != null && s.BankDetails.EndDate < DateTime.Today) || (s.BankDetails == null) || (s.AccountNumber == null) ? new HtmlStyle().Add("text-decoration", "line-through") : null)
+.Columns(c =>
+{
+    c.For(row => row.Name).Template(ba => Html.Partial("DisplayTemplates/Entity", ba));
+    c.DefaultColumns(true);
+}))

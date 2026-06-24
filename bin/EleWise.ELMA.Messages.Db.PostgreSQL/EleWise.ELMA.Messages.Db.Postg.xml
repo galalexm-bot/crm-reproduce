@@ -1,0 +1,3508 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<root uid="{C74D41F1-84D1-48CC-B3A0-8C727F072C39}" provider="PostgreSQL">
+
+  <procedures>
+
+    <procedure name="FeedSaveMessage">
+      <mappings>
+        <hibernate-mapping xmlns="urn:nhibernate-mapping-2.2">
+          <sql-query name="ExecFeedSaveMessage">
+            select FeedSaveMessage(:Parent_Subject, :Parent_Text, :Parent_TextHtml, :Parent_ActionUid, :Parent_ActionObjectUid, :Parent_ActionObjectId, :Parent_CreationDate, :Parent_CreationAuthor, :Parent_MessageAttachments, :Parent_ObjectRecipients, :Parent_MessageObjects, :Parent_Url, :Subject, :Text, :TextHtml, :ActionUid, :ActionObjectUid, :ActionObjectId, :CreationAuthor, :MessageAttachments, :ObjectRecipients, :MessageObjects, :Url, :SaveComment, :ChangeDate, :ChangeDateHash, :Recipients, :SetReadForAuthor, :IdRangeStart, :CheckParent, :DateTimeNow)
+          </sql-query>
+        </hibernate-mapping>
+      </mappings>
+      <text>
+        <![CDATA[
+/**************************************************************************************
+
+   Добавление/обновление родительского сообщения и добавление дочернего
+
+**************************************************************************************/        
+create or replace function FeedSaveMessage(
+    PARENT_SUBJECT text,         --$1
+    PARENT_TEXT text,            --$2
+    PARENT_TEXTHTML text,        --$3
+    PARENT_ACTIONUID uuid,        --$4
+    PARENT_ACTIONOBJECTUID uuid,    --$5
+    PARENT_ACTIONOBJECTID bigint,    --$6
+    PARENT_CREATIONDATE timestamp,    --$7
+    PARENT_CREATIONAUTHOR bigint,    --$8
+    PARENT_MESSAGEATTACHMENTS bytea,    --$9
+    PARENT_OBJECTRECIPIENTS bytea,    --$10
+    PARENT_MESSAGEOBJECTS bytea,    --$11
+    PARENT_URL varchar(2000),        --$12
+    &&Subject&& text,            --$13
+    &&Text&& text,                --$14
+    &&TextHtml&& text,            --$15
+    &&ActionUid&& uuid,            --$16
+    &&ActionObjectUid&& uuid,        --$17
+    &&ActionObjectId&& bigint,        --$18
+    &&CreationAuthor&& bigint,        --$19
+    &&MessageAttachments&& bytea,        --$20
+    &&ObjectRecipients&& bytea,        --$21
+    &&MessageObjects&& bytea,        --$22
+    &&Url&& varchar(2000),            --$23
+    &&SaveComment&& smallint,        --$24
+    &&ChangeDate&& timestamp,        --$25
+    &&ChangeDateHash&& char(16),        --$26
+    &&Recipients&& text,            --$27
+    &&SetReadForAuthor&& smallint,        --$28
+    &&IdRangeStart&& bigint,        --$29
+    &&CheckParent&& smallint,   --$30
+    &&DateTimeNow&& timestamp   --$31
+)
+returns void
+
+as
+$$
+
+declare 
+&&FeedId&& bigint;
+v_IsRead smallint;
+Parent_IsRead smallint;
+Parent_HasUnreadChild smallint;
+v_TableRecord record;
+v_missing_recipients bigint;
+rows_count bigint := 0;
+
+begin
+
+  create temporary table if not exists &&FeedRecipients&& (
+          &&Id&&                  bigint,
+          &&Priority&&            integer
+        ) on commit delete rows;
+
+  delete from &&FeedRecipients&&;
+  insert into &&FeedRecipients&& (&&Id&&, &&Priority&&)
+  select distinct
+    cast(substring(val from 1 for position(':' in val) - 1) as bigint),
+    cast(substring(val from position(':' in val) + 1 for char_length(val) - position(':' in val)) as int)
+  from SplitString(&&Recipients&&, ','); 
+ 
+  create temporary table if not exists &&FeedSaveTempUpdate&& 
+        (&&Id&& bigint, 
+        &&ChildCount&& integer, 
+        &&IsRead&& smallint, 
+        &&ReadDate&& timestamp, 
+        &&HasUnreadChild&& smallint, 
+        &&UnreadCount&& integer, 
+        &&Priority&& integer, 
+        &&Recipient&& bigint, 
+        &&ParentObjectId&& bigint, 
+        &&ParentObjectUid&& uuid) on commit delete rows;
+  
+  create temporary table if not exists &&FeedSaveTempInsert&& (
+        &&Id&&                  bigint,
+        &&Subject&&             text,
+        &&Text&&              text,
+        &&TextHtml&&            text,
+        &&ActionObjectUid&&     uuid,
+        &&ActionUid&&           uuid,
+        &&ActionObjectId&&      bigint not null,
+        &&Recipient&&           bigint not null,
+        &&CreationDate&&        timestamp not null,
+        &&ChangeDate&&          timestamp not null,
+        &&CreationAuthor&&      bigint,
+        &&IsParent&&            smallint not null,
+        &&ParentObjectId&&      bigint,
+        &&ParentObjectUid&&     uuid,
+        &&ChildCount&&          integer,
+        &&IsRead&&              smallint,
+        &&ReadDate&&            timestamp,
+        &&HasUnreadChild&&      smallint,
+        &&UnreadCount&&         integer,
+        &&Priority&&            integer,
+        &&ChangeDateHash&&      varchar(35) not null,
+        &&MessageAttachments&&  bytea,
+        &&ObjectRecipients&&    bytea,
+        &&MessageObjects&&      bytea,
+        &&Url&&                 text
+        ) on commit delete rows;
+
+  if (&&CheckParent&& = 1) then
+  begin
+  insert into &&FeedSaveTempUpdate&& (
+      &&Id&&,
+      &&HasUnreadChild&&,
+      &&IsRead&&,
+      &&ReadDate&&,
+      &&UnreadCount&&,
+      &&ChildCount&&,
+      &&Priority&&,
+      &&Recipient&&,
+      &&ParentObjectId&&,
+      &&ParentObjectUid&&
+  )
+  select
+      fd.&&Id&&,
+      fd.&&HasUnreadChild&&,
+      fd.&&IsRead&&,
+      fd.&&ReadDate&&,
+      fd.&&UnreadCount&&,
+      fd.&&ChildCount&&,
+      fd.&&Priority&&,
+      fd.&&Recipient&&,
+      fd.&&ParentObjectId&&,
+      fd.&&ParentObjectUid&&
+  from &&Feed&& fd
+  inner join &&FeedRecipients&& r on fd.&&Recipient&& = r.&&Id&&
+  where
+      &&IsParent&& = 1
+      and &&ParentObjectId&& = PARENT_ACTIONOBJECTID
+      and &&ParentObjectUid&& = PARENT_ACTIONOBJECTUID;
+  
+  create temporary table if not exists &&FeedMissingRecipients&& (&&Recipient&& bigint) on commit delete rows;
+  
+  insert into &&FeedMissingRecipients&& (&&Recipient&&)
+  select tr.&&Id&& from &&FeedRecipients&& tr 
+  left join &&FeedSaveTempUpdate&& tu on tr.&&Id&& = tu.&&Recipient&&
+  group by tr.&&Id&&, tu.&&ParentObjectId&&, tu.&&ParentObjectUid&&
+  having count(tu.&&Recipient&&) = 0;
+  
+  SELECT COUNT(&&Recipient&&) INTO v_missing_recipients FROM &&FeedMissingRecipients&&;
+  
+  if (v_missing_recipients > 0) then
+  begin
+  insert into &&FeedSaveTempInsert&& (
+        &&Id&&,
+        &&ChangeDateHash&&,
+        &&Subject&&,
+        &&Text&&, 
+        &&TextHtml&&,
+        &&CreationDate&&, 
+        &&ChangeDate&&, 
+        &&CreationAuthor&&,
+        &&HasUnreadChild&&, 
+        &&ActionUid&&, 
+        &&ActionObjectUid&&, 
+        &&ActionObjectId&&,
+        &&Recipient&&, 
+        &&ParentObjectId&&, 
+        &&ParentObjectUid&&,
+        &&IsRead&&, 
+        &&ReadDate&&,
+        &&UnreadCount&&,
+        &&Priority&&, 
+        &&ChildCount&&,
+        &&IsParent&&,
+        &&MessageAttachments&&, 
+        &&ObjectRecipients&&, 
+        &&MessageObjects&&,
+        &&Url&&
+  )
+  select
+        a.&&Id&&,
+        case when a.&&IsParent&& = 1 then $26 || lpad(cast(a.&&Id&& as varchar(19)), 19, '0') else a.&&ChangeDateHash&& end,
+        a.&&Subject&&,
+        a.&&Text&&, 
+        a.&&TextHtml&&,
+        a.&&CreationDate&&, 
+        a.&&ChangeDate&&, 
+        a.&&CreationAuthor&&,
+        a.&&HasUnreadChild&&, 
+        a.&&ActionUid&&, 
+        a.&&ActionObjectUid&&, 
+        a.&&ActionObjectId&&,
+        a.&&Recipient&&, 
+        a.&&ParentObjectId&&, a.&&ParentObjectUid&&,
+        a.&&IsRead&&, a.&&ReadDate&&,
+        a.&&UnreadCount&&,
+        a.&&Priority&&, a.&&ChildCount&&,
+        a.&&IsParent&&,
+        a.&&MessageAttachments&&, 
+        a.&&ObjectRecipients&&, 
+        a.&&MessageObjects&&,
+        a.&&Url&&
+  from &&FeedArchive&& a
+  where
+      a.&&ParentObjectId&& = PARENT_ACTIONOBJECTID
+      and a.&&ParentObjectUid&& = PARENT_ACTIONOBJECTUID
+      and a.&&Recipient&& in (select r.&&Id&& from &&FeedRecipients&& r)
+      and (
+              (a.&&IsParent&& = 0 and not exists (select u.&&Id&& from &&FeedSaveTempUpdate&& u where u.&&Recipient&& = a.&&Recipient&&))
+              or
+              (a.&&IsParent&& = 1 and not a.&&Id&& in (select u.&&Id&& from &&FeedSaveTempUpdate&& u where u.&&Recipient&& = a.&&Recipient&&))
+      );
+  end;
+  end if;
+end;
+end if;
+  
+for v_TableRecord in select fr.&&Id&& as &&RecipientId&&, fr.&&Priority&& as &&Priority&& from &&FeedRecipients&& fr loop
+    begin
+        Parent_HasUnreadChild = &&SaveComment&&;
+        v_IsRead = 0;
+        Parent_IsRead = 0;
+        if (&&SetReadForAuthor&& = 1) then
+            begin
+                if (&&SaveComment&& = 0) then
+                    begin
+                        if (v_TableRecord.&&RecipientId&& = Parent_CreationAuthor) then
+                            begin
+                                Parent_IsRead = 1;
+                            end;
+                        end if;
+                    end;
+                else
+                    begin
+                        Parent_IsRead = 1;
+                        if (v_TableRecord.&&RecipientId&& = $19) then
+                            begin
+                                v_IsRead = 1;
+                                Parent_HasUnreadChild = 0;
+                            end;
+                        end if;
+                    end;
+                end if;
+            end;
+        end if;
+    
+        update &&FeedSaveTempUpdate&& set
+            &&HasUnreadChild&& = Parent_HasUnreadChild,
+            &&IsRead&& = Parent_IsRead,
+            &&ReadDate&& = (case when Parent_IsRead = 1 then $31 else null end),
+            &&UnreadCount&& = Parent_HasUnreadChild,
+            &&ChildCount&& = &&SaveComment&&,
+            &&Priority&& = v_TableRecord.&&Priority&&
+        where
+            &&ParentObjectId&& = Parent_ActionObjectId
+            and &&ParentObjectUid&& = Parent_ActionObjectUid
+            and &&Recipient&& = v_TableRecord.&&RecipientId&&;
+
+        get diagnostics rows_count = row_count;
+        if (rows_count = 0) then
+            begin
+                update &&FeedSaveTempInsert&&
+                set
+                    &&HasUnreadChild&& = Parent_HasUnreadChild,
+                    &&IsRead&& = Parent_IsRead,
+                    &&ReadDate&& = (case when Parent_IsRead = 1 then $31 else &&ReadDate&& end),
+                    &&UnreadCount&& = Parent_HasUnreadChild,
+                    &&ChildCount&& = &&ChildCount&& + &&SaveComment&&,
+                    &&Priority&& = v_TableRecord.&&Priority&&,
+                    &&Subject&& = Parent_Subject,
+                    &&Text&& = Parent_Text,
+                    &&TextHtml&& = Parent_TextHtml,
+                    &&ChangeDate&& = $25,
+                    &&MessageAttachments&& = Parent_MessageAttachments,
+                    &&ObjectRecipients&& = Parent_ObjectRecipients,
+                    &&MessageObjects&& = Parent_MessageObjects,
+                    &&Url&& = Parent_Url
+                where
+                    &&IsParent&& = 1
+                    and &&ParentObjectId&& = Parent_ActionObjectId
+                    and &&ParentObjectUid&& = Parent_ActionObjectUid
+                    and &&Recipient&& = v_TableRecord.&&RecipientId&&;
+
+                get diagnostics rows_count = row_count;
+                if (rows_count = 0) then
+                    begin
+                        &&FeedId&& = &&IdRangeStart&&;
+                        &&IdRangeStart&& = &&IdRangeStart&& + 1;
+                        insert into &&FeedSaveTempInsert&& (
+                        &&Id&&,
+                        &&ChangeDateHash&&,
+                        &&Subject&&,
+                        &&Text&&, &&TextHtml&&,
+                        &&CreationDate&&, &&ChangeDate&&, &&CreationAuthor&&,
+                        &&HasUnreadChild&&, &&ActionUid&&, &&ActionObjectUid&&, &&ActionObjectId&&,
+                        &&Recipient&&, &&ParentObjectId&&, &&ParentObjectUid&&,
+                        &&IsRead&&, &&ReadDate&&,
+                        &&UnreadCount&&,
+                        &&Priority&&, &&ChildCount&&,
+                        &&IsParent&&,
+                        &&MessageAttachments&&, &&ObjectRecipients&&, &&MessageObjects&&,
+                        &&Url&&
+                        )
+                        values (&&FeedId&&,
+                          $26 || lpad(cast(&&FeedId&& as varchar(19)), 19, '0'),
+                          Parent_Subject,
+                          Parent_Text, Parent_TextHtml,
+                          Parent_CreationDate, &&ChangeDate&&, Parent_CreationAuthor,
+                          Parent_HasUnreadChild, Parent_ActionUid, Parent_ActionObjectUid, Parent_ActionObjectId,
+                          v_TableRecord.&&RecipientId&&, Parent_ActionObjectId, Parent_ActionObjectUid,
+                          Parent_IsRead, (case when Parent_IsRead = 1 then $31 else null end),
+                          Parent_HasUnreadChild,
+                          v_TableRecord.&&Priority&&, &&SaveComment&&,
+                          1,
+                          Parent_MessageAttachments, Parent_ObjectRecipients, Parent_MessageObjects,
+                          Parent_Url);
+                    end;
+                end if;
+            end;
+        end if;
+
+    
+        if (&&SaveComment&& = 1) then
+            begin
+                &&FeedId&& = &&IdRangeStart&&;
+                &&IdRangeStart&& = &&IdRangeStart&& + 1;
+                insert into &&Feed&& (&&Id&&, 
+                          &&ChangeDateHash&&, 
+                          &&Subject&&, &&Text&&, &&TextHtml&&,
+                          &&CreationDate&&, &&ChangeDate&&, &&CreationAuthor&&,
+                          &&IsRead&&, &&ReadDate&&, &&ActionUid&&, &&ActionObjectUid&&, &&ActionObjectId&&,
+                          &&Recipient&&, &&ParentObjectId&&, &&ParentObjectUid&&,
+                          &&Priority&&, &&IsParent&&, &&UnreadCount&&, &&ChildCount&&,
+                          &&MessageAttachments&&, &&ObjectRecipients&&, &&MessageObjects&&,
+                          &&Url&&)
+                values (&&FeedId&&, 
+                    $26 || lpad(cast(&&FeedId&& as varchar(19)), 19, '0'), 
+                    $13, $14, $15,
+                    $25, $25, $19,
+                    v_IsRead, (case when v_IsRead = 1 then $31 else null end), $16, $17, $18,
+                    v_TableRecord.&&RecipientId&&, Parent_ActionObjectId, Parent_ActionObjectUid,
+                    v_TableRecord.&&Priority&&, 0, 0, 0,
+                    $20, $21, $22,
+                    $23);
+            end;
+        end if;
+    end;
+end loop;
+
+insert into &&Feed&& (
+    &&Id&&,
+    &&ChangeDateHash&&,
+    &&Subject&&,
+    &&Text&&, &&TextHtml&&,
+    &&CreationDate&&, &&ChangeDate&&, &&CreationAuthor&&,
+    &&HasUnreadChild&&, &&IsRead&&, &&ReadDate&&,
+    &&ActionUid&&, &&ActionObjectUid&&, &&ActionObjectId&&,
+    &&Recipient&&, &&ParentObjectId&&, &&ParentObjectUid&&, &&Priority&&,
+    &&IsParent&&, &&UnreadCount&&, &&ChildCount&&,
+    &&MessageAttachments&&, &&ObjectRecipients&&, &&MessageObjects&&,
+    &&Url&&
+)
+select
+    fsti.&&Id&&,
+    fsti.&&ChangeDateHash&&,
+    fsti.&&Subject&&,
+    fsti.&&Text&&, fsti.&&TextHtml&&,
+    fsti.&&CreationDate&&, fsti.&&ChangeDate&&, fsti.&&CreationAuthor&&,
+    fsti.&&HasUnreadChild&&, fsti.&&IsRead&&, fsti.&&ReadDate&&,
+    fsti.&&ActionUid&&, fsti.&&ActionObjectUid&&, fsti.&&ActionObjectId&&,
+    fsti.&&Recipient&&, fsti.&&ParentObjectId&&, fsti.&&ParentObjectUid&&, fsti.&&Priority&&,
+    fsti.&&IsParent&&, fsti.&&UnreadCount&&, fsti.&&ChildCount&&,
+    fsti.&&MessageAttachments&&, fsti.&&ObjectRecipients&&, fsti.&&MessageObjects&&,
+    fsti.&&Url&&
+from &&FeedSaveTempInsert&& fsti;
+
+for v_TableRecord in select 
+        &&Id&& as &&FeedId&&,
+        &&HasUnreadChild&& as Parent_HasUnreadChild,
+        &&IsRead&& as Parent_IsRead,
+        &&ReadDate&& as &&DateTimeNow&&,
+        &&ChildCount&& as &&SaveComment&&,
+        &&Priority&& as &&Priority&&
+    from &&FeedSaveTempUpdate&&
+  loop
+      begin
+        update &&Feed&&
+        set
+        &&ChangeDateHash&& = $26 || lpad(cast(&&Id&& as varchar(19)), 19, '0'),
+        &&Subject&& = Parent_Subject,
+        &&Text&& = Parent_Text,
+        &&TextHtml&& = Parent_TextHtml,
+        &&ChangeDate&& = $25,
+        &&HasUnreadChild&& = (case when v_TableRecord.Parent_HasUnreadChild = 1 then 1 else &&HasUnreadChild&& end),
+        &&ReadDate&& = (case when &&Feed&&.&&ReadDate&& is null then v_TableRecord.&&DateTimeNow&& else &&Feed&&.&&ReadDate&& end),
+        &&UnreadCount&& = coalesce(&&UnreadCount&&, 0) + v_TableRecord.Parent_HasUnreadChild,
+        &&ChildCount&& = &&Feed&&.&&ChildCount&& + v_TableRecord.&&SaveComment&&,
+        &&MessageAttachments&& = Parent_MessageAttachments,
+        &&ObjectRecipients&& = Parent_ObjectRecipients,
+        &&MessageObjects&& = Parent_MessageObjects,
+        &&Priority&& = v_TableRecord.&&Priority&&,
+        &&Url&& = Parent_Url
+         where &&Feed&&.&&Id&& = v_TableRecord.&&FeedId&&;
+      end;
+  end loop;
+
+delete from &&FeedSaveTempInsert&&;
+delete from &&FeedSaveTempUpdate&&;
+
+end
+
+$$ 
+language plpgsql;
+        ]]>
+      </text>
+    </procedure>
+
+    <procedure name="FeedToArchiveRecipient">
+      <mappings>
+        <hibernate-mapping xmlns="urn:nhibernate-mapping-2.2">
+          <sql-query name="ExecFeedToArchiveRecipient">
+            <query-param name="DateLimit" type="datetime" />
+            <query-param name="LastUserId" type="long" />
+            <![CDATA[
+            select FeedToArchiveRecipient(:DateLimit, :LastUserId)
+            ]]>
+          </sql-query>
+        </hibernate-mapping>
+      </mappings>
+      <text>
+        <![CDATA[
+/**************************************************************************************
+
+   Получить следующего пользователя для архивации
+   
+    DateLimit дата архивации
+    LastUserId последний архивированный пользователь
+   
+**************************************************************************************/
+create or replace function FeedToArchiveRecipient(
+    &&DateLimit&& timestamp,
+    &&LastUserId&& bigint
+)
+returns bigint
+
+as
+$$
+
+declare
+    v_userId bigint;
+
+begin
+  
+    v_userId = null;
+  
+    select f.&&Recipient&& into v_userId
+    from &&Feed&& f
+    where
+        f.&&Recipient&& > $2
+        and f.&&IsParent&& = 1
+        and f.&&ChangeDate&& < $1
+    order by f.&&Recipient&&
+    limit (1);
+  
+    if (v_userId is null) then
+    begin
+    
+        select f.&&Recipient&& into v_userId
+        from &&Feed&& f
+        where
+            f.&&IsParent&& = 1
+            and f.&&ChangeDate&& < $1
+        order by f.&&Recipient&&
+        limit (1);
+      
+    end;
+    end if;
+  
+    return coalesce(v_userId, 0);
+end
+
+$$ 
+language plpgsql;
+        ]]>
+      </text>
+    </procedure>
+
+    <procedure name="FeedToArchive">
+      <mappings>
+        <hibernate-mapping xmlns="urn:nhibernate-mapping-2.2">
+          <sql-query name="ExecFeedToArchive">
+            select FeedToArchive(:DateLimit, :LastUserId, :CurrentDate)
+          </sql-query>
+        </hibernate-mapping>
+      </mappings>
+      <text>
+        <![CDATA[
+/**************************************************************************************
+
+   Перенос старых сообщений в архив
+
+**************************************************************************************/
+create or replace function FeedToArchive(
+    &&DateLimit&& timestamp,
+    &&LastUserId&& bigint,
+    &&CurrentDate&& timestamp
+)
+returns bigint
+
+as
+$$
+
+declare 
+v_TableRecord record;
+    v_userId bigint;
+    v_count bigint;
+
+begin
+  
+  v_userId = null;
+  
+  select FeedToArchiveRecipient($1, $2) into v_userId;
+  
+  if (v_userId <> 0) then -- найден следующий пользователь
+  begin
+  
+  create temporary table if not exists &&FeedToArchiveTemp&& (
+          &&ParentObjectId&&      bigint,
+          &&ParentObjectUid&&     uuid,
+          &&ParentChangeDate&&    timestamp not null
+        ) on commit delete rows;
+        
+  create temporary table if not exists &&FeedToArchiveTemp2&& (
+          &&Id&&                  bigint
+        ) on commit delete rows;
+  
+    delete from &&FeedToArchiveTemp&&;
+    delete from &&FeedToArchiveTemp2&&;
+  
+      insert into &&FeedToArchiveTemp&& (&&ParentObjectId&&, &&ParentObjectUid&&, &&ParentChangeDate&&)
+      select f.&&ParentObjectId&&, f.&&ParentObjectUid&&, f.&&ChangeDate&&
+      from &&Feed&& f
+      left join &&FeedFavorite&& ff on ff.&&ActionObjectId&& = f.&&ParentObjectId&&
+          and ff.&&ActionObjectUid&& = f.&&ParentObjectUid&&
+          and ff.&&Recipient&& = f.&&Recipient&&
+    where
+            f.&&IsParent&& = 1
+            and f.&&ChangeDate&& < $1
+            and f.&&Recipient&& = v_userId
+            and not exists (select &&Id&& from &&FeedFavorite&& ff
+                           where
+                               ff.&&ActionObjectId&& = f.&&ParentObjectId&&
+                               and ff.&&ActionObjectUid&& = f.&&ParentObjectUid&&
+                               and ff.&&Recipient&& = f.&&Recipient&&
+                               and (ff.&&IsDelete&& is null or ff.&&IsDelete&& = 0));
+        
+        
+      -- если есть что обновлять, то обновляем
+      select count(*) into v_count from &&FeedToArchiveTemp&&;
+      if (v_count <> 0) then
+      begin
+        
+          -- обновляем архив
+    for v_TableRecord in 
+        select distinct 
+            a.&&Id&& as pId, 
+            a.&&Subject&& as pSubject, 
+            a.&&Text&& as pText, 
+            a.&&TextHtml&& as pTextHtml, 
+            a.&&ActionObjectUid&& as pActionObjectUid, 
+            a.&&ActionUid&& as pActionUid, 
+            a.&&ActionObjectId&& as pActionObjectId, 
+            a.&&Recipient&& as pRecipient, 
+            a.&&CreationDate&& as pCreationDate, 
+            a.&&ChangeDate&& as pChangeDate, 
+            a.&&CreationAuthor&& as pCreationAuthor, 
+            a.&&IsParent&& as pIsParent, 
+            a.&&ParentObjectId&& as pParentObjectId,
+            a.&&ParentObjectUid&& as pParentObjectUid, 
+            a.&&ChildCount&& as pChildCount, 
+            a.&&Priority&& as pPriority, 
+            a.&&ChangeDateHash&& as pChangeDateHash, 
+            a.&&MessageAttachments&& as pMessageAttachments, 
+            a.&&ObjectRecipients&& as pObjectRecipients, 
+            a.&&MessageObjects&& as pMessageObjects, 
+            a.&&Url&& as pUrl
+        from &&FeedArchive&& a
+            inner join &&Feed&& f on f.&&Id&& = a.&&Id&&
+                  inner join &&FeedToArchiveTemp&& t on t.&&ParentObjectId&& = f.&&ParentObjectId&& and f.&&ParentObjectUid&& = f.&&ParentObjectUid&& and f.&&Recipient&& = v_userId
+    loop
+        begin
+            update &&FeedArchive&&
+            set
+        &&Id&& = v_TableRecord.pId,
+                &&Subject&& = v_TableRecord.pSubject,
+                &&Text&& = v_TableRecord.pText,
+                &&TextHtml&& = v_TableRecord.pTextHtml,
+                &&ActionObjectUid&& = v_TableRecord.pActionObjectUid,
+                &&ActionUid&& = v_TableRecord.pActionUid,
+                &&ActionObjectId&& = v_TableRecord.pActionObjectId,
+                &&Recipient&& = v_TableRecord.pRecipient,
+                &&CreationDate&& = v_TableRecord.pCreationDate,
+                &&ChangeDate&& = v_TableRecord.pChangeDate,
+                &&CreationAuthor&& = v_TableRecord.pCreationAuthor,
+                &&IsParent&& = v_TableRecord.pIsParent,
+                &&ParentObjectId&& = v_TableRecord.pParentObjectId,
+                &&ParentObjectUid&& = v_TableRecord.pParentObjectUid,
+                &&ChildCount&& = v_TableRecord.pChildCount,
+                &&IsRead&& = 1,
+                &&ReadDate&& = $3,
+                &&HasUnreadChild&& = 0,
+                &&UnreadCount&& = 0,
+                &&Priority&& = v_TableRecord.pPriority,
+                &&ChangeDateHash&& = v_TableRecord.pChangeDateHash,
+                &&MessageAttachments&& = v_TableRecord.pMessageAttachments,
+                &&ObjectRecipients&& = v_TableRecord.pObjectRecipients,
+                &&MessageObjects&& = v_TableRecord.pMessageObjects,
+                &&Url&& = v_TableRecord.pUrl
+            where &&Id&& = v_TableRecord.pID;
+        end;
+    end loop;
+    
+          -- копируем в архив
+          insert into FeedArchive(
+        &&Id&&, &&Subject&&, &&Text&&, &&TextHtml&&, &&ActionObjectUid&&, &&ActionUid&&, &&ActionObjectId&&, &&Recipient&&, &&CreationDate&&, &&ChangeDate&&, &&CreationAuthor&&, &&IsParent&&,
+        &&ParentObjectId&&, &&ParentObjectUid&&, &&ChildCount&&, &&IsRead&&, &&ReadDate&&, &&HasUnreadChild&&, &&UnreadCount&&, &&Priority&&, &&ChangeDateHash&&,
+        &&MessageAttachments&&, &&ObjectRecipients&&, &&MessageObjects&&, &&Url&&
+        )
+        select
+        f.&&Id&&, f.&&Subject&&, f.&&Text&&, f.&&TextHtml&&, f.&&ActionObjectUid&&, f.&&ActionUid&&, f.&&ActionObjectId&&, f.&&Recipient&&, f.&&CreationDate&&, f.&&ChangeDate&&, f.&&CreationAuthor&&, f.&&IsParent&&,
+        f.&&ParentObjectId&&, f.&&ParentObjectUid&&, f.&&ChildCount&&, 1, $3, 0, 0, f.&&Priority&&, f.&&ChangeDateHash&&,
+        f.&&MessageAttachments&&, f.&&ObjectRecipients&&, f.&&MessageObjects&&, f.&&Url&&
+        from &&Feed&& f
+          inner join &&FeedToArchiveTemp&& t on t.&&ParentObjectId&& = f.&&ParentObjectId&& and t.&&ParentObjectUid&& = f.&&ParentObjectUid&& and f.&&Recipient&& = v_userId
+          where not exists (select 1 from &&FeedArchive&& where &&Id&& = f.&&Id&&);
+    
+    
+        -- удаляем из ленты, если не изменилось
+    insert into &&FeedToArchiveTemp2&& (&&Id&&)
+        select f.&&Id&&
+        from &&Feed&& f
+        inner join &&Feed&& fp on
+            fp.&&IsParent&& = 1
+            and fp.&&ParentObjectId&& = f.&&ParentObjectId&&
+            and fp.&&ParentObjectUid&& = f.&&ParentObjectUid&&
+            and fp.&&Recipient&& = f.&&Recipient&&
+        where
+            f.&&Recipient&& = v_userId
+            and exists (select *
+                        from &&FeedToArchiveTemp&& t
+                        where t.&&ParentObjectId&& = f.&&ParentObjectId&&
+        and t.&&ParentObjectUid&& = f.&&ParentObjectUid&&
+                            and t.&&ParentChangeDate&& = fp.&&ChangeDate&&);
+
+    delete from &&Feed&&
+    where
+            exists (select &&Id&& from &&FeedToArchiveTemp2&& t2 where t2.&&Id&& = &&Feed&&.&&Id&&)
+            and not exists(select 1 from &&FeedFavorite&& ff
+                                 where (ff.&&IsDelete&& is null or ff.&&IsDelete&& = 0)
+                                    and ff.&&ActionObjectId&& = &&Feed&&.&&ParentObjectId&&
+                                    and ff.&&ActionObjectUid&& = &&Feed&&.&&ParentObjectUid&&
+                                    and ff.&&Recipient&& = v_userId);
+        
+      end;
+      end if;
+  end;
+  end if;
+        
+  return v_userId;
+end
+
+$$ 
+language plpgsql;
+        ]]>
+      </text>
+    </procedure>
+
+    <procedure name="FeedSetAsRead">
+      <mappings>
+        <hibernate-mapping xmlns="urn:nhibernate-mapping-2.2">
+          <sql-query name="ExecFeedSetAsRead">
+            select FeedSetAsRead(:ChangeDateHash, :Recipient, :ActionObjectUid, :ActionObjectId, :DateTimeNow)
+          </sql-query>
+        </hibernate-mapping>
+      </mappings>
+      <text>
+        <![CDATA[
+
+/**************************************************************************************
+
+   Установка сообщениям статуса "прочитано"
+
+**************************************************************************************/
+create or replace function FeedSetAsRead(
+    ChangeDateHash char(35),    --$1
+    &&Recipient&& bigint,        --$2
+    &&ActionObjectUid&& uuid,    --$3
+    ActionObjectId bigint,           --$4
+    &&DateTimeNow&& timestamp           --$5
+   )
+returns void   
+   
+as
+$$
+
+declare 
+pRowCount bigint = 0;
+pTempUid uuid;
+
+begin
+
+    pTempUid = uuid_generate_v4();
+    
+      create temporary table if not exists &&FeedSetAsReadTemp&& (
+          &&Uid&&                   uuid,
+          &&Id&&                    bigint,
+          &&IsParent&&              smallint not null,
+          &&UnreadCount&&           integer,
+          &&UnreadCountOld&&        integer
+        ) on commit delete rows;
+    
+    delete from &&FeedSetAsReadTemp&& where &&Uid&& = pTempUid;
+    
+    insert into &&FeedSetAsReadTemp&& (&&Uid&&, &&Id&&, &&IsParent&&, &&UnreadCount&&, &&UnreadCountOld&&)
+    
+    select pTempUid, &&Id&&, &&IsParent&&, &&UnreadCount&&, &&UnreadCount&&
+      from &&Feed&& f
+    where
+      f.&&Recipient&& = $2
+      and f.&&ParentObjectId&& = $4
+      and f.&&ParentObjectUid&& = $3
+      and f.&&ChangeDateHash&& <= coalesce($1, 'zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz')
+      and (
+            f.&&IsParent&& = 1
+            or (
+                  f.&&IsRead&& = 0
+                  and f.&&ChangeDateHash&& <= coalesce($1, 'zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz')
+                )
+          );
+      
+    select count(&&Id&&) from &&FeedSetAsReadTemp&& where &&Uid&& = pTempUid and &&IsParent&& = 0 into pRowCount;
+    
+    update &&FeedSetAsReadTemp&&
+    set
+          &&UnreadCount&& = &&UnreadCount&& - pRowCount
+      where &&Uid&& = pTempUid and &&IsParent&& = 1;
+      
+    update &&Feed&& f
+    set
+      &&IsRead&& = 1,
+      &&ReadDate&& = $5,
+      &&UnreadCount&& = (case when (select t.&&IsParent&& from &&FeedSetAsReadTemp&& t where &&Uid&& = pTempUid and t.&&Id&& = f.&&Id&&) = 1 then (select t.&&UnreadCount&& + (f.&&UnreadCount&& - t.&&UnreadCountOld&&) from &&FeedSetAsReadTemp&& t where &&Uid&& = pTempUid and t.&&Id&& = f.&&Id&&) else f.&&UnreadCount&& end),
+      &&HasUnreadChild&& = (case when (select t.&&IsParent&& from &&FeedSetAsReadTemp&& t where &&Uid&& = pTempUid and t.&&Id&& = f.&&Id&&) = 1 then (select (case when t.&&UnreadCount&& + (f.&&UnreadCount&& - t.&&UnreadCountOld&&) = 0 then 0 else 1 end) from &&FeedSetAsReadTemp&& t where &&Uid&& = pTempUid and t.&&Id&& = f.&&Id&&) else f.&&HasUnreadChild&& end)
+    where exists (select 1 from &&FeedSetAsReadTemp&& t where &&Uid&& = pTempUid and t.&&Id&& = f.&&Id&&);
+    
+end
+
+$$
+language plpgsql;
+        ]]>
+
+      </text>
+    </procedure>
+
+    <procedure name="FeedSetAsReadAll">
+      <mappings>
+        <hibernate-mapping xmlns="urn:nhibernate-mapping-2.2">
+          <sql-query name="ExecFeedSetAsReadAll">
+            select FeedSetAsReadAll(:Recipient, :ChangeDateHashMin, :ChangeDateHashMax, :Priority, :DateTimeNow)
+          </sql-query>
+        </hibernate-mapping>
+      </mappings>
+      <text>
+        <![CDATA[
+/**************************************************************************************
+
+   Отметить прочитанными
+   
+**************************************************************************************/
+create or replace function FeedSetAsReadAll(
+    p_Recipient bigint,
+    &&ChangeDateHashMin&& varchar(35),
+    &&ChangeDateHashMax&& varchar(35),
+    p_Priority integer,
+    &&DateTimeNow&& timestamp
+)
+returns void
+
+as
+$$
+
+declare 
+v_TableRecord record;
+
+begin
+
+    for v_TableRecord in 
+        select &&ParentObjectId&&, &&ParentObjectUid&&
+        from &&Feed&&
+        where
+              &&IsParent&& = 1
+              and &&Recipient&& = $1
+              and (&&IsRead&& = 0 or &&HasUnreadChild&& = 1)
+              and &&ChangeDateHash&& >= coalesce($2, '                                   ')
+              and &&ChangeDateHash&& <= coalesce($3, 'zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz')
+              and ($4 is null or &&Priority&& >= $4)
+    loop
+        begin
+            update &&Feed&&
+            set
+                &&IsRead&& = 1,
+                &&ReadDate&& = $5,
+                &&UnreadCount&& = 0,
+                &&HasUnreadChild&& = 0
+            where
+                &&Recipient&& = $1
+                and (&&IsRead&& = 0 or &&HasUnreadChild&& = 1)
+                and &&ParentObjectId&& = v_TableRecord.&&ParentObjectId&&
+                and &&ParentObjectUid&& = v_TableRecord.&&ParentObjectUid&&;
+        end;
+    end loop;
+
+end
+
+$$
+language plpgsql;
+        ]]>
+      </text>
+    </procedure>
+
+    <procedure name="FeedLoad">
+      <mappings>
+        <hibernate-mapping xmlns="urn:nhibernate-mapping-2.2">
+          <sql-query name="ExecFeedLoad">
+            select * from FeedLoad(:MaxCount, :MaxChildCount, :ChangeDateHash, :Recipient, :Priority, :AllMessages)
+          </sql-query>
+        </hibernate-mapping>
+      </mappings>
+      <text>
+        <![CDATA[
+/**************************************************************************************
+
+   Фильтрация сообщений
+
+**************************************************************************************/
+create or replace function FeedLoad(
+    &&MaxCount&& integer,            --$1
+    &&MaxChildCount&& integer,        --$2
+    p_ChangeDateHash varchar(35),    --$3
+    p_Recipient bigint,            --$4
+    p_Priority integer,        --$5
+    &&AllMessages&& smallint        --$6
+)
+returns table(
+    &&Id&& bigint,
+    &&Subject&& text,
+    &&Text&& text,
+    &&TextHtml&& text,
+    &&ActionObjectUid&& uuid,
+    &&ActionUid&& uuid,
+    &&ActionObjectId&& bigint,
+    &&Recipient&& bigint,
+    &&CreationDate&& timestamp,
+    &&ChangeDate&& timestamp,
+    &&CreationAuthor&& bigint,
+    &&IsParent&& smallint,
+    &&ParentObjectId&& bigint,
+    &&ParentObjectUid&& uuid,
+    &&IsRead&& smallint,
+    &&ReadDate&& timestamp,
+    &&HasUnreadChild&& smallint,
+    &&UnreadCount&& integer,
+    &&Priority&& integer,
+    &&ChangeDateHash&& varchar(35),
+    &&ChildCount&& integer,
+    &&MessageAttachments&& bytea,
+    &&ObjectRecipients&& bytea,
+    &&MessageObjects&& bytea,
+    &&Url&& varchar(2000))
+    
+as
+$$
+
+declare
+v_TableRecord record;
+v_TableRecord2 record;
+v_ResultId bigint;
+
+begin
+
+    p_ChangeDateHash = coalesce(p_ChangeDateHash, 'zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz');
+
+    for v_TableRecord in
+        select f.&&ParentObjectUid&& as v_ParentObjectUid, f.&&ParentObjectId&& as v_ParentObjectId
+        from &&Feed&& f
+        where
+            f.&&IsParent&& = 1
+            and f.&&Recipient&& = $4
+            and f.&&ChangeDateHash&& < p_ChangeDateHash
+            and f.&&Priority&& >= coalesce($5, 0)
+            and ($6 = 1 or f.&&HasUnreadChild&& = 1 or f.&&IsRead&& = 0)
+        order by f.&&ChangeDateHash&& desc
+        limit ($1)
+    loop
+        begin
+            -- parents
+            for v_TableRecord2 in
+                select f.&&Id&&, f.&&Subject&&, f.&&Text&& as &&Text&&, f.&&TextHtml&&, f.&&ActionObjectUid&&, f.&&ActionUid&&, f.&&ActionObjectId&&, f.&&Recipient&&, f.&&CreationDate&&,
+                    f.&&ChangeDate&&, f.&&CreationAuthor&&, f.&&IsParent&&, f.&&ParentObjectId&&, f.&&ParentObjectUid&&,
+                    f.&&IsRead&&, f.&&ReadDate&&,
+                    f.&&HasUnreadChild&&, f.&&UnreadCount&&, f.&&Priority&&, f.&&ChangeDateHash&&, f.&&ChildCount&&,
+                    f.&&MessageAttachments&&, f.&&ObjectRecipients&&, f.&&MessageObjects&&, f.&&Url&&
+                from &&Feed&& f
+                where f.&&IsParent&& = 1 and
+                    f.&&Recipient&& = $4 and
+                    f.&&ParentObjectUid&& = v_TableRecord.v_ParentObjectUid and
+                    f.&&ParentObjectId&& = v_TableRecord.v_ParentObjectId
+            loop
+                begin
+                    &&Id&& = v_TableRecord2.&&Id&&;
+                    &&Subject&& = v_TableRecord2.&&Subject&&;
+                    &&Text&& = v_TableRecord2.&&Text&&;
+                    &&TextHtml&& = v_TableRecord2.&&TextHtml&&;
+                    &&ActionObjectUid&& = v_TableRecord2.&&ActionObjectUid&&;
+                    &&ActionUid&& = v_TableRecord2.&&ActionUid&&;
+                    &&ActionObjectId&& = v_TableRecord2.&&ActionObjectId&&;
+                    &&Recipient&& = v_TableRecord2.&&Recipient&&;
+                    &&CreationDate&& = v_TableRecord2.&&CreationDate&&;
+                    &&ChangeDate&& = v_TableRecord2.&&ChangeDate&&;
+                    &&CreationAuthor&& = v_TableRecord2.&&CreationAuthor&&;
+                    &&IsParent&& = v_TableRecord2.&&IsParent&&;
+                    &&ParentObjectId&& = v_TableRecord2.&&ParentObjectId&&;
+                    &&ParentObjectUid&& = v_TableRecord2.&&ParentObjectUid&&;
+                    &&IsRead&& = v_TableRecord2.&&IsRead&&;
+                    &&ReadDate&& = v_TableRecord2.&&ReadDate&&;
+                    &&HasUnreadChild&& = v_TableRecord2.&&HasUnreadChild&&;
+                    &&UnreadCount&& = v_TableRecord2.&&UnreadCount&&;
+                    &&Priority&& = v_TableRecord2.&&Priority&&;
+                    &&ChangeDateHash&& = v_TableRecord2.&&ChangeDateHash&&;
+                    &&ChildCount&& = v_TableRecord2.&&ChildCount&&;
+                    &&MessageAttachments&& = v_TableRecord2.&&MessageAttachments&&;
+                    &&ObjectRecipients&& = v_TableRecord2.&&ObjectRecipients&&;
+                    &&MessageObjects&& = v_TableRecord2.&&MessageObjects&&;
+                    &&Url&& = v_TableRecord2.&&Url&&;
+
+                    return next;
+                end;
+            end loop;
+
+            -- childs
+            for v_TableRecord2 in
+                select f.&&Id&&, f.&&Subject&&, f.&&Text&& as &&Text&&, f.&&TextHtml&&, f.&&ActionObjectUid&&, f.&&ActionUid&&, f.&&ActionObjectId&&, f.&&Recipient&&,
+                                      f.&&CreationDate&&, f.&&ChangeDate&&, f.&&CreationAuthor&&, f.&&IsParent&&, f.&&ParentObjectId&&, f.&&ParentObjectUid&&,
+                                      f.&&IsRead&&, f.&&ReadDate&&, f.&&HasUnreadChild&&, f.&&UnreadCount&&,
+                                      f.&&Priority&&, f.&&ChangeDateHash&&, f.&&ChildCount&&,
+                                      f.&&MessageAttachments&&, f.&&ObjectRecipients&&, f.&&MessageObjects&&, f.&&Url&&
+                from &&Feed&& f
+                where f.&&IsParent&& = 0 and
+                      f.&&Recipient&& = $4 and
+                      f.&&ParentObjectUid&& = v_TableRecord.v_ParentObjectUid and
+                      f.&&ParentObjectId&& = v_TableRecord.v_ParentObjectId
+                      and ($6 = 1 or f.&&IsRead&& = 0)
+                order by f.&&ChangeDateHash&& desc
+                limit ($2)
+            loop
+                begin
+
+                    &&Id&& = v_TableRecord2.&&Id&&;
+                    &&Subject&& = v_TableRecord2.&&Subject&&;
+                    &&Text&& = v_TableRecord2.&&Text&&;
+                    &&TextHtml&& = v_TableRecord2.&&TextHtml&&;
+                    &&ActionObjectUid&& = v_TableRecord2.&&ActionObjectUid&&;
+                    &&ActionUid&& = v_TableRecord2.&&ActionUid&&;
+                    &&ActionObjectId&& = v_TableRecord2.&&ActionObjectId&&;
+                    &&Recipient&& = v_TableRecord2.&&Recipient&&;
+                    &&CreationDate&& = v_TableRecord2.&&CreationDate&&;
+                    &&ChangeDate&& = v_TableRecord2.&&ChangeDate&&;
+                    &&CreationAuthor&& = v_TableRecord2.&&CreationAuthor&&;
+                    &&IsParent&& = v_TableRecord2.&&IsParent&&;
+                    &&ParentObjectId&& = v_TableRecord2.&&ParentObjectId&&;
+                    &&ParentObjectUid&& = v_TableRecord2.&&ParentObjectUid&&;
+                    &&IsRead&& = v_TableRecord2.&&IsRead&&;
+                    &&ReadDate&& = v_TableRecord2.&&ReadDate&&;
+                    &&HasUnreadChild&& = v_TableRecord2.&&HasUnreadChild&&;
+                    &&UnreadCount&& = v_TableRecord2.&&UnreadCount&&;
+                    &&Priority&& = v_TableRecord2.&&Priority&&;
+                    &&ChangeDateHash&& = v_TableRecord2.&&ChangeDateHash&&;
+                    &&ChildCount&& = v_TableRecord2.&&ChildCount&&;
+                    &&MessageAttachments&& = v_TableRecord2.&&MessageAttachments&&;
+                    &&ObjectRecipients&& = v_TableRecord2.&&ObjectRecipients&&;
+                    &&MessageObjects&& = v_TableRecord2.&&MessageObjects&&;
+                    &&Url&& = v_TableRecord2.&&Url&&;
+
+                return next;
+                end;
+            end loop;
+
+        end;
+    end loop;
+
+end
+
+$$
+language plpgsql;
+        ]]>
+      </text>
+    </procedure>
+
+    <procedure name="FeedFavoriteLoad">
+      <mappings>
+        <hibernate-mapping xmlns="urn:nhibernate-mapping-2.2">
+          <sql-query name="ExecFeedFavoriteLoad">
+            select * from FeedFavoriteLoad (:MaxCount, :Recipient, :ChangeDateHash)
+          </sql-query>
+        </hibernate-mapping>
+      </mappings>
+      <text>
+        <![CDATA[
+/**************************************************************************************
+
+   Загрузка избранных сообщений
+   
+**************************************************************************************/
+create or replace function FeedFavoriteLoad (
+    &&MaxCount&& bigint,            --$1
+    p_Recipient bigint,            --$2    
+    p_ChangeDateHash varchar(16)    --$3
+)
+returns table(
+    &&Id&& bigint,
+    &&Subject&& text,
+    &&Text&& text,
+    &&TextHtml&& text,
+    &&ActionObjectUid&& uuid,
+    &&ActionUid&& uuid,
+    &&ActionObjectId&& bigint,
+    &&Recipient&& bigint,
+    &&CreationDate&& timestamp,
+    &&ChangeDate&& timestamp,
+    &&CreationAuthor&& bigint,
+    &&IsParent&& smallint,
+    &&ParentObjectId&& bigint,
+    &&ParentObjectUid&& uuid,
+    &&IsRead&& smallint,
+    &&ReadDate&& timestamp,
+    &&HasUnreadChild&& smallint,
+    &&UnreadCount&& integer,
+    &&Priority&& integer,
+    &&ChangeDateHash&& varchar(35),
+    &&ChildCount&& integer,
+    &&MessageAttachments&& bytea,
+    &&ObjectRecipients&& bytea,
+    &&MessageObjects&& bytea,
+    &&Url&& varchar(2000))
+
+as
+$$
+
+declare
+v_TableRecord record;
+
+begin
+
+    p_ChangeDateHash = coalesce(p_ChangeDateHash, 'zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz');
+
+    create temporary table if not exists &&FeedObjectId&& 
+    (
+        &&ChangeDateHash&& varchar(35),
+        &&ParentObjectUid&& uuid,
+        &&ParentObjectId&& bigint,
+    &&IsArchive&& smallint
+        ) on commit delete rows;
+
+    insert into &&FeedObjectId&& (&&ChangeDateHash&&, &&ParentObjectUid&&, &&ParentObjectId&&)
+        select f.&&ChangeDateHash&&, f.&&ActionObjectUid&&, f.&&ActionObjectId&& 
+        from (
+            select fp.&&ChangeDateHash&&, fp.&&ActionObjectUid&&, fp.&&ActionObjectId&&
+            from &&FeedFavorite&& fp
+            where fp.&&Recipient&& = $2
+                and fp.&&IsDelete&& = 0
+                and fp.&&ChangeDateHash&& < p_ChangeDateHash
+            order by fp.&&ChangeDateHash&& desc
+            limit ($1)) f;
+
+    create temporary table if not exists &&FeedTempTableFavorite&& 
+    (
+        &&FavoriteChangeDateHash&& varchar(35),
+        &&Id&& bigint, 
+        &&Subject&& text, 
+        &&Text&& text, 
+        &&TextHtml&& text, 
+        &&ActionObjectUid&& uuid, 
+        &&ActionUid&& uuid, 
+        &&ActionObjectId&& bigint not null, 
+        &&Recipient&& bigint not null, 
+        &&CreationDate&& timestamp not null, 
+        &&ChangeDate&& timestamp not null, 
+        &&CreationAuthor&& bigint, 
+        &&ParentObjectId&& bigint, 
+        &&ParentObjectUid&& uuid, 
+        &&IsRead&& smallint, 
+        &&ReadDate&& timestamp, 
+        &&HasUnreadChild&& smallint, 
+        &&UnreadCount&& integer, 
+        &&Priority&& integer, 
+        &&ChangeDateHash&& varchar(35) not null, 
+        &&IsParent&& smallint not null,
+        &&ChildCount&& integer, 
+        &&MessageAttachments&& bytea, 
+        &&ObjectRecipients&& bytea, 
+        &&MessageObjects&& bytea, 
+        &&Url&& text
+        ) on commit delete rows;
+    
+    -- feed
+    insert into &&FeedTempTableFavorite&& (&&FavoriteChangeDateHash&&, &&Id&&, &&Subject&&, &&Text&&, &&TextHtml&&, &&ActionObjectUid&&, &&ActionUid&&, &&ActionObjectId&&, &&Recipient&&, &&CreationDate&&, &&ChangeDate&&, &&CreationAuthor&&, &&ParentObjectId&&, &&ParentObjectUid&&, &&IsRead&&, &&ReadDate&&, &&HasUnreadChild&&, &&UnreadCount&&, &&Priority&&, &&ChangeDateHash&&, &&IsParent&&, &&ChildCount&&, &&MessageAttachments&&, &&ObjectRecipients&&, &&MessageObjects&&, &&Url&&)
+        select ft.&&ChangeDateHash&&, fp.&&Id&&, fp.&&Subject&&, fp.&&Text&&, fp.&&TextHtml&&, fp.&&ActionObjectUid&&, fp.&&ActionUid&&, fp.&&ActionObjectId&&, fp.&&Recipient&&, fp.&&CreationDate&&, fp.&&ChangeDate&&, fp.&&CreationAuthor&&, fp.&&ParentObjectId&&, fp.&&ParentObjectUid&&, fp.&&IsRead&&, fp.&&ReadDate&&, fp.&&HasUnreadChild&&, fp.&&UnreadCount&&, fp.&&Priority&&, fp.&&ChangeDateHash&&, fp.&&IsParent&&, fp.&&ChildCount&&, fp.&&MessageAttachments&&, fp.&&ObjectRecipients&&, fp.&&MessageObjects&&, fp.&&Url&&
+        from &&Feed&& fp
+            inner join &&FeedObjectId&& ft on ft.&&ParentObjectUid&& = fp.&&ParentObjectUid&& and ft.&&ParentObjectId&& = fp.&&ParentObjectId&&
+        where fp.&&IsParent&& = 1 and fp.&&Recipient&& = $2;
+
+    -- feed + archive
+    for v_TableRecord in 
+        select f.&&Id&&, f.&&Subject&&, f.&&Text&&, f.&&TextHtml&&, f.&&ActionObjectUid&&, f.&&ActionUid&&, f.&&ActionObjectId&&, f.&&Recipient&&, f.&&CreationDate&&,
+            f.&&ChangeDate&&, f.&&CreationAuthor&&, f.&&ParentObjectId&&, f.&&ParentObjectUid&&,
+            f.&&IsRead&&, f.&&ReadDate&&,
+            f.&&HasUnreadChild&&, f.&&UnreadCount&&, f.&&Priority&&, f.&&ChangeDateHash&&, f.&&IsParent&&, f.&&ChildCount&&,
+            f.&&MessageAttachments&&, f.&&ObjectRecipients&&, f.&&MessageObjects&&, f.&&Url&&
+        from (
+            select ff.&&FavoriteChangeDateHash&&, ff.&&Id&&, ff.&&Subject&&, ff.&&Text&&, ff.&&TextHtml&&, ff.&&ActionObjectUid&&, 
+                ff.&&ActionUid&&, ff.&&ActionObjectId&&, ff.&&Recipient&&, ff.&&CreationDate&&, ff.&&ChangeDate&&,
+                ff.&&CreationAuthor&&, ff.&&ParentObjectId&&, ff.&&ParentObjectUid&&, ff.&&IsRead&&, ff.&&ReadDate&&, ff.&&HasUnreadChild&&, 
+                ff.&&UnreadCount&&, ff.&&Priority&&, ff.&&ChangeDateHash&&, ff.&&IsParent&&, ff.&&ChildCount&&, ff.&&MessageAttachments&&, 
+                ff.&&ObjectRecipients&&, ff.&&MessageObjects&&, ff.&&Url&&
+            from &&FeedTempTableFavorite&& ff
+
+            union all
+
+            select ft.&&ChangeDateHash&& &&FavoriteChangeDateHash&&, fp.&&Id&&, fp.&&Subject&&, fp.&&Text&&, fp.&&TextHtml&&, fp.&&ActionObjectUid&&, fp.&&ActionUid&&, fp.&&ActionObjectId&&, fp.&&Recipient&&, fp.&&CreationDate&&, fp.&&ChangeDate&&, fp.&&CreationAuthor&&, fp.&&ParentObjectId&&, fp.&&ParentObjectUid&&, fp.&&IsRead&&, fp.&&ReadDate&&, fp.&&HasUnreadChild&&, fp.&&UnreadCount&&, fp.&&Priority&&, fp.&&ChangeDateHash&&, fp.&&IsParent&&, fp.&&ChildCount&&, fp.&&MessageAttachments&&, fp.&&ObjectRecipients&&, fp.&&MessageObjects&&, fp.&&Url&&
+            from &&FeedArchive&& fp right join (
+                select t.&&ChangeDateHash&&, t.&&ParentObjectId&&, t.&&ParentObjectUid&& 
+                from &&FeedObjectId&& t left join &&FeedTempTableFavorite&& p on p.&&ParentObjectId&& = t.&&ParentObjectId&& and p.&&ParentObjectUid&& = t.&&ParentObjectUid&&
+                where p.&&ChangeDateHash&& is null
+                ) ft on ft.&&ParentObjectUid&& = fp.&&ParentObjectUid&& and ft.&&ParentObjectId&& = fp.&&ParentObjectId&&
+            where fp.&&IsParent&& = 1 and fp.&&Recipient&& = $2
+            ) f
+        order by &&FavoriteChangeDateHash&& desc
+    loop
+        begin
+            &&Id&& = v_TableRecord.&&Id&&;
+            &&Subject&& = v_TableRecord.&&Subject&&;
+            &&Text&& = v_TableRecord.&&Text&&;
+            &&TextHtml&& = v_TableRecord.&&TextHtml&&;
+            &&ActionObjectUid&& = v_TableRecord.&&ActionObjectUid&&;
+            &&ActionUid&& = v_TableRecord.&&ActionUid&&;
+            &&ActionObjectId&& = v_TableRecord.&&ActionObjectId&&;
+            &&Recipient&& = v_TableRecord.&&Recipient&&;
+            &&CreationDate&& = v_TableRecord.&&CreationDate&&;
+            &&ChangeDate&& = v_TableRecord.&&ChangeDate&&;
+            &&CreationAuthor&& = v_TableRecord.&&CreationAuthor&&; 
+            &&ParentObjectId&& = v_TableRecord.&&ParentObjectId&&;
+            &&ParentObjectUid&& = v_TableRecord.&&ParentObjectUid&&;
+            &&IsRead&& = v_TableRecord.&&IsRead&&;
+            &&ReadDate&& = v_TableRecord.&&ReadDate&&;
+            &&HasUnreadChild&& = v_TableRecord.&&HasUnreadChild&&;
+            &&UnreadCount&& = v_TableRecord.&&UnreadCount&&;
+            &&Priority&& = v_TableRecord.&&Priority&&;
+            &&ChangeDateHash&& = v_TableRecord.&&ChangeDateHash&&;
+            &&IsParent&& = v_TableRecord.&&IsParent&&;
+            &&ChildCount&& = v_TableRecord.&&ChildCount&&;
+            &&MessageAttachments&& = v_TableRecord.&&MessageAttachments&&;
+            &&ObjectRecipients&& = v_TableRecord.&&ObjectRecipients&&;
+            &&MessageObjects&& = v_TableRecord.&&MessageObjects&&;
+            &&Url&& = v_TableRecord.&&Url&&;
+
+            return next;
+        end;
+    end loop;
+             
+    delete from &&FeedObjectId&&;
+    delete from &&FeedTempTableFavorite&&;
+
+end
+
+$$
+language plpgsql;
+        ]]>
+      </text>
+    </procedure>
+
+    <procedure name="FeedLoadNew">
+      <mappings>
+        <hibernate-mapping xmlns="urn:nhibernate-mapping-2.2">
+          <sql-query name="ExecFeedLoadNew">
+            select * from FeedLoadNew(:MaxCount, :MaxChildCount, :ChangeDateHash, :Recipient, :AllMessages)
+          </sql-query>
+        </hibernate-mapping>
+      </mappings>
+      <text>
+        <![CDATA[
+/**************************************************************************************
+
+   Загрузка новых сообщений
+
+**************************************************************************************/
+create or replace function FeedLoadNew (
+    &&MaxCount&& bigint,
+    &&MaxChildCount&& bigint,
+    p_ChangeDateHash varchar(35),
+    p_Recipient bigint,
+    &&AllMessages&& smallint
+)
+returns table(
+    &&Id&& bigint,
+    &&Subject&& text,
+    &&Text&& text,
+    &&TextHtml&& text,
+    &&ActionObjectUid&& uuid,
+    &&ActionUid&& uuid,
+    &&ActionObjectId&& bigint,
+    &&Recipient&& bigint,
+    &&CreationDate&& timestamp,
+    &&ChangeDate&& timestamp,
+    &&CreationAuthor&& bigint,
+    &&IsParent&& smallint,
+    &&ParentObjectId&& bigint,
+    &&ParentObjectUid&& uuid,
+    &&IsRead&& smallint,
+    &&ReadDate&& timestamp,
+    &&HasUnreadChild&& smallint,
+    &&UnreadCount&& integer,
+    &&Priority&& integer,
+    &&ChangeDateHash&& varchar(35),
+    &&ChildCount&& integer,
+    &&MessageAttachments&& bytea,
+    &&ObjectRecipients&& bytea,
+    &&MessageObjects&& bytea,
+    &&Url&& varchar(2000))
+
+as
+$$
+
+declare
+v_TableRecord record;
+v_TableRecord2 record;
+    
+begin
+
+    p_ChangeDateHash = coalesce(p_ChangeDateHash, '');
+
+    for v_TableRecord in
+        select fd.&&ParentObjectUid&& as v_ParentObjectUid, fd.&&ParentObjectId&& as v_ParentObjectId
+        from &&Feed&& fd
+        where fd.&&IsParent&& = 1
+            and fd.&&Recipient&& = p_Recipient
+            and fd.&&ChangeDateHash&& > p_ChangeDateHash
+            and (&&AllMessages&& = 1 or fd.&&HasUnreadChild&& = 1 or fd.&&IsRead&& = 0)
+        order by fd.&&ChangeDateHash&&
+        limit(&&MaxCount&&)
+    loop
+        begin
+  
+            -- parents
+            for v_TableRecord2 in
+                select fd.&&Id&&, fd.&&Subject&&, fd.&&Text&&, fd.&&TextHtml&&, fd.&&ActionObjectUid&&, fd.&&ActionUid&&, fd.&&ActionObjectId&&, fd.&&Recipient&&,
+                    fd.&&CreationDate&&, fd.&&ChangeDate&&,
+                    fd.&&CreationAuthor&&, fd.&&IsParent&&, fd.&&ParentObjectId&&, fd.&&ParentObjectUid&&, fd.&&IsRead&&, fd.&&ReadDate&&,
+                    fd.&&HasUnreadChild&&, fd.&&UnreadCount&&, fd.&&Priority&&, fd.&&ChangeDateHash&&, fd.&&ChildCount&&,
+                    fd.&&MessageAttachments&&, fd.&&ObjectRecipients&&, fd.&&MessageObjects&&, fd.&&Url&&
+                from &&Feed&& fd
+                where fd.&&IsParent&& = 1 and
+                    fd.&&Recipient&& = p_Recipient and
+                    fd.&&ParentObjectUid&& = v_TableRecord.v_ParentObjectUid and
+                    fd.&&ParentObjectId&& = v_TableRecord.v_ParentObjectId
+            loop
+                begin
+                    &&Id&& = v_TableRecord2.&&Id&&;
+                    &&Subject&& = v_TableRecord2.&&Subject&&;
+                    &&Text&& = v_TableRecord2.&&Text&&;
+                    &&TextHtml&& = v_TableRecord2.&&TextHtml&&;
+                    &&ActionObjectUid&& = v_TableRecord2.&&ActionObjectUid&&;
+                    &&ActionUid&& = v_TableRecord2.&&ActionUid&&;
+                    &&ActionObjectId&& = v_TableRecord2.&&ActionObjectId&&;
+                    &&Recipient&& = v_TableRecord2.&&Recipient&&;
+                    &&CreationDate&& = v_TableRecord2.&&CreationDate&&;
+                    &&ChangeDate&& = v_TableRecord2.&&ChangeDate&&;
+                    &&CreationAuthor&& = v_TableRecord2.&&CreationAuthor&&;
+                    &&IsParent&& = v_TableRecord2.&&IsParent&&;
+                    &&ParentObjectId&& = v_TableRecord2.&&ParentObjectId&&;
+                    &&ParentObjectUid&& = v_TableRecord2.&&ParentObjectUid&&;
+                    &&IsRead&& = v_TableRecord2.&&IsRead&&;
+                    &&ReadDate&& = v_TableRecord2.&&ReadDate&&;
+                    &&HasUnreadChild&& = v_TableRecord2.&&HasUnreadChild&&;
+                    &&UnreadCount&& = v_TableRecord2.&&UnreadCount&&;
+                    &&Priority&& = v_TableRecord2.&&Priority&&;
+                    &&ChangeDateHash&& = v_TableRecord2.&&ChangeDateHash&&;
+                    &&ChildCount&& = v_TableRecord2.&&ChildCount&&;
+                    &&MessageAttachments&& = v_TableRecord2.&&MessageAttachments&&;
+                    &&ObjectRecipients&& = v_TableRecord2.&&ObjectRecipients&&;
+                    &&MessageObjects&& = v_TableRecord2.&&MessageObjects&&;
+                    &&Url&& = v_TableRecord2.&&Url&&;
+          return next;
+                end;
+            end loop;
+
+            -- childs
+            for v_TableRecord2 in
+                select fd.&&Id&&, fd.&&Subject&&, fd.&&Text&&, fd.&&TextHtml&&, fd.&&ActionObjectUid&&, fd.&&ActionUid&&, fd.&&ActionObjectId&&, fd.&&Recipient&&,
+                    fd.&&CreationDate&&, fd.&&ChangeDate&&,
+                    fd.&&CreationAuthor&&, fd.&&IsParent&&, fd.&&ParentObjectId&&, fd.&&ParentObjectUid&&, fd.&&IsRead&&, fd.&&ReadDate&&,
+                    fd.&&HasUnreadChild&&, fd.&&UnreadCount&&, fd.&&Priority&&, fd.&&ChangeDateHash&&, fd.&&ChildCount&&,
+                    fd.&&MessageAttachments&&, fd.&&ObjectRecipients&&, fd.&&MessageObjects&&, fd.&&Url&&
+                from &&Feed&& fd
+                where fd.&&IsParent&& = 0 and
+                      fd.&&Recipient&& = p_Recipient and
+                      fd.&&ParentObjectUid&& = v_TableRecord.v_ParentObjectUid and
+                      fd.&&ParentObjectId&& = v_TableRecord.v_ParentObjectId and
+                      fd.&&ChangeDateHash&& > p_ChangeDateHash
+                order by fd.&&ChangeDateHash&& desc
+                limit(&&MaxChildCount&&)
+            loop
+                begin
+                    &&Id&& = v_TableRecord2.&&Id&&;
+                    &&Subject&& = v_TableRecord2.&&Subject&&;
+                    &&Text&& = v_TableRecord2.&&Text&&;
+                    &&TextHtml&& = v_TableRecord2.&&TextHtml&&;
+                    &&ActionObjectUid&& = v_TableRecord2.&&ActionObjectUid&&;
+                    &&ActionUid&& = v_TableRecord2.&&ActionUid&&;
+                    &&ActionObjectId&& = v_TableRecord2.&&ActionObjectId&&;
+                    &&Recipient&& = v_TableRecord2.&&Recipient&&;
+                    &&CreationDate&& = v_TableRecord2.&&CreationDate&&;
+                    &&ChangeDate&& = v_TableRecord2.&&ChangeDate&&;
+                    &&CreationAuthor&& = v_TableRecord2.&&CreationAuthor&&;
+                    &&IsParent&& = v_TableRecord2.&&IsParent&&;
+                    &&ParentObjectId&& = v_TableRecord2.&&ParentObjectId&&;
+                    &&ParentObjectUid&& = v_TableRecord2.&&ParentObjectUid&&;
+                    &&IsRead&& = v_TableRecord2.&&IsRead&&;
+                    &&ReadDate&& = v_TableRecord2.&&ReadDate&&;
+                    &&HasUnreadChild&& = v_TableRecord2.&&HasUnreadChild&&;
+                    &&UnreadCount&& = v_TableRecord2.&&UnreadCount&&;
+                    &&Priority&& = v_TableRecord2.&&Priority&&;
+                    &&ChangeDateHash&& = v_TableRecord2.&&ChangeDateHash&&;
+                    &&ChildCount&& = v_TableRecord2.&&ChildCount&&;
+                    &&MessageAttachments&& = v_TableRecord2.&&MessageAttachments&&;
+                    &&ObjectRecipients&& = v_TableRecord2.&&ObjectRecipients&&;
+                    &&MessageObjects&& = v_TableRecord2.&&MessageObjects&&;
+                    &&Url&& = v_TableRecord2.&&Url&&;
+          return next;
+                end;
+            end loop;
+        end;
+    end loop;
+            
+end
+
+$$
+language plpgsql;
+        ]]>
+      </text>
+    </procedure>
+
+    <procedure name="FeedFavoriteLoadNew">
+      <mappings>
+        <hibernate-mapping xmlns="urn:nhibernate-mapping-2.2">
+          <sql-query name="ExecFeedFavoriteLoadNew">
+            select * from FeedFavoriteLoadNew (:ChangeDateHash, :Recipient, :MaxCount, :AllMessages)
+          </sql-query>
+        </hibernate-mapping>
+      </mappings>
+      <text>
+        <![CDATA[
+/**************************************************************************************
+
+   Загрузка новых сообщений из избранного
+   
+**************************************************************************************/
+create or replace function FeedFavoriteLoadNew (
+    p_ChangeDateHash varchar(16),
+    p_Recipient bigint,
+    &&MaxCount&& bigint,
+    &&AllMessages&& smallint
+)
+returns table(
+    &&Id&& bigint,
+    &&Recipient&& bigint,
+    &&ActionObjectUid&& uuid,
+    &&ActionObjectId&& bigint,
+    &&ChangeDateHash&& varchar(16),
+    &&IsDelete&& smallint
+)
+
+as
+$$
+
+declare
+v_TableRecord record;
+
+begin
+
+  p_ChangeDateHash = coalesce(p_ChangeDateHash, '');
+
+    for v_TableRecord in 
+        select ff.&&Id&&, ff.&&Recipient&&, ff.&&ActionObjectId&&, ff.&&ActionObjectUid&&, ff.&&ChangeDateHash&&, ff.&&IsDelete&&
+        from &&FeedFavorite&& ff
+        where ff.&&Recipient&& = p_Recipient
+            and (ff.&&IsDelete&& = 0 or &&AllMessages&& = 1)
+            and ff.&&ChangeDateHash&& > p_ChangeDateHash
+        order by ff.&&ChangeDateHash&&
+        limit (&&MaxCount&&)
+    loop
+        begin
+            &&Id&& = v_TableRecord.&&Id&&;
+            &&Recipient&& = v_TableRecord.&&Recipient&&;
+            &&ActionObjectId&& = v_TableRecord.&&ActionObjectId&&;
+            &&ActionObjectUid&& = v_TableRecord.&&ActionObjectUid&&;
+            &&ChangeDateHash&& = v_TableRecord.&&ChangeDateHash&&;
+            &&IsDelete&& = v_TableRecord.&&IsDelete&&;
+
+            return next;
+        end;
+    end loop;
+end
+
+$$
+language plpgsql;
+        ]]>
+      </text>
+    </procedure>
+
+    <procedure name="FeedInfoLoadNew">
+      <mappings>
+        <hibernate-mapping xmlns="urn:nhibernate-mapping-2.2">
+          <sql-query name="ExecFeedInfoLoadNew">
+            select * from FeedInfoLoadNew(:ChangeDate, :Recipient, :MaxCount)
+          </sql-query>
+        </hibernate-mapping>
+      </mappings>
+      <text>
+        <![CDATA[
+/**************************************************************************************
+
+   Загрузка информации по объектам сообщений ленты
+   
+**************************************************************************************/
+create or replace function FeedInfoLoadNew(
+    p_ChangeDate timestamp,
+    p_Recipient bigint,
+    &&MaxCount&& bigint
+)
+returns table(
+    &&Id&& bigint,
+    &&Recipient&& bigint,
+    &&ActionObjectUid&& uuid,
+    &&ActionObjectId&& bigint,
+    &&ChangeDate&& timestamp,
+    &&Data&& bytea
+)
+as
+$$
+
+declare
+v_TableRecord record;
+
+begin
+
+    for v_TableRecord in
+        select i.&&Id&&, i.&&Recipient&&, i.&&ActionObjectId&&, i.&&ActionObjectUid&&, i.&&ChangeDate&&, i.&&Data&&
+        from &&FeedInfo&& i
+            inner join (
+                select i1.&&ActionObjectUid&&, i1.&&ActionObjectId&&, i1.&&Recipient&&, max(i1.&&ChangeDate&&) &&ChangeDate&&
+                from &&FeedInfo&& i1
+                where i1.&&Recipient&& = p_Recipient
+                group by i1.&&ActionObjectUid&&, i1.&&ActionObjectId&&, i1.&&Recipient&&
+                ) f 
+            on f.&&ActionObjectUid&& = i.&&ActionObjectUid&& and f.&&ActionObjectId&& = i.&&ActionObjectId&& and f.&&Recipient&& = i.&&Recipient&&    and f.&&ChangeDate&& = i.&&ChangeDate&&
+        where p_ChangeDate is null or i.&&ChangeDate&& > p_ChangeDate
+        order by i.&&ChangeDate&&
+        limit(&&MaxCount&&)
+    loop
+        begin
+            &&Id&& = v_TableRecord.&&Id&&;
+            &&Recipient&& = v_TableRecord.&&Recipient&&;
+            &&ActionObjectId&& = v_TableRecord.&&ActionObjectId&&;
+            &&ActionObjectUid&& = v_TableRecord.&&ActionObjectUid&&;
+            &&ChangeDate&& = v_TableRecord.&&ChangeDate&&;
+            &&Data&& = v_TableRecord.&&Data&&;
+            
+                return next;
+        end;
+    end loop;
+
+end
+
+$$
+language plpgsql;
+        ]]>
+      </text>
+    </procedure>
+
+
+    <procedure name="FeedMessageLoad">
+      <mappings>
+        <hibernate-mapping xmlns="urn:nhibernate-mapping-2.2">
+          <sql-query name="ExecFeedMessageLoad">
+            select * from FeedMessageLoad(:Id)
+          </sql-query>
+        </hibernate-mapping>
+      </mappings>
+      <text>
+        <![CDATA[
+/**************************************************************************************
+
+   Загружает указанное сообщение со всеми комментариями.
+
+**************************************************************************************/
+create or replace function FeedMessageLoad(&&MessageId&& bigint)
+returns table(
+    &&Id&& bigint,
+    &&Subject&& text,
+    &&Text&& text,
+    &&TextHtml&& text,
+    &&ActionObjectUid&& uuid,
+    &&ActionUid&& uuid,
+    &&ActionObjectId&& bigint,
+    &&Recipient&& bigint,
+    &&CreationDate&& timestamp,
+    &&ChangeDate&& timestamp,
+    &&CreationAuthor&& bigint,
+    &&IsParent&& smallint,
+    &&ParentObjectId&& bigint,
+    &&ParentObjectUid&& uuid,
+    &&IsRead&& smallint,
+    &&ReadDate&& timestamp,
+    &&HasUnreadChild&& smallint,
+    &&UnreadCount&& integer,
+    &&Priority&& integer,
+    &&ChangeDateHash&& varchar(35),
+    &&ChildCount&& integer,
+    &&MessageAttachments&& bytea,
+    &&ObjectRecipients&& bytea,
+    &&MessageObjects&& bytea,
+    &&Url&& varchar(2000))
+    
+as
+$$
+
+declare
+v_TableRecord record;
+
+begin
+    
+    for v_TableRecord in
+        select f.&&Id&&, f.&&Subject&&, f.&&Text&&, f.&&TextHtml&&, f.&&ActionObjectUid&&, f.&&ActionUid&&, f.&&ActionObjectId&&, f.&&Recipient&&, f.&&CreationDate&&,
+            f.&&ChangeDate&&, f.&&CreationAuthor&&, f.&&IsParent&&, f.&&ParentObjectId&&, f.&&ParentObjectUid&&,
+            f.&&IsRead&&, f.&&ReadDate&&,
+            f.&&HasUnreadChild&&, f.&&UnreadCount&&, f.&&Priority&&, f.&&ChangeDateHash&&, f.&&ChildCount&&,
+            f.&&MessageAttachments&&, f.&&ObjectRecipients&&, f.&&MessageObjects&&, f.&&Url&&
+        from &&Feed&& f inner join &&Feed&& ff on
+            ff.&&Id&& = $1
+            and ff.&&Recipient&& = f.&&Recipient&&
+            and ff.&&ParentObjectId&& = f.&&ParentObjectId&&
+            and ff.&&ParentObjectUid&& = f.&&ParentObjectUid&&
+        order by f.&&IsParent&& desc, f.&&ChangeDateHash&& desc
+    loop
+        begin
+            &&Id&& = v_TableRecord.&&Id&&;
+            &&Subject&& = v_TableRecord.&&Subject&&;
+            &&Text&& = v_TableRecord.&&Text&&;
+            &&TextHtml&& = v_TableRecord.&&TextHtml&&;
+            &&ActionObjectUid&& = v_TableRecord.&&ActionObjectUid&&;
+            &&ActionUid&& = v_TableRecord.&&ActionUid&&;
+            &&ActionObjectId&& = v_TableRecord.&&ActionObjectId&&;
+            &&Recipient&& = v_TableRecord.&&Recipient&&;
+            &&CreationDate&& = v_TableRecord.&&CreationDate&&;
+            &&ChangeDate&& = v_TableRecord.&&ChangeDate&&;
+            &&CreationAuthor&& = v_TableRecord.&&CreationAuthor&&;
+            &&IsParent&& = v_TableRecord.&&IsParent&&;
+            &&ParentObjectId&& = v_TableRecord.&&ParentObjectId&&;
+            &&ParentObjectUid&& = v_TableRecord.&&ParentObjectUid&&;
+            &&IsRead&& = v_TableRecord.&&IsRead&&;
+            &&ReadDate&& = v_TableRecord.&&ReadDate&&;
+            &&HasUnreadChild&& = v_TableRecord.&&HasUnreadChild&&;
+            &&UnreadCount&& = v_TableRecord.&&UnreadCount&&;
+            &&Priority&& = v_TableRecord.&&Priority&&;
+            &&ChangeDateHash&& = v_TableRecord.&&ChangeDateHash&&;
+            &&ChildCount&& = v_TableRecord.&&ChildCount&&;
+            &&MessageAttachments&& = v_TableRecord.&&MessageAttachments&&;
+            &&ObjectRecipients&& = v_TableRecord.&&ObjectRecipients&&;
+            &&MessageObjects&& = v_TableRecord.&&MessageObjects&&;
+            &&Url&& = v_TableRecord.&&Url&&;
+
+            return next;
+        end;
+    end loop;
+      
+end
+
+$$
+language plpgsql;
+        ]]>
+      </text>
+    </procedure>
+
+    <procedure name="FeedParentMessageLoad">
+      <mappings>
+        <hibernate-mapping xmlns="urn:nhibernate-mapping-2.2">
+          <sql-query name="ExecFeedParentMessageLoad">
+            select * from FeedParentMessageLoad (:Recipient, :ParentObjectUid, :ParentObjectId)
+          </sql-query>
+        </hibernate-mapping>
+      </mappings>
+      <text>
+        <![CDATA[
+/**************************************************************************************
+
+   Загружает указанное родительское сообщение без комментариев.
+
+**************************************************************************************/
+create or replace function FeedParentMessageLoad (
+    p_Recipient bigint,
+    p_ParentObjectUid  uuid,
+    p_ParentObjectId bigint
+)
+returns table(
+    &&Id&& bigint,
+    &&Subject&& text,
+    &&Text&& text,
+    &&TextHtml&& text,
+    &&ActionObjectUid&& uuid,
+    &&ActionUid&& uuid,
+    &&ActionObjectId&& bigint,
+    &&Recipient&& bigint,
+    &&CreationDate&& timestamp,
+    &&ChangeDate&& timestamp,
+    &&CreationAuthor&& bigint,
+    &&IsParent&& smallint,
+    &&ParentObjectId&& bigint,
+    &&ParentObjectUid&& uuid,
+    &&IsRead&& smallint,
+    &&ReadDate&& timestamp,
+    &&HasUnreadChild&& smallint,
+    &&UnreadCount&& integer,
+    &&Priority&& integer,
+    &&ChangeDateHash&& varchar(35),
+    &&ChildCount&& integer,
+    &&MessageAttachments&& bytea,
+    &&ObjectRecipients&& bytea,
+    &&MessageObjects&& bytea,
+    &&Url&& varchar(2000))
+    
+as
+$$
+
+declare
+v_TableRecord record;
+
+begin
+    
+    for v_TableRecord in
+        select f.&&Id&&, f.&&Subject&&, f.&&Text&&, f.&&TextHtml&&, f.&&ActionObjectUid&&, f.&&ActionUid&&, f.&&ActionObjectId&&, f.&&Recipient&&, f.&&CreationDate&&,
+            f.&&ChangeDate&&, f.&&CreationAuthor&&, f.&&IsParent&&, f.&&ParentObjectId&&, f.&&ParentObjectUid&&,
+            f.&&IsRead&&, f.&&ReadDate&&,
+            f.&&HasUnreadChild&&, f.&&UnreadCount&&, f.&&Priority&&, f.&&ChangeDateHash&&, f.&&ChildCount&&,
+            f.&&MessageAttachments&&, f.&&ObjectRecipients&&, f.&&MessageObjects&&, f.&&Url&&
+        from &&Feed&& f
+        where
+            f.&&IsParent&& = 1
+            and f.&&Recipient&& = $1
+            and f.&&ParentObjectId&& = $3
+            and f.&&ParentObjectUid&& = $2
+    loop
+        begin
+            
+            &&Id&& = v_TableRecord.&&Id&&;
+            &&Subject&& = v_TableRecord.&&Subject&&;
+            &&Text&& = v_TableRecord.&&Text&&;
+            &&TextHtml&& = v_TableRecord.&&TextHtml&&;
+            &&ActionObjectUid&& = v_TableRecord.&&ActionObjectUid&&;
+            &&ActionUid&& = v_TableRecord.&&ActionUid&&;
+            &&ActionObjectId&& = v_TableRecord.&&ActionObjectId&&;
+            &&Recipient&& = v_TableRecord.&&Recipient&&;
+            &&CreationDate&& = v_TableRecord.&&CreationDate&&;
+            &&ChangeDate&& = v_TableRecord.&&ChangeDate&&;
+            &&CreationAuthor&& = v_TableRecord.&&CreationAuthor&&;
+            &&IsParent&& = v_TableRecord.&&IsParent&&;
+            &&ParentObjectId&& = v_TableRecord.&&ParentObjectId&&;
+            &&ParentObjectUid&& = v_TableRecord.&&ParentObjectUid&&;
+            &&IsRead&& = v_TableRecord.&&IsRead&&;
+            &&ReadDate&& = v_TableRecord.&&ReadDate&&;
+            &&HasUnreadChild&& = v_TableRecord.&&HasUnreadChild&&;
+            &&UnreadCount&& = v_TableRecord.&&UnreadCount&&;
+            &&Priority&& = v_TableRecord.&&Priority&&;
+            &&ChangeDateHash&& = v_TableRecord.&&ChangeDateHash&&;
+            &&ChildCount&& = v_TableRecord.&&ChildCount&&;
+            &&MessageAttachments&& = v_TableRecord.&&MessageAttachments&&;
+            &&ObjectRecipients&& = v_TableRecord.&&ObjectRecipients&&;
+            &&MessageObjects&& = v_TableRecord.&&MessageObjects&&;
+            &&Url&& = v_TableRecord.&&Url&&;
+
+            return next;
+        end;
+    end loop;
+        
+    if (&&Id&& is null) then
+        begin
+        
+            for v_TableRecord in 
+                select fa.&&Id&&, fa.&&Subject&&, fa.&&Text&&, fa.&&TextHtml&&, fa.&&ActionObjectUid&&, fa.&&ActionUid&&, fa.&&ActionObjectId&&, fa.&&Recipient&&, fa.&&CreationDate&&,
+                    fa.&&ChangeDate&&, fa.&&CreationAuthor&&, fa.&&IsParent&&, fa.&&ParentObjectId&&, fa.&&ParentObjectUid&&,
+                    fa.&&IsRead&&, fa.&&ReadDate&&,
+                    fa.&&HasUnreadChild&&, fa.&&UnreadCount&&, fa.&&Priority&&, fa.&&ChangeDateHash&&, fa.&&ChildCount&&,
+                    fa.&&MessageAttachments&&, fa.&&ObjectRecipients&&, fa.&&MessageObjects&&, fa.&&Url&&
+                from &&FeedArchive&& fa
+                where
+                    fa.&&Recipient&& = $1
+                    and fa.&&ParentObjectId&& = $3
+                    and fa.&&ParentObjectUid&& = $2
+                    and fa.&&IsParent&& = 1
+            loop
+                begin
+
+                    &&Id&& = v_TableRecord.&&Id&&;
+                    &&Subject&& = v_TableRecord.&&Subject&&;
+                    &&Text&& = v_TableRecord.&&Text&&;
+                    &&TextHtml&& = v_TableRecord.&&TextHtml&&;
+                    &&ActionObjectUid&& = v_TableRecord.&&ActionObjectUid&&;
+                    &&ActionUid&& = v_TableRecord.&&ActionUid&&;
+                    &&ActionObjectId&& = v_TableRecord.&&ActionObjectId&&;
+                    &&Recipient&& = v_TableRecord.&&Recipient&&;
+                    &&CreationDate&& = v_TableRecord.&&CreationDate&&;
+                    &&ChangeDate&& = v_TableRecord.&&ChangeDate&&;
+                    &&CreationAuthor&& = v_TableRecord.&&CreationAuthor&&;
+                    &&IsParent&& = v_TableRecord.&&IsParent&&;
+                    &&ParentObjectId&& = v_TableRecord.&&ParentObjectId&&;
+                    &&ParentObjectUid&& = v_TableRecord.&&ParentObjectUid&&;
+                    &&IsRead&& = v_TableRecord.&&IsRead&&;
+                    &&ReadDate&& = v_TableRecord.&&ReadDate&&;
+                    &&HasUnreadChild&& = v_TableRecord.&&HasUnreadChild&&;
+                    &&UnreadCount&& = v_TableRecord.&&UnreadCount&&;
+                    &&Priority&& = v_TableRecord.&&Priority&&;
+                    &&ChangeDateHash&& = v_TableRecord.&&ChangeDateHash&&;
+                    &&ChildCount&& = v_TableRecord.&&ChildCount&&;
+                    &&MessageAttachments&& = v_TableRecord.&&MessageAttachments&&;
+                    &&ObjectRecipients&& = v_TableRecord.&&ObjectRecipients&&;
+                    &&MessageObjects&& = v_TableRecord.&&MessageObjects&&;
+                    &&Url&& = v_TableRecord.&&Url&&;
+                
+                      return next;
+                end;
+            end loop;
+        end;
+    end if;
+end
+
+
+$$
+language plpgsql;
+        ]]>
+      </text>
+    </procedure>
+
+    <procedure name="FeedSearch">
+      <mappings>
+        <hibernate-mapping xmlns="urn:nhibernate-mapping-2.2">
+          <sql-query name="ExecFeedSearch">
+            select * from FeedSearch (:MaxCount, :MaxChildCount, :ChangeDateHash, lower(:FastSearch), :Recipient, :ChangeDateFrom, :ChangeDateTo, :FeedAuthors, :OnlyUnread)
+          </sql-query>
+        </hibernate-mapping>
+      </mappings>
+      <text>
+        <![CDATA[
+/**************************************************************************************
+
+   Фильтрация сообщений
+
+**************************************************************************************/
+create or replace function FeedSearch(
+    &&MaxCount&& bigint,            --$1
+    &&MaxChildCount&& bigint,        --$2
+    p_ChangeDateHash varchar(35),    --$3
+    &&FastSearch&& varchar(255),        --$4
+    p_Recipient bigint,            --$5
+    P_FromDate timestamp,        --$6
+    P_ToDate timestamp,            --$7
+    P_Authors text,            --$8
+    P_OnlyUnread smallint    --$9
+)
+returns table(
+    &&Id&& bigint,
+    &&Subject&& text,
+    &&Text&& text,
+    &&TextHtml&& text,
+    &&ActionObjectUid&& uuid,
+    &&ActionUid&& uuid,
+    &&ActionObjectId&& bigint,
+    &&Recipient&& bigint,
+    &&CreationDate&& timestamp,
+    &&ChangeDate&& timestamp,
+    &&CreationAuthor&& bigint,
+    &&IsParent&& smallint,
+    &&ParentObjectId&& bigint,
+    &&ParentObjectUid&& uuid,
+    &&IsRead&& smallint,
+    &&HasUnreadChild&& smallint,
+    &&UnreadCount&& integer,
+    &&Priority&& integer,
+    &&ChangeDateHash&& varchar(35),
+    &&ChildCount&& integer,
+    &&MessageAttachments&& bytea,
+    &&ObjectRecipients&& bytea,
+    &&MessageObjects&& bytea,
+    &&Url&& varchar(2000))
+
+as
+$$
+
+declare
+v_TableRecord record;
+v_TableRecord2 record;
+
+begin
+
+    p_ChangeDateHash = coalesce(p_ChangeDateHash, 'zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz');
+
+create temporary table if not exists &&FeedObject&&
+        (&&ParentObjectId&& bigint not null,
+        &&ParentObjectUid&& uuid not null,
+        &&IsArchive&& smallint)
+        on commit delete rows;
+
+    if ($8 is null) then
+        begin
+            insert into &&FeedObject&& (&&ParentObjectUid&&, &&ParentObjectId&&)
+                select f.&&ParentObjectUid&&, f.&&ParentObjectId&&
+                from &&Feed&& f
+                where f.&&Recipient&& = $5
+                    and f.&&ChangeDate&& >= $6
+                    and ($7 is null or f.&&ChangeDate&& <= $7)
+                    and f.&&ChangeDateHash&& < p_ChangeDateHash
+          and ($9 = 0 or f.&&IsRead&& = 0)
+                    and ($4 is null or lower(f.&&Text&&) like $4 or lower(f.&&Subject&&) like $4)
+                group by f.&&ParentObjectUid&&, f.&&ParentObjectId&&
+                order by max(f.&&ChangeDateHash&&) desc;
+      
+      
+            -- parents
+            for v_TableRecord in
+                select f.&&Id&&, f.&&Subject&&, f.&&Text&&, f.&&TextHtml&&, f.&&ActionObjectUid&&, f.&&ActionUid&&, f.&&ActionObjectId&&, f.&&Recipient&&,
+                    f.&&CreationDate&&, f.&&ChangeDate&&, f.&&CreationAuthor&&, f.&&IsParent&&, f.&&ParentObjectId&&, f.&&ParentObjectUid&&, f.&&IsRead&&,
+                    f.&&HasUnreadChild&&, f.&&UnreadCount&&, f.&&Priority&&, f.&&ChangeDateHash&&, f.&&ChildCount&&, f.&&MessageAttachments&&, f.&&ObjectRecipients&&, f.&&MessageObjects&&, f.&&Url&&
+                from &&Feed&& f
+                    right join &&FeedObject&& fo on fo.&&ParentObjectUid&& = f.&&ParentObjectUid&& and fo.&&ParentObjectId&& = f.&&ParentObjectId&&
+                where f.&&IsParent&& = 1 and
+                    f.&&Recipient&& = $5 and
+                    f.&&ChangeDateHash&& < p_ChangeDateHash
+                order by f.&&ChangeDateHash&& desc
+                limit ($1)
+            loop
+                begin
+                    &&Id&& = v_TableRecord.&&Id&&;
+                    &&Subject&& = v_TableRecord.&&Subject&&;
+                    &&Text&& = v_TableRecord.&&Text&&;
+                    &&TextHtml&& = v_TableRecord.&&TextHtml&&;
+                    &&ActionObjectUid&& = v_TableRecord.&&ActionObjectUid&&;
+                    &&ActionUid&& = v_TableRecord.&&ActionUid&&;
+                    &&ActionObjectId&& = v_TableRecord.&&ActionObjectId&&;
+                    &&Recipient&& = v_TableRecord.&&Recipient&&;
+                    &&CreationDate&& = v_TableRecord.&&CreationDate&&;
+                    &&ChangeDate&& = v_TableRecord.&&ChangeDate&&;
+                    &&CreationAuthor&& = v_TableRecord.&&CreationAuthor&&;
+                    &&IsParent&& = v_TableRecord.&&IsParent&&;
+                    &&ParentObjectId&& = v_TableRecord.&&ParentObjectId&&;
+                    &&ParentObjectUid&& = v_TableRecord.&&ParentObjectUid&&;
+                    &&IsRead&& = v_TableRecord.&&IsRead&&;
+                    &&HasUnreadChild&& = v_TableRecord.&&HasUnreadChild&&;
+                    &&UnreadCount&& = v_TableRecord.&&UnreadCount&&;
+                    &&Priority&& = v_TableRecord.&&Priority&&;
+                    &&ChangeDateHash&& = v_TableRecord.&&ChangeDateHash&&;
+                    &&ChildCount&& = v_TableRecord.&&ChildCount&&;
+                    &&MessageAttachments&& = v_TableRecord.&&MessageAttachments&&;
+                    &&ObjectRecipients&& = v_TableRecord.&&ObjectRecipients&&;
+                    &&MessageObjects&& = v_TableRecord.&&MessageObjects&&;
+                    &&Url&& = v_TableRecord.&&Url&&;
+
+                    return next;
+                
+                
+                    -- дочерние сообщения
+                    for v_TableRecord2 in
+                        select f.&&Id&&, f.&&Subject&&, f.&&Text&&, f.&&TextHtml&&, f.&&ActionObjectUid&&, f.&&ActionUid&&, f.&&ActionObjectId&&, f.&&Recipient&&,
+                            f.&&CreationDate&&, f.&&ChangeDate&&, f.&&CreationAuthor&&,
+                            f.&&IsRead&&, f.&&HasUnreadChild&&, f.&&UnreadCount&&,
+                            f.&&Priority&&, f.&&ChangeDateHash&&, f.&&IsParent&&, f.&&ChildCount&&, f.&&MessageAttachments&&, f.&&ObjectRecipients&&, f.&&MessageObjects&&, f.&&Url&&
+                        from &&Feed&& f
+                        where f.&&IsParent&& = 0 and
+                            f.&&Recipient&& = $5 and
+                            f.&&ParentObjectUid&& = v_TableRecord.&&ParentObjectUid&& and
+                            f.&&ParentObjectId&& = v_TableRecord.&&ParentObjectId&& and
+                            (P_ToDate is null or f.&&ChangeDate&& <= P_ToDate) and
+              (P_OnlyUnread = 0 or f.&&IsRead&& = 0) and
+                            (&&FastSearch&& is null or lower(f.&&Text&&) like &&FastSearch&& or lower(f.&&Subject&&) like &&FastSearch&&)
+                        order by ChangeDateHash desc
+                        limit ($1)
+                    loop
+                        begin
+                            &&Id&& = v_TableRecord2.&&Id&&;
+                            &&Subject&& = v_TableRecord2.&&Subject&&;
+                            &&Text&& = v_TableRecord2.&&Text&&;
+                            &&TextHtml&& = v_TableRecord2.&&TextHtml&&;
+                            &&ActionObjectUid&& = v_TableRecord2.&&ActionObjectUid&&;
+                            &&ActionUid&& = v_TableRecord2.&&ActionUid&&;
+                            &&ActionObjectId&& = v_TableRecord2.&&ActionObjectId&&;
+                            &&Recipient&& = v_TableRecord2.&&Recipient&&;
+                            &&CreationDate&& = v_TableRecord2.&&CreationDate&&;
+                            &&ChangeDate&& = v_TableRecord2.&&ChangeDate&&;
+                            &&CreationAuthor&& = v_TableRecord2.&&CreationAuthor&&;
+                            &&IsParent&& = v_TableRecord2.&&IsParent&&;
+                            &&IsRead&& = v_TableRecord2.&&IsRead&&;
+                            &&HasUnreadChild&& = v_TableRecord2.&&HasUnreadChild&&;
+                            &&UnreadCount&& = v_TableRecord2.&&UnreadCount&&;
+                            &&Priority&& = v_TableRecord2.&&Priority&&;
+                            &&ChangeDateHash&& = v_TableRecord2.&&ChangeDateHash&&;
+                            &&ChildCount&& = v_TableRecord2.&&ChildCount&&;
+                            &&MessageAttachments&& = v_TableRecord2.&&MessageAttachments&&;
+                            &&ObjectRecipients&& = v_TableRecord2.&&ObjectRecipients&&;
+                            &&MessageObjects&& = v_TableRecord2.&&MessageObjects&&;
+                            &&Url&& = v_TableRecord2.&&Url&&;
+
+                            return next;
+                        end;
+                    end loop;
+                end;
+            end loop;
+        end;
+    else
+        begin
+    
+            create temporary table if not exists &&FeedFilterAuthors&& (
+          &&Id&& bigint not null primary key
+        ) on commit delete rows;
+    
+            insert into &&FeedFilterAuthors&&
+            select cast(&&Val&& as bigint) as AuthorId from SplitString(P_Authors, ',');
+  
+            insert into &&FeedObject&& (&&ParentObjectUid&&, &&ParentObjectId&&)
+                select f.&&ParentObjectUid&&, f.&&ParentObjectId&&
+                from &&Feed&& f
+                where f.&&Recipient&& = p_Recipient
+                    and f.&&ChangeDate&& >= P_FromDate
+                    and (P_ToDate is null or f.&&ChangeDate&& <= P_ToDate)
+                    and f.&&ChangeDateHash&& < p_ChangeDateHash
+                    and (P_Authors is null or f.&&CreationAuthor&& in (select ffa.&&Id&& from &&FeedFilterAuthors&& ffa))
+          and (P_OnlyUnread = 0 or f.&&IsRead&& = 0)
+                    and (&&FastSearch&& is null or lower(f.&&Text&&) like &&FastSearch&& or lower(f.&&Subject&&) like &&FastSearch&&)
+                group by f.&&ParentObjectUid&&, f.&&ParentObjectId&&
+                order by max(f.&&ChangeDateHash&&) desc;
+  
+  
+            -- parents
+            for v_TableRecord in
+                select f.&&Id&&, f.&&Subject&&, f.&&Text&&, f.&&TextHtml&&, f.&&ActionObjectUid&&, f.&&ActionUid&&, f.&&ActionObjectId&&, f.&&Recipient&&, f.&&CreationDate&&, f.&&ChangeDate&&,
+                    f.&&CreationAuthor&&, f.&&IsParent&&, f.&&ParentObjectId&&, f.&&ParentObjectUid&&, f.&&IsRead&&,
+                    f.&&HasUnreadChild&&, f.&&UnreadCount&&, f.&&Priority&&, f.&&ChangeDateHash&&, f.&&ChildCount&&, f.&&MessageAttachments&&, f.&&ObjectRecipients&&, f.&&MessageObjects&&, f.&&Url&&
+                from &&Feed&& f
+                    right join &&FeedObject&& fo on fo.&&ParentObjectUid&& = f.&&ParentObjectUid&& and fo.&&ParentObjectId&& = f.&&ParentObjectId&&
+                where f.&&IsParent&& = 1 and
+                    f.&&Recipient&& = p_Recipient and
+                    f.&&ChangeDateHash&& < p_ChangeDateHash
+                order by f.&&ChangeDateHash&& desc
+                limit($1)
+            loop
+                begin
+                
+                    &&Id&& = v_TableRecord.&&Id&&;
+                    &&Subject&& = v_TableRecord.&&Subject&&;
+                    &&Text&& = v_TableRecord.&&Text&&;
+                    &&TextHtml&& = v_TableRecord.&&TextHtml&&;
+                    &&ActionObjectUid&& = v_TableRecord.&&ActionObjectUid&&;
+                    &&ActionUid&& = v_TableRecord.&&ActionUid&&;
+                    &&ActionObjectId&& = v_TableRecord.&&ActionObjectId&&;
+                    &&Recipient&& = v_TableRecord.&&Recipient&&;
+                    &&CreationDate&& = v_TableRecord.&&CreationDate&&;
+                    &&ChangeDate&& = v_TableRecord.&&ChangeDate&&;
+                    &&CreationAuthor&& = v_TableRecord.&&CreationAuthor&&;
+                    &&IsParent&& = v_TableRecord.&&IsParent&&;
+                    &&ParentObjectId&& = v_TableRecord.&&ParentObjectId&&;
+                    &&ParentObjectUid&& = v_TableRecord.&&ParentObjectUid&&;
+                    &&IsRead&& = v_TableRecord.&&IsRead&&;
+                    &&HasUnreadChild&& = v_TableRecord.&&HasUnreadChild&&;
+                    &&UnreadCount&& = v_TableRecord.&&UnreadCount&&;
+                    &&Priority&& = v_TableRecord.&&Priority&&;
+                    &&ChangeDateHash&& = v_TableRecord.&&ChangeDateHash&&;
+                    &&ChildCount&& = v_TableRecord.&&ChildCount&&;
+                    &&MessageAttachments&& = v_TableRecord.&&MessageAttachments&&;
+                    &&ObjectRecipients&& = v_TableRecord.&&ObjectRecipients&&;
+                    &&MessageObjects&& = v_TableRecord.&&MessageObjects&&;
+                    &&Url&& = v_TableRecord.&&Url&&;
+
+                    return next;
+                
+                         -- childs
+                    for v_TableRecord2 in 
+                        select f.&&Id&&, f.&&Subject&&, f.&&Text&&, f.&&TextHtml&&, f.&&ActionObjectUid&&, f.&&ActionUid&&, f.&&ActionObjectId&&, f.&&Recipient&&,
+                            f.&&CreationDate&&, f.&&ChangeDate&&, f.&&CreationAuthor&&,
+                            f.&&IsRead&&, f.&&HasUnreadChild&&, f.&&UnreadCount&&,
+                            f.&&Priority&&, f.&&ChangeDateHash&&, f.&&IsParent&&, f.&&ChildCount&&, f.&&MessageAttachments&&, f.&&ObjectRecipients&&, f.&&MessageObjects&&, f.&&Url&&
+                        from &&Feed&& f
+                        where f.&&IsParent&& = 0 and
+                              f.&&Recipient&& = p_Recipient and
+                              f.&&ParentObjectUid&& = v_TableRecord.&&ParentObjectUid&& and
+                              f.&&ParentObjectId&& = v_TableRecord.&&ParentObjectId&& and
+                              (P_ToDate is null or f.&&ChangeDate&& <= P_ToDate) and
+                              (f.&&CreationAuthor&& in (select ffa.&&Id&& from &&FeedFilterAuthors&& ffa)) and
+                  (P_OnlyUnread = 0 or f.&&IsRead&& = 0) and
+                              (&&FastSearch&& is null or lower(f.&&Text&&) like &&FastSearch&& or lower(f.&&Subject&&) like &&FastSearch&&)
+                        order by f.&&ChangeDateHash&& desc
+                        limit($1)
+                    loop
+                        begin
+                        
+                            &&Id&& = v_TableRecord2.&&Id&&;
+                            &&Subject&& = v_TableRecord2.&&Subject&&;
+                            &&Text&& = v_TableRecord2.&&Text&&;
+                            &&TextHtml&& = v_TableRecord2.&&TextHtml&&;
+                            &&ActionObjectUid&& = v_TableRecord2.&&ActionObjectUid&&;
+                            &&ActionUid&& = v_TableRecord2.&&ActionUid&&;
+                            &&ActionObjectId&& = v_TableRecord2.&&ActionObjectId&&;
+                            &&Recipient&& = v_TableRecord2.&&Recipient&&;
+                            &&CreationDate&& = v_TableRecord2.&&CreationDate&&;
+                            &&ChangeDate&& = v_TableRecord2.&&ChangeDate&&;
+                            &&CreationAuthor&& = v_TableRecord2.&&CreationAuthor&&;
+                            &&IsParent&& = v_TableRecord2.&&IsParent&&;
+                            &&IsRead&& = v_TableRecord2.&&IsRead&&;
+                            &&HasUnreadChild&& = v_TableRecord2.&&HasUnreadChild&&;
+                            &&UnreadCount&& = v_TableRecord2.&&UnreadCount&&;
+                            &&Priority&& = v_TableRecord2.&&Priority&&;
+                            &&ChangeDateHash&& = v_TableRecord2.&&ChangeDateHash&&;
+                            &&ChildCount&& = v_TableRecord2.&&ChildCount&&;
+                            &&MessageAttachments&& = v_TableRecord2.&&MessageAttachments&&;
+                            &&ObjectRecipients&& = v_TableRecord2.&&ObjectRecipients&&;
+                            &&MessageObjects&& = v_TableRecord2.&&MessageObjects&&;
+                            &&Url&& = v_TableRecord2.&&Url&&;
+
+                            return next;
+                        end;
+                    end loop;
+                end;
+            end loop;
+  
+            delete from &&FeedFilterAuthors&&;    
+        end;
+
+    end if;
+  
+    delete from &&FeedObject&&;
+
+end
+
+$$
+language plpgsql;
+        ]]>
+      </text>
+    </procedure>
+
+    <procedure name="FeedFavoritsSearch">
+      <mappings>
+        <hibernate-mapping xmlns="urn:nhibernate-mapping-2.2">
+          <sql-query name="ExecFeedFavoritsSearch">
+            select * from FeedFavoritsSearch (:MaxCount, :Recipient, :ChangeDateHash, lower(:FastSearch), :ChangeDateFrom, :ChangeDateTo, :FeedAuthors, :OnlyUnread)
+          </sql-query>
+        </hibernate-mapping>
+      </mappings>
+      <text>
+        <![CDATA[
+/**************************************************************************************
+
+   Поиск в избранных сообщениях
+   
+**************************************************************************************/
+create or replace function FeedFavoritsSearch (
+    &&MaxCount&& bigint,            --$1
+    p_Recipient bigint,            --$2
+    p_ChangeDateHash varchar(16),    --$3    
+    &&FastSearch&& varchar(255),        --$4
+    P_FromDate timestamp,        --$5
+    P_ToDate timestamp,            --$6
+    P_Authors text,            --$7    
+    P_OnlyUnread smallint        --$8
+)
+returns table(
+    &&Id&& bigint,
+    &&Subject&& text,
+    &&Text&& text,
+    &&TextHtml&& text,
+    &&ActionObjectUid&& uuid,
+    &&ActionUid&& uuid,
+    &&ActionObjectId&& bigint,
+    &&Recipient&& bigint,
+    &&CreationDate&& timestamp,
+    &&ChangeDate&& timestamp,
+    &&CreationAuthor&& bigint,
+    &&IsParent&& smallint,
+    &&ParentObjectId&& bigint,
+    &&ParentObjectUid&& uuid,
+    &&IsRead&& smallint,
+    &&HasUnreadChild&& smallint,
+    &&UnreadCount&& integer,
+    &&Priority&& integer,
+    &&ChangeDateHash&& varchar(35),
+    &&ChildCount&& integer,
+    &&MessageAttachments&& bytea,
+    &&ObjectRecipients&& bytea,
+    &&MessageObjects&& bytea,
+    &&Url&& varchar(2000))
+as
+$$
+
+declare
+v_TableRecord record;
+v_TableRecord2 record;
+
+begin
+
+    p_ChangeDateHash = coalesce(p_ChangeDateHash, 'zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz');
+
+    create temporary table if not exists &&FeedObjectId&& 
+    (
+        &&ChangeDateHash&& varchar(16),
+        &&ParentObjectUid&& uuid,
+        &&ParentObjectId&& bigint,
+        &&IsArchive&& smallint
+        ) on commit delete rows;
+
+    if (P_Authors is null) then
+        begin
+        
+            insert into &&FeedObjectId&& (&&ChangeDateHash&&, &&ParentObjectUid&&, &&ParentObjectId&&, &&IsArchive&&)
+                select distinct f.&&FavoriteChangeDateHash&&, f.&&ParentObjectUid&&, f.&&ParentObjectId&&, min(f.&&IsArchive&&)
+                from (
+                    select ff.&&ChangeDateHash&& &&FavoriteChangeDateHash&&, fp.&&ParentObjectUid&&, fp.&&ParentObjectId&&, 0 &&IsArchive&&
+                    from &&Feed&& fp
+                        inner join &&FeedFavorite&& ff on ff.&&ActionObjectUid&& = fp.&&ParentObjectUid&& and ff.&&ActionObjectId&& = fp.&&ParentObjectId&& and ff.&&Recipient&& = fp.&&Recipient&& and ff.&&IsDelete&& = 0
+                    where
+                        fp.&&IsParent&& = 1
+                        and fp.&&Recipient&& = p_Recipient
+                        and fp.&&ChangeDate&& >= P_FromDate
+                        and (P_ToDate is null or fp.&&ChangeDate&& <= P_ToDate)
+                        and ff.&&ChangeDateHash&& < p_ChangeDateHash
+                        and (&&FastSearch&& is null or lower(fp.&&Text&&) like &&FastSearch&& or lower(fp.&&Subject&&) like &&FastSearch&&)
+                    group by ff.&&ChangeDateHash&&, fp.&&ParentObjectUid&&, fp.&&ParentObjectId&&
+
+                    union all
+
+                    select ff.&&ChangeDateHash&& &&FavoriteChangeDateHash&&, fp.&&ParentObjectUid&&, fp.&&ParentObjectId&&, 1 &&IsArchive&&
+                    from &&FeedArchive&& fp
+                        inner join &&FeedFavorite&& ff on ff.&&ActionObjectUid&& = fp.&&ParentObjectUid&& and ff.&&ActionObjectId&& = fp.&&ParentObjectId&& and ff.&&Recipient&& = fp.&&Recipient&& and ff.&&IsDelete&& = 0
+                    where fp.&&IsParent&& = 1
+                        and fp.&&Recipient&& = p_Recipient
+                        and fp.&&ChangeDate&& >= P_FromDate
+                        and (P_ToDate is null or fp.&&ChangeDate&& <= P_ToDate)
+                        and ff.&&ChangeDateHash&& < p_ChangeDateHash
+                        and (&&FastSearch&& is null or lower(fp.&&Text&&) like &&FastSearch&& or lower(fp.&&Subject&&) like &&FastSearch&&)
+                    group by ff.&&ChangeDateHash&&, fp.&&ParentObjectUid&&, fp.&&ParentObjectId&&) F
+                group by f.&&FavoriteChangeDateHash&&, f.&&ParentObjectUid&&, f.&&ParentObjectId&&
+                order by f.&&FavoriteChangeDateHash&& desc;
+
+            for v_TableRecord in 
+                select f.&&Id&&, f.&&Subject&&, f.&&Text&&, f.&&TextHtml&&, f.&&ActionObjectUid&&, f.&&ActionUid&&, f.&&ActionObjectId&&, f.&&Recipient&&,
+                    f.&&CreationDate&&, f.&&ChangeDate&&, f.&&CreationAuthor&&, f.&&IsParent&&, f.&&ParentObjectId&&,
+                    f.&&ParentObjectUid&&, f.&&IsRead&&, f.&&HasUnreadChild&&, f.&&UnreadCount&&, f.&&Priority&&, f.&&ChangeDateHash&&,
+                    f.&&ChildCount&&, f.&&MessageAttachments&&, f.&&ObjectRecipients&&, f.&&MessageObjects&&, f.&&Url&&
+                from (
+                    select f1.&&FavoriteChangeDateHash&&, f1.&&Id&&, f1.&&Subject&&, f1.&&Text&&, f1.&&TextHtml&&, f1.&&ActionObjectUid&&, f1.&&ActionUid&&, f1.&&ActionObjectId&&, f1.&&Recipient&&, f1.&&CreationDate&&,
+                        f1.&&ChangeDate&&, f1.&&CreationAuthor&&, f1.&&IsParent&&, f1.&&ParentObjectId&&, f1.&&ParentObjectUid&&, f1.&&IsRead&&,
+                        f1.&&HasUnreadChild&&, f1.&&UnreadCount&&, f1.&&Priority&&, f1.&&ChangeDateHash&&, f1.&&ChildCount&&, f1.&&MessageAttachments&&,
+                        f1.&&ObjectRecipients&&, f1.&&MessageObjects&&, f1.&&Url&&, 0 &&IsArchive&&
+                    from (
+                        select fo.&&ChangeDateHash&& &&FavoriteChangeDateHash&&, fd.&&Id&&, fd.&&Subject&&, fd.&&Text&&, fd.&&TextHtml&&, fd.&&ActionObjectUid&&, fd.&&ActionUid&&, fd.&&ActionObjectId&&,
+                            fd.&&Recipient&&, fd.&&CreationDate&&, fd.&&ChangeDate&&, fd.&&CreationAuthor&&, fd.&&IsParent&&,
+                            fd.&&ParentObjectId&&, fd.&&ParentObjectUid&&, fd.&&IsRead&&, fd.&&HasUnreadChild&&,
+                            fd.&&UnreadCount&&, fd.&&Priority&&, fd.&&ChangeDateHash&&, fd.&&ChildCount&&, fd.&&MessageAttachments&&,
+                            fd.&&ObjectRecipients&&, fd.&&MessageObjects&&, fd.&&Url&&
+                        from &&Feed&& fd right join &&FeedObjectId&& fo on fo.&&IsArchive&& = 0 and fo.&&ParentObjectUid&& = fd.&&ParentObjectUid&& and fo.&&ParentObjectId&& = fd.&&ParentObjectId&&
+                        where fd.&&IsParent&& = 1
+                            and fd.&&Recipient&& = p_Recipient
+                            and fo.&&ChangeDateHash&& < p_ChangeDateHash
+                        order by fo.&&ChangeDateHash&& desc
+                        limit (&&MaxCount&&)
+                        ) f1
+
+                    union all
+                        
+                    select f2.&&FavoriteChangeDateHash&&, f2.&&Id&&, f2.&&Subject&&, f2.&&Text&&, f2.&&TextHtml&&, f2.&&ActionObjectUid&&, f2.&&ActionUid&&, f2.&&ActionObjectId&&, f2.&&Recipient&&,
+                        f2.&&CreationDate&&, f2.&&ChangeDate&&, f2.&&CreationAuthor&&, f2.&&IsParent&&, f2.&&ParentObjectId&&,
+                        f2.&&ParentObjectUid&&, f2.&&IsRead&&, f2.&&HasUnreadChild&&, f2.&&UnreadCount&&, f2.&&Priority&&, f2.&&ChangeDateHash&&,
+                        f2.&&ChildCount&&, f2.&&MessageAttachments&&, f2.&&ObjectRecipients&&, f2.&&MessageObjects&&, f2.&&Url&&, 1 &&IsArchive&&
+                    from (
+                        select fo.&&ChangeDateHash&& &&FavoriteChangeDateHash&&, fa.&&Id&&, fa.&&Subject&&, fa.&&Text&&, fa.&&TextHtml&&, fa.&&ActionObjectUid&&, fa.&&ActionUid&&, fa.&&ActionObjectId&&,
+                            fa.&&Recipient&&, fa.&&CreationDate&&, fa.&&ChangeDate&&, fa.&&CreationAuthor&&, fa.&&IsParent&&,
+                            fa.&&ParentObjectId&&, fa.&&ParentObjectUid&&, fa.&&IsRead&&, fa.&&HasUnreadChild&&,
+                            fa.&&UnreadCount&&, fa.&&Priority&&, fa.&&ChangeDateHash&&, fa.&&ChildCount&&, fa.&&MessageAttachments&&,
+                            fa.&&ObjectRecipients&&, fa.&&MessageObjects&&, fa.&&Url&&
+                        from &&FeedArchive&& fa right join &&FeedObjectId&& fo on fo.&&IsArchive&& = 1 and fo.&&ParentObjectUid&& = fa.&&ParentObjectUid&& and fo.&&ParentObjectId&& = fa.&&ParentObjectId&&
+                        where fa.&&IsParent&& = 1
+                            and fa.&&Recipient&& = p_Recipient
+                            and fo.&&ChangeDateHash&& < p_ChangeDateHash
+                        order by fo.&&ChangeDateHash&& desc
+                        limit (&&MaxCount&&)
+                        ) f2
+                    ) F
+                order by f.&&FavoriteChangeDateHash&& desc
+                limit (&&MaxCount&&)
+            loop
+                begin
+                    &&Id&& = v_TableRecord.&&Id&&;
+                    &&Subject&& = v_TableRecord.&&Subject&&;
+                    &&Text&& = v_TableRecord.&&Text&&;
+                    &&TextHtml&& = v_TableRecord.&&TextHtml&&;
+                    &&ActionObjectUid&& = v_TableRecord.&&ActionObjectUid&&;
+                    &&ActionUid&& = v_TableRecord.&&ActionUid&&;
+                    &&ActionObjectId&& = v_TableRecord.&&ActionObjectId&&;
+                    &&Recipient&& = v_TableRecord.&&Recipient&&;
+                    &&CreationDate&& = v_TableRecord.&&CreationDate&&;
+                    &&ChangeDate&& = v_TableRecord.&&ChangeDate&&;
+                    &&CreationAuthor&& = v_TableRecord.&&CreationAuthor&&;
+                    &&IsParent&& = v_TableRecord.&&IsParent&&;
+                    &&ParentObjectId&& = v_TableRecord.&&ParentObjectId&&;
+                    &&ParentObjectUid&& = v_TableRecord.&&ParentObjectUid&&;
+                    &&IsRead&& = v_TableRecord.&&IsRead&&;
+                    &&HasUnreadChild&& = v_TableRecord.&&HasUnreadChild&&;
+                    &&UnreadCount&& = v_TableRecord.&&UnreadCount&&;
+                    &&Priority&& = v_TableRecord.&&Priority&&;
+                    &&ChangeDateHash&& = v_TableRecord.&&ChangeDateHash&&;
+                    &&ChildCount&& = v_TableRecord.&&ChildCount&&;
+                    &&MessageAttachments&& = v_TableRecord.&&MessageAttachments&&;
+                    &&ObjectRecipients&& = v_TableRecord.&&ObjectRecipients&&;
+                    &&MessageObjects&& = v_TableRecord.&&MessageObjects&&;
+                    &&Url&& = v_TableRecord.&&Url&&;
+
+                    return next;
+                end;
+            end loop;
+        end;
+    else
+        begin
+
+            create temporary table if not exists &&FeedFilterAuthors&& (
+                &&Id&& bigint not null primary key
+            ) on commit delete rows;
+        
+            insert into &&FeedFilterAuthors&&
+            select cast(&&Val&& as bigint) as AuthorId
+            from SplitString(P_Authors, ',');
+
+            insert into &&FeedObjectId&& (&&ChangeDateHash&&, &&ParentObjectUid&&, &&ParentObjectId&&, &&IsArchive&&)
+                select f.&&FavoriteChangeDateHash&&, f.&&ParentObjectUid&&, f.&&ParentObjectId&&, min(f.&&IsArchive&&)
+                from (
+                    select ff.&&ChangeDateHash&& &&FavoriteChangeDateHash&&, fp.&&ParentObjectUid&&, fp.&&ParentObjectId&&, 0 &&IsArchive&&
+                    from &&Feed&& fp
+                        inner join &&FeedFavorite&& ff on ff.&&ActionObjectUid&& = fp.&&ParentObjectUid&& and ff.&&ActionObjectId&& = fp.&&ParentObjectId&& and ff.&&Recipient&& = fp.&&Recipient&& and ff.&&IsDelete&& = 0
+                    where fp.&&IsParent&& = 1
+                        and fp.&&Recipient&& = p_Recipient
+                        and fp.&&ChangeDate&& >= P_FromDate
+                        and (P_ToDate is null or fp.&&ChangeDate&& <= P_ToDate)
+                        and ff.&&ChangeDateHash&& < p_ChangeDateHash
+                        and (P_Authors is null or fp.&&CreationAuthor&& in (select ffa.&&Id&& from &&FeedFilterAuthors&& ffa))
+                        and (&&FastSearch&& is null or lower(fp.&&Text&&) like &&FastSearch&& or lower(fp.&&Subject&&) like &&FastSearch&&)
+                    group by ff.&&ChangeDateHash&&, fp.&&ParentObjectUid&&, fp.&&ParentObjectId&&
+
+                    union all
+
+                    select ff.&&ChangeDateHash&& &&FavoriteChangeDateHash&&, fp.&&ParentObjectUid&&, fp.&&ParentObjectId&&, 1 &&IsArchive&&
+                    from &&FeedArchive&& fp
+                        inner join &&FeedFavorite&& ff on ff.&&ActionObjectUid&& = fp.&&ParentObjectUid&& and ff.&&ActionObjectId&& = fp.&&ParentObjectId&& and ff.&&Recipient&& = fp.&&Recipient&& and ff.&&IsDelete&& = 0
+                    where
+                        fp.&&IsParent&& = 1
+                        and fp.&&Recipient&& = p_Recipient
+                        and fp.&&ChangeDate&& >= P_FromDate
+                        and (P_ToDate is null or fp.&&ChangeDate&& <= P_ToDate)
+                        and ff.&&ChangeDateHash&& < p_ChangeDateHash
+                        and (P_Authors is null or fp.&&CreationAuthor&& in (select ffa.&&Id&& from &&FeedFilterAuthors&& ffa))
+                        and (&&FastSearch&& is null or lower(fp.&&Text&&) like &&FastSearch&& or lower(fp.&&Subject&&) like &&FastSearch&&)
+                    group by ff.&&ChangeDateHash&&, fp.&&ParentObjectUid&&, fp.&&ParentObjectId&&
+                    ) F
+                group by f.&&FavoriteChangeDateHash&&, f.&&ParentObjectUid&&, f.&&ParentObjectId&&
+                order by f.&&FavoriteChangeDateHash&& desc;
+
+            -- parents
+            for v_TableRecord in 
+                select f.&&Id&&, f.&&Subject&&, f.&&Text&&, f.&&TextHtml&&, f.&&ActionObjectUid&&, f.&&ActionUid&&, f.&&ActionObjectId&&, f.&&Recipient&&,
+                    f.&&CreationDate&&, f.&&ChangeDate&&, f.&&CreationAuthor&&, f.&&IsParent&&, f.&&ParentObjectId&&,
+                    f.&&ParentObjectUid&&, f.&&IsRead&&, f.&&HasUnreadChild&&, f.&&UnreadCount&&, f.&&Priority&&, f.&&ChangeDateHash&&,
+                    f.&&ChildCount&&, f.&&MessageAttachments&&, f.&&ObjectRecipients&&, f.&&MessageObjects&&, f.&&Url&&
+                from (
+                    select f1.&&FavoriteChangeDateHash&&, f1.&&Id&&, f1.&&Subject&&, f1.&&Text&&, f1.&&TextHtml&&, f1.&&ActionObjectUid&&, f1.&&ActionUid&&, f1.&&ActionObjectId&&, f1.&&Recipient&&, f1.&&CreationDate&&,
+                        f1.&&ChangeDate&&, f1.&&CreationAuthor&&, f1.&&IsParent&&, f1.&&ParentObjectId&&, f1.&&ParentObjectUid&&, f1.&&IsRead&&,
+                        f1.&&HasUnreadChild&&, f1.&&UnreadCount&&, f1.&&Priority&&, f1.&&ChangeDateHash&&, f1.&&ChildCount&&, f1.&&MessageAttachments&&,
+                        f1.&&ObjectRecipients&&, f1.&&MessageObjects&&, f1.&&Url&&, 0 &&IsArchive&&
+                    from (
+                        select fo.&&ChangeDateHash&& &&FavoriteChangeDateHash&&, fd.&&Id&&, fd.&&Subject&&, fd.&&Text&&, fd.&&TextHtml&&, fd.&&ActionObjectUid&&, fd.&&ActionUid&&, fd.&&ActionObjectId&&,
+                            fd.&&Recipient&&, fd.&&CreationDate&&, fd.&&ChangeDate&&, fd.&&CreationAuthor&&, fd.&&IsParent&&,
+                            fd.&&ParentObjectId&&, fd.&&ParentObjectUid&&, fd.&&IsRead&&, fd.&&HasUnreadChild&&,
+                            fd.&&UnreadCount&&, fd.&&Priority&&, fd.&&ChangeDateHash&&, fd.&&ChildCount&&, fd.&&MessageAttachments&&,
+                            fd.&&ObjectRecipients&&, fd.&&MessageObjects&&, fd.&&Url&&
+                        from &&Feed&& fd right join &&FeedObjectId&& fo on fo.&&IsArchive&& = 0 and fo.&&ParentObjectUid&& = fd.&&ParentObjectUid&& and fo.&&ParentObjectId&& = fd.&&ParentObjectId&&
+                        where fd.&&IsParent&& = 1
+                            and fd.&&Recipient&& = p_Recipient
+                            and fo.&&ChangeDateHash&& < p_ChangeDateHash
+                        order by fo.&&ChangeDateHash&& desc
+                        limit (&&MaxCount&&)
+                        ) f1
+
+                    union all
+
+                    select f2.&&FavoriteChangeDateHash&&, f2.&&Id&&, f2.&&Subject&&, f2.&&Text&&, f2.&&TextHtml&&, f2.&&ActionObjectUid&&, f2.&&ActionUid&&, f2.&&ActionObjectId&&, f2.&&Recipient&&, f2.&&CreationDate&&,
+                        f2.&&ChangeDate&&, f2.&&CreationAuthor&&, f2.&&IsParent&&, f2.&&ParentObjectId&&, f2.&&ParentObjectUid&&, f2.&&IsRead&&,
+                        f2.&&HasUnreadChild&&, f2.&&UnreadCount&&, f2.&&Priority&&, f2.&&ChangeDateHash&&, f2.&&ChildCount&&, f2.&&MessageAttachments&&,
+                        f2.&&ObjectRecipients&&, f2.&&MessageObjects&&, f2.&&Url&&, 1 &&IsArchive&&
+                    from (
+                        select fo.&&ChangeDateHash&& &&FavoriteChangeDateHash&&, fa.&&Id&&, fa.&&Subject&&, fa.&&Text&&, fa.&&TextHtml&&, fa.&&ActionObjectUid&&, fa.&&ActionUid&&, fa.&&ActionObjectId&&,
+                            fa.&&Recipient&&, fa.&&CreationDate&&, fa.&&ChangeDate&&, fa.&&CreationAuthor&&, fa.&&IsParent&&,
+                            fa.&&ParentObjectId&&, fa.&&ParentObjectUid&&, fa.&&IsRead&&, fa.&&HasUnreadChild&&,
+                            fa.&&UnreadCount&&, fa.&&Priority&&, fa.&&ChangeDateHash&&, fa.&&ChildCount&&, fa.&&MessageAttachments&&,
+                            fa.&&ObjectRecipients&&, fa.&&MessageObjects&&, fa.&&Url&&
+                        from &&FeedArchive&& fa right join &&FeedObjectId&& fo on fo.&&IsArchive&& = 1 and fo.&&ParentObjectUid&& = fa.&&ParentObjectUid&& and fo.&&ParentObjectId&& = fa.&&ParentObjectId&&
+                        where fa.&&IsParent&& = 1
+                            and fa.&&Recipient&& = p_Recipient
+                            and fo.&&ChangeDateHash&& < p_ChangeDateHash
+                        order by fo.&&ChangeDateHash&& desc
+                        limit (&&MaxCount&&)
+                        ) f2
+                    ) F
+                order by f.&&FavoriteChangeDateHash&& desc
+                limit (&&MaxCount&&)
+            loop 
+                begin
+
+                    &&Id&& = v_TableRecord.&&Id&&;
+                    &&Subject&& = v_TableRecord.&&Subject&&;
+                    &&Text&& = v_TableRecord.&&Text&&;
+                    &&TextHtml&& = v_TableRecord.&&TextHtml&&;
+                    &&ActionObjectUid&& = v_TableRecord.&&ActionObjectUid&&;
+                    &&ActionUid&& = v_TableRecord.&&ActionUid&&;
+                    &&ActionObjectId&& = v_TableRecord.&&ActionObjectId&&;
+                    &&Recipient&& = v_TableRecord.&&Recipient&&;
+                    &&CreationDate&& = v_TableRecord.&&CreationDate&&;
+                    &&ChangeDate&& = v_TableRecord.&&ChangeDate&&;
+                    &&CreationAuthor&& = v_TableRecord.&&CreationAuthor&&;
+                    &&IsParent&& = v_TableRecord.&&IsParent&&;
+                    &&ParentObjectId&& = v_TableRecord.&&ParentObjectId&&;
+                    &&ParentObjectUid&& = v_TableRecord.&&ParentObjectUid&&;
+                    &&IsRead&& = v_TableRecord.&&IsRead&&;
+                    &&HasUnreadChild&& = v_TableRecord.&&HasUnreadChild&&;
+                    &&UnreadCount&& = v_TableRecord.&&UnreadCount&&;
+                    &&Priority&& = v_TableRecord.&&Priority&&;
+                    &&ChangeDateHash&& = v_TableRecord.&&ChangeDateHash&&;
+                    &&ChildCount&& = v_TableRecord.&&ChildCount&&;
+                    &&MessageAttachments&& = v_TableRecord.&&MessageAttachments&&;
+                    &&ObjectRecipients&& = v_TableRecord.&&ObjectRecipients&&;
+                    &&MessageObjects&& = v_TableRecord.&&MessageObjects&&;
+                    &&Url&& = v_TableRecord.&&Url&&;
+                    
+                    return next;
+                end;
+            end loop;
+
+            delete from &&FeedFilterAuthors&&;
+        end;
+    end if;
+  
+    delete from &&FeedObjectId&&;
+
+end
+
+$$
+language plpgsql;
+        ]]>
+      </text>
+    </procedure>
+
+    <procedure name="FeedArchiveSearch">
+      <mappings>
+        <hibernate-mapping xmlns="urn:nhibernate-mapping-2.2">
+          <sql-query name="ExecFeedArchiveSearch">
+            select * from FeedArchiveSearch(:MaxCount, :MaxChildCount, :ChangeDateHash, lower(:FastSearch), :Recipient, :ChangeDateFrom, :ChangeDateTo, :FeedAuthors, :OnlyUnread)
+          </sql-query>
+        </hibernate-mapping>
+      </mappings>
+      <text>
+        <![CDATA[
+/**************************************************************************************
+
+   Фильтрация сообщений, включая сообщения архива
+
+**************************************************************************************/
+create or replace function FeedArchiveSearch(
+    &&MaxCount&& bigint,            --$1
+    &&MaxChildCount&& bigint,        --$2
+    p_ChangeDateHash varchar(35),    --$3
+    &&FastSearch&& varchar(255),        --$4
+    p_Recipient bigint,            --$5
+    P_FromDate timestamp,        --$6
+    P_ToDate timestamp,            --$7
+    P_Authors text,            --$8
+    P_OnlyUnread smallint)  --$9
+returns table(
+    &&Id&& bigint,
+    &&Subject&& text,
+    &&Text&& text,
+    &&TextHtml&& text,
+    &&ActionObjectUid&& uuid,
+    &&ActionUid&& uuid,
+    &&ActionObjectId&& bigint,
+    &&Recipient&& bigint,
+    &&CreationDate&& timestamp,
+    &&ChangeDate&& timestamp,
+    &&CreationAuthor&& bigint,
+    &&IsParent&& smallint,
+    &&ParentObjectId&& bigint,
+    &&ParentObjectUid&& uuid,
+    &&IsRead&& smallint,
+    &&HasUnreadChild&& smallint,
+    &&UnreadCount&& integer,
+    &&Priority&& integer,
+    &&ChangeDateHash&& varchar(35),
+    &&ChildCount&& integer,
+    &&MessageAttachments&& bytea,
+    &&ObjectRecipients&& bytea,
+    &&MessageObjects&& bytea,
+    &&Url&& varchar(2000))
+
+as
+$$
+
+declare
+v_TableRecord record;
+v_TableRecord2 record;
+&&IsArchive&& smallint;
+
+begin
+
+    p_ChangeDateHash = coalesce(p_ChangeDateHash, 'zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz');
+
+    create temporary table if not exists &&FeedObject&& (
+        &&ParentObjectId&& bigint not null,
+        &&ParentObjectUid&& uuid not null,
+        &&IsArchive&& smallint
+        ) on commit delete rows;
+
+    if ($8 is null) then
+        begin
+            insert into &&FeedObject&& (&&ParentObjectUid&&, &&ParentObjectId&&, &&IsArchive&&)
+            select distinct ff.&&ParentObjectUid&&, ff.&&ParentObjectId&&, min(ff.&&IsArchive&&)
+            from (
+                select f.&&ParentObjectUid&&, f.&&ParentObjectId&&, 0 &&IsArchive&&
+                from &&Feed&& f
+                where f.&&Recipient&& = p_Recipient and
+                    f.&&ChangeDate&& >= P_FromDate and
+                    (P_ToDate is null or f.&&ChangeDate&& <= P_ToDate) and
+                    f.&&ChangeDateHash&& < p_ChangeDateHash and
+                    (P_OnlyUnread = 0 or f.&&IsRead&& = 0) and
+                    (&&FastSearch&& is null or lower(f.&&Text&&) like &&FastSearch&& or lower(f.&&Subject&&) like &&FastSearch&&)
+                
+                union all
+
+                select fa.&&ParentObjectUid&&, fa.&&ParentObjectId&&, 1 &&IsArchive&&
+                from &&FeedArchive&& fa
+                where fa.&&Recipient&& = p_Recipient and
+                    fa.&&ChangeDate&& >= P_FromDate and
+                    (P_ToDate is null or fa.&&ChangeDate&& <= P_ToDate) and
+                    fa.&&ChangeDateHash&& < p_ChangeDateHash and
+                    (&&FastSearch&& is null or lower(fa.&&Text&&) like &&FastSearch&& or lower(fa.&&Subject&&) like &&FastSearch&&)
+            ) ff
+            group by ff.&&ParentObjectUid&&, ff.&&ParentObjectId&&;
+      
+            -- parents
+            for v_TableRecord in
+                select ff.&&Id&&, ff.&&Subject&&, ff.&&Text&&, ff.&&TextHtml&&, ff.&&ActionObjectUid&&, ff.&&ActionUid&&, ff.&&ActionObjectId&&, ff.&&Recipient&&,
+                    ff.&&CreationDate&&, ff.&&ChangeDate&&, ff.&&CreationAuthor&&, ff.&&IsParent&&, ff.&&ParentObjectId&&,
+                    ff.&&ParentObjectUid&&, ff.&&IsRead&&, ff.&&HasUnreadChild&&, ff.&&UnreadCount&&, ff.&&Priority&&, ff.&&ChangeDateHash&&,
+                    ff.&&ChildCount&&, ff.&&MessageAttachments&&, ff.&&ObjectRecipients&&, ff.&&MessageObjects&&, ff.&&Url&&, ff.&&IsArchive&&
+                from (
+                    select f1.&&Id&&, f1.&&Subject&&, f1.&&Text&&, f1.&&TextHtml&&, f1.&&ActionObjectUid&&, f1.&&ActionUid&&, f1.&&ActionObjectId&&, f1.&&Recipient&&, f1.&&CreationDate&&,
+                        f1.&&ChangeDate&&, f1.&&CreationAuthor&&, f1.&&IsParent&&, f1.&&ParentObjectId&&, f1.&&ParentObjectUid&&, f1.&&IsRead&&,
+                        f1.&&HasUnreadChild&&, f1.&&UnreadCount&&, f1.&&Priority&&, f1.&&ChangeDateHash&&, f1.&&ChildCount&&, f1.&&MessageAttachments&&,
+                        f1.&&ObjectRecipients&&, f1.&&MessageObjects&&, f1.&&Url&&, 0 &&IsArchive&&
+                    from (
+                        select f.&&Id&&, f.&&Subject&&, f.&&Text&&, f.&&TextHtml&&, f.&&ActionObjectUid&&, f.&&ActionUid&&, f.&&ActionObjectId&&,
+                            f.&&Recipient&&, f.&&CreationDate&&, f.&&ChangeDate&&, f.&&CreationAuthor&&, f.&&IsParent&&,
+                            f.&&ParentObjectId&&, f.&&ParentObjectUid&&, f.&&IsRead&&, f.&&HasUnreadChild&&,
+                            f.&&UnreadCount&&, f.&&Priority&&, f.&&ChangeDateHash&&, f.&&ChildCount&&, f.&&MessageAttachments&&,
+                            f.&&ObjectRecipients&&, f.&&MessageObjects&&, f.&&Url&&
+                        from &&Feed&& f right join &&FeedObject&& fo on fo.&&IsArchive&& = 0 and fo.&&ParentObjectUid&& = f.&&ParentObjectUid&& and fo.&&ParentObjectId&& = f.&&ParentObjectId&&
+                        where f.&&IsParent&& = 1 and
+                            f.&&Recipient&& = p_Recipient and
+                            f.&&ChangeDateHash&& < p_ChangeDateHash
+                        order by f.&&ChangeDateHash&& desc limit ($1)
+                        ) f1
+
+                    union all
+                    
+                    select f2.&&Id&&, f2.&&Subject&&, f2.&&Text&&, f2.&&TextHtml&&, f2.&&ActionObjectUid&&, f2.&&ActionUid&&, f2.&&ActionObjectId&&, f2.&&Recipient&&,
+                        f2.&&CreationDate&&, f2.&&ChangeDate&&, f2.&&CreationAuthor&&, f2.&&IsParent&&, f2.&&ParentObjectId&&,
+                        f2.&&ParentObjectUid&&, f2.&&IsRead&&, f2.&&HasUnreadChild&&, f2.&&UnreadCount&&, f2.&&Priority&&, f2.&&ChangeDateHash&&,
+                        f2.&&ChildCount&&, f2.&&MessageAttachments&&, f2.&&ObjectRecipients&&, f2.&&MessageObjects&&, f2.&&Url&&, 1 &&IsArchive&&
+                    from (
+                        select fa.&&Id&&, fa.&&Subject&&, fa.&&Text&&,fa.&&TextHtml&&, fa.&&ActionObjectUid&&, fa.&&ActionUid&&, fa.&&ActionObjectId&&,
+                            fa.&&Recipient&&, fa.&&CreationDate&&,fa.&&ChangeDate&&, fa.&&CreationAuthor&&,fa.&&IsParent&&,
+                            fa.&&ParentObjectId&&, fa.&&ParentObjectUid&&, fa.&&IsRead&&, fa.&&HasUnreadChild&&,
+                            fa.&&UnreadCount&&, fa.&&Priority&&, fa.&&ChangeDateHash&&, fa.&&ChildCount&&, fa.&&MessageAttachments&&,
+                            fa.&&ObjectRecipients&&, fa.&&MessageObjects&&, fa.&&Url&&
+                        from &&FeedArchive&& fa right join &&FeedObject&& fo on fo.&&IsArchive&& = 1 and fo.&&ParentObjectUid&& = fa.&&ParentObjectUid&& and fo.&&ParentObjectId&& = fa.&&ParentObjectId&&
+                        where fa.&&IsParent&& = 1 and
+                            fa.&&Recipient&& = p_Recipient and
+                            fa.&&ChangeDateHash&& < p_ChangeDateHash
+                        order by fa.&&ChangeDateHash&& desc limit ($1)
+                        ) f2
+                    ) ff
+                limit ($1)
+            loop
+                begin
+                    &&Id&& = v_TableRecord.&&Id&&;
+                    &&Subject&& = v_TableRecord.&&Subject&&;
+                    &&Text&& = v_TableRecord.&&Text&&;
+                    &&TextHtml&& = v_TableRecord.&&TextHtml&&;
+                    &&ActionObjectUid&& = v_TableRecord.&&ActionObjectUid&&;
+                    &&ActionUid&& = v_TableRecord.&&ActionUid&&;
+                    &&ActionObjectId&& = v_TableRecord.&&ActionObjectId&&;
+                    &&Recipient&& = v_TableRecord.&&Recipient&&;
+                    &&CreationDate&& = v_TableRecord.&&CreationDate&&;
+                    &&ChangeDate&& = v_TableRecord.&&ChangeDate&&;
+                    &&CreationAuthor&& = v_TableRecord.&&CreationAuthor&&;
+                    &&IsParent&& = v_TableRecord.&&IsParent&&;
+                    &&ParentObjectId&& = v_TableRecord.&&ParentObjectId&&;
+                    &&ParentObjectUid&& = v_TableRecord.&&ParentObjectUid&&;
+                    &&IsRead&& = v_TableRecord.&&IsRead&&;
+                    &&HasUnreadChild&& = v_TableRecord.&&HasUnreadChild&&;
+                    &&UnreadCount&& = v_TableRecord.&&UnreadCount&&;
+                    &&Priority&& = v_TableRecord.&&Priority&&;
+                    &&ChangeDateHash&& = v_TableRecord.&&ChangeDateHash&&;
+                    &&ChildCount&& = v_TableRecord.&&ChildCount&&;
+                    &&MessageAttachments&& = v_TableRecord.&&MessageAttachments&&;
+                    &&ObjectRecipients&& = v_TableRecord.&&ObjectRecipients&&;
+                    &&MessageObjects&& = v_TableRecord.&&MessageObjects&&;
+                    &&Url&& = v_TableRecord.&&Url&&;
+                    &&IsArchive&& = v_TableRecord.&&IsArchive&&;
+
+                    return next;
+                
+                
+                    -- дочерние сообщения
+                    for v_TableRecord2 in
+                        select ff.&&Id&&, ff.&&Subject&&, ff.&&Text&&, ff.&&TextHtml&&, ff.&&ActionObjectUid&&, ff.&&ActionUid&&, ff.&&ActionObjectId&&,
+                            ff.&&Recipient&&, ff.&&CreationDate&&, ff.&&ChangeDate&&, ff.&&CreationAuthor&&, ff.&&IsRead&&, ff.&&HasUnreadChild&&,
+                            ff.&&UnreadCount&&, ff.&&Priority&&, ff.&&ChangeDateHash&&, ff.&&IsParent&&, ff.&&ParentObjectId&&, ff.&&ParentObjectUid&&, ff.&&ChildCount&&, ff.&&MessageAttachments&&,
+                            ff.&&ObjectRecipients&&, ff.&&MessageObjects&&, ff.&&Url&&
+                        from (
+                            select f1.&&Id&&, f1.&&Subject&&, f1.&&Text&&, f1.&&TextHtml&&, f1.&&ActionObjectUid&&, f1.&&ActionUid&&, f1.&&ActionObjectId&&, f1.&&Recipient&&, f1.&&CreationDate&&,
+                                f1.&&ChangeDate&&, f1.&&CreationAuthor&&, f1.&&IsRead&&, f1.&&HasUnreadChild&&, f1.&&UnreadCount&&, f1.&&Priority&&, f1.&&ChangeDateHash&&,
+                                f1.&&IsParent&&, f1.&&ParentObjectId&&, f1.&&ParentObjectUid&&, f1.&&ChildCount&&, f1.&&MessageAttachments&&, f1.&&ObjectRecipients&&, f1.&&MessageObjects&&, f1.&&Url&&
+                            from (
+                                select f.&&Id&&, f.&&Subject&&, f.&&Text&&, f.&&TextHtml&&, f.&&ActionObjectUid&&, f.&&ActionUid&&,
+                                    f.&&ActionObjectId&&, f.&&Recipient&&, f.&&CreationDate&&, f.&&ChangeDate&&, f.&&CreationAuthor&&,
+                                    f.&&IsRead&&, f.&&HasUnreadChild&&, f.&&UnreadCount&&, f.&&Priority&&, f.&&ChangeDateHash&&,
+                                    f.&&IsParent&&, f.&&ParentObjectId&&, f.&&ParentObjectUid&&, f.&&ChildCount&&, f.&&MessageAttachments&&, f.&&ObjectRecipients&&,
+                                    f.&&MessageObjects&&, f.&&Url&&
+                                from &&Feed&& f
+                                where f.&&IsParent&& = 0 and
+                                    f.&&Recipient&& = p_Recipient and
+                                    v_TableRecord.&&IsArchive&& = 0 and
+                                    f.&&ParentObjectUid&& = v_TableRecord.&&ParentObjectUid&& and
+                                    f.&&ParentObjectId&& = v_TableRecord.&&ParentObjectId&& and
+                                    (P_ToDate is null or f.&&ChangeDate&& <= P_ToDate) and
+                                    (&&FastSearch&& is null or lower(f.&&Text&&) like &&FastSearch&& or lower(f.&&Subject&&) like &&FastSearch&&)
+                                order by f.&&ChangeDateHash&& desc
+                                limit ($1)
+                                ) f1
+                            
+                            union all
+
+                            select f2.&&Id&&, f2.&&Subject&&, f2.&&Text&&, f2.&&TextHtml&&, f2.&&ActionObjectUid&&, f2.&&ActionUid&&, f2.&&ActionObjectId&&, f2.&&Recipient&&, f2.&&CreationDate&&,
+                                f2.&&ChangeDate&&, f2.&&CreationAuthor&&, f2.&&IsRead&&, f2.&&HasUnreadChild&&, f2.&&UnreadCount&&, f2.&&Priority&&, f2.&&ChangeDateHash&&,
+                                f2.&&IsParent&&, f2.&&ParentObjectId&&, f2.&&ParentObjectUid&&, f2.&&ChildCount&&, f2.&&MessageAttachments&&, f2.&&ObjectRecipients&&, f2.&&MessageObjects&&, f2.&&Url&&
+                            from (
+                                select fa.&&Id&&, fa.&&Subject&&, fa.&&Text&&, fa.&&TextHtml&&, fa.&&ActionObjectUid&&, fa.&&ActionUid&&,
+                                    fa.&&ActionObjectId&&, fa.&&Recipient&&, fa.&&CreationDate&&, fa.&&ChangeDate&&, fa.&&CreationAuthor&&,
+                                    fa.&&IsRead&&, fa.&&HasUnreadChild&&, fa.&&UnreadCount&&, fa.&&Priority&&, fa.&&ChangeDateHash&&,
+                                    fa.&&IsParent&&, fa.&&ParentObjectId&&, fa.&&ParentObjectUid&&, fa.&&ChildCount&&, fa.&&MessageAttachments&&, fa.&&ObjectRecipients&&,
+                                    fa.&&MessageObjects&&, fa.&&Url&&
+                                from &&FeedArchive&& fa
+                                where fa.&&IsParent&& = 0 and
+                                    fa.&&Recipient&& = p_Recipient and
+                                    v_TableRecord.&&IsArchive&& = 1 and
+                                    fa.&&ParentObjectUid&& = v_TableRecord.&&ParentObjectUid&& and
+                                    fa.&&ParentObjectId&& = v_TableRecord.&&ParentObjectId&& and
+                                    (P_ToDate is null or fa.&&ChangeDate&& <= P_ToDate) and
+                                    (P_OnlyUnread = 0 or fa.&&IsRead&& = 0) and
+                                    (&&FastSearch&& is null or lower(fa.&&Text&&) like &&FastSearch&& or lower(fa.&&Subject&&) like &&FastSearch&&)
+                                order by fa.&&ChangeDateHash&& desc
+                                limit ($1)
+                                ) f2
+                            ) ff
+                        order by ff.&&ChangeDateHash&& desc
+                        limit ($1)
+                    loop
+                        begin
+                            &&Id&& = v_TableRecord2.&&Id&&;
+                            &&Subject&& = v_TableRecord2.&&Subject&&;
+                            &&Text&& = v_TableRecord2.&&Text&&;
+                            &&TextHtml&& = v_TableRecord2.&&TextHtml&&;
+                            &&ActionObjectUid&& = v_TableRecord2.&&ActionObjectUid&&;
+                            &&ActionUid&& = v_TableRecord2.&&ActionUid&&;
+                            &&ActionObjectId&& = v_TableRecord2.&&ActionObjectId&&;
+                            &&Recipient&& = v_TableRecord2.&&Recipient&&;
+                            &&CreationDate&& = v_TableRecord2.&&CreationDate&&;
+                            &&ChangeDate&& = v_TableRecord2.&&ChangeDate&&;
+                            &&CreationAuthor&& = v_TableRecord2.&&CreationAuthor&&;
+                            &&IsParent&& = v_TableRecord2.&&IsParent&&;
+                            &&ParentObjectId&& = v_TableRecord2.&&ParentObjectId&&;
+                            &&ParentObjectUid&& = v_TableRecord2.&&ParentObjectUid&&;
+                            &&IsRead&& = v_TableRecord2.&&IsRead&&;
+                            &&HasUnreadChild&& = v_TableRecord2.&&HasUnreadChild&&;
+                            &&UnreadCount&& = v_TableRecord2.&&UnreadCount&&;
+                            &&Priority&& = v_TableRecord2.&&Priority&&;
+                            &&ChangeDateHash&& = v_TableRecord2.&&ChangeDateHash&&;
+                            &&ChildCount&& = v_TableRecord2.&&ChildCount&&;
+                            &&MessageAttachments&& = v_TableRecord2.&&MessageAttachments&&;
+                            &&ObjectRecipients&& = v_TableRecord2.&&ObjectRecipients&&;
+                            &&MessageObjects&& = v_TableRecord2.&&MessageObjects&&;
+                            &&Url&& = v_TableRecord2.&&Url&&;
+
+                            return next;
+                        end;
+                    end loop;
+                end;
+            end loop;
+        end;
+    else
+        begin
+            create temporary table if not exists &&FeedFilterAuthors&& (
+                &&Id&& bigint not null primary key
+            ) on commit delete rows;
+            
+            insert into &&FeedFilterAuthors&&
+            select cast(Val as bigint) as AuthorId from SplitString(P_Authors, ',');
+    
+            insert into &&FeedObject&& (&&ParentObjectUid&&, &&ParentObjectId&&, &&IsArchive&&)
+            select distinct ff.&&ParentObjectUid&&, ff.&&ParentObjectId&&, min(ff.&&IsArchive&&)
+            from (
+                select f.&&ParentObjectUid&&, f.&&ParentObjectId&&, 0 &&IsArchive&&
+                from &&Feed&& f
+                where f.&&Recipient&& = p_Recipient and
+                    f.&&ChangeDate&& >= P_FromDate and
+                    (P_ToDate is null or f.&&ChangeDate&& <= P_ToDate) and
+                    f.&&ChangeDateHash&& < p_ChangeDateHash and
+                    (f.&&CreationAuthor&& in (select ffa.&&Id&& from &&FeedFilterAuthors&& ffa)) and
+                    (P_OnlyUnread = 0 or f.&&IsRead&& = 0) and
+                    (&&FastSearch&& is null or lower(f.&&Text&&) like &&FastSearch&& or lower(f.&&Subject&&) like &&FastSearch&&)
+
+                union all
+
+                select fa.&&ParentObjectUid&&, fa.&&ParentObjectId&&, 1 &&IsArchive&&
+                from &&FeedArchive&& fa
+                where fa.&&Recipient&& = p_Recipient and
+                    fa.&&ChangeDate&& >= P_FromDate and
+                    (P_ToDate is null or fa.&&ChangeDate&& <= P_ToDate) and
+                    fa.&&ChangeDateHash&& < p_ChangeDateHash and
+                    (fa.&&CreationAuthor&& in (select ffa.&&Id&& from &&FeedFilterAuthors&& ffa)) and
+                    (&&FastSearch&& is null or lower(fa.&&Text&&) like &&FastSearch&& or lower(fa.&&Subject&&) like &&FastSearch&&)
+                ) ff
+            group by ff.&&ParentObjectUid&&, ff.&&ParentObjectId&&;
+  
+            -- parents
+            for v_TableRecord in
+                select ff.&&Id&&, ff.&&Subject&&, ff.&&Text&&, ff.&&TextHtml&&, ff.&&ActionObjectUid&&, ff.&&ActionUid&&, ff.&&ActionObjectId&&, ff.&&Recipient&&,
+                    ff.&&CreationDate&&, ff.&&ChangeDate&&, ff.&&CreationAuthor&&, ff.&&IsParent&&, ff.&&ParentObjectId&&,
+                    ff.&&ParentObjectUid&&, ff.&&IsRead&&, ff.&&HasUnreadChild&&, ff.&&UnreadCount&&, ff.&&Priority&&, ff.&&ChangeDateHash&&,
+                    ff.&&ChildCount&&, ff.&&MessageAttachments&&, ff.&&ObjectRecipients&&, ff.&&MessageObjects&&, ff.&&Url&&, ff.&&IsArchive&&
+                from (
+                    select f1.&&Id&&, f1.&&Subject&&, f1.&&Text&&, f1.&&TextHtml&&, f1.&&ActionObjectUid&&, f1.&&ActionUid&&, f1.&&ActionObjectId&&, f1.&&Recipient&&, f1.&&CreationDate&&,
+                        f1.&&ChangeDate&&, f1.&&CreationAuthor&&, f1.&&IsParent&&, f1.&&ParentObjectId&&, f1.&&ParentObjectUid&&, f1.&&IsRead&&,
+                        f1.&&HasUnreadChild&&, f1.&&UnreadCount&&, f1.&&Priority&&, f1.&&ChangeDateHash&&, f1.&&ChildCount&&, f1.&&MessageAttachments&&,
+                        f1.&&ObjectRecipients&&, f1.&&MessageObjects&&, f1.&&Url&&, 0 &&IsArchive&&
+                    from (
+                        select f.&&Id&&, f.&&Subject&&, f.&&Text&&, f.&&TextHtml&&, f.&&ActionObjectUid&&, f.&&ActionUid&&, f.&&ActionObjectId&&,
+                            f.&&Recipient&&, f.&&CreationDate&&, f.&&ChangeDate&&, f.&&CreationAuthor&&, f.&&IsParent&&,
+                            f.&&ParentObjectId&&, f.&&ParentObjectUid&&, f.&&IsRead&&, f.&&HasUnreadChild&&,
+                            f.&&UnreadCount&&, f.&&Priority&&, f.&&ChangeDateHash&&, f.&&ChildCount&&, f.&&MessageAttachments&&,
+                            f.&&ObjectRecipients&&, f.&&MessageObjects&&, f.&&Url&&
+                        from &&Feed&& f right join &&FeedObject&& fo on fo.&&IsArchive&& = 0 and fo.&&ParentObjectUid&& = f.&&ParentObjectUid&& and fo.&&ParentObjectId&& = f.&&ParentObjectId&&
+                        where f.&&IsParent&& = 1 and
+                            f.&&Recipient&& = p_Recipient and
+                            f.&&ChangeDateHash&& < p_ChangeDateHash
+                        order by f.&&ChangeDateHash&& desc
+                        limit($1)
+                        ) f1
+
+                    union all
+
+                    select f2.&&Id&&, f2.&&Subject&&, f2.&&Text&&, f2.&&TextHtml&&, f2.&&ActionObjectUid&&, f2.&&ActionUid&&, f2.&&ActionObjectId&&, f2.&&Recipient&&, f2.&&CreationDate&&,
+                        f2.&&ChangeDate&&, f2.&&CreationAuthor&&, f2.&&IsParent&&, f2.&&ParentObjectId&&, f2.&&ParentObjectUid&&, f2.&&IsRead&&,
+                        f2.&&HasUnreadChild&&, f2.&&UnreadCount&&, f2.&&Priority&&, f2.&&ChangeDateHash&&, f2.&&ChildCount&&, f2.&&MessageAttachments&&,
+                        f2.&&ObjectRecipients&&, f2.&&MessageObjects&&, f2.&&Url&&, 1 &&IsArchive&&
+                    from (
+                        select fa.&&Id&&, fa.&&Subject&&, fa.&&Text&&, fa.&&TextHtml&&, fa.&&ActionObjectUid&&, fa.&&ActionUid&&, fa.&&ActionObjectId&&,
+                            fa.&&Recipient&&, fa.&&CreationDate&&, fa.&&ChangeDate&&, fa.&&CreationAuthor&&, fa.&&IsParent&&,
+                            fa.&&ParentObjectId&&, fa.&&ParentObjectUid&&, fa.&&IsRead&&, fa.&&HasUnreadChild&&,
+                            fa.&&UnreadCount&&, fa.&&Priority&&, fa.&&ChangeDateHash&&, fa.&&ChildCount&&, fa.&&MessageAttachments&&,
+                            fa.&&ObjectRecipients&&, fa.&&MessageObjects&&, fa.&&Url&&
+                        from &&FeedArchive&& fa right join &&FeedObject&& fo on fo.&&IsArchive&& = 1 and fo.&&ParentObjectUid&& = fa.&&ParentObjectUid&& and fo.&&ParentObjectId&& = fa.&&ParentObjectId&&
+                        where fa.&&IsParent&& = 1 and
+                            fa.&&Recipient&& = p_Recipient and
+                            fa.&&ChangeDateHash&& < p_ChangeDateHash
+                        order by fa.&&ChangeDateHash&& desc
+                        limit($1)
+                        ) f2
+                    ) ff
+                order by ff.&&ChangeDateHash&& desc
+                limit($1)
+            loop
+                begin
+                
+                    &&Id&& = v_TableRecord.&&Id&&;
+                    &&Subject&& = v_TableRecord.&&Subject&&;
+                    &&Text&& = v_TableRecord.&&Text&&;
+                    &&TextHtml&& = v_TableRecord.&&TextHtml&&;
+                    &&ActionObjectUid&& = v_TableRecord.&&ActionObjectUid&&;
+                    &&ActionUid&& = v_TableRecord.&&ActionUid&&;
+                    &&ActionObjectId&& = v_TableRecord.&&ActionObjectId&&;
+                    &&Recipient&& = v_TableRecord.&&Recipient&&;
+                    &&CreationDate&& = v_TableRecord.&&CreationDate&&;
+                    &&ChangeDate&& = v_TableRecord.&&ChangeDate&&;
+                    &&CreationAuthor&& = v_TableRecord.&&CreationAuthor&&;
+                    &&IsParent&& = v_TableRecord.&&IsParent&&;
+                    &&ParentObjectId&& = v_TableRecord.&&ParentObjectId&&;
+                    &&ParentObjectUid&& = v_TableRecord.&&ParentObjectUid&&;
+                    &&IsRead&& = v_TableRecord.&&IsRead&&;
+                    &&HasUnreadChild&& = v_TableRecord.&&HasUnreadChild&&;
+                    &&UnreadCount&& = v_TableRecord.&&UnreadCount&&;
+                    &&Priority&& = v_TableRecord.&&Priority&&;
+                    &&ChangeDateHash&& = v_TableRecord.&&ChangeDateHash&&;
+                    &&ChildCount&& = v_TableRecord.&&ChildCount&&;
+                    &&MessageAttachments&& = v_TableRecord.&&MessageAttachments&&;
+                    &&ObjectRecipients&& = v_TableRecord.&&ObjectRecipients&&;
+                    &&MessageObjects&& = v_TableRecord.&&MessageObjects&&;
+                    &&Url&& = v_TableRecord.&&Url&&;
+                    &&IsArchive&& = v_TableRecord.&&IsArchive&&;
+
+                    return next;
+                
+                     -- childs
+                    for v_TableRecord2 in 
+                        select ff.&&Id&&, ff.&&Subject&&, ff.&&Text&&, ff.&&TextHtml&&, ff.&&ActionObjectUid&&, ff.&&ActionUid&&, ff.&&ActionObjectId&&,
+                            ff.&&Recipient&&, ff.&&CreationDate&&, ff.&&ChangeDate&&, ff.&&CreationAuthor&&, ff.&&IsRead&&, ff.&&HasUnreadChild&&,
+                            ff.&&UnreadCount&&, ff.&&Priority&&, ff.&&ChangeDateHash&&, ff.&&IsParent&&, ff.&&ParentObjectId&&, ff.&&ParentObjectUid&&, ff.&&ChildCount&&, ff.&&MessageAttachments&&,
+                            ff.&&ObjectRecipients&&, ff.&&MessageObjects&&, ff.&&Url&&
+                        from (
+                            select f1.&&Id&&, f1.&&Subject&&, f1.&&Text&&, f1.&&TextHtml&&, f1.&&ActionObjectUid&&, f1.&&ActionUid&&, f1.&&ActionObjectId&&, f1.&&Recipient&&, f1.&&CreationDate&&,
+                                f1.&&ChangeDate&&, f1.&&CreationAuthor&&, f1.&&IsRead&&, f1.&&HasUnreadChild&&, f1.&&UnreadCount&&, f1.&&Priority&&, f1.&&ChangeDateHash&&,
+                                f1.&&IsParent&&, f1.&&ParentObjectId&&, f1.&&ParentObjectUid&&, f1.&&ChildCount&&, f1.&&MessageAttachments&&, f1.&&ObjectRecipients&&, f1.&&MessageObjects&&, f1.&&Url&&
+                            from (
+                                select f.&&Id&&, f.&&Subject&&, f.&&Text&&, f.&&TextHtml&&, f.&&ActionObjectUid&&, f.&&ActionUid&&,
+                                    f.&&ActionObjectId&&, f.&&Recipient&&, f.&&CreationDate&&, f.&&ChangeDate&&, f.&&CreationAuthor&&,
+                                    f.&&IsRead&&, f.&&HasUnreadChild&&, f.&&UnreadCount&&, f.&&Priority&&, f.&&ChangeDateHash&&,
+                                    f.&&IsParent&&, f.&&ParentObjectId&&, f.&&ParentObjectUid&&, f.&&ChildCount&&, f.&&MessageAttachments&&, f.&&ObjectRecipients&&,
+                                    f.&&MessageObjects&&, f.&&Url&&
+                                from &&Feed&& f
+                                where f.&&IsParent&& = 0 and
+                                    f.&&Recipient&& = p_Recipient and
+                                    v_TableRecord.&&IsArchive&& = 0 and
+                                    f.&&ParentObjectUid&& = v_TableRecord.&&ParentObjectUid&& and
+                                    f.&&ParentObjectId&& = v_TableRecord.&&ParentObjectId&& and
+                                    (P_ToDate is null or f.&&ChangeDate&& <= P_ToDate) and
+                                    (f.&&CreationAuthor&& in (select ffa.&&Id&& from &&FeedFilterAuthors&& ffa)) and
+                                    (&&FastSearch&& is null or lower(f.&&Text&&) like &&FastSearch&& or lower(f.&&Subject&&) like &&FastSearch&&)
+                                limit($1)
+                                ) f1
+                                
+                            union all
+                            
+                            select f2.&&Id&&, f2.&&Subject&&, f2.&&Text&&, f2.&&TextHtml&&, f2.&&ActionObjectUid&&, f2.&&ActionUid&&, f2.&&ActionObjectId&&, f2.&&Recipient&&, f2.&&CreationDate&&,
+                                f2.&&ChangeDate&&, f2.&&CreationAuthor&&, f2.&&IsRead&&, f2.&&HasUnreadChild&&, f2.&&UnreadCount&&, f2.&&Priority&&, f2.&&ChangeDateHash&&,
+                                f2.&&IsParent&&, f2.&&ParentObjectId&&, f2.&&ParentObjectUid&&, f2.&&ChildCount&&, f2.&&MessageAttachments&&, f2.&&ObjectRecipients&&, f2.&&MessageObjects&&, f2.&&Url&&
+                            from (
+                                select fa.&&Id&&, fa.&&Subject&&, fa.&&Text&&, fa.&&TextHtml&&, fa.&&ActionObjectUid&&, fa.&&ActionUid&&,
+                                    fa.&&ActionObjectId&&, fa.&&Recipient&&, fa.&&CreationDate&&, fa.&&ChangeDate&&, fa.&&CreationAuthor&&,
+                                    fa.&&IsRead&&, fa.&&HasUnreadChild&&, fa.&&UnreadCount&&, fa.&&Priority&&, fa.&&ChangeDateHash&&,
+                                    fa.&&IsParent&&, fa.&&ParentObjectId&&, fa.&&ParentObjectUid&&, fa.&&ChildCount&&, fa.&&MessageAttachments&&, fa.&&ObjectRecipients&&,
+                                    fa.&&MessageObjects&&, fa.&&Url&&
+                                from &&FeedArchive&& fa
+                                where fa.&&IsParent&& = 0 and
+                                    fa.&&Recipient&& = p_Recipient and
+                                    v_TableRecord.&&IsArchive&& = 1 and
+                                    fa.&&ParentObjectUid&& = v_TableRecord.&&ParentObjectUid&& and
+                                    fa.&&ParentObjectId&& = v_TableRecord.&&ParentObjectId&& and
+                                    (P_ToDate is null or fa.&&ChangeDate&& <= P_ToDate) and
+                                    (fa.&&CreationAuthor&& in (select ffa.&&Id&& from &&FeedFilterAuthors&& ffa)) and
+                                    (P_OnlyUnread = 0 or fa.&&IsRead&& = 0) and
+                                    (&&FastSearch&& is null or lower(fa.&&Text&&) like &&FastSearch&& or lower(fa.&&Subject&&) like &&FastSearch&&)
+                                limit($1)
+                                ) f2
+                            ) ff
+                        order by ff.&&ChangeDateHash&& desc
+                        limit($1)
+                    loop
+                        begin
+                        
+                            &&Id&& = v_TableRecord2.&&Id&&;
+                            &&Subject&& = v_TableRecord2.&&Subject&&;
+                            &&Text&& = v_TableRecord2.&&Text&&;
+                            &&TextHtml&& = v_TableRecord2.&&TextHtml&&;
+                            &&ActionObjectUid&& = v_TableRecord2.&&ActionObjectUid&&;
+                            &&ActionUid&& = v_TableRecord2.&&ActionUid&&;
+                            &&ActionObjectId&& = v_TableRecord2.&&ActionObjectId&&;
+                            &&Recipient&& = v_TableRecord2.&&Recipient&&;
+                            &&CreationDate&& = v_TableRecord2.&&CreationDate&&;
+                            &&ChangeDate&& = v_TableRecord2.&&ChangeDate&&;
+                            &&CreationAuthor&& = v_TableRecord2.&&CreationAuthor&&;
+                            &&IsParent&& = v_TableRecord2.&&IsParent&&;
+                            &&ParentObjectId&& = v_TableRecord2.&&ParentObjectId&&;
+                            &&ParentObjectUid&& = v_TableRecord2.&&ParentObjectUid&&;
+                            &&IsRead&& = v_TableRecord2.&&IsRead&&;
+                            &&HasUnreadChild&& = v_TableRecord2.&&HasUnreadChild&&;
+                            &&UnreadCount&& = v_TableRecord2.&&UnreadCount&&;
+                            &&Priority&& = v_TableRecord2.&&Priority&&;
+                            &&ChangeDateHash&& = v_TableRecord2.&&ChangeDateHash&&;
+                            &&ChildCount&& = v_TableRecord2.&&ChildCount&&;
+                            &&MessageAttachments&& = v_TableRecord2.&&MessageAttachments&&;
+                            &&ObjectRecipients&& = v_TableRecord2.&&ObjectRecipients&&;
+                            &&MessageObjects&& = v_TableRecord2.&&MessageObjects&&;
+                            &&Url&& = v_TableRecord2.&&Url&&;
+
+                            return next;
+                        end;
+                    end loop;
+                end;
+            end loop;
+  
+            delete from &&FeedFilterAuthors&&;    
+        end;
+
+    end if;
+  
+    delete from &&FeedObject&&;
+
+end
+
+$$
+language plpgsql;
+        ]]>
+      </text>
+    </procedure>
+
+    <procedure name="FeedCommentsLoad">
+      <mappings>
+        <hibernate-mapping xmlns="urn:nhibernate-mapping-2.2">
+          <sql-query name="ExecFeedCommentsLoad">
+            select * from FeedCommentsLoad (:Recipient, :ParentObjectUid, :ParentObjectId, :ChangeDateHash, :MaxChildCount)
+          </sql-query>
+        </hibernate-mapping>
+      </mappings>
+      <text>
+        <![CDATA[
+/**************************************************************************************
+
+   Загружает комментарии к сообщению ленты.
+
+**************************************************************************************/
+create or replace function FeedCommentsLoad(
+    p_Recipient bigint,
+    p_ParentObjectUid  uuid,
+    p_ParentObjectId bigint,
+    p_ChangeDateHash CHAR(35),
+    p_MaxChildCount bigint
+)
+returns table(
+    &&Id&& bigint,
+    &&Subject&& text,
+    &&Text&& text,
+    &&TextHtml&& text,
+    &&ActionObjectUid&& uuid,
+    &&ActionUid&& uuid,
+    &&ActionObjectId&& bigint,
+    &&Recipient&& bigint,
+    &&CreationDate&& timestamp,
+    &&ChangeDate&& timestamp,
+    &&CreationAuthor&& bigint,
+    &&IsParent&& smallint,
+    &&ParentObjectId&& bigint,
+    &&ParentObjectUid&& uuid,
+    &&IsRead&& smallint,
+    &&ReadDate&& timestamp,
+    &&HasUnreadChild&& smallint,
+    &&UnreadCount&& integer,
+    &&Priority&& integer,
+    &&ChangeDateHash&& varchar(35),
+    &&ChildCount&& integer,
+    &&MessageAttachments&& bytea,
+    &&ObjectRecipients&& bytea,
+    &&MessageObjects&& bytea,
+    &&Url&& varchar(2000))
+    
+as
+$$
+
+declare
+v_TableRecord record;
+
+begin
+    
+    for v_TableRecord in 
+        select f1.&&Id&&, f1.&&Subject&&, f1.&&Text&&, f1.&&TextHtml&&, f1.&&ActionObjectUid&&, f1.&&ActionUid&&, f1.&&ActionObjectId&&, f1.&&Recipient&&, f1.&&CreationDate&&,
+            f1.&&ChangeDate&&, f1.&&CreationAuthor&&, f1.&&IsParent&&, f1.&&ParentObjectId&&, f1.&&ParentObjectUid&&,
+            f1.&&IsRead&&, f1.&&ReadDate&&,
+            f1.&&HasUnreadChild&&, f1.&&UnreadCount&&, f1.&&Priority&&, f1.&&ChangeDateHash&&, f1.&&ChildCount&&,
+            f1.&&MessageAttachments&&, f1.&&ObjectRecipients&&, f1.&&MessageObjects&&, f1.&&Url&&
+        from &&Feed&& f1
+        where f1.&&ParentObjectId&& = p_ParentObjectId
+            and f1.&&ParentObjectUid&& = p_ParentObjectUid
+            and f1.&&Recipient&& = p_Recipient
+            and f1.&&IsParent&& = 1
+
+        union all
+
+        select fc.&&Id&&, fc.&&Subject&&, fc.&&Text&&, fc.&&TextHtml&&, fc.&&ActionObjectUid&&, fc.&&ActionUid&&, fc.&&ActionObjectId&&, fc.&&Recipient&&, fc.&&CreationDate&&,
+            fc.&&ChangeDate&&, fc.&&CreationAuthor&&, fc.&&IsParent&&, fc.&&ParentObjectId&&, fc.&&ParentObjectUid&&,
+            fc.&&IsRead&&, fc.&&ReadDate&&,
+            fc.&&HasUnreadChild&&, fc.&&UnreadCount&&, fc.&&Priority&&, fc.&&ChangeDateHash&&, fc.&&ChildCount&&,
+            fc.&&MessageAttachments&&, fc.&&ObjectRecipients&&, fc.&&MessageObjects&&, fc.&&Url&&
+        from (
+            select f.*
+            from &&Feed&& f
+            where f.&&ParentObjectId&& = p_ParentObjectId
+                and f.&&ParentObjectUid&& = p_ParentObjectUid
+                and f.&&Recipient&& = p_Recipient
+                and f.&&IsParent&& = 0
+                and f.&&ChangeDateHash&& < coalesce(p_ChangeDateHash, 'zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz')
+            order by f.&&ChangeDateHash&& desc
+            limit(p_MaxChildCount)
+            ) fc
+    loop
+        begin
+    
+            &&Id&& = v_TableRecord.&&Id&&;
+            &&Subject&& = v_TableRecord.&&Subject&&;
+            &&Text&& = v_TableRecord.&&Text&&;
+            &&TextHtml&& = v_TableRecord.&&TextHtml&&;
+            &&ActionObjectUid&& = v_TableRecord.&&ActionObjectUid&&;
+            &&ActionUid&& = v_TableRecord.&&ActionUid&&;
+            &&ActionObjectId&& = v_TableRecord.&&ActionObjectId&&;
+            &&Recipient&& = v_TableRecord.&&Recipient&&;
+            &&CreationDate&& = v_TableRecord.&&CreationDate&&;
+            &&ChangeDate&& = v_TableRecord.&&ChangeDate&&;
+            &&CreationAuthor&& = v_TableRecord.&&CreationAuthor&&;
+            &&IsParent&& = v_TableRecord.&&IsParent&&;
+            &&ParentObjectId&& = v_TableRecord.&&ParentObjectId&&;
+            &&ParentObjectUid&& = v_TableRecord.&&ParentObjectUid&&;
+            &&IsRead&& = v_TableRecord.&&IsRead&&;
+            &&ReadDate&& = v_TableRecord.&&ReadDate&&;
+            &&HasUnreadChild&& = v_TableRecord.&&HasUnreadChild&&;
+            &&UnreadCount&& = v_TableRecord.&&UnreadCount&&;
+            &&Priority&& = v_TableRecord.&&Priority&&;
+            &&ChangeDateHash&& = v_TableRecord.&&ChangeDateHash&&;
+            &&ChildCount&& = v_TableRecord.&&ChildCount&&;
+            &&MessageAttachments&& = v_TableRecord.&&MessageAttachments&&;
+            &&ObjectRecipients&& = v_TableRecord.&&ObjectRecipients&&;
+            &&MessageObjects&& = v_TableRecord.&&MessageObjects&&;
+            &&Url&& = v_TableRecord.&&Url&&;
+    
+            return next;
+
+        end;
+    end loop;
+end;
+
+$$
+language plpgsql;
+        ]]>
+      </text>
+    </procedure>
+
+    <procedure name="FeedGetUnreadCount">
+      <mappings>
+        <hibernate-mapping xmlns="urn:nhibernate-mapping-2.2">
+          <sql-query name="ExecFeedGetUnreadCount">
+            select * from FeedGetUnreadCount (:Recipient, :Priority)
+          </sql-query>
+        </hibernate-mapping>
+      </mappings>
+      <text>
+        <![CDATA[
+/**************************************************************************************
+
+   Возвращает количество непрочитанных сообщений для заданного пользователя.
+
+**************************************************************************************/
+create or replace function FeedGetUnreadCount(
+    &&Recipient&& bigint,
+    &&Priority&& integer
+)
+returns table(
+    &&WithPriority&& smallint,
+    &&Count&& bigint
+)
+
+as
+$$
+
+declare
+v_TableRecord record;
+
+begin
+    
+    for v_TableRecord in
+        select 1 &&WithPriority&&, count(f.&&Id&&) &&Count&&
+        from &&Feed&& f
+        where
+            f.&&Recipient&& = $1
+            and (f.&&IsRead&& = 0)
+            and (f.&&Priority&& >= $2)
+
+        union
+
+        select 0 &&WithPriority&&, count(f.&&Id&&) &&Count&&
+        from &&Feed&& f
+        where
+            f.&&Recipient&& = $1
+            and (f.&&IsRead&& = 0)
+    loop
+        begin
+        
+    
+            &&WithPriority&& = v_TableRecord.&&WithPriority&&;
+            &&Count&& = v_TableRecord.&&Count&&;
+    
+        return next;
+        end;
+    end loop;
+end
+
+$$
+language plpgsql;
+        ]]>
+      </text>
+    </procedure>
+
+    <procedure name="FeedGetNewIds">
+      <mappings>
+        <hibernate-mapping xmlns="urn:nhibernate-mapping-2.2">
+          <sql-query name="ExecFeedGetNewIds">
+            select * from FeedGetNewIds(:Count)
+          </sql-query>
+        </hibernate-mapping>
+      </mappings>
+      <text>
+        <![CDATA[
+/**************************************************************************************
+
+   Создаёт заданное количество идентификаторов для таблицы Feed и возвращает первый из них.
+
+**************************************************************************************/
+create or replace function FeedGetNewIds(
+    p_Count bigint
+)
+returns bigint
+
+as
+$$
+
+declare 
+v_firstId bigint = 0;
+v_anotherId bigint = 0;
+
+begin
+    while p_Count > 0 loop
+        if (v_firstId = 0) then
+            begin
+                v_firstId = nextval('G_FEED');
+            end;
+        else
+            begin
+                v_anotherId = nextval('G_FEED');
+            end;
+        end if;
+        p_Count = p_Count - 1;
+    end loop;
+
+    return v_firstId;
+end
+$$
+language plpgsql;
+        ]]>
+      </text>
+    </procedure>
+
+    <procedure name="FeedChangeDateHashFirst">
+      <mappings>
+        <hibernate-mapping xmlns="urn:nhibernate-mapping-2.2">
+          <sql-query name="ExecFeedChangeDateHashFirst">
+            select * from FeedChangeDateHashFirst(:Recipient)
+          </sql-query>
+        </hibernate-mapping>
+      </mappings>
+      <text>
+        <![CDATA[
+/**************************************************************************************
+
+   Возвращает первый hash из ленты сообщений.
+
+**************************************************************************************/
+create or replace function FeedChangeDateHashFirst(p_Recipient bigint)
+returns varchar(35)
+
+as
+$$
+
+declare
+&&ChangeDateHash&& varchar(35);
+
+begin
+
+    select f.&&ChangeDateHash&&
+    from &&Feed&& f
+    where &&IsParent&& = 1 and &&Recipient&& = $1
+    order by f.&&ChangeDateHash&&
+    limit(1)
+    into &&ChangeDateHash&&;
+    
+    return &&ChangeDateHash&&;
+
+end
+
+$$
+language plpgsql;
+        ]]>
+      </text>
+    </procedure>
+
+    <procedure name="FeedChangeDateHashLast">
+      <mappings>
+        <hibernate-mapping xmlns="urn:nhibernate-mapping-2.2">
+          <sql-query name="ExecFeedChangeDateHashLast">
+            select * from FeedChangeDateHashLast (:Recipient)
+          </sql-query>
+        </hibernate-mapping>
+      </mappings>
+      <text>
+        <![CDATA[
+/**************************************************************************************
+
+   Возвращает последний hash из ленты сообщений.
+
+**************************************************************************************/
+create or replace function FeedChangeDateHashLast(p_Recipient bigint)
+returns varchar(35)
+
+as
+$$
+
+declare
+&&ChangeDateHash&& varchar(35);
+
+begin
+
+    select f.&&ChangeDateHash&& 
+    from &&Feed&& f
+    where &&IsParent&& = 1 and &&Recipient&& = $1
+    order by f.&&ChangeDateHash&& desc
+    limit 1
+    into &&ChangeDateHash&&;
+    
+    return &&ChangeDateHash&&;
+
+end
+
+$$ 
+language plpgsql;
+        ]]>
+      </text>
+    </procedure>
+
+    <procedure name="FeedSetAsReadForObject">
+      <mappings>
+        <hibernate-mapping xmlns="urn:nhibernate-mapping-2.2">
+          <sql-query name="ExecFeedSetAsReadForObject">
+            select FeedSetAsReadForObject(:ReadDate, :ParentObjectUid, :ParentObjectId, :Recipient)
+          </sql-query>
+        </hibernate-mapping>
+      </mappings>
+      <text>
+        <![CDATA[
+/**************************************************************************************
+
+   Отметить все сообщения по указанному объекту, как прочитанные.
+
+**************************************************************************************/
+create or replace function FeedSetAsReadForObject(
+    &&ReadDate&& timestamp,
+    &&ParentObjectUid&& uuid,
+    &&ParentObjectId&& bigint,
+    &&Recipient&& bigint
+)
+returns void
+
+as
+$$
+
+begin
+
+    update &&Feed&& f
+    set
+      &&IsRead&& = 1,
+      &&HasUnreadChild&& = (case when &&IsParent&& = 1 then 0 else null end),
+      &&UnreadCount&& = 0,
+      &&ReadDate&& = $1
+    where
+      f.&&ParentObjectUid&& = $2
+      and f.&&ParentObjectId&& = $3
+      and f.&&Recipient&& = $4;
+
+end
+$$
+language plpgsql;
+        ]]>
+
+      </text>
+    </procedure>
+
+    <procedure name="FeedGetReadedPostsIds">
+      <mappings>
+        <hibernate-mapping xmlns="urn:nhibernate-mapping-2.2">
+          <sql-query name="ExecFeedGetReadedPostsIds">
+            select * from FeedGetReadedPostsIds (:Recipient, cast(:IsRead as smallint), :FromDate)
+          </sql-query>
+        </hibernate-mapping>
+      </mappings>
+      <text>
+        <![CDATA[
+/**************************************************************************************
+
+   Получить идентификаторы сообщений после указанной даты.
+
+**************************************************************************************/
+create or replace function FeedGetReadedPostsIds(
+    &&Recipient&& bigint,
+    &&IsRead&& smallint,
+    &&FromDate&& timestamp
+)
+returns setof bigint
+
+as
+$$
+
+begin
+    
+  return query select f.&&Id&& from &&Feed&& f
+  where f.&&Recipient&& = $1
+    and f.&&IsRead&& = $2
+    and ((cast(coalesce(&&ReadDate&&, cast('01-01-1753' as timestamp)) as timestamp) > cast(coalesce($3, cast('01-01-1753' as timestamp)) as timestamp))    or (&&ReadDate&& is null and $3 is null));
+  
+  return;
+  
+end
+$$
+language plpgsql;
+        ]]>
+      </text>
+    </procedure>
+
+    <procedure name="FeedLoadMessages">
+      <mappings>
+        <hibernate-mapping xmlns="urn:nhibernate-mapping-2.2">
+          <sql-query name="ExecFeedLoadMessages">
+            select * from FeedLoadMessages (:Ids)
+          </sql-query>
+        </hibernate-mapping>
+      </mappings>
+      <text>
+        <![CDATA[
+/**************************************************************************************
+
+   Загружает сообщения без комментариев.
+
+**************************************************************************************/
+create or replace function FeedLoadMessages(Ids text)
+returns table(
+    &&Id&& bigint,
+    &&Subject&& text,
+    &&Text&& text,
+    &&TextHtml&& text,
+    &&ActionObjectUid&& uuid,
+    &&ActionUid&& uuid,
+    &&ActionObjectId&& bigint,
+    &&Recipient&& bigint,
+    &&CreationDate&& timestamp,
+    &&ChangeDate&& timestamp,
+    &&CreationAuthor&& bigint,
+    &&IsParent&& smallint,
+    &&ParentObjectId&& bigint,
+    &&ParentObjectUid&& uuid,
+    &&IsRead&& smallint,
+    &&ReadDate&& timestamp,
+    &&HasUnreadChild&& smallint,
+    &&UnreadCount&& integer,
+    &&Priority&& integer,
+    &&ChangeDateHash&& varchar(35),
+    &&ChildCount&& integer,
+    &&MessageAttachments&& bytea,
+    &&ObjectRecipients&& bytea,
+    &&MessageObjects&& bytea,
+    &&Url&& varchar(2000))
+
+as
+$$
+
+declare
+v_TableRecord record;
+
+begin
+    
+    for v_TableRecord in
+        select f.&&Id&&, f.&&Subject&&, f.&&Text&&, f.&&TextHtml&&, f.&&ActionObjectUid&&, f.&&ActionUid&&, f.&&ActionObjectId&&, f.&&Recipient&&, f.&&CreationDate&&,
+               f.&&ChangeDate&&, f.&&CreationAuthor&&, f.&&IsParent&&, f.&&ParentObjectId&&, f.&&ParentObjectUid&&,
+               f.&&IsRead&&, f.&&ReadDate&&,
+               f.&&HasUnreadChild&&, f.&&UnreadCount&&, f.&&Priority&&, f.&&ChangeDateHash&&, f.&&ChildCount&&,
+               f.&&MessageAttachments&&, f.&&ObjectRecipients&&, f.&&MessageObjects&&, f.&&Url&&
+        from &&Feed&& f
+        where f.&&IsParent&& = 1 and f.&&Id&& in (select cast(&&Val&& as bigint) as &&Id&& from SplitString($1, ','))
+    loop
+        begin
+        
+            &&Id&& = v_TableRecord.&&Id&&;
+            &&Subject&& = v_TableRecord.&&Subject&&;
+            &&Text&& = v_TableRecord.&&Text&&;
+            &&TextHtml&& = v_TableRecord.&&TextHtml&&;
+            &&ActionObjectUid&& = v_TableRecord.&&ActionObjectUid&&;
+            &&ActionUid&& = v_TableRecord.&&ActionUid&&;
+            &&ActionObjectId&& = v_TableRecord.&&ActionObjectId&&;
+            &&Recipient&& = v_TableRecord.&&Recipient&&;
+            &&CreationDate&& = v_TableRecord.&&CreationDate&&;
+            &&ChangeDate&& = v_TableRecord.&&ChangeDate&&;
+            &&CreationAuthor&& = v_TableRecord.&&CreationAuthor&&;
+            &&IsParent&& = v_TableRecord.&&IsParent&&;
+            &&ParentObjectId&& = v_TableRecord.&&ParentObjectId&&;
+            &&ParentObjectUid&& = v_TableRecord.&&ParentObjectUid&&;
+            &&IsRead&& = v_TableRecord.&&IsRead&&;
+            &&ReadDate&& = v_TableRecord.&&ReadDate&&;
+            &&HasUnreadChild&& = v_TableRecord.&&HasUnreadChild&&;
+            &&UnreadCount&& = v_TableRecord.&&UnreadCount&&;
+            &&Priority&& = v_TableRecord.&&Priority&&;
+            &&ChangeDateHash&& = v_TableRecord.&&ChangeDateHash&&;
+            &&ChildCount&& = v_TableRecord.&&ChildCount&&;
+            &&MessageAttachments&& = v_TableRecord.&&MessageAttachments&&;
+            &&ObjectRecipients&& = v_TableRecord.&&ObjectRecipients&&;
+            &&MessageObjects&& = v_TableRecord.&&MessageObjects&&;
+            &&Url&& = v_TableRecord.&&Url&&;
+    
+            return next;
+        end;
+    end loop;
+end
+$$
+language plpgsql;
+        ]]>
+      </text>
+    </procedure>
+
+    <procedure name="FeedUrlUpdateFromInternalMessage">
+      <mappings>
+        <hibernate-mapping xmlns="urn:nhibernate-mapping-2.2">
+          <sql-query name="FeedUrlUpdateFromInternalMessage">
+            <![CDATA[
+update &&Feed&&
+set &&Url&& = &&Url&&
+where &&Id&& = -1000
+              ]]>
+          </sql-query>
+        </hibernate-mapping>
+      </mappings>
+    </procedure>
+
+    <procedure name="FeedChangeDateHashRecalc">
+      <mappings>
+        <hibernate-mapping xmlns="urn:nhibernate-mapping-2.2">
+          <sql-query name="FeedChangeDateHashRecalc">
+            <![CDATA[
+update &&Feed&&
+set &&ChangeDateHash&& = substring(&&ChangeDateHash&& from 1 for 16) || substring('0000000000000000000' || cast(&&Id&& as varchar(19)) from 1 + char_length(cast(&&Id&& as varchar(19))) for 19)
+where &&IsParent&& = 1 and &&ChildCount&& > 0
+              ]]>
+          </sql-query>
+        </hibernate-mapping>
+      </mappings>
+    </procedure>
+
+    <procedure name="FeedChildCountRecalc">
+      <mappings>
+        <hibernate-mapping xmlns="urn:nhibernate-mapping-2.2">
+          <sql-query name="ExecFeedChildCountRecalc">
+            select FeedChildCountRecalc()
+          </sql-query>
+        </hibernate-mapping>
+      </mappings>
+      <text>
+        <![CDATA[
+/**************************************************************************************
+
+   Пересчитать счётчики количества дочерних сообщений и количества непрочитанных дочерних сообщений.
+
+**************************************************************************************/
+create or replace function FeedChildCountRecalc()
+returns void
+    
+as
+$$
+
+declare 
+v_TableRecord record;
+  
+begin
+    
+    for v_TableRecord in
+        select f.&&ParentObjectId&&, f.&&ParentObjectUid&&, f.&&Recipient&&, count(f.&&Id&&) &&ChildCount&&
+        from &&Feed&& f
+        where f.&&IsParent&& = 0
+        group by f.&&ParentObjectId&&, f.&&ParentObjectUid&&, f.&&Recipient&&
+    loop
+        begin
+            update &&Feed&& set &&ChildCount&& = v_TableRecord.&&ChildCount&&
+            where &&IsParent&& = 1
+                and &&ParentObjectId&& = v_TableRecord.&&ParentObjectId&&
+                and &&ParentObjectUid&& = v_TableRecord.&&ParentObjectUid&&
+                and &&Recipient&& = v_TableRecord.&&Recipient&&;
+        end;
+
+    end loop;
+                            
+    for v_TableRecord in
+        select f.&&ParentObjectId&&, f.&&ParentObjectUid&&, f.&&Recipient&&, count(f.&&Id&&) &&ChildCount&&
+        from &&Feed&& f
+        where f.&&IsParent&& = 0 and f.&&IsRead&& = 0
+        group by f.&&ParentObjectId&&, f.&&ParentObjectUid&&, f.&&Recipient&&
+    loop
+        begin
+            update &&Feed&& 
+            set
+                &&UnreadCount&& = v_TableRecord.&&ChildCount&&,
+                &&HasUnreadChild&& = (case when v_TableRecord.&&ChildCount&& = 0 then 0 else 1 end)
+            where &&IsParent&& = 1
+                and &&ParentObjectId&& = v_TableRecord.&&ParentObjectId&&
+                and &&ParentObjectUid&& = v_TableRecord.&&ParentObjectUid&&
+                and &&Recipient&& = v_TableRecord.&&Recipient&&;
+        end;
+    end loop;
+
+end
+
+$$ 
+language plpgsql;
+        ]]>
+      </text>
+    </procedure>
+
+  </procedures>
+
+  <scripts>
+  </scripts>
+  
+  <indexes>
+    <index name="BaseMessageIdIndex" tableName="BaseMessage" columns="Id, TypeUid" />
+    <index name="RMSStatusIdx" tableName="RecipientMessageStatus" columns="Status" />
+    <index name="RMSObjRecipientIdx" tableName="RecipientMessageStatus" columns="Recipient, MessageObject" />
+    <index name="IX_RecipientStatusIdMessObject" tableName="RecipientMessageStatus" columns="Recipient, Status, Id, MessageObject" />
+    <index name="IX_UserId_MessageId" tableName="M_BaseMessage_Recipients" columns="UserId, MessageId" />
+    <index name="IX_BM_CreateDateDesc" tableName="BaseMessage" columns="CreationDate" />
+    <index name="IX_RMS_RecStat_IUM" tableName="RecipientMessageStatus" columns="Recipient, Status, Id, Uid, MessageObject" />
+    <index name="IX_Feed_ChangeDateHash" tableName="Feed" columns="ChangeDateHash" />
+    <index name="IX_Feed_RecipientParentHash" unique="true" tableName="Feed" columns="Recipient, IsParent, ChangeDateHash" />
+    <index name="IX_Feed_Parent" tableName="Feed" columns="IsParent, ParentObjectUid, ParentObjectId" />
+    <index name="IX_Feed_RecipientDate" tableName="Feed" columns="Recipient, ChangeDate, ChangeDateHash" />
+    <index name="IX_Feed_RecIsRead" tableName="Feed" columns="Recipient, IsRead, ReadDate" />
+    <index name="IX_FeedArchive_Id" tableName="FeedArchive" columns="Id" />
+    <index name="IX_FeedArchive_ChangeDateHash" tableName="FeedArchive" columns="ChangeDateHash" />
+    <index name="IX_FeedFavorite_ChangeDateHash" tableName="FeedFavorite" columns="ChangeDateHash" />
+    <index name="FeedUniqueParent" tableName="Feed">
+      <text>
+        <![CDATA[
+        CREATE UNIQUE INDEX &&FeedUniqueParent&& ON &&Feed&& (&&Recipient&&, &&ParentObjectId&&, &&ParentObjectUid&&) where &&IsParent&& = 1
+        ]]>
+      </text>
+    </index>
+    <index name="IX_Feed_IsParentRecipient" tableName="Feed" columns="IsParent, Recipient, ChangeDate, ParentObjectId, ParentObjectUid" />
+  </indexes>
+  
+</root>

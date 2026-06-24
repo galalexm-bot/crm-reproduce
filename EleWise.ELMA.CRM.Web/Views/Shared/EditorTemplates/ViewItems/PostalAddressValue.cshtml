@@ -1,0 +1,81 @@
+﻿@inherits ViewItemControl<PropertyValueViewItem, object, IAddress>
+@using EleWise.ELMA
+@using EleWise.ELMA.CRM.Components
+@using EleWise.ELMA.CRM.Models
+@using EleWise.ELMA.Model.Entities
+@using EleWise.ELMA.Model.Metadata
+@using EleWise.ELMA.Model.Views
+@using EleWise.ELMA.Web.Mvc.Views.ViewItem
+@{
+    var addressTypeDots = ViewData.TemplateInfo.HtmlFieldPrefix;
+}
+
+@if (ViewItem != null)
+{
+    var model = ViewData.ModelMetadata.GetContainerObject() as IEntity;
+    var metadata = model != null ? MetadataLoader.LoadMetadata(model.GetType(), loadImplementation: false) as ClassMetadata : null;
+    var propAddress = metadata.Properties.FirstOrDefault(p => p.Name == "LegalAddress") ?? metadata.Properties.FirstOrDefault(p => p.Name == "RegistrationAddress");
+    bool sameAddress = false;
+    var postalAddressId = "PostalAddressId";
+
+    if (propAddress != null)
+    {
+        var htmlFieldPrefix = ViewData.TemplateInfo.HtmlFieldPrefix;
+        if (htmlFieldPrefix.EndsWith("Entity." + ViewData.ModelMetadata.PropertyName))
+        {
+            var items = ViewItem.FormViewItem.GetAllItems().OfType<PropertyViewItem>().Where(p => !p.Hide && p.PropertyUid == propAddress.Uid);
+            if (items.Any(i => i.Attributes.Visible && !i.IsReadOnly()))
+            {
+                var otherAddress = model.GetPropertyValue<IAddress>(propAddress.Uid);
+                sameAddress = otherAddress.IsEqual(Model);
+
+                ViewData.TemplateInfo.HtmlFieldPrefix = htmlFieldPrefix.Remove(Math.Max(htmlFieldPrefix.Length - ViewData.ModelMetadata.PropertyName.Length - 8, 0));
+
+                using (Html.TableForm(EleWise.ELMA.Model.Views.ViewType.Edit))
+                {
+                    <tr class="full-row">
+                        <td class="property-value-container matching-addresses" colspan="2">
+                            @(Html.ModernCheckBox(false)
+                                .Id(ViewData.TemplateInfo.GetFullHtmlFieldId("sameAddress")+"CheckBox")
+                                .Checked(sameAddress)
+                                .LabelText(propAddress.Name == "LegalAddress" ? SR.T("Юридический и почтовый адреса совпадают") : SR.T("Адреса регистрации и проживания совпадают"))
+                                .Attributes(a => 
+                                { 
+                                    a.onclick = @"showHidePostalAddress($(this))";
+                                }))
+                        </td>
+                    </tr>
+                }
+
+                var sameAddressId = ViewData.TemplateInfo.GetFullHtmlFieldId("sameAddress");
+                <input type="hidden" id="@sameAddressId" name="@ViewData.TemplateInfo.GetFullHtmlFieldName("sameAddress")" value="@(sameAddress ? "true" : "false")" />
+                <script type="text/javascript">
+                    function showHidePostalAddress(checkBox) {
+                        var hidden = $("#@sameAddressId");
+                        var checked = checkBox.is(':checked');
+                        hidden.val(checked ? 'true' : 'false');
+                        var valueDiv = $("#@postalAddressId");
+                        if (checked) {
+                            valueDiv.hide();
+                        } else {
+                            valueDiv.show();
+                            $(document).trigger("resizeLayout");
+                        }
+                    }
+                </script>
+                ViewData.TemplateInfo.HtmlFieldPrefix = htmlFieldPrefix;
+            }
+        }
+    }
+
+    <div id="@postalAddressId" style="@(sameAddress ? " display: none;" : "")">
+        @if (ViewItem.IsReadOnly() || !ViewItem.IsMainPropertyViewItem())
+        {
+            @Html.Partial("DisplayTemplates/Entities/Address")
+        }
+        else
+        {
+            @Html.Partial("EditorTemplates/Entities/Address")
+        }
+    </div> 
+}

@@ -1,0 +1,133 @@
+﻿@using System
+@using EleWise.ELMA
+@using EleWise.ELMA.CRM.Web
+@using EleWise.ELMA.CRM.Managers
+@using ContentHtmlExtensions = EleWise.ELMA.BPM.Web.Content.Extensions.HtmlExtensions
+@model EleWise.ELMA.CRM.Web.Models.CategoryIndexModel
+
+@{
+    ContentHtmlExtensions.HeaderBreadcrumbsInZone(Html, SR.T("Список категорий"));
+
+    var currentUser = Model.CurrentUser;
+    var showAccess = Model.ShowAccess;
+    var checkUpdatepermission = Model.CheckUpdatePermission;
+    var lockEditPermission = Model.LockEditPermission;
+    var lastError = Model.LastRecalculatePermissionsError;
+    var lockDivId = string.Format("lock{0}", Guid.NewGuid().ToString("N"));
+    var errorDivId = string.Format("lastError{0}", Guid.NewGuid().ToString("N"));
+} 
+
+@(Html.Toolbar()
+    .Group("toolbar-group-1")
+        .ToolbarButton(new ActionToolbarItem("AddCategoryItemButton")
+        {
+            Text = SR.T("Создать"),
+            IconUrl = "#add.svg",
+            Url = Url.Action("Create", "Category", new { area = RouteProvider.AreaName })
+        })
+           .ToolbarButton(new ActionToolbarItem("RecalculatePermissionCrmAccessSettings")
+                   {
+                       Text = SR.T("Пересчитать  привилегии"),
+                       ToolTip = SR.T("<b>Пересчитать привилегии</b><br />Запустить применение накопленных изменений в привилегиях. <br /> Процесс может занять продолжительное время."),
+                           Click = "UpdatePermissonCRM()"
+                       
+                   }) 
+        .If(showAccess, b => b.ToolbarButton(new ActionToolbarItem("GoToCrmAccessSettings")
+        {
+            Text = SR.T("Настройки доступа"),
+            Url = Url.Action("Permissions", "Security", new { area = RouteProvider.AreaName })
+        }) ))
+@if (lockEditPermission)
+{
+    <div id="@lockDivId" class="note" style="margin-bottom: 10px;">
+        <div style="background: url('/Content/Images/wait.gif') 0 0 no-repeat; padding-left: 30px;">
+            <div style="padding: 10px;">
+                @Html.Raw(SR.T("Производится перерасчет привилегий. Изменение заблокировано. Пожалуйста подождите..."))
+            </div>
+        </div>
+    </div>
+}
+<div id="@errorDivId" class="messagePanel-Error" style="margin-bottom: 10px; @if (!(!string.IsNullOrEmpty(lastError) && !lockEditPermission)){ <text>display: none</text> } ">
+    <div>
+        @Html.Raw(SR.T("Во время последнего пересчета привилегий возникла ошибка. Подробности см. в журнале ошибок."))
+    </div>
+</div>
+
+<div id="divCheckUpdatepermission" class="note" style="margin-bottom: 10px; @(!checkUpdatepermission || lockEditPermission?";display: none":"")" >
+        <div style="padding: 10px;">
+            @Html.Raw(SR.T("Имеются не примененные изменения в привилегиях. Для вступления изменений в силу нужно нажать кнопку 'Пересчитать привилегии'."))
+        </div>
+    </div>
+        <div id="gridContainer" autofocus="false">
+            @Html.Partial("Grid", Model.GridData)
+        </div>
+
+        <script type="text/javascript">
+
+            function deleteCategory(id) {
+                var gridContainer = $('#gridContainer');
+                if (id != undefined && id != null) {
+                    $.ajax({
+                        url: '@(Url.Action("Delete", "Category", new { area = RouteProvider.AreaName }))/' + id,
+                        type: "GET",
+                        dataType: 'html',
+                        cache: false,
+                        success: function (data) {
+                            gridContainer.html(data);
+                            $("#divCheckUpdatepermission")[0].style.display = "";
+                        }
+                    });
+                }
+            }
+
+            function onDeleteCategoryClick(id) {
+                jConfirm('@SR.T("Удалить категорию?")', '@SR.T("Удаление")', function (r) {
+                    if (r == true) {
+                        deleteCategory(id);
+                    }
+                });
+            }
+
+            function UpdatePermissonCRM() {
+
+                jConfirm('@SR.T("Запустить применение накопленных разрешений. Процесс может занять продолжительное время")', '@SR.T("Подтверждение")', function (r) {
+                    if (r) {
+                        elma.openPleaseWait(true);
+                        var postData = [];
+                        $.ajax({
+                            url: "@(Url.Action("RecalculateCategoryPermission", "Category", new { area = RouteProvider.AreaName }))",
+                            data: $.extend({}, postData),
+                            type: "POST",
+                            success: function (data) {
+                                elma.closePleaseWait(true);
+                                window.navigateToUrl("@(Url.Action("Index", "Category", new {area = RouteProvider.AreaName}))");
+                            }
+                        });
+                    }
+                });
+            }
+            
+            @if (lockEditPermission)
+            {
+                @:$(document).ready(function() { getRecalculateCategoryPermissionStatus(); });
+            }
+    
+            function getRecalculateCategoryPermissionStatus() {
+                $.ajax({
+                    url: '@(Url.Action("GetRecalculateCategoryPermissionStatus", "Category", new { area = RouteProvider.AreaName }))',
+                    type: "post",
+                    dataType: "json",
+                    success: function (data) {
+                        if (!data.blocking) {
+                           $("#@lockDivId").hide();
+                           $("#divCheckUpdatepermission").hide();
+                           if (data.lastErr) {
+                               $("#@errorDivId").show();
+                           }
+                           return;
+                        }
+                        setTimeout(getRecalculateCategoryPermissionStatus, 10000);
+                    }
+                });
+            }
+        </script>

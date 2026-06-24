@@ -1,0 +1,58 @@
+﻿@model IMarketingBase
+
+@using EleWise.ELMA
+@using EleWise.ELMA.CRM.Models
+@using EleWise.ELMA.Model.Types.Settings
+@using EleWise.ELMA.Web.Mvc.Html.Forms
+
+@using (Html.TableForm(EleWise.ELMA.Model.Views.ViewType.Edit))
+{
+    @Html.HiddenFor(m => m.Id)
+
+    @Html.BuildFormForModel(Model, EleWise.ELMA.Model.Views.ViewType.Edit, b =>
+    {
+        b.HideForm();
+        b.HideAllProperties();
+        b.LayoutConfig<DefaultFormLayout>(l => { l.RenderTable = false; });
+
+        b.PropertyRow(m => m.BudgetType).EditorAttributes(a =>
+        {
+            a.Html.onchange = "budgetTypeChanged";
+            a.TypeSettings = new EnumSettings
+            {
+                DefaultValue = EleWise.ELMA.Helpers.EnumHelper.GetUid(MarketingBudgetType.SumOfChild)
+            };
+        }).Order(1);
+
+        b.PropertyRow(m => m.Budget).Attributes(a =>
+        {
+            a.Html = new HtmlAttributes() { { "id", "budgetRow" } };
+            if (Model.BudgetType == MarketingBudgetType.SumOfChild)
+            {
+                a.Html.style = new HtmlStyle() { { "display", "none;" } };
+            }
+        }).Order(2);
+
+    })
+}
+
+<script type="text/javascript">
+    function budgetTypeChanged(e) {
+        if (e.value == "@(MarketingBudgetType.Manual)") {
+            jConfirm('@(SR.T("При переводе в этот режим актуальность бюджета придется поддерживать вручную. Вы уверены что хотите это сделать?"))', '@(SR.T("Предупреждение"))', function (r) {
+                if (r) {
+                    $('#budgetRow').show();
+                }
+                else {
+                    $("#Entity_BudgetType").val('@MarketingBudgetType.SumOfChild');
+                    $("#Entity_BudgetType").data("tDropDownList").value('@MarketingBudgetType.SumOfChild');
+
+                }
+            });
+        }
+        else {
+            $('#budgetRow').hide();
+        }
+    }
+</script>
+

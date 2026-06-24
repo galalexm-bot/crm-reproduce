@@ -1,0 +1,50 @@
+﻿@using System.Reflection
+@using EleWise.ELMA.CRM.Models
+@using EleWise.ELMA.Model.Metadata
+@using EleWise.ELMA.Web.Mvc.ExtensionPoints
+@inherits EleWise.ELMA.Web.Mvc.Views.Inputs.InputControl<EleWise.ELMA.CRM.Models.IMarketingEffect, EleWise.ELMA.CRM.Types.MarketingEffectSettings>
+@if (Settings.IsComposite)
+{
+    var modelContainerObject = ViewData.ModelMetadata.GetContainerObject();
+    var metadataModelContainerObject = modelContainerObject != null ? MetadataLoader.LoadMetadata(modelContainerObject.GetType(), loadImplementation: false) as EntityMetadata: null;
+    if (metadataModelContainerObject != null)
+    {
+        var groupPropMeta = metadataModelContainerObject.Properties.FirstOrDefault(p => p.Uid == Settings.MarketingGroupPropertyUid);
+        var activityPropMeta = metadataModelContainerObject.Properties.FirstOrDefault(p => p.Uid == Settings.MarketingActivityPropertyUid);
+
+        var groupProp = modelContainerObject.GetType().GetReflectionProperty(groupPropMeta.Name);
+        var activityProp = modelContainerObject.GetType().GetReflectionProperty(activityPropMeta.Name);
+
+        var group = groupProp.GetValue(modelContainerObject, null) as IMarketingGroup;
+        var activity = activityProp.GetValue(modelContainerObject, null) as IMarketingActivity;
+
+        if (group == null && activity == null && Model == null)
+        {
+            @Html.Partial("DisplayTemplates/Entity", new ViewDataDictionary((IMarketingBase)null))
+        }    
+        if (group != null)
+        {
+            <img src="@Url.ObjectIcon(ObjectIconFormat.x16, group)" class="svg-16-size" style="vertical-align: text-bottom" />
+            @Html.Partial("DisplayTemplates/Entity", group)
+        }
+        if (activity != null)
+        {
+            if (group != null)
+            {
+                @:<br />
+            }
+            <img src="@Url.ObjectIcon(ObjectIconFormat.x16, activity)" class="svg-16-size" style="vertical-align: text-bottom" />
+            @Html.Partial("DisplayTemplates/Entity", activity)
+        }
+        if (Model != null)
+        {
+            @:<br />
+            <img src="@Url.ObjectIcon(ObjectIconFormat.x16, Model)" class="svg-16-size" style="vertical-align: text-bottom" />
+            @Html.Partial("DisplayTemplates/Entity", Model)
+        }
+    }
+}
+else
+{
+    @Html.Partial("DisplayTemplates/Entity")
+}

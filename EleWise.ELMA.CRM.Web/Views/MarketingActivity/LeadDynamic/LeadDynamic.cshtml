@@ -1,0 +1,401 @@
+﻿@model LeadDynamicModel
+
+@using EleWise.ELMA
+@using EleWise.ELMA.BPM.Web.Common.Models
+@using EleWise.ELMA.CRM
+@using EleWise.ELMA.CRM.Models
+@using EleWise.ELMA.CRM.Web
+@using EleWise.ELMA.CRM.Web.Menu
+@using EleWise.ELMA.CRM.Web.Models
+@using EleWise.ELMA.Helpers
+@using EleWise.ELMA.Model.Services
+@using EleWise.ELMA.Model.Types.Settings
+@using EleWise.ELMA.Model.Views
+@using EleWise.ELMA.Web.Mvc.Html.FilterSearchForm
+
+@{
+    var header = SR.T("Маркетинг");
+    var filterName = SR.T("Календарь");
+    Html.Title(header);
+
+    const string gridId = "LeadDynamicGrid";
+    bool canAdd = CRMPermissionProvider.CheckAny(new[] { CRMPermissionProvider.CRMFullAccessPermission, CRMPermissionProvider.MarketingFullAccessPermission });
+
+    var currentDateTimeFormat = DateTimeFormatHelper.GetCurrentFullFormat();
+    var filterModel = new FilterModel();
+    var builder = new FilterModelBuilder(filterModel);
+}
+
+@(Html.Toolbar()
+    .Group("marketing-period-toolbar-group-1")
+        .ToolbarButton(new ActionToolbarItem("marketing-toolbar-action-Add")
+        {
+            Text = SR.Create,
+            IsMainAction = true,
+            Visible = canAdd,
+            Items = new ActionItemList {
+                new ActionToolbarItem("marketing-toolbar-action-AddGroup")
+                {
+                    Text = SR.T("Группу"),
+                    Url = Url.Action("Create", "MarketingActivity", new { area = CRMAreaRegistration.AREA_NAME, typeUid = InterfaceActivator.UID<IMarketingGroup>() })
+                },
+                new ActionToolbarItem("marketing-toolbar-action-AddActivity")
+                {
+                    Text = SR.T("Мероприятие"),
+                    Url = Url.Action("Create", "MarketingActivity", new { area = CRMAreaRegistration.AREA_NAME, typeUid = InterfaceActivator.UID<IMarketingActivity>() })
+                },
+                new ActionToolbarItem("marketing-toolbar-action-AddEffect")
+                {
+                    Text = SR.T("Воздействие"),
+                    Url = Url.Action("Create", "MarketingActivity", new { area = CRMAreaRegistration.AREA_NAME, typeUid = InterfaceActivator.UID<IMarketingEffect>() })
+                },
+            }
+        })
+    .Group("marketing-period-main")
+        .AdditionalActions(tb =>
+        {
+            tb.Button(b => b
+                .Uid("show-statistic")
+                .Text(SR.T("Показывать статистику"))
+                .IconUrl("#statistic.svg")
+                .Click("showStatistic(selectedMenuItem)")
+                .ToolTip(SR.T("Показывать статистику"))
+            );
+            tb.Button(b => b
+                .Uid("show-archive")
+                .Text(SR.T("Показывать архив"))
+                .IconUrl("#archive.svg")
+                .Click("showArchive(selectedMenuItem)")
+                .ToolTip(SR.T("Показывать архив"))
+            );
+        })
+      )
+
+@helper NavigationCalendar()
+{
+    var periodList = new List<DropDownItem>
+    {
+        new DropDownItem {
+            Value = "Month",
+            Text = SR.T("Месяц"),
+            Selected = false
+        },
+        new DropDownItem {
+            Value = "Week",
+            Text = SR.T("Неделя"),
+            Selected = false
+        },
+        new DropDownItem {
+            Value = "Day",
+            Text = SR.T("День"),
+            Selected = false
+        }
+    };
+
+    var selected = periodList.FirstOrDefault(p => p.Value == Model.Mode.ToString());
+    if (selected != null)
+    {
+        selected.Selected = true;
+    }
+
+    var comboBox = Html.Telerik().DropDownList()
+        .Name("period_switcher")
+        .BindTo(periodList)
+        .ClientEvents(events => events.OnChange("function(e) { changeViewMode(e.value) }"))
+        .HtmlAttributes(new Dictionary<string, object> { { "style", "z-index: 10;" } });
+    <div>
+        <div style="display: none; z-index: 2;">
+            @Html.Editor(m => m.CurrentDate, a =>
+            {
+                a.Html.onchange = "updateDate";
+                a.TypeSettings = new DateTimeSettings { ShowTime = false };
+            })
+        </div>
+        <div class="calendar-navigator">
+                <div class="calendar-navigator-item">
+                    @Html.Button().Text(SR.T("Сегодня")).Click("updateDynamicTable(0, Date.now())").NoFill()
+                </div>
+                <div class="calendar-navigator-item">
+                @(Html.ButtonGroup()
+                    .Item(a =>
+                    {
+                        a.IconUrl("#arrow_left.svg");
+                        a.Click("updateDynamicTable(-1);");
+                        a.Style(ButtonStyle.Simple);
+                        a.NoFill();
+                    })
+                    .Item(a =>
+                    {
+                        a.Text(Model.CurrentDate.ToString("dd MMMM yyyy"));
+                        a.Click("toggleMarketingCalendar(this)");
+                        a.Attributes(new { @class = "marketing-date-title" });
+                        a.NoFill();
+                    })
+                    .Item(a =>
+                    {
+                        a.IconUrl("#arrow_right.svg");
+                        a.Click("updateDynamicTable(1);");
+                        a.Style(ButtonStyle.Simple);
+                        a.NoFill();
+                    }))                </div>
+                <div class="calendar-navigator-item">
+                    @comboBox
+                </div>
+                <div class="calendar-navigator-item">
+                </div>
+        </div>
+    </div>
+}
+
+@helper SimpleSearchTr(HtmlHelper<FilterModel> html, string hdr)
+{
+    @Html.FilterSearchForm().FastSearchBoxFor("").Enabled(false).IsShortSearch(true).ActionButtons(a =>
+    {
+        a.Add(new FastSearchFilterTreeButton(hdr, Url.Action("Index") + "?FilterId=")
+        {
+            OnClick = string.Format("openPopoverWindow('{0}', this);",
+            FastSearchFilterTreeButton.GetFilterTreeId(CRMMenuItems.MARKETING_ACTIVITIES_MENU)),
+        });
+    });
+}
+
+@helper HeaderContent(HtmlHelper<FilterModel> html, string header)
+{
+<div class="crm-marketing-header">
+    <div class="crm-marketing-header-name">
+        @header
+    </div>
+    <div class="crm-marketing-header-bar">
+        @NavigationCalendar()
+    </div>
+</div>
+}
+
+@Html.Partial("Filter/FilterModel", builder
+    .FilterMenuItemCode(CRMMenuItems.MARKETING_ACTIVITIES_MENU)
+    .SimpleSearchTr(helper => SimpleSearchTr(helper, filterName))
+    .HeaderContent(html => HeaderContent(html, header))
+    .Model)
+
+@functions {
+    string HeaderDateText(MarketingPeriodEnum mode, DateTime date1, DateTime date2)
+    {
+        switch (mode)
+        {
+            case MarketingPeriodEnum.Day:
+            case MarketingPeriodEnum.Week:
+                if (date1.Year != date2.Year)
+                {
+                    return SR.CalendarDMYDMY(date1, date2);
+                }
+                if (date1.Month != date2.Month)
+                {
+                    return SR.CalendarDMDMY(date1, date2);
+                }
+                return SR.T("{0:dd} - {1:d MMMM yyyy} г.", date1, date2);
+            case MarketingPeriodEnum.Month:
+                return SR.T("{0:MMMM}", date1) + (date2.Year != date1.Year ? SR.T(" {0:yyyy} г.", date1) : "") + " - " + SR.YearMonth(date2);
+        }
+        return "";
+    }
+}
+
+@Html.Hidden("CurrentDate", Model.CurrentDate.ToShortDateString())
+@Html.HiddenFor(m => m.Mode)
+@Html.HiddenFor(m => m.ShowArchive)
+@Html.HiddenFor(m => m.ShowStatistic)
+
+@{
+    if (Model.GridData.Count > 0 || Model.GridDataArchive.Count > 0)
+    {
+        <div id="@gridId">
+            @Html.Partial("LeadDynamic/LeadDynamicGrid", Model)
+        </div>
+    }
+    else
+    {
+        <div>@(SR.T("Маркетинговые мероприятия отсутствуют"))</div>
+    }
+
+}
+
+
+<script type="text/javascript">
+    function updateDate(e) {
+        var date = $.telerik.datetime.format(e.date, jQuery.telerik.cultureInfo.shortDate);
+        var mode = $("#Mode").val();
+        var showArch = $("#ShowArchive").val();
+        var showStat = $("#ShowStatistic").val();
+
+        updateTitleMarketing(mode, date);
+        reloadGrid(date, mode, showArch, showStat);
+    }
+
+    function updateDynamicTable(count, newDate) {
+        var date = $.telerik.datetime.parse({ value: $("#CurrentDate").val(), format: '@currentDateTimeFormat' }).value;
+        if (newDate) {
+            date = newDate;
+        }
+        var mode = $("#Mode").val();
+        var showArch = $("#ShowArchive").val();
+        var showStat = $("#ShowStatistic").val();
+        if (mode == '@MarketingPeriodEnum.Month') {
+            date.addMonths(count);
+        }
+        else if (mode == '@MarketingPeriodEnum.Week') {
+            date.addDays(count * 7);
+        }
+        else if (mode == '@MarketingPeriodEnum.Day') {
+            date.addDays(count);
+        }
+        var dateString = $.telerik.datetime.format(date, jQuery.telerik.cultureInfo.shortDate);
+        updateTitleMarketing(mode, dateString);
+        reloadGrid(dateString, mode, showArch, showStat);
+    }
+
+    function updateTitleMarketing(mode, currentDate) {
+        var date = $.telerik.datetime.parse({ value: currentDate, format: '@currentDateTimeFormat' }).value;
+        var date1, date2, format;
+        switch (mode) {
+            case "@MarketingPeriodEnum.Month":
+                date1 = new Date(date.getFullYear(), date.getMonth(), 1).addMonths(-5);
+                date2 = new Date(date.getFullYear(), date.getMonth(), 1).addMonths(1).addDays(-1);
+                format = "MMM[ yyyy]{ '&ndash;'[ MMM] yyyy}";
+                break;
+            case "@MarketingPeriodEnum.Week":
+                var firstWeek = new Date(date.setDate(date.getDate() - date.getDay() + (date.getDay() == 0 ? -6 : 1)));
+                date1 = new Date(firstWeek).addDays(-35);
+                date2 = new Date(firstWeek).addDays(6);
+                format = "d MMM[ yyyy]{ '&ndash;' d[ MMM] yyyy}";
+                break;
+            case "@MarketingPeriodEnum.Day":
+                date1 = new Date(date).addDays(-13);
+                date2 = new Date(date);
+                format = "d[ MMM][ yyyy]{ '&ndash;' d MMM yyyy}";
+                break;
+        }
+        $(".td_calendar_navigator .marketing-date-title .t-button-text").html(Date.dateTimePickerTitleFormatDates(date1, date2, format));
+    }
+
+    function changeViewMode(mode) {
+        elma.closeAllMenu();
+        if (mode == $("#Mode").val())
+            return;
+
+        var date = $("#CurrentDate").val();
+        var showArch = $("#ShowArchive").val();
+        var showStat = $("#ShowStatistic").val();
+        updateTitleMarketing(mode, date);
+        reloadGrid(date, mode, showArch, showStat);
+    }
+
+    function showStatistic(selectedMenuItem) {
+        selectedMenuItem.checked = !selectedMenuItem.checked;
+        var date = $("#CurrentDate").val();
+        var mode = $("#Mode").val();
+        var showArch = $("#ShowArchive").val();
+        var showStat = $("#ShowStatistic").val() == "True" ? "False" : "True";
+        reloadGrid(date, mode, showArch, showStat);
+    }
+
+    function showArchive(selectedMenuItem) {
+        selectedMenuItem.checked = !selectedMenuItem.checked;
+        var date = $("#CurrentDate").val();
+        var mode = $("#Mode").val();
+        var showArch = $("#ShowArchive").val() == "True" ? "False" : "True";
+        var showStat = $("#ShowStatistic").val();
+        reloadGrid(date, mode, showArch, showStat);
+    }
+
+    $(document).ready(function () {
+        delegateClick();
+    });
+
+    function delegateClick() {
+        $("#@gridId").find(".lead-dynamic-grid-body").delegate(".t-icon.t-plus, .t-icon.t-minus", "click", function () {
+            var $icon = $(this);
+            var expanding = $icon.hasClass('t-plus');
+
+            $icon.toggleClass('t-minus', expanding)
+                .toggleClass('t-plus', !expanding);
+
+            var currentTr = $(this).parentsUntil(".lead-dynamic-grid-body").last();
+            var date = $("#CurrentDate").val();
+            var mode = $("#Mode").val();
+            var showArch = $(currentTr).hasClass("is-archive");
+            var showStat = $("#ShowStatistic").val();
+            var marketingGroupId = $(this).attr("marketing-id");
+            var childrenTr = showArch ? currentTr.nextAll(".is-archive.parent-" + marketingGroupId) : currentTr.nextAll(".parent-" + marketingGroupId).not(".is-archive");
+
+            if (expanding) {
+                if (childrenTr.size() > 0) {
+                    $(childrenTr).show();
+                }
+                else {
+                    elma.openPleaseWait(true);
+                    $.ajax({
+                        type: 'POST',
+                        url: '@Url.Action("LeadDynamicActivity", "MarketingActivity", new { area = CRMAreaRegistration.AREA_NAME })?date=' + date + '&mode=' + mode + '&showArchive=' + showArch + '&marketingGroupId=' + marketingGroupId + '&showStatistic=' + showStat,
+                        error: function () {
+                            elma.closePleaseWait(true);
+                        },
+                        success: function (data) {
+                            if (data) {
+                                currentTr.after(data);
+                            }
+                            elma.closePleaseWait(true);
+                        }
+                    });
+                }
+            }
+            else {
+                childrenTr.find("a.t-icon.t-minus").click();
+                childrenTr.hide();
+            }
+            leadDynamicSaveState(marketingGroupId, expanding);
+        });
+    }
+
+    function leadDynamicSaveState(id, expanding) {
+        $.ajax({
+            type: 'POST',
+            url: '@Url.Action("LeadDynamicSaveState", "MarketingActivity", new { area = CRMAreaRegistration.AREA_NAME })',
+            data: {
+                id: id,
+                expanding: expanding
+            }
+        });
+    }
+
+    function reloadGrid(date, mode, showArch, showStat) {
+        elma.openPleaseWait(true);
+        $.ajax({
+            type: 'POST',
+            url: '@Url.Action("LeadDynamicGrid", "MarketingActivity", new { area = CRMAreaRegistration.AREA_NAME })?date=' + date + '&mode=' + mode + '&showArchive=' + showArch + '&showStatistic=' + showStat,
+            error: function () {
+                elma.closePleaseWait(true);
+            },
+            success: function (data) {
+                if (data) {
+                    $("#@gridId").html(data);
+                    delegateClick();
+                    $("#CurrentDate").val(date);
+                    $("#Mode").val(mode);
+                    $("#ShowArchive").val(showArch);
+                    $("#ShowStatistic").val(showStat);
+                }
+                elma.closePleaseWait(true);
+            }
+        });
+    }
+
+    function toggleMarketingCalendar(obj) {
+        if ($('#CurrentDate_date').data('tDatePicker').dateView.isOpened()) {
+            $('#CurrentDate_date').data('tDatePicker').close();
+        }
+        else {
+            var position = $(obj).offset();
+            $("#CurrentDate_date").data("tDatePicker").dateView.open({ offset: { top: position.top, left: position.left - 72 }, outerHeight: $(obj).outerHeight(), outerWidth: $(obj).outerWidth(), zIndex: 2 });
+        }
+    }
+</script>

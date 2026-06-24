@@ -1,0 +1,39 @@
+﻿@using EleWise.ELMA
+@using EleWise.ELMA.BPM.Web.Calendar
+@using EleWise.ELMA.Security
+@using EleWise.ELMA.Services
+@using PermissionProvider = EleWise.ELMA.Calendar.PermissionProvider
+@model EleWise.ELMA.Calendar.Models.ISchedule
+
+@if (Model != null)
+{
+    var service = Locator.GetServiceNotNull<ISecurityService>();
+    if (service.CanCheckPermission(PermissionProvider.ScheduleViewPermission, Model) && service.HasPermission(PermissionProvider.ScheduleViewPermission, Model))
+    {
+        <a href="javascript:void(0)" onclick=" openSchedulePopup(@(Model.Id)) ">@Model.Name</a>
+    }
+    else
+    {
+        @Model.Name
+    }
+
+    Html.RegisterScriptSrc(Html.Url().Content("~/Modules/EleWise.ELMA.BPM.Web.Calendar/Scripts/ELMA.Calendar.js"));
+
+    Html.RegisterContent("openScheduleScript",
+        @<text>
+             <script type="text/javascript">
+                 function openSchedulePopup(scheduleId, userId) {
+                     var window = createWindow("openSchedulePopup", { title: "@(SR.T("Календарь"))", html: "", widthMode: 'xl', height: elma.getSchedulePopupContentHeight() });
+                     if (window != null && (scheduleId != null || userId != null)) {
+                         var url = scheduleId != null ?
+                             '@(Url.Action("PopupView", "Scheduler", new {area = CalendarAreaRegistration.AREA_NAME, id = ""}))/' + scheduleId
+                             : '@(Url.Action("PopupUserView", "Scheduler", new {area = CalendarAreaRegistration.AREA_NAME, id = ""}))/' + userId;
+                         refreshPopup("openSchedulePopup", url);
+                     } else {
+                         @(Html.MessageBox("").Error(SR.T("Не удается открыть окно календаря."), SR.T("Ошибка")).Render())
+
+                     }
+                 }
+             </script>
+         </text>);
+}

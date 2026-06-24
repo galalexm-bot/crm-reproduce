@@ -1,0 +1,90 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<FormViewItem xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <Name>Details</Name>
+  <Uid>864f1ae7-b7e4-407b-8341-393391a42649</Uid>
+  <Items>
+    <RootViewItem xsi:type="ColumnsLayoutViewItem">
+      <Name>ColumnsLayout1</Name>
+      <Uid>8bc26174-631b-42a3-8b04-9b75afc8db1f</Uid>
+      <Items>
+        <RootViewItem xsi:type="ColumnViewItem">
+          <Name>Column1</Name>
+          <Uid>cfe4c7ea-7f0f-4842-9653-37315d6dfb82</Uid>
+          <Items>
+            <RootViewItem xsi:type="PropertyViewItem">
+              <Name>Property1</Name>
+              <Uid>e7e411b2-08fc-4a9e-9c61-cc42347850ba</Uid>
+              <Property>2718096e-c134-4177-a506-b61d8065c636</Property>
+              <Attributes />
+              <CustomViewName>EntityLink</CustomViewName>
+            </RootViewItem>
+            <RootViewItem xsi:type="PropertyViewItem">
+              <Name>Property2</Name>
+              <Uid>97fc49d5-fb5e-4c05-bd49-9c2ba12e3ec3</Uid>
+              <Property>9bb908ed-dbd0-466f-89ed-86add6b15af4</Property>
+              <Attributes />
+            </RootViewItem>
+            <RootViewItem xsi:type="PropertyViewItem">
+              <Name>Property3</Name>
+              <Uid>4a08c042-0c25-4cd6-bcd5-921a85abc236</Uid>
+              <Property>0535a252-9220-4b5c-af4e-4bad3ed86846</Property>
+              <Attributes />
+            </RootViewItem>
+            <RootViewItem xsi:type="PropertyViewItem">
+              <Name>Property4</Name>
+              <Uid>905777a7-c5b3-44b7-84be-de626f00bea0</Uid>
+              <Property>cedd0b45-8991-4192-90e4-9ca9f3eec524</Property>
+              <Attributes />
+            </RootViewItem>
+            <RootViewItem xsi:type="PropertyViewItem">
+              <Name>Property5</Name>
+              <Uid>a6925bda-7bb8-4c6f-b379-397c621450f1</Uid>
+              <Property>e4a62198-860c-415a-b15c-87f2f4e16e40</Property>
+              <Attributes />
+            </RootViewItem>
+            <RootViewItem xsi:type="PropertyViewItem">
+              <Name>Property6</Name>
+              <Uid>b1d4cb50-dee9-4e9c-8ed1-bae627737e2f</Uid>
+              <Property>0618b6a5-509f-4fac-93e0-fa765077ba4d</Property>
+              <Attributes />
+              <CustomViewName>Uri</CustomViewName>
+            </RootViewItem>
+            <RootViewItem xsi:type="PropertyViewItem">
+              <Name>Property7</Name>
+              <Uid>1787d12f-04aa-4ffa-8e6c-9576cd3fb603</Uid>
+              <Property>fbc3b4a6-7ddc-4a0e-b99c-93856a4ea375</Property>
+              <Attributes />
+            </RootViewItem>
+            <RootViewItem xsi:type="PropertyViewItem">
+              <Name>Property8</Name>
+              <Uid>6a944c48-0446-4a3f-9020-42532c5cbfa5</Uid>
+              <Property>9360b777-afef-4f00-81ea-44a042ab5bfd</Property>
+              <Attributes />
+            </RootViewItem>
+            <RootViewItem xsi:type="PropertyViewItem">
+              <Name>Property9</Name>
+              <Uid>43773c50-7b60-49ff-8ecc-bf1c2576ac55</Uid>
+              <Property>b8705333-27f7-4c9a-8e07-6d8fd5ef5033</Property>
+              <Attributes />
+            </RootViewItem>
+            <RootViewItem xsi:type="PropertyViewItem">
+              <Name>Property10</Name>
+              <Uid>c2212f48-ca60-4ab5-8e9d-135457f88159</Uid>
+              <Property>51c4141c-fb98-4d52-97b5-d43becf7e3fe</Property>
+              <Attributes />
+            </RootViewItem>
+            <RootViewItem xsi:type="PropertyViewItem">
+              <Name>Property11</Name>
+              <Uid>988da7cf-b29b-4bcc-abe8-5713d8a8a3bc</Uid>
+              <Property>b8dbfef2-c088-46aa-9dd2-d5d0111bb464</Property>
+              <Attributes />
+              <CustomViewName>ContactBirthDate</CustomViewName>
+            </RootViewItem>
+          </Items>
+        </RootViewItem>
+      </Items>
+    </RootViewItem>
+  </Items>
+  <DisplayName>Сокращенный просмотр</DisplayName>
+  <ReadOnly>true</ReadOnly>
+</FormViewItem>

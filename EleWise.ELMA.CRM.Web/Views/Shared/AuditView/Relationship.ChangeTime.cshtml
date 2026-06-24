@@ -1,0 +1,13 @@
+﻿@using EleWise.ELMA.Web.Mvc.Models.History
+@model EleWise.ELMA.CRM.Models.RelationshipChangesHistoryModel
+@if (Model.OldEntity != null && Model.NewEntity != null)
+{
+<div class="history-type-action history-item-ext">
+    <div class="history-action-editvalues">
+        <table style="width: 100%;">
+        @Html.DisplayChanges(m => m.OldEntity.StartDate, m => m.NewEntity.StartDate)
+        @Html.DisplayChanges(m => m.OldEntity.EndDate, m => m.NewEntity.EndDate)
+        </table>
+    </div>
+</div>
+}

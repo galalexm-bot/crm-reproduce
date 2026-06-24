@@ -1,0 +1,99 @@
+﻿@model SaleFunnelReportFilterModel
+@using EleWise.ELMA
+@using EleWise.ELMA.BPM.Web.Common.Models
+@using EleWise.ELMA.CRM.Models
+@using EleWise.ELMA.CRM.Web
+@using EleWise.ELMA.CRM.Web.Models
+@using EleWise.ELMA.Web.Mvc.Html.FilterSearchForm
+@using EleWise.ELMA.CRM.Web.Menu
+
+@{
+    Html.Title(SR.T("Воронка продаж"));
+}
+
+@helper SimpleSearchTr(HtmlHelper<FilterModel> html)
+{
+    @MvcHtmlString.Create(Html.FilterSearchForm().FastSearchBoxFor(m => m.DataFilter.Filter.SearchString).Enabled(Model.DataFilter.ExistPropertiesForFastSearch).ShowExpandButton(true)
+            .ActionButtons(a =>
+            {
+                a.Add(new FastSearchFilterTreeButton(html.ViewData.Model.Entity.Name, Url.Action("Index") + "?FilterId=")
+                {
+                    OnClick = string.Format("openPopoverWindow('{0}', this);", 
+                        FastSearchFilterTreeButton.GetFilterTreeId(html.ViewData.Model.FilterMenuItemCode)),
+                    Index = 3
+                });
+            })
+            .Custom(@<text>
+            @html.Hidden("Filter.SaleFunnel.Id", ((ISaleFilter)html.ViewData.Model.Filter).SaleFunnel.Id)
+            <div class="custom-fastSearch-item">
+                @html.Hidden("Filter.SaleFunnel.Id", ((ISaleFilter)html.ViewData.Model.Filter).SaleFunnel.Id)
+                @Html.TableFormStart(EleWise.ELMA.Model.Views.ViewType.Edit)
+                @html.Property("Filter.SaleFunnel", a => { a.Html.style.width = "50%"; })
+                @html.EditableProperty("Filter.Responsibles", a => { a.Html.style.width = "100%"; })
+                @Html.TableFormEnd()
+            </div>
+            <div class="custom-fastSearch-item">
+                @Html.TableFormStart(EleWise.ELMA.Model.Views.ViewType.Edit)
+                @html.EditableProperty("Filter.StartDate", a => { a.Html.style.Add("width", "100%"); })
+                @html.EditableProperty("Filter.Categories", a => { a.Html.style.width = "100%"; })
+                @Html.TableFormEnd()
+            </div>
+            <div class="custom-fastSearch-buttons">
+                @Html.FilterSearchForm().FastSearchButton().Enabled(Model.DataFilter.ExistPropertiesForFastSearch)
+            </div>
+        </text>).ToHtmlString())
+}
+
+@if (Model != null)
+{
+
+    @(Html.Toolbar().Group("toolbar-group-1"))
+
+    @Html.Partial("Filter/FilterModel", Model.DataFilter.Builder()
+        .SubmitText(SR.T("Показать воронку"))
+        .GridAction(Url.Action("SaleFunnels", "SaleFunnelReport", new { area = CRMAreaRegistration.AREA_NAME }))
+        .ApplayFilterScript("applyFilterSaleFunnels()")
+        .FilterUrl(Url.Action("Index") + "?FilterId=")
+        .HiddenColumns(new List<string> {"SaleFunnel", "SaleStage"})
+        .IgnoreColumns(new List<string> {"Responsibles", "StartDate", "Categories"})
+        .ExtededSearchText(SR.T("Расширенный поиск по сделкам"))
+        .SimpleSearchTr(helper => SimpleSearchTr(helper))
+        .FilterMenuItemCode(CRMMenuItems.CRM_SALE_FUNNELS)
+        .Header(SR.T("Воронка продаж"))
+        .EnableSave(false)
+        .Model,
+        new ViewDataDictionary {TemplateInfo = new TemplateInfo {HtmlFieldPrefix = "DataFilter"}})
+
+    <div style="height:10px"></div>
+
+    <div id="SaleFunnelsContainer">
+        @Html.Action("SaleFunnels", "SaleFunnelReport", new { area = CRMAreaRegistration.AREA_NAME, Model.DataFilter })
+    </div>
+    <script type="text/javascript">
+        function applyFilterSaleFunnels() {
+            
+            var dataFilter = [];
+
+            var fields = $("#filteringGridForm").serializeArray();
+            $.each(fields, function (_, field) {
+                dataFilter[field.name] = field.value;
+            });
+
+            elma.openPleaseWait(true);
+            $.ajax({
+                cache: false,
+                type: "GET",
+                url: '@(Url.Action("SaleFunnels", "SaleFunnelReport", new { area = CRMAreaRegistration.AREA_NAME }))',
+                data: $.extend({}, dataFilter),
+                success: function (data) {
+                    elma.closePleaseWait(true);
+                    $('#SaleFunnelsContainer').html(data);
+                }
+            });
+        }
+    </script>
+}
+else
+{
+    @SR.T("Нет данных для отображения. В системе нет ни одной воронки продаж.")
+}

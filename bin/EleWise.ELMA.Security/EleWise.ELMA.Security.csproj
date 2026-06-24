@@ -1,0 +1,75 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <AssemblyName>EleWise.ELMA.Security</AssemblyName>
+    <GenerateAssemblyInfo>False</GenerateAssemblyInfo>
+    <TargetFramework>net48</TargetFramework>
+  </PropertyGroup>
+  <PropertyGroup>
+    <LangVersion>Preview</LangVersion>
+    <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
+  </PropertyGroup>
+  <PropertyGroup>
+    <RootNamespace />
+  </PropertyGroup>
+  <ItemGroup>
+    <None Remove="T1bjBGp6nGMVAqN6j9.WSvhk451WbG9ytdt0Z" />
+    <Compile Remove="EleWise.ELMA.Security.Models.U.cs" />
+    <None Remove="EleWise.ELMA.Security.Db.Secur.xml" />
+    <None Remove="EleWise.ELMA.Security.Notifica.xml" />
+    <EmbeddedResource Include="T1bjBGp6nGMVAqN6j9.WSvhk451WbG9ytdt0Z" />
+    <EmbeddedResource Include="EleWise.ELMA.Security.Models.U.cs" />
+    <EmbeddedResource Include="EleWise.ELMA.Security.Db.Secur.xml" />
+    <EmbeddedResource Include="EleWise.ELMA.Security.Notifica.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="AutoMapper">
+      <HintPath>..\..\..\bin\AutoMapper.dll</HintPath>
+    </Reference>
+    <Reference Include="EleWise.ELMA.SDK">
+      <HintPath>..\..\..\bin\EleWise.ELMA.SDK.dll</HintPath>
+    </Reference>
+    <Reference Include="EleWise.ELMA.SDK.Diagrams">
+      <HintPath>..\..\..\bin\EleWise.ELMA.SDK.Diagrams.dll</HintPath>
+    </Reference>
+    <Reference Include="Nevron.Diagram">
+      <HintPath>..\..\..\bin\Nevron.Diagram.dll</HintPath>
+    </Reference>
+    <Reference Include="NHibernate">
+      <HintPath>..\..\..\bin\NHibernate.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Xml" />
+    <Reference Include="System.Web" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Core" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="Iesi.Collections">
+      <HintPath>..\..\..\bin\Iesi.Collections.dll</HintPath>
+    </Reference>
+    <Reference Include="Nevron.System">
+      <HintPath>..\..\..\bin\Nevron.System.dll</HintPath>
+    </Reference>
+    <Reference Include="Nevron.Presentation" >
+      <HintPath>..\..\..\bin\Nevron.Presentation.dll</HintPath>
+    </Reference>
+    <Reference Include="EleWise.ELMA.SDK.Web">
+      <HintPath>..\..\..\bin\EleWise.ELMA.SDK.Web.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.Extensions" />
+    <Reference Include="EleWise.ELMA.Packaging">
+      <HintPath>..\..\..\bin\EleWise.ELMA.Packaging.dll</HintPath>
+    </Reference>
+    <Reference Include="System.ServiceModel.Web" />
+    <Reference Include="System.ServiceModel" />
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="EleWise.TemplateGenerator.Merged">
+      <HintPath>..\..\..\bin\EleWise.TemplateGenerator.Merged.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.IdentityModel.JsonWebTokens">
+      <HintPath>..\..\..\bin\Microsoft.IdentityModel.JsonWebTokens.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.IdentityModel.Tokens">
+      <HintPath>..\..\..\bin\Microsoft.IdentityModel.Tokens.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Security" />
+  </ItemGroup>
+</Project>

@@ -1,0 +1,210 @@
+﻿@model EleWise.ELMA.CRM.Web.Models.MarketingActivityModel
+
+@using EleWise.ELMA
+@using EleWise.ELMA.CRM.Models
+@using EleWise.ELMA.Helpers
+@using EleWise.ELMA.Model.Types.Settings
+@using EleWise.ELMA.Model.Views
+@using EleWise.ELMA.Web.Mvc.Html.Forms
+
+@{
+    long tagEntityId = 0;
+    if (Model.Entity is IMarketingActivity && ((IMarketingActivity)Model.Entity).MarketingGroup != null)
+    {
+        tagEntityId = ((IMarketingActivity)Model.Entity).MarketingGroup.Id;
+    }
+    else if (Model.Entity is IMarketingEffect && ((IMarketingEffect)Model.Entity).MarketingActivity != null)
+    {
+        tagEntityId = ((IMarketingEffect)Model.Entity).MarketingActivity.Id;
+    }
+}
+
+<div class="general-form-container">
+@using (Html.ElmaForm(confirmOnClose: true))
+{
+    var hasCommonView = Model.HasCustomFormViews(Model.Entity.IsNew() ? EleWise.ELMA.Model.Views.ViewType.Create : EleWise.ELMA.Model.Views.ViewType.Edit, false);
+    var formView = Model.GetCustomFormView(Model.Entity.IsNew() ? EleWise.ELMA.Model.Views.ViewType.Create : EleWise.ELMA.Model.Views.ViewType.Edit, false);
+
+    @Html.ValidationSummary(false)
+
+    if (!Model.Entity.IsNew())
+    {
+        @Html.HiddenFor(m => m.Entity.Id)
+    }
+
+    if (!Model.Entity.IsNew() || Model.LockParentItem)
+    {
+        if (Model.Entity is IMarketingActivity)
+        {
+            @Html.Hidden("Entity.MarketingGroup.Id", ((IMarketingActivity)Model.Entity).MarketingGroup != null ? ((IMarketingActivity)Model.Entity).MarketingGroup.Id.ToString() : "")
+        }
+        else if (Model.Entity is IMarketingEffect)
+        {
+            @Html.Hidden("Entity.MarketingActivity.Id", ((IMarketingEffect)Model.Entity).MarketingActivity != null ? ((IMarketingEffect)Model.Entity).MarketingActivity.Id.ToString() : "")
+        }
+    }
+
+    @Html.Hidden("Entity.TypeUid", Model.Entity.TypeUid)
+
+    if (Model.LockResponsible)
+    {
+        @Html.Hidden("Entity.Responsible.Id", Model.Entity.Responsible.Id)
+    }
+
+    if (hasCommonView && formView.UseRazorView)
+    {
+        var vd = new ViewDataDictionary(ViewData) { TemplateInfo = { HtmlFieldPrefix = ViewData.TemplateInfo.GetFullHtmlFieldName("Entity") } };
+        @Html.Partial(formView.RazorCommonViewName, Model.Entity, vd)
+    }
+    else
+    {
+        @Html.TableFormStart(EleWise.ELMA.Model.Views.ViewType.Edit)
+        @Html.BuildFormForModel(Model.Entity, Model.Entity.IsNew() ? EleWise.ELMA.Model.Views.ViewType.Create : EleWise.ELMA.Model.Views.ViewType.Edit,
+        b =>
+        {
+            b.HideForm();
+            b.HideAllProperties();
+            b.Prefix("Entity");
+            b.LayoutConfig<DefaultFormLayout>(l => { l.RenderTable = false; });
+
+            b.PropertyRow(m => m.Name).Order(1);
+            b.PropertyRow(m => m.Description).Order(2);
+
+            if (Model.Entity is IMarketingActivity)
+            {
+                b.PropertyRow(m => ((IMarketingActivity)m).MarketingGroup)
+                    .EditorAttributes(a => a.ReadOnly = !Model.Entity.IsNew() || Model.LockParentItem)
+                    .EditorAttributes(a => a.Html.onchange = "loadTag")
+                    .Order(3);
+            }
+
+            if (Model.Entity is IMarketingEffect)
+            {
+                b.PropertyRow(m => ((IMarketingEffect)m).MarketingActivity)
+                    .EditorAttributes(a => a.ReadOnly = !Model.Entity.IsNew() || Model.LockParentItem)
+                    .EditorAttributes(a => a.Html.onchange = "loadTag")
+                    .Order(3);
+            }
+
+            b.PropertyRow(m => m.Responsible)
+                .EditorAttributes(a => a.ReadOnly = Model.LockResponsible)
+                .Order(4);
+
+            if (Model.Entity.IsNew())
+            {
+                b.PropertyRow(m => m.BudgetType).EditorAttributes(a =>
+                {
+                    a.Html.onchange = "budgetTypeChanged";
+                    a.TypeSettings = new EnumSettings
+                    {
+                        DefaultValue = EleWise.ELMA.Helpers.EnumHelper.GetUid(MarketingBudgetType.SumOfChild)
+                    };
+                }).Order(5);
+            }
+
+            if (Model.Entity is IMarketingActivity)
+            {
+                b.PropertyRow(m => ((IMarketingActivity) m).StartDate).Order(6);
+                b.PropertyRow(m => ((IMarketingActivity) m).EndDate).Order(7);
+            }
+
+            if (Model.Entity is IMarketingEffect)
+            {
+                b.PropertyRow(m => ((IMarketingEffect)m).StartDate).Order(6);
+                b.PropertyRow(m => ((IMarketingEffect)m).EndDate).Order(7);
+            }
+
+            if (Model.Entity.IsNew())
+            {
+                b.PropertyRow(m => m.Budget).Attributes(a =>
+                {
+                    a.Html = new HtmlAttributes() {{"id", "budgetRow"}};
+                    if (Model.Entity.BudgetType == MarketingBudgetType.SumOfChild)
+                    {
+                        a.Html.style = new HtmlStyle() {{"display", "none;"}};
+                    }
+                }).Order(8);
+            }
+
+            var tagName = "";
+            if (Model.Entity is IMarketingGroup)
+            {
+                b.PropertyRow(m => ((IMarketingGroup)m).GroupType).Order(9);
+                tagName = "utm_source";
+            }
+            if (Model.Entity is IMarketingActivity)
+            {
+                b.PropertyRow(m => ((IMarketingActivity)m).ActivityType).Order(9);
+                tagName = "utm_medium";
+            }
+            if (Model.Entity is IMarketingEffect)
+            {
+                b.PropertyRow(m => ((IMarketingEffect)m).EffectType).Order(9);
+                tagName = "utm_campaign";
+            }
+            
+            b.PropertyRow(m => m.Tags).CaptionTemplate(delegate
+            {
+                return MvcHtmlString.Create(string.Format("{0} ({1})", Html.Caption(y => y.Entity.Tags), SR.T("соответствует {0}", tagName)));
+            }).Attributes(a => a.Html.@class = "tag-caption-bottom").EditorAttributes(a => a.AdditionalViewData = new RouteValueDictionary { { "TagName", tagName } }).Order(11);
+            
+            if (hasCommonView && !formView.UseRazorView)
+            {
+                b.UserProperties();
+                b.UserPropertiesOrder(11, 1);
+            }
+        })
+        @Html.TableFormEnd()
+    }
+}
+</div>
+
+<script type="text/javascript">
+    function budgetTypeChanged(e) {
+        if (e.value == "@(MarketingBudgetType.Manual)") {
+            jConfirm('@(SR.T("При переводе в этот режим актуальность бюджета придется поддерживать вручную. Вы уверены что хотите это сделать?"))', '@(SR.T("Предупреждение"))', function (r) {
+                if (r) {
+                    $('#budgetRow').show();
+                }
+                else {
+                    $("#Entity_BudgetType").val('@MarketingBudgetType.SumOfChild');
+                    $("#Entity_BudgetType").data("tDropDownList").value('@MarketingBudgetType.SumOfChild');
+
+                }
+            });
+        }
+        else {
+            $('#budgetRow').hide();
+        }
+    }
+
+    $(document).ready(function () {
+        loadParentMarketingTags(@(tagEntityId));
+    });
+
+    function loadTag(e) {
+        loadParentMarketingTags($(e.target).val());
+    }
+
+    function loadParentMarketingTags(id) {
+        if (id == 0) {
+            return;
+        }
+
+        $.ajax({
+            type: 'POST',
+            url: '@Url.Action("GetMarketingTags", "MarketingActivity")',
+            data: {
+                id: id
+            },
+            success: function (data) {
+                if (data) {
+                    $("#ParentMarketingTag").html(data);
+                }
+            }
+        });
+
+    }
+</script>
+
+

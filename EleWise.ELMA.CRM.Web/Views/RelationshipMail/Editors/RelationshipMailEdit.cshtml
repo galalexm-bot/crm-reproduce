@@ -1,0 +1,15 @@
+﻿@model EleWise.ELMA.CRM.Web.Models.RelationshipMailModel
+@{ 
+    var formId = ((string)ViewData["FormId"]) ?? HtmlExtensions.GLOBALFORMID;
+    if (Model.DynamicFormSettings != null)
+    {
+        Model.DynamicFormSettings.FormId = formId;
+    }
+}
+
+@using (Html.ElmaForm(formId, confirmOnClose: true))
+{
+    <div class="general-form-container">
+        @Html.Partial("RelationshipMail/RelationshipMailEditForm")
+    </div>
+}

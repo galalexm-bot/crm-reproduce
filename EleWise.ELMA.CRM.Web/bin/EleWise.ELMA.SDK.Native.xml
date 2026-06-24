@@ -1,0 +1,157 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>EleWise.ELMA.SDK.Native</name>
+    </assembly>
+    <members>
+        <member name="T:EleWise.ELMA.Extensions.ByteArrayExtensions">
+            <summary>
+            Методы расширения для массива <see cref="T:System.Byte"/>
+            </summary>
+        </member>
+        <member name="M:EleWise.ELMA.Extensions.ByteArrayExtensions.ByteArrayCompare(System.Byte[],System.Byte[])">
+            <summary>
+            Сравнить массивы <see cref="T:System.Byte"/>
+            </summary>
+            <param name="left">Первый операнд</param>
+            <param name="right">Второй операнд</param>
+            <returns><c>true</c> если эквивалентен</returns>
+        </member>
+        <member name="M:EleWise.ELMA.Extensions.ByteArrayExtensions.ByteArrayCompare(System.Byte*,System.Byte*,System.Int64)">
+            <summary>
+            Сравнить массивы <see cref="T:System.Byte"/>
+            </summary>
+            <param name="left">Указатель на первый элемент первого буфера</param>
+            <param name="right">Указатель на первый элемент второго буфера</param>
+            <param name="count">Количество элементов для сравнение</param>
+            <returns><c>true</c> если эквиваленты</returns>
+        </member>
+        <member name="T:EleWise.ELMA.Extensions.MemoryStreamExtensions">
+            <summary>
+            Методы расширения для <see cref="T:System.IO.MemoryStream"/>
+            </summary>
+        </member>
+        <member name="M:EleWise.ELMA.Extensions.MemoryStreamExtensions.Compare(System.IO.MemoryStream,System.IO.MemoryStream)">
+            <summary>
+            Сравнить два экземпляра <see cref="T:System.IO.MemoryStream"/>
+            </summary>
+            <param name="left">Первый <see cref="T:System.IO.MemoryStream"/></param>
+            <param name="right">Второй <see cref="T:System.IO.MemoryStream"/></param>
+            <returns><c>true</c> если эквивалентны</returns>
+        </member>
+        <member name="T:EleWise.ELMA.IO.NativeMemoryStream">
+            <summary>
+            Поток, резервным хранилищем которого является память
+            </summary>
+        </member>
+        <member name="M:EleWise.ELMA.IO.NativeMemoryStream.#ctor">
+            <inheritdoc />
+        </member>
+        <member name="M:EleWise.ELMA.IO.NativeMemoryStream.#ctor(System.Int32)">
+            <inheritdoc />
+        </member>
+        <member name="M:EleWise.ELMA.IO.NativeMemoryStream.#ctor(System.Runtime.Serialization.SerializationInfo,System.Runtime.Serialization.StreamingContext)">
+            <summary>
+            Ctor
+            </summary>
+            <param name="info">Данные сериализации</param>
+            <param name="context">Контекст сериализации</param>
+        </member>
+        <member name="M:EleWise.ELMA.IO.NativeMemoryStream.Finalize">
+            <summary>
+            Dctor
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.IO.NativeMemoryStream.CanRead">
+            <inheritdoc />
+        </member>
+        <member name="P:EleWise.ELMA.IO.NativeMemoryStream.CanSeek">
+            <inheritdoc />
+        </member>
+        <member name="P:EleWise.ELMA.IO.NativeMemoryStream.CanWrite">
+            <inheritdoc />
+        </member>
+        <member name="P:EleWise.ELMA.IO.NativeMemoryStream.Capacity">
+            <inheritdoc />
+        </member>
+        <member name="P:EleWise.ELMA.IO.NativeMemoryStream.Length">
+            <inheritdoc />
+        </member>
+        <member name="P:EleWise.ELMA.IO.NativeMemoryStream.Position">
+            <inheritdoc />
+        </member>
+        <member name="M:EleWise.ELMA.IO.NativeMemoryStream.GetBuffer">
+            <inheritdoc />
+        </member>
+        <member name="M:EleWise.ELMA.IO.NativeMemoryStream.TryGetBuffer(System.ArraySegment{System.Byte}@)">
+            <inheritdoc />
+        </member>
+        <member name="M:EleWise.ELMA.IO.NativeMemoryStream.Read(System.Byte[],System.Int32,System.Int32)">
+            <inheritdoc />
+        </member>
+        <member name="M:EleWise.ELMA.IO.NativeMemoryStream.ReadAsync(System.Byte[],System.Int32,System.Int32,System.Threading.CancellationToken)">
+            <inheritdoc />
+        </member>
+        <member name="M:EleWise.ELMA.IO.NativeMemoryStream.ReadByte">
+            <inheritdoc />
+        </member>
+        <member name="M:EleWise.ELMA.IO.NativeMemoryStream.Seek(System.Int64,System.IO.SeekOrigin)">
+            <inheritdoc />
+        </member>
+        <member name="M:EleWise.ELMA.IO.NativeMemoryStream.SetLength(System.Int64)">
+            <inheritdoc />
+        </member>
+        <member name="M:EleWise.ELMA.IO.NativeMemoryStream.ToArray">
+            <inheritdoc />
+        </member>
+        <member name="M:EleWise.ELMA.IO.NativeMemoryStream.Write(System.Byte[],System.Int32,System.Int32)">
+            <inheritdoc />
+        </member>
+        <member name="M:EleWise.ELMA.IO.NativeMemoryStream.WriteAsync(System.Byte[],System.Int32,System.Int32,System.Threading.CancellationToken)">
+            <inheritdoc />
+        </member>
+        <member name="M:EleWise.ELMA.IO.NativeMemoryStream.WriteByte(System.Byte)">
+            <inheritdoc />
+        </member>
+        <member name="M:EleWise.ELMA.IO.NativeMemoryStream.WriteTo(System.IO.Stream)">
+            <inheritdoc />
+        </member>
+        <member name="M:EleWise.ELMA.IO.NativeMemoryStream.AsString(System.Text.Encoding)">
+            <summary>
+            Преобразовать <see cref="T:EleWise.ELMA.IO.NativeMemoryStream"/> в строку c использование указанной кодировки
+            </summary>
+            <param name="encoding">Кодировка символов</param>
+            <returns>Результирующая строка</returns>
+        </member>
+        <member name="M:EleWise.ELMA.IO.NativeMemoryStream.GetContentHashCode">
+            <summary>
+            Получить хек-код содержимого внутренного буфера
+            </summary>
+            <returns>Хеш-код</returns>
+        </member>
+        <member name="M:EleWise.ELMA.IO.NativeMemoryStream.Dispose(System.Boolean)">
+            <inheritdoc />
+        </member>
+        <member name="M:EleWise.ELMA.IO.NativeMemoryStream.GetNativeBuffer">
+            <summary>
+            Получить указатель на буфер в неуправляемой памяти
+            </summary>
+            <returns>Указатель на буфер</returns>
+        </member>
+        <member name="M:EleWise.ELMA.IO.NativeMemoryStream.ThrowIfStreamClosed">
+            <summary>
+            Сгенерировать ошибку если поток закрыт
+            </summary>
+        </member>
+        <member name="M:EleWise.ELMA.IO.NativeMemoryStream.EnsureCapacity(System.Int32)">
+            <summary>
+            Установить новую емкость потока в байтах
+            </summary>
+            <param name="value">Емкость</param>
+            <returns><c>true</c> если при изменении емкости был аллоцирован новый буфер</returns>
+        </member>
+        <member name="M:EleWise.ELMA.IO.NativeMemoryStream.System#Runtime#Serialization#ISerializable#GetObjectData(System.Runtime.Serialization.SerializationInfo,System.Runtime.Serialization.StreamingContext)">
+            <inheritdoc />
+        </member>
+    </members>
+</doc>

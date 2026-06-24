@@ -1,0 +1,224 @@
+﻿@using EleWise.ELMA
+@using EleWise.ELMA.CRM.Models
+@using EleWise.ELMA.CRM.Web.Models
+@model UserEditContractorHistoryModel
+
+@{
+    var changedCount = Model.ChangedProperties != null ? Model.ChangedProperties.Count(p => !Model.BaseProperties.Contains(p.Uid)) : 0;
+    var emailChanged = Model.EmailUpdateEvents.Any() || Model.NewEmails.Count > 0;
+    if (emailChanged)
+    {
+        changedCount++;
+    }
+    var phoneChanged = Model.PhoneUpdateEvents.Any() || Model.NewPhones.Count > 0;
+    if (phoneChanged)
+    {
+        changedCount++;
+    }
+    var legalAddressChanged = Model.LegalAddressUpdateEvent != null;
+    if (legalAddressChanged)
+    {
+        changedCount++;
+    }
+    var postalAddressChanged = Model.PostalAddressUpdateEvent != null;
+    if (postalAddressChanged)
+    {
+        changedCount++;
+    }
+    var categoryChanged = Model.NewCategory != null && Model.NewCategory.Count > 0 || Model.OldCategory != null && Model.OldCategory.Count > 0;
+    if (categoryChanged)
+    {
+        changedCount++;
+    }
+    var bankAccountChanged = Model.BankAccountUpdateEvents.Any() || Model.NewBankAccounts.Count > 0;
+    if (bankAccountChanged)
+    {
+        changedCount++;
+    }
+    var paymentCardChanged = Model.PaymentCardUpdateEvents.Any() || Model.NewPaymentCards.Count > 0;
+    if (paymentCardChanged)
+    {
+        changedCount++;
+    }
+}
+
+@if (changedCount > 0)
+{
+<div class="history-type-action history-item-ext">
+    <div class="history-action-editvalues">
+        <div class="history-action-short-values">
+            @SR.T("Всего изменено свойств"): <b>@changedCount</b>
+        </div>
+        @Html.RotatableArrow(true, new { @class = "history-action-arrow" })
+        <div class="history-action-all-values">
+            @if (Model.OldEntity != null && Model.NewEntity != null && Model.ChangedProperties.Any())
+            {
+                   @Html.Partial("HistoryParts/ContractorEditedProperties", new ContractorEditedPropertiesModel { NewEntity = Model.NewEntity, OldEntity = Model.OldEntity, ChangedProperties = Model.ChangedProperties, BaseProperties = Model.BaseProperties })
+            }
+            @if (emailChanged)
+            {
+                <table>
+                    <tr>
+                        <td class="history-item-changerow-caption">
+                            @SR.T("Email")
+                        </td>
+                        <td class="history-item-changerow-values">
+                            @{
+                                if (Model.EmailUpdateEvents.Any())
+                                {
+                                    foreach (var emailEvent in Model.EmailUpdateEvents)
+                                    {
+                                        @Html.DisplayChanges(emailEvent.Old, emailEvent.New)
+                                    }
+                                }
+                                if (Model.NewEmails != null && Model.NewEmails.Any())
+                                {
+                                    @SR.T("Добавлены: ")
+                                    @Html.Display(m => m.NewEmails)
+                                }
+                            }
+                        </td>
+                    </tr>
+                </table>
+            }
+            @if (phoneChanged)
+            {
+                <table>
+                    <tr>
+                        <td class="history-item-changerow-caption">
+                            @SR.T("Телефоны")
+                        </td>
+                        <td class="history-item-changerow-values">
+                            @{
+                                if (Model.PhoneUpdateEvents.Any())
+                                {
+                                    foreach (var phoneEvent in Model.PhoneUpdateEvents)
+                                    {
+                                        @Html.DisplayChanges(phoneEvent.Old, phoneEvent.New)
+                                    }
+                                }
+                                if (Model.NewPhones.Any())
+                                {
+                                    @SR.T("Добавлены: ")
+                                    @Html.Display(m => m.NewPhones)
+                                }
+                            }
+                        </td>
+                    </tr>
+                </table>
+            }
+            @if (legalAddressChanged)
+            {
+                <table>
+                    <tr>
+                        <td class="history-item-changerow-caption">
+                            @SR.T("Юридический адрес")
+                        </td>
+                        <td class="history-item-changerow-values">
+                            <span class="display-string">@Html.Display(m => m.LegalAddressUpdateEvent.Old)</span>
+                            @Html.Image("#forward.svg",  new {  @class="history-arrow-right", title = "Изменено" })
+                            <span class="display-string">@Html.Display(m => m.LegalAddressUpdateEvent.New)</span>
+                        </td>
+                    </tr>
+                </table>
+            }
+            @if (postalAddressChanged)
+            {
+                <table>
+                    <tr>
+                        <td class="history-item-changerow-caption">
+                            @SR.T("Почтовый адрес")
+                        </td>
+                        <td class="history-item-changerow-values">
+                            <span class="display-string">@Html.Display(m => m.PostalAddressUpdateEvent.Old)</span>
+                            @Html.Image("#forward.svg", new { @class = "history-arrow-right", title = "Изменено" })
+                            <span class="display-string">@Html.Display(m => m.PostalAddressUpdateEvent.New)</span>
+                        </td>
+                    </tr>
+                </table>
+            }
+            @if (categoryChanged)
+            {
+                <table>
+                    <tr>
+                        <td class="history-item-changerow-caption">
+                            @SR.T("Категории")
+                        </td>
+                        <td class="history-item-changerow-values">
+                            @{
+                                if (Model.OldCategory.Count > 0)
+                                {
+                                    @SR.T("Удалены")
+                                    @MvcHtmlString.Create(": " + string.Join(", ", Model.OldCategory.Select(c => @Html.DisplayValue(c))))
+                                    <br/>
+                                }
+                                if (Model.NewCategory.Count > 0)
+                                {
+                                    @SR.T("Добавлены")
+                                    @MvcHtmlString.Create(": " + string.Join(", ", Model.NewCategory.Select(c => @Html.DisplayValue(c))))
+                                }
+                            }
+                        </td>
+                    </tr>
+                </table>
+            }
+            @if (bankAccountChanged)
+            {
+                <table>
+                        <tr>
+                            <td class="history-item-changerow-caption">
+                                @SR.T("Банковские счета")
+                            </td>
+                            <td class="history-item-changerow-values">
+                                @{
+                                    if (Model.BankAccountUpdateEvents.Any())
+                                    {
+                                        foreach (var bankAccountEvent in Model.BankAccountUpdateEvents)
+                                        {
+                                            <div style="margin-bottom: 15px;">
+                                                @Html.DisplayChanges(bankAccountEvent.Old, bankAccountEvent.New)
+                                            </div>
+                                        }
+                                    }
+                                    if (Model.NewBankAccounts.Any())
+                                    {
+                                        @SR.T("Добавлены:")
+                                        @Html.Display(m => m.NewBankAccounts)
+                                    }
+                                }
+                            </td>
+                        </tr>
+                    </table>
+            }
+            @if (paymentCardChanged)
+            {
+                <table>
+                        <tr>
+                            <td class="history-item-changerow-caption">
+                                @SR.T("Платежные карты (кошельки)")
+                            </td>
+                            <td class="history-item-changerow-values">
+                                @{
+                                    if (Model.PaymentCardUpdateEvents.Any())
+                                    {
+                                        foreach (var paymentCardEvent in Model.PaymentCardUpdateEvents)
+                                        {
+                                            <div style="margin-bottom: 15px;">
+                                                @Html.DisplayChanges(paymentCardEvent.Old, paymentCardEvent.New)
+                                            </div>
+                                        }
+                                    }
+                                    if (Model.NewPaymentCards.Any())
+                                    {
+                                        @SR.T("Добавлены:")
+                                        @Html.Display(m => m.NewPaymentCards)
+                                    }
+                                }
+                            </td>
+                        </tr>
+                    </table>
+            }
+        </div>
+    </div>
+</div>
+}

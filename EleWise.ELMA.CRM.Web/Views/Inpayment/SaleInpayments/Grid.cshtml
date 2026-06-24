@@ -1,0 +1,128 @@
+﻿@using EleWise.ELMA
+@using EleWise.ELMA.CRM
+@using EleWise.ELMA.CRM.Extensions
+@using EleWise.ELMA.CRM.Models
+@using EleWise.ELMA.CRM.Web
+@using EleWise.ELMA.CRM.Web.Models
+@using EleWise.ELMA.Common.Models
+@using EleWise.ELMA.Model.Managers
+@using EleWise.ELMA.Security
+@using EleWise.ELMA.Services
+@using EleWise.ELMA.Security.Services
+@using EleWise.ELMA.Services
+@using EleWise.ELMA.Web.Mvc.Html
+@model SaleInpaymentsModel
+
+@{
+    var canEdit = Locator.GetServiceNotNull<ISecurityService>().HasPermission(CRMPermissionProvider.CRMSaleCreateElementPermission, Model.Sale);
+    var canDelete = CRMPermissionProvider.CheckAny(new[] { CRMPermissionProvider.CRMFullAccessPermission, CRMPermissionProvider.CRMDeleteInpaymentPermission });
+    var closed = Model.Sale.SaleClosed();
+    var service = Locator.GetServiceNotNull<ISecurityService>();
+    if (!closed)
+    {
+        closed = !
+            (service.HasPermission(CRMPermissionProvider.CRMSaleCreateElementPermission, Model.Sale) ||
+             service.HasPermission(CRMPermissionProvider.CRMSaleFullAccessPermission, Model.Sale) ||
+             service.HasPermission(CRMPermissionProvider.CRMFullAccessPermission));
+    }
+}
+
+@(Html.DynamicGrid("SaleInpaymentsGrid1", Model.GridData).Columns(c =>
+    {
+        c.For(m => m.Name).Template(x => Html.ActionLink(x.Name ?? SR.Untitled, "Details", "Inpayment", new { area = CRMAreaRegistration.AREA_NAME, id = x.Id }, null)).Order(1);
+        c.For(m => m.Date).Template(x => x.Date != null
+                                                ? Html.HtmlHelperFunc(x, helper => helper.Display(m => m.Date))
+                                                : closed ? MvcHtmlString.Empty : MvcHtmlString.Create("<a href=\"#\" onclick=\"setInpaymentDateClick(" + x.Id + "); return false;\">" + SR.T("Установить") + "</a>")).Order(2);
+        c.For(m => m.Sum).Order(3);
+        c.For(m => m.Invoice).Template(x => x.Invoice
+                                                ? MvcHtmlString.Create(SR.T("Да"))
+                                                : closed ? MvcHtmlString.Create(SR.T("Нет")) : MvcHtmlString.Create("<a href=\"#\" onclick=\"setInpaymentInvoiceClick(" + x.Id + "); return false;\">" + SR.T("Установить") + "</a>")).Order(4);
+        if (!closed)
+        {
+            c.For(m => m.Status).Link(x => String.Format("javascript:setInpaymentStatusClick({0})", x.Id)).Order(5);
+        }
+        else
+        {
+            c.For(m => m.Status).Order(5);
+        }
+    
+        if (canEdit && !Model.Sale.SaleClosed())
+        {
+            c.For(m => m)
+                .Template(t => Html.ImageButton("#edit.svg", SR.T("Изменить"), string.Format("javascript:void(editInpayment(" + t.Id + "));")).ToHtmlString())
+                .Header(String.Empty)
+                .NotSortable()
+                .Order(6);
+        }
+        if (canDelete && !Model.Sale.SaleClosed())
+        {
+            c.For(m => m)
+                .Template(t => Html.ImageButton("#basket.svg", SR.T("Удалить"), string.Format("javascript:void(onDeleteInpaymentClick(" + t.Id + "));")).ToHtmlString())
+                .Header(String.Empty)
+                .NotSortable()
+                .CellHtmlAttributes((a, column) => new { style = "padding-left: 0!important; margin-left: 0!important" })
+                .Order(7);
+        }
+    })
+    .Customizable(false)
+    .RowHtmlAttributes((x, g) => new { style = x.Status == InpaymentStatus.Cancelled ? "color: darkgray;" : x.Status == InpaymentStatus.Received ? "color: green;" : x.Date != null && x.Date < DateTime.Today ? "color: red;" : "" })
+        .EnableCustomize(false)
+        .DefaultSortExpression("Date")
+        .Action("Inpayments").Controller("Inpayment").RouteValues(new RouteValueDictionary { { "saleId", Model.Sale.Id } })
+    )
+
+<span id="SalesVolumeHiddenDiv">@Html.Display(m => m.Sale.SalesVolume)</span>
+
+<div class="sale-inpayment-add-button">
+    @Html.ImageButton("#add.svg", SR.T("Добавить поступление"), "addInpayment();", null, new { style = "", @class = "sale-inpayment" }, SR.T("Добавить поступление"))
+</div>
+
+@{
+    Money saleVolume = Model.Sale.SalesVolume ?? 0.00;
+    var inpayments = EntityManager<IInpayment>.Instance.Find(i => i.Sale == Model.Sale).ToList();
+    if (inpayments.Any())
+    {
+        Money inpayments_inplan = inpayments.Where(x => x.Status == InpaymentStatus.InPlan && x.Date != null).Sum(i => i.Sum);
+        Money inpayments_inplan_nodate = inpayments.Where(x => x.Status == InpaymentStatus.InPlan && x.Date == null).Sum(i => i.Sum);
+        Money inpayments_received = inpayments.Where(x => x.Status == InpaymentStatus.Received).Sum(i => i.Sum);
+
+
+        <div class="sale-inpayment-money-table-container">
+            <div class="sale-inpayment-money-table">
+                <table>
+                    <tr>
+                        <td class="sale-inpayment-money-table-key">@SR.T("В плане (с датой):")</td>
+                        <td class="sale-inpayment-money-table-divider"></td>
+                        <td class="sale-inpayment-money-table-value">@Html.Partial("DisplayTemplates/Money", inpayments_inplan)</td>
+                    </tr>
+                    <tr>
+                        <td class="sale-inpayment-money-table-key">@SR.T("В плане (без даты):")</td>
+                        <td class="sale-inpayment-money-table-divider"></td>
+                        <td class="sale-inpayment-money-table-value">@Html.Partial("DisplayTemplates/Money", inpayments_inplan_nodate)</td>
+                    </tr>
+                    <tr>
+                        <td class="sale-inpayment-money-table-key">@SR.T("В плане (всего):")</td>
+                        <td class="sale-inpayment-money-table-divider"></td>
+                        <td class="sale-inpayment-money-table-value">@Html.Partial("DisplayTemplates/Money", (Money)(inpayments_inplan + inpayments_inplan_nodate))</td>
+                    </tr>
+                </table>
+            </div>
+
+            <div class="sale-inpayment-money-table">
+                <table>
+                    <tr>
+                        <td class="sale-inpayment-money-table-key">@SR.T("Получено:")</td>
+                        <td class="sale-inpayment-money-table-divider"></td>
+                        <td class="sale-inpayment-money-table-value">@Html.Partial("DisplayTemplates/Money", inpayments_received)</td>
+                    </tr>
+                    <tr>
+                        <td class="sale-inpayment-money-table-key">@SR.T("Всего:")</td>
+                        <td class="sale-inpayment-money-table-divider"></td>
+                        <td class="sale-inpayment-money-table-value">@Html.Partial("DisplayTemplates/Money", saleVolume)</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+
+    }
+}

@@ -1,0 +1,14 @@
+﻿@using EleWise.ELMA.Model.Entities
+@model EleWise.ELMA.CRM.Models.ILead
+
+@if (Model != null)
+{
+    if (Model.IsNew() || Model.IsDeleted)
+    {
+        @Model.GetTitleOrDefault(m => m.Name)
+    }
+    else
+    {
+        <a href="@Url.Entity(Model)">@Model.GetTitleOrDefault(m => m.Name)</a>
+    }
+}

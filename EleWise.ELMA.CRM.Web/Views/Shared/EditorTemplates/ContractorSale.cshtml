@@ -1,0 +1,7 @@
+﻿@using EleWise.ELMA.CRM.Web.Components
+@model EleWise.ELMA.CRM.Web.Models.ContractorSaleModel
+@Html.Editor(m => m.Sale, a =>
+                    {
+                        a.EntityFilterProvider = ContractorSaleFilterProvider.UID;
+                        a.EntityFilterData = Model.Contractor != null ? Model.Contractor.Id.ToString() : string.Empty;
+                    })

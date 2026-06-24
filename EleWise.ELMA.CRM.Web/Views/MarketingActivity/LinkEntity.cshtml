@@ -1,0 +1,19 @@
+﻿@using EleWise.ELMA.CRM.Web
+@using EleWise.ELMA
+@using EleWise.ELMA.CRM.Web.Components
+@model EleWise.ELMA.CRM.Web.Models.LinkEntityToMarketingModel
+@using (Html.AjaxForm(Model.Action, "MarketingActivity", new { area = CRMAreaRegistration.AREA_NAME }, FormMethod.Post, null, Model.Callback))
+{
+    @Html.HiddenFor(m => m.MarketingBase.Id)
+    @Html.TableFormStart(EleWise.ELMA.Model.Views.ViewType.Edit)
+        @Html.EditableProperty(Model.EntityExpression, a =>
+                {
+                    a.EntityFilterProvider = EntityWithoutMarketingFilterProvider.UID;
+                    a.EntityFilterData = Model.MarketingBase != null ? Model.MarketingBase.TypeUid.ToString() : Guid.Empty.ToString();
+                })
+    @Html.TableFormEnd()
+    <div class="popup-buttons">
+        <input type="submit" class="confirm" value="@SR.Save" onclick="closeWindow(this)"/>
+        <input type="button" value="@SR.Cancel" onclick="closeWindow(this)"/>
+    </div>
+}

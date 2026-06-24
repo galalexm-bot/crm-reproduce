@@ -1,0 +1,275 @@
+﻿@model IGridData<ILead>
+@using EleWise.ELMA
+@using EleWise.ELMA.CRM.Web.Code
+@using EleWise.ELMA.Services
+@using EleWise.ELMA.Model.Services
+@using EleWise.ELMA.CRM.Models
+@using EleWise.ELMA.CRM
+@using EleWise.ELMA.CRM.Web
+@using EleWise.ELMA.Security.Models
+@using EleWise.ELMA.Security.Services
+@using EleWise.ELMA.BPM.Web.Common.Models
+@using EleWise.ELMA.BPM.Web.Common.Extensions
+@{
+    Html.Title(EleWise.ELMA.SR.T("Потенциальные клиенты"));
+    var typeUid =  InterfaceActivator.UID<ILead>();
+    Html.RenderInZone("FilterModelLinkZone", d => Html.CurrentSearchLinkButton(typeUid));
+}
+
+@{ 
+    var currentUserId = Locator.GetService<IAuthenticationService>().GetCurrentUser<IUser>().Id;
+    var activateTip = string.Format("<b>{0}</b><br>{1}", SR.T("Активировать выбранных потенциальных клиентов"), SR.T("Установить выбранным потенциальным клиентам статус &quotНовый&quot"));
+    bool canAdd = CRMPermissionProvider.CheckAny(new[] { CRMPermissionProvider.CRMFullAccessPermission, CRMPermissionProvider.CRMLeadCreatePermission });
+    bool canDelete = CRMPermissionProvider.CheckAny(new[] { CRMPermissionProvider.CRMFullAccessPermission, CRMPermissionProvider.CRMDeletePermission });
+
+} 
+    @(Html.Toolbar().Group(ToolbarGroupUids.FrequentlyUsedButtonsGroupUid)
+        .If(canAdd, b => b.Button(b1=> b1
+            .Uid("toolbar-action-Create")
+            .Text(EleWise.ELMA.SR.Create)
+            .IconUrl("#add.svg")
+            .Url(Url.Action("Create", "Lead"))
+            .MainAction()
+        ))
+        .Button(bDo => bDo
+            .Uid("toolbar-button-SelectedActions")
+            .Text(SR.T("Выбранные"))
+            .IconUrl("#select_all.svg")
+            .Buttons(t => {
+                t.Button(builder => builder
+                            .Uid("toolbar-button-SelectedActions-Add")
+                            .Text(SR.T("Добавить")) 
+                            .Buttons(btnAdd => {
+                                btnAdd.Button(b => b
+                                    .Uid("toolbar-button-SelectedActions-AddCalls")
+                                    .Text(SR.T("Звонки")) 
+                                    .IconUrl("#add.svg") 
+                                    .Click("AddCalls();")
+                                    );
+                                btnAdd.Button(b => b
+                                    .Uid("toolbar-button-SelectedActions-AddMeetings")
+                                    .Text(SR.T("Встречи")) 
+                                    .IconUrl("#add_meeting.svg")
+                                    .Click("AddMeetings();")
+                                    );
+                                btnAdd.Button(b => b
+                                    .Uid("toolbar-button-SelectedActions-AddMails")
+                                    .Text(SR.T("Письма")) 
+                                    .IconUrl("#add_message.svg")
+                                    .Click("AddMails();")
+                                    );
+                                btnAdd.Button(b => b
+                                    .Uid("toolbar-button-SelectedActions-SetMarketingActivity")
+                                    .Text(SR.T("Маркетинговые мероприятия"))
+                                    .Click("SetMarketingActivity();")
+                                    .IconUrl("#target.svg")
+                                    );
+                            }));
+                            t.Button(b => b
+                                .Uid("toolbar-button-SelectedActions-AssignTo")
+                                .Text(SR.T("Назначить ответственного")) 
+                                .Click("AssignTo();")
+                                );
+                            t.Button(b => b
+                                .Uid("toolbar-button-SelectedActions-ChangeType")
+                                .Text(SR.T("Изменить тип")) 
+                                .Click("ChangeType();")
+                                );
+                            t.Button(b => b
+                                .Uid("toolbar-button-SelectedActions-Activate")
+                                .Text(SR.T("Активировать")) 
+                                .ToolTip(activateTip)
+                                .Click("Activate();")
+                                );
+                            t.If(canDelete, gb => gb
+                                .Button(b => b
+                                    .Uid("toolbar-button-SelectedActions-DeleteLeads")
+                                    .Text(SR.T("Удалить")) 
+                                    .IconUrl("#basket.svg") 
+                                    .Click("DeleteLeads();")
+                                    )
+                                );
+                       })
+
+        )
+)
+
+@Html.FilterEditButton(new FilterEditButtonModel {        
+    FilterId = Convert.ToInt64(Request["FilterId"]),
+    Area = RouteProvider.AreaName,
+    ControllerName = "Lead",
+    BackUrl = Request.RawUrl
+}) 
+
+@Html.PopupWindow("PopUpDeleteLeads", SR.T("Подтверждение удаления"), @<text></text>)
+@Html.PopupWindow("PopUpSelectUser", SR.T("Укажите ответственного"), @<text></text>)
+@Html.PopupWindow("LeadChangeType", SR.T("Тип потенциального клиента"), @<text></text>)
+@Html.PopupWindow("MarketingActivitySelectionPopup", SR.T("Выберите маркетинговое мероприятие"), @<text></text>)
+
+<script type="text/javascript">
+    function SetMarketingActivity()
+    {
+        var url = '@Url.Action("AssignActivityToManyEntities", "MarketingActivity", new { area = CRMAreaRegistration.AREA_NAME })?';
+        var noSelectedEntitiesMsg = '@(SR.T("Нет выбранных потенциальных клиентов"))';
+        var entityName = '@System.Web.HttpUtility.UrlEncode(SR.T("потенциальным клиентам"))';
+        var entitiesNameForErrorMessage = '@System.Web.HttpUtility.UrlEncode(SR.T("потенциальных клиентов"))';
+        AssignMarketingActivity(url, '@typeUid', noSelectedEntitiesMsg, 'Index', 'Lead', entityName, entitiesNameForErrorMessage);   
+    }
+
+    function ChangeType()
+    {
+        var selectedLeads = GetSelectedObjects();
+         if (selectedLeads.length == 0) {
+            jAlert('@(SR.T("Нет выбранных потенциальных клиентов"))', '@(SR.T("Предупреждение"))');
+            return;
+        }
+        
+        if (selectedLeads.length > 0)
+        {
+            var url = '@Url.Action("ChangeType", "Lead", new { area = CRMAreaRegistration.AREA_NAME })?';
+            $.each(selectedLeads, function(i, d) {
+                url += '&leadsId=' + d;
+            });
+            var window = $('#LeadChangeType').data("tWindow");
+            window.contentUrl = url;
+            window.loaded = false;
+            @(Html.OpenPopup("LeadChangeType"))
+        }
+    }
+
+    function Activate()
+    {
+        var selectedLeads = GetSelectedObjects();
+         if (selectedLeads.length == 0) {
+            jAlert('@(SR.T("Нет выбранных потенциальных клиентов"))', '@(SR.T("Предупреждение"))');
+            return;
+        }
+        
+        if (selectedLeads.length > 0)
+        {
+            var url = '@(Url.Action("Activate", "Lead"))?';
+            $.each(selectedLeads, function(i, d) {
+                url += '&leadsId=' + d;
+            });
+            window.replaceUrl(url);
+        }
+    }
+
+    function AssignTo(userId)
+    {
+        
+        var selectedLeads = GetSelectedObjects();
+         if (selectedLeads.length == 0) {
+            jAlert('@(SR.T("Нет выбранных потенциальных клиентов"))', '@(SR.T("Предупреждение"))');
+            return;
+        }
+        
+        if (selectedLeads.length > 0)
+        {
+            if (userId)
+            {
+                var url = '@Url.Action("AssignTo", "Lead", new { area = CRMAreaRegistration.AREA_NAME })';
+                url += "?userId=" + userId;
+                $.each(selectedLeads, function(i, d) {
+                    url += '&leadsId=' + d;
+                });
+                window.replaceUrl(url);
+            }
+            else
+            {
+                var url = '@Url.Action("SelectAndAssign", "Lead", new { area = CRMAreaRegistration.AREA_NAME })?';
+                $.each(selectedLeads, function(i, d) {
+                    url += '&leadsId=' + d;
+                });
+                var windowP = $('#PopUpSelectUser').data("tWindow");
+                windowP.contentUrl = url;
+                windowP.loaded = false;
+                @(Html.OpenPopup("PopUpSelectUser"))                
+            }
+        }
+    }
+
+    function DeleteLeads()
+    {
+        var selectedLeads = GetSelectedObjects();
+         if (selectedLeads.length == 0) {
+            jAlert('@(SR.T("Нет выбранных потенциальных клиентов"))', '@(SR.T("Предупреждение"))');
+            return;
+        }
+        var url = '@Url.Action("DeleteGroup", "Lead", new { area = CRMAreaRegistration.AREA_NAME, popupId = "PopUpDeleteLeads" })';
+        if (selectedLeads.length > 0)
+        {
+            $.each(selectedLeads, function(i, d) {
+                url += '&leadsId=' + d;
+            });
+            var window = $('#PopUpDeleteLeads').data("tWindow");
+            window.contentUrl = url;
+            window.loaded = false;
+            @(Html.OpenPopup("PopUpDeleteLeads"))
+        }
+    }
+
+    function AddCalls()
+    {
+        var selectedContractors = GetSelectedObjects();
+         if (selectedContractors.length == 0) {
+            jAlert('@(SR.T("Нет выбранных потенциальных клиентов"))', '@(SR.T("Предупреждение"))');
+            return;
+        }
+        
+        if (selectedContractors.length > 0)
+        {
+            var url = '@Url.Action("CreateMany", "RelationshipCall", new { area = CRMAreaRegistration.AREA_NAME })';
+            url += "?";
+            $.each(selectedContractors, function(i, d) {
+                url += '&leadsId=' + d;
+            });
+            window.replaceUrl(url);
+        }
+    }
+        
+    function AddMeetings()
+    {
+        var selectedContractors = GetSelectedObjects();
+         if (selectedContractors.length == 0) {
+            jAlert('@(SR.T("Нет выбранных потенциальных клиентов"))', '@(SR.T("Предупреждение"))');
+            return;
+        }
+        
+        if (selectedContractors.length > 0)
+        {
+            var url = '@Url.Action("CreateMany", "RelationshipMeeting", new { area = CRMAreaRegistration.AREA_NAME })';
+            url += "?";
+            $.each(selectedContractors, function(i, d) {
+                url += '&leadsId=' + d;
+            });
+            window.replaceUrl(url);
+        }
+    }
+    
+    function AddMails()
+    {
+        var selectedContractors = GetSelectedObjects();
+         if (selectedContractors.length == 0) {
+            jAlert('@(SR.T("Нет выбранных потенциальных клиентов"))', '@(SR.T("Предупреждение"))');
+            return;
+        }
+        
+        if (selectedContractors.length > 0)
+        {
+            var url = '@Url.Action("CreateMany", "RelationshipMail", new { area = CRMAreaRegistration.AREA_NAME })';
+            url += "?";
+            $.each(selectedContractors, function(i, d) {
+                url += '&leadsId=' + d;
+            });
+            window.replaceUrl(url);
+        }
+    }
+    
+</script>
+
+<script type="text/javascript" src="@Url.Content("~/Modules/EleWise.ELMA.CRM.Web/Scripts/MarketingActivityAssigner.js")"></script>
+
+@Html.ExtensionZone("LeadsStartRouteExtensionZone")
+
+@(Html.Action("GridWithSummary"))

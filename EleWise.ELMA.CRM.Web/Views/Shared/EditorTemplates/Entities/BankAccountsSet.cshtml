@@ -1,0 +1,323 @@
+﻿@using System.Reflection
+@using EleWise.ELMA
+@using EleWise.ELMA.CRM.Enums
+@using EleWise.ELMA.CRM.Models.BillingInformation
+@using EleWise.ELMA.CRM.Web
+@using EleWise.ELMA.Helpers
+@using EleWise.ELMA.Model.Entities
+@using EleWise.ELMA.Model.Metadata
+@using EleWise.ELMA.Model.Services
+@using EleWise.ELMA.Model.Types
+@using viewForm = EleWise.ELMA.Model.Views
+@using EleWise.ELMA.Serialization
+
+@model IEnumerable<IBankAccount>
+@{
+    var unique = string.Format("Bind{0}", Guid.NewGuid().ToString("N"));
+    var tableId = string.Format("{0}Table", unique);
+    var tr = string.Format("{0}Tr", unique);
+    var popupId = string.Format("{0}Popup", unique);
+
+    string id = ViewData.TemplateInfo.GetFullHtmlFieldId("");
+    string name = ViewData.TemplateInfo.GetFullHtmlFieldName("");
+
+    var uid = InterfaceActivator.UID<IBankAccount>();
+    var metadata = (EntityMetadata)MetadataLoader.LoadMetadata(uid);
+    var properties = metadata.Properties.Where(item => item.Name != "Uid").ToList();
+    int propertyCount = properties.Count;
+    var accountStatusList = Enum.GetValues(typeof(AccountStatus)).Cast<AccountStatus>();
+    var accountStatusDispNameList = accountStatusList.Select(i => EleWise.ELMA.Helpers.EnumHelper.GetDisplayName(i)).ToList();
+    int index = 0;
+
+    if (properties.Count != 0)
+    {
+        <div class="t-grid">
+            <table cellspacing="0" class="t-grid-table" id="@(tableId)">
+                <thead class="t-grid-header">
+                    <tr>
+                        @foreach (var prop in properties)
+                        {
+                            <th class="t-header" scope="col">
+                                <span class="t-header-content">@prop.DisplayName</span>
+                            </th>
+                        }
+                        <th class="t-header"></th>
+                        <th class="t-header"></th>
+                        <th class="t-header"></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model.Count() == 0)
+                    {
+                        <tr class="t-no-data">
+                            <td colspan="@(propertyCount + 1)">
+                                <span>@SR.T("Нет данных для отображения")</span>
+                            </td>
+                        </tr>
+                    }
+                    else
+                    {
+                        foreach (var item in Model)
+                        {
+                            <tr id="@(tr)@(index)">
+                                @foreach (var prop in properties)
+                                {
+                                    var propInfo = item.GetType().GetReflectionProperty(prop.Name);
+                                    var propValue = propInfo.GetValue(item, null);
+                                    //объект
+                                    if (prop.TypeUid == EntityDescriptor.UID)
+                                    {
+                                        var entity = propValue as IEntity;
+                                        <td>
+                                            <span id="@(id)_@(prop.Name)@(index)">@(propValue)</span>
+                                            <input type="hidden" id="@(id)[@(index)]_@(prop.Name)_Id" name="@(name)[@(index)].@(prop.Name).Id" value="@(entity != null ? entity.GetId() : String.Empty)" />
+                                        </td>
+                                    }
+                                    //перечисление
+                                    else if (prop.TypeUid == EnumDescriptor.UID)
+                                    {
+                                        <td>
+                                            <span id="@(id)_@(prop.Name)@(index)">@EleWise.ELMA.Helpers.EnumHelper.GetDisplayName(propValue)</span>
+                                            <input type="hidden" id="@(id)[@(index)]_@(prop.Name)" name="@(name)[@(index)].@(prop.Name)" value="@(propValue)" />
+                                        </td>
+                                    }
+                                    else
+                                    {
+                                        <td>
+                                            <span id="@(id)_@(prop.Name)@(index)">@(propValue)</span>
+                                            <input type="hidden" id="@(id)[@(index)]_@(prop.Name)" name="@(name)[@(index)].@(prop.Name)" value="@(propValue)" />
+                                        </td>
+                                    }
+                                }
+                                <td align="center">
+                                    @Html.ImageButton("#edit.svg").Click(string.Format("{0}EditRow({1})", unique, index))
+                                </td>
+                                <td align="center">
+                                    @Html.ImageButton("#basket.svg").Click(string.Format("{0}DeleteRow({1})", unique, index))
+                                </td>
+                                <td>
+                                    <input type="hidden" id="@(id)[@(index)]_Id" name="@(name)[@(index)].Id" value="@item.Id" />
+                                </td>
+                            </tr>
+                                index++;
+                        }
+                    }
+                </tbody>
+            </table>
+        </div>
+
+        <div style="height: 10px"></div>
+
+        @Html.ImageButton("#add.svg", SR.T("Добавить"), string.Format("{0}PopupCreate();", unique), text: SR.T("Добавить"))
+    }
+    Html.RegisterContent(popupId, @<text> @Html.PopupWindow(popupId, SR.T("Добавить запись")) </text>);
+}
+<script type="text/javascript">
+    var accountStatusDispNameList@(unique) = @Html.Raw(Json.Encode(accountStatusDispNameList));
+    var itemIndex@(unique) = @(index);
+    var propertyCount@(unique) = @(propertyCount);
+
+    function @(unique)PopupCreate() {
+        refreshPopup("@(popupId)", "@(Url.Action("PopupCreateBankAccount", "BankAccount", new { area = CRMAreaRegistration.AREA_NAME }))", {popupId : '@popupId', prefix : '@unique', callbackFunc: '@(unique)CallbackFunctionCreate(data)'}, "@(SR.T("Добавить запись"))");
+    }
+
+    function @(unique)CallbackFunctionCreate(data) {
+        @Html.ClosePopup(popupId);
+
+        if (data != null) {
+            var parentModel = jQuery.parseJSON(data);
+            var model = parentModel.Entity;
+            delete model['Id'];
+            delete model['TypeUid'];
+            delete model['Uid'];
+            var propList = Object.keys(model);
+            var propCount = Object.keys(model).length;
+            var tr = '<tr id="@(tr)' + itemIndex@(unique) + '">';
+            for (var item = 0; item < propCount; item++) {
+                var prop = propList[item];
+                if (prop == "@(EntitySerializationSelector.ToStringPropertyName)") {
+                    continue;
+                }
+                if ((typeof model[prop]) ==  "object") {
+                    //entity
+                    var propName = "";
+                    var propId = "";
+                    if (model[prop] != null) {
+                        propName =  model[prop]["Name"];
+                        propId = model[prop]["Id"];
+                    }
+                    tr += '<td> ' +
+                        '<span id="@(id)_' + prop + itemIndex@(unique) + '"> ' + propName +' </span> ' +
+                        '<input type="hidden" id="@(id)[' + itemIndex@(unique) + ']_' + prop + '_Id" name="@(name)[' + itemIndex@(unique) + '].' + prop + '.Id" value="' + propId + '"/> ' +
+                        '</td>';
+                } else {
+                    if (prop == "AccountStatus") {
+                        //enum
+                        var id = model[prop];
+                        tr += '<td> ' +
+                            '<span id="@(id)_' + prop + itemIndex@(unique) + '"> ' + accountStatusDispNameList@(unique)[id] + ' </span>' +
+                            '<input type="hidden" id="@(id)[' + itemIndex@(unique) + ']_' + prop + '" name="@(name)[' + itemIndex@(unique) + '].' + prop + '" value="' + model[prop] + '"/>' +
+                            '</td>';
+
+                        @(unique)ChekStatus(id, null);
+                    } else {
+                        //propetry
+                        tr += '<td> ' +
+                            '<span id="@(id)_' + prop + itemIndex@(unique) + '"> ' + model[prop] + ' </span>' +
+                            '<input type="hidden" id="@(id)[' + itemIndex@(unique) + ']_' + prop + '" name="@(name)[' + itemIndex@(unique) + '].' + prop + '" value="' + model[prop] + '"/>' +
+                            '</td>';
+                    }
+                }
+            }
+
+            tr += '<td align="center">'+
+                    '@(Html.ImageButton("#edit.svg").Click(string.Format("{0}EditRow({1})", unique, index)).RemoveLineBreaks())' +
+                '</td>'+
+                '<td align="center">'+
+                    '@(Html.ImageButton("#basket.svg").Click(string.Format("{0}DeleteRow({1})", unique, index)).RemoveLineBreaks())' +
+                '</td>' +
+                '<td></td>' +
+                '</tr>';
+
+            var notData = $('#@(tableId)').find(".t-no-data");
+            if (notData != null) {
+                notData.remove();
+                $(tr).appendTo("#@(tableId) tbody");
+            } else {
+                $(tr).appendTo("#@(tableId) tbody");
+            }
+            itemIndex@(unique)++;
+        }
+    }
+
+    function @(unique)ChekStatus(enumId, editRow) {
+        var statusCol = 4;
+        var notMainStatusIndex = 1;
+        var mainStatusIndex = 0;
+        if(enumId == mainStatusIndex){
+            for (var i = 0; i < itemIndex@(unique); i++) {
+                var inputArr = $('#@(tr)' + i).find('input');
+                var spanArr = $('#@(tr)' + i).find('span');
+                var inputEnum = inputArr[statusCol].value;
+                if (editRow != null) {
+                    if (i != editRow) {
+                        if (inputEnum == mainStatusIndex || inputEnum == 'Main') {
+                            spanArr.eq(statusCol).text(accountStatusDispNameList@(unique)[notMainStatusIndex]);
+                            inputArr[statusCol].value = notMainStatusIndex;
+                        }
+                    }
+                } else {
+                    if (inputEnum == mainStatusIndex || inputEnum == 'Main') {
+                        spanArr.eq(statusCol).text(accountStatusDispNameList@(unique)[notMainStatusIndex]);
+                        inputArr[statusCol].value = notMainStatusIndex;
+                    }
+                }
+            }
+        }
+    }
+
+    function @(unique)DeleteRow(index) {
+        jConfirm('@SR.T("Удалить элемент из списка?")', '@SR.T("Удаление")', function (r) {
+            if (r) {
+                for (var i = index; i < itemIndex@(unique) - 1; i++) {
+                    var inputArrThis = $('#@(tr)' + i).find('input');
+                    var inputArrNext = $('#@(tr)' + (i+1) ).find('input');
+                    var spanArrThis = $('#@(tr)' + i).find('span');
+                    var spanArrNext = $('#@(tr)' + (i + 1)).find('span');
+                    if(inputArrThis.length > inputArrNext.length) {
+                        var length = inputArrThis.length;
+                        $('#@(tr)' + i).find('input')[length - 1].remove();
+                    }
+                    for (var j = 0; j < inputArrNext.length; j++) {
+                        inputArrThis[j].value = inputArrNext[j].value;
+                        spanArrThis.eq(j).text(spanArrNext.eq(j).text());
+                    }
+
+                }
+                itemIndex@(unique)--;
+                $('#@(tr)' + itemIndex@(unique)).remove();
+                if (itemIndex@(unique) == 0) {
+                    $('<tr class="t-no-data">' +
+                        '<td colspan="@(propertyCount + 1)">' +
+                        '<span>@SR.T("Нет данных для отображения")</span>' +
+                        '<input type="hidden" id="@(id)_Id" name="@(name).Id"/>' +
+                        '</td>' +
+                        '</tr>').appendTo("#@(tableId) tbody");
+                }
+            }
+        });
+    }
+
+    function @(unique)EditRow(index) {
+        var inputArr = $('#@(tr)' + index).find('input');
+        var postModel = {};
+        for (var i = 0; i < propertyCount@(unique); i++) {
+            var property = inputArr[i].name;
+            property = property.replace('@(name)[' + index + '].','');
+            var value = inputArr[i].value;
+            postModel[property] = value;
+        }
+        postModel["index"] = index;
+        postModel["prefix"] = '@unique';
+        postModel["callbackFunc"] = '@(unique)CallbackFunctionEdit(data)';
+        postModel["popupId"] = '@popupId';
+        refreshPopup("@(popupId)", "@(Url.Action("PopupEditBankAccount", "BankAccount", new { area = CRMAreaRegistration.AREA_NAME }))", postModel, "@(SR.T("Редактировать запись"))");
+    }
+
+    function @(unique)CallbackFunctionEdit(data) {
+        @Html.ClosePopup(popupId);
+        if (data != null) {
+            var parentModel = jQuery.parseJSON(data);
+            var model = parentModel.Entity;
+            var editRowIndex = parentModel['RowId'];
+            //delete model['RowId'];
+            delete model['Id'];
+            delete model['TypeUid'];
+            delete model['Uid'];
+            if (editRowIndex != null) {
+
+                var index = editRowIndex;
+                var inputArr = $('#@(tr)' + index).find('input');
+                var spanArr = $('#@(tr)' + index).find('span');
+
+                for (var i = 0; i < propertyCount@(unique); i++) {
+                    var propName = inputArr[i].name.replace('@(name)[' + index + '].', '');
+                    if (propName.indexOf('.') == -1) {
+                        if (propName == 'AccountStatus') {
+                            //enum
+                            var valEnum = model[propName];
+                            if (inputArr[i].name.indexOf(propName) != -1) {
+                                inputArr[i].value = valEnum;
+                                spanArr.eq(i).text(accountStatusDispNameList@(unique)[valEnum]);
+
+                                @(unique)ChekStatus(valEnum, editRowIndex);
+                            }
+                        }else{
+                            //propetry
+                            var valProperty = model[propName];
+                            if (inputArr[i].name.indexOf(propName) != -1) {
+                                inputArr[i].value = valProperty;
+                                if (valProperty == null)
+                                    valProperty = "";
+                                spanArr.eq(i).text(valProperty);
+                            }
+                        }
+                    }else {
+                        //entity
+                        propName = propName.replace('.Id', '');
+                        var valEntityId = "";
+                        var valEntityName = "";
+                        if (model[propName] != null) {
+                            valEntityId = model[propName]["Id"];
+                            valEntityName = model[propName]["Name"];
+                        }
+                        if (inputArr[i].name.indexOf(propName) != -1) {
+                            inputArr[i].value = valEntityId;
+                            spanArr.eq(i).text(valEntityName);
+                        }
+                    }
+                }
+            }
+        }
+    }
+</script>

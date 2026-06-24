@@ -1,0 +1,13 @@
+﻿@using EleWise.ELMA
+@using ContentHtmlExtensions = EleWise.ELMA.BPM.Web.Content.Extensions.HtmlExtensions
+@{
+    ContentHtmlExtensions.HeaderBreadcrumbsInZone(Html, SR.T("Настройка глобального порядка стадий сделок"));
+    Html.Toolbar();
+    Html.LabeledHeader(SR.T("Воронки продаж"), false);
+}
+@using (Html.LabeledContainer(""))
+{
+    <div class="general-form-container">
+        @Html.Action("Grid")
+    </div>
+}

@@ -1,0 +1,2485 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<root uid="{6A193EA1-DBFC-46DB-8EF9-239A85745660}" provider="SqlServer">
+
+  <methods>
+      <method ExecuteTime="OnTablesCreated" name="UpdateFeedTablesColumnId" />
+  </methods>
+
+  <procedures>
+
+    <procedure name="FeedSaveMessage">
+      <mappings>
+        <hibernate-mapping xmlns="urn:nhibernate-mapping-2.2">
+          <sql-query name="ExecFeedSaveMessage">
+            exec FeedSaveMessage @Parent_Subject=:Parent_Subject, @Parent_Text=:Parent_Text, @Parent_TextHtml=:Parent_TextHtml, @Parent_ActionUid=:Parent_ActionUid, @Parent_ActionObjectUid=:Parent_ActionObjectUid, @Parent_ActionObjectId=:Parent_ActionObjectId, @Parent_CreationDate=:Parent_CreationDate, @Parent_CreationAuthor=:Parent_CreationAuthor, @Parent_MessageAttachments=:Parent_MessageAttachments, @Parent_ObjectRecipients=:Parent_ObjectRecipients, @Parent_MessageObjects=:Parent_MessageObjects, @Parent_Url=:Parent_Url, @Subject=:Subject, @Text=:Text, @TextHtml=:TextHtml, @ActionUid=:ActionUid, @ActionObjectUid=:ActionObjectUid, @ActionObjectId=:ActionObjectId, @CreationAuthor=:CreationAuthor, @MessageAttachments=:MessageAttachments, @ObjectRecipients=:ObjectRecipients, @MessageObjects=:MessageObjects, @Url=:Url, @SaveComment=:SaveComment, @ChangeDate=:ChangeDate, @ChangeDateHash=:ChangeDateHash, @Recipients=:Recipients, @SetReadForAuthor=:SetReadForAuthor, @IdRangeStart=:IdRangeStart, @CheckParent=:CheckParent, @DateTimeNow=:DateTimeNow
+          </sql-query>
+        </hibernate-mapping>
+      </mappings>
+      <text>
+        <![CDATA[
+/**************************************************************************************
+
+   Добавление/обновление родительского сообщения и добавление дочернего
+   
+**************************************************************************************/
+CREATE PROCEDURE FeedSaveMessage
+    -- Карточка объекта / родительское сообщение
+    @Parent_Subject nvarchar(MAX),
+    @Parent_Text nvarchar(MAX),
+    @Parent_TextHtml nvarchar(MAX),
+    @Parent_ActionUid uniqueidentifier,
+    @Parent_ActionObjectUid uniqueidentifier,
+    @Parent_ActionObjectId bigint,
+    @Parent_CreationDate datetime,
+    @Parent_CreationAuthor bigint,
+    @Parent_MessageAttachments varbinary(MAX),
+    @Parent_ObjectRecipients varbinary(MAX),
+    @Parent_MessageObjects varbinary(MAX),
+    @Parent_Url nvarchar(2000),
+    
+    -- Комментарий / вопрос / ответ / сообщение по объекту
+    @Subject nvarchar(MAX),
+    @Text nvarchar(MAX),
+    @TextHtml nvarchar(MAX),
+    @ActionUid uniqueidentifier,
+    @ActionObjectUid uniqueidentifier,
+    @ActionObjectId bigint,
+    @CreationAuthor bigint,
+    @MessageAttachments varbinary(MAX),
+    @ObjectRecipients varbinary(MAX),
+    @MessageObjects varbinary(MAX),
+    @Url nvarchar(2000),
+    
+    @SaveComment bit, -- сохранить комментарий
+    @ChangeDate datetime, -- дата изменения
+    @ChangeDateHash nvarchar(16), -- хеш сообщения
+    @Recipients nvarchar(MAX), -- строка со списком получателей сообщения, через запятую в формате (RecipientId:Priority)
+    @SetReadForAuthor bit, -- установить прочитанным для автора
+    @IdRangeStart bigint, -- первый идентификатор в таблице
+    
+    @CheckParent bit, -- Нужно ли делать проверку на существование родительского сообщения
+    @DateTimeNow datetime -- текущая дата
+AS
+BEGIN
+  declare @Recipient bigint
+  declare @feedId bigint
+  declare @IsRead bit
+  declare @Parent_IsRead bit
+  declare @Parent_HasUnreadChild bit
+  declare @Priority int
+  
+  declare @tableRecipients TABLE (
+    [Id] bigint,
+    [Priority] int
+  )
+  
+  declare @tableInsert TABLE (
+    [Id] bigint,
+    [Subject] nvarchar(max) NULL,
+    [Text] nvarchar(max) NULL,
+    [ActionObjectUid] uniqueidentifier NOT NULL,
+    [ActionUid] uniqueidentifier NOT NULL,
+    [ActionObjectId] bigint NOT NULL,
+    [Recipient] bigint NOT NULL,
+    [CreationDate] datetime NOT NULL,
+    [ChangeDate] datetime NOT NULL,
+    [CreationAuthor] bigint NULL,
+    [IsParent] bit NOT NULL,
+    [ParentObjectId] bigint NULL,
+    [ParentObjectUid] uniqueidentifier NULL,
+    [ChildCount] int NULL,
+    [IsRead] bit NULL,
+    [ReadDate] datetime NULL,
+    [HasUnreadChild] bit NULL,
+    [UnreadCount] int NULL,
+    [Priority] int NULL,
+    [ChangeDateHash] nvarchar(35) NOT NULL,
+    [MessageAttachments] varbinary(max) NULL,
+    [ObjectRecipients] varbinary(max) NULL,
+    [MessageObjects] varbinary(max) NULL,
+    [Url] nvarchar(max) NULL,
+    [TextHtml] nvarchar(max) NULL
+  )
+
+  declare @tableUpdate TABLE (
+    [Id] [bigint] PRIMARY KEY,
+    [ChildCount] [int] NULL,
+    [IsRead] [bit] NULL,
+    [ReadDate] [datetime] NULL,
+    [HasUnreadChild] [bit] NULL,
+    [UnreadCount] [int] NULL,
+    [Priority] [int] NULL,
+    [ParentObjectId] bigint NULL,
+    [ParentObjectUid] uniqueidentifier NULL,
+    [Recipient] bigint
+  )
+  
+  -- получатели
+  insert into @tableRecipients (Id, Priority)
+  select distinct
+      Cast(left(val, patindex('%:%' , val) - 1) as bigint),
+      Cast(stuff(val, 1, patindex('%:%' , val), '') as int)
+  from SplitString(@Recipients, ',')
+  
+  if (@CheckParent = 1)
+  begin
+  -- родительские сообщения, которые есть в ленте Feed
+  INSERT INTO @tableUpdate (
+      [Id],
+      [HasUnreadChild],
+      [IsRead],
+      [ReadDate],
+      [UnreadCount],
+      [ChildCount],
+      [Priority],
+      [Recipient],
+      [ParentObjectId],
+      [ParentObjectUid]
+  )
+  select
+      f.[Id],
+      [HasUnreadChild],
+      [IsRead],
+      [ReadDate],
+      [UnreadCount],
+      [ChildCount],
+      f.[Priority],
+      [Recipient],
+      [ParentObjectId],
+      [ParentObjectUid]
+  from Feed f WITH(nolock)
+  inner join @tableRecipients r on f.[Recipient] = r.[Id]
+  where
+      [IsParent] = 1
+      and [ParentObjectId] = @Parent_ActionObjectId
+      and [ParentObjectUid] = @Parent_ActionObjectUid
+      
+  declare @tableMissingRecipients TABLE ( [Recipient] bigint)
+  
+  insert into @tableMissingRecipients ([Recipient])    
+  select tr.[Id] from @tableRecipients tr 
+  left join @tableUpdate tu on tr.[Id] = tu.[Recipient]
+  group by tr.[Id], tu.[ParentObjectId], tu.[ParentObjectUid]
+  having count(tu.[Recipient]) = 0
+  
+  if ((select count(*) from @tableMissingRecipients) > 0)
+  begin    
+  -- все сообщения, которые есть в архиве и нет в Feed
+  INSERT INTO @tableInsert (
+        [Id],
+        [ChangeDateHash],
+        [Subject],
+        [Text], [TextHtml],
+        [CreationDate], [ChangeDate], [CreationAuthor],
+        [HasUnreadChild], [ActionUid], [ActionObjectUid], [ActionObjectId],
+        [Recipient], [ParentObjectId], [ParentObjectUid],
+        [IsRead], [ReadDate], 
+        [UnreadCount], 
+        [Priority], [ChildCount],
+        [IsParent],
+        [MessageAttachments], [ObjectRecipients], [MessageObjects],
+        [Url]
+  )
+  select
+        a.[Id],
+        case when [IsParent] = 1 then @ChangeDateHash + right('0000000000000000000' + cast(a.[Id] as varchar(19)), 19) else [ChangeDateHash] end,
+        [Subject],
+        [Text], [TextHtml],
+        [CreationDate], [ChangeDate], [CreationAuthor],
+        [HasUnreadChild], [ActionUid], [ActionObjectUid], [ActionObjectId],
+        [Recipient], [ParentObjectId], [ParentObjectUid],
+        [IsRead], [ReadDate], 
+        [UnreadCount], 
+        a.[Priority], [ChildCount],
+        [IsParent],
+        [MessageAttachments], [ObjectRecipients], [MessageObjects],
+        [Url]
+  from FeedArchive a WITH(nolock)
+  inner join @tableRecipients r on a.[Recipient] = r.[Id]
+  where
+      [ParentObjectId] = @Parent_ActionObjectId
+      and [ParentObjectUid] = @Parent_ActionObjectUid
+      and (
+              ([IsParent] = 0 and not exists (select u.[Id] from @tableUpdate u where u.Recipient = a.[Recipient]))
+              or
+              ([IsParent] = 1 and not a.[Id] in (select u.[Id] from @tableUpdate u where u.Recipient = a.[Recipient]))
+      )
+ end
+end 
+  -- создаём в цикле сообщения для каждого получателя
+  declare @lastId bigint
+  set @lastId = 0
+  while ((select count(*) from @tableRecipients where Id > @lastId) > 0)
+  begin
+    select top 1 @Recipient = Id, @Priority = Priority from @tableRecipients where Id > @lastId order by Id;
+        set @lastId = @Recipient
+    
+    set @Parent_HasUnreadChild = @SaveComment
+    set @IsRead = 0
+    set @Parent_IsRead = 0
+    if @SetReadForAuthor = 1
+    begin
+      if @SaveComment = 0
+      begin
+        if @Recipient = @Parent_CreationAuthor
+        begin
+          set @Parent_IsRead = 1
+        end
+      end
+      else
+      begin
+        set @Parent_IsRead = 1
+        if @Recipient = @CreationAuthor
+        begin
+          set @IsRead = 1
+          set @Parent_HasUnreadChild = 0
+        end
+      end
+    end
+
+    -- обновляем родителей из ленты
+    update @tableUpdate
+    set
+        [HasUnreadChild] = @Parent_HasUnreadChild,
+        [IsRead] = @Parent_IsRead,
+        [ReadDate] = (CASE WHEN @Parent_IsRead = 1 THEN @DateTimeNow ELSE NULL END),
+        [UnreadCount] = @Parent_HasUnreadChild,
+        [ChildCount] = @SaveComment,
+        [Priority] = @Priority
+    where
+        [ParentObjectId] = @Parent_ActionObjectId
+        and [ParentObjectUid] = @Parent_ActionObjectUid
+        and [Recipient] = @Recipient
+    
+    -- родителей в ленте не было, обновляем родителей из архива
+    if @@ROWCOUNT = 0
+    begin
+        update @tableInsert
+        set
+            [HasUnreadChild] = @Parent_HasUnreadChild,
+            [IsRead] = @Parent_IsRead,
+            [ReadDate] = (CASE WHEN @Parent_IsRead = 1 THEN @DateTimeNow ELSE [ReadDate] END),
+            [UnreadCount] = @Parent_HasUnreadChild,
+            [ChildCount] = [ChildCount] + @SaveComment,
+            [Priority] = @Priority,
+            [Subject] = @Parent_Subject,
+            [Text] = @Parent_Text,
+            [TextHtml] = @Parent_TextHtml,
+            [ChangeDate] = @ChangeDate,
+            [MessageAttachments] = @Parent_MessageAttachments,
+            [ObjectRecipients] = @Parent_ObjectRecipients,
+            [MessageObjects] = @Parent_MessageObjects,
+            [Url] = @Parent_Url
+        where
+            [IsParent] = 1
+            and [ParentObjectId] = @Parent_ActionObjectId
+            and [ParentObjectUid] = @Parent_ActionObjectUid
+            and [Recipient] = @Recipient
+            
+        -- родителей в архиве не было, создаём нового родителя
+        if @@ROWCOUNT = 0
+        begin
+          set @feedId = @IdRangeStart
+          set @IdRangeStart = @IdRangeStart + 1
+          INSERT INTO @tableInsert (
+            [Id],
+            [ChangeDateHash],
+            [Subject],
+            [Text], [TextHtml],
+            [CreationDate], [ChangeDate], [CreationAuthor],
+            [HasUnreadChild], [ActionUid], [ActionObjectUid], [ActionObjectId],
+            [Recipient], [ParentObjectId], [ParentObjectUid],
+            [IsRead], [ReadDate], 
+            [UnreadCount], 
+            [Priority], [ChildCount],
+            [IsParent],
+            [MessageAttachments], [ObjectRecipients], [MessageObjects],
+            [Url]
+          )
+          VALUES (@feedId,
+                  @ChangeDateHash + right('0000000000000000000' + cast(@feedId as varchar(19)), 19),
+                  @Parent_Subject,
+                  @Parent_Text, @Parent_TextHtml,
+                  @Parent_CreationDate, @ChangeDate, @Parent_CreationAuthor,
+                  @Parent_HasUnreadChild, @Parent_ActionUid, @Parent_ActionObjectUid, @Parent_ActionObjectId,
+                  @Recipient, @Parent_ActionObjectId, @Parent_ActionObjectUid,
+                  @Parent_IsRead, (CASE WHEN @Parent_IsRead = 1 THEN @DateTimeNow ELSE NULL END), 
+                  @Parent_HasUnreadChild, 
+                  @Priority, @SaveComment,
+                  1,
+                  @Parent_MessageAttachments, @Parent_ObjectRecipients, @Parent_MessageObjects,
+                  @Parent_Url)
+        end
+    end
+
+    -- создаём комментарий
+    if @SaveComment = 1
+    begin
+    
+      set @feedId = @IdRangeStart
+      set @IdRangeStart = @IdRangeStart + 1
+      INSERT INTO @tableInsert ([Id], 
+                        [ChangeDateHash], 
+                        [Subject], 
+                        [Text], [TextHtml],
+                        [CreationDate], [ChangeDate], [CreationAuthor],
+                        [IsRead], [ReadDate],
+                        [ActionUid], [ActionObjectUid], [ActionObjectId],
+                        [Recipient], [ParentObjectId], [ParentObjectUid], [Priority], 
+                        [IsParent], [UnreadCount], [ChildCount],
+                        [MessageAttachments], [ObjectRecipients], [MessageObjects], 
+                        [Url])
+      VALUES (@feedId, 
+              @ChangeDateHash + right('0000000000000000000' + cast(@feedId as varchar(19)), 19), 
+              @Subject, 
+              @Text, @TextHtml,
+              @ChangeDate, @ChangeDate, @CreationAuthor,
+              @IsRead, (CASE WHEN @IsRead = 1 THEN @DateTimeNow ELSE NULL END),
+              @ActionUid, @ActionObjectUid, @ActionObjectId,
+              @Recipient, @Parent_ActionObjectId, @Parent_ActionObjectUid, @Priority, 
+              0, 0, 0,
+              @MessageAttachments, @ObjectRecipients, @MessageObjects,
+              @Url)
+              
+    end
+  
+  end
+  
+  
+  INSERT INTO Feed (
+          [Id], 
+                    [ChangeDateHash], 
+                    [Subject], 
+                    [Text], [TextHtml],
+                    [CreationDate], [ChangeDate], [CreationAuthor],
+                    [HasUnreadChild], [IsRead], [ReadDate], 
+                    [ActionUid], [ActionObjectUid], [ActionObjectId],
+                    [Recipient], [ParentObjectId], [ParentObjectUid], [Priority], 
+                    [IsParent], [UnreadCount], [ChildCount],
+                    [MessageAttachments], [ObjectRecipients], [MessageObjects], 
+                    [Url]
+        )
+  Select
+    [Id], 
+        [ChangeDateHash], 
+        [Subject], 
+        [Text], [TextHtml],
+        [CreationDate], [ChangeDate], [CreationAuthor],
+        [HasUnreadChild], [IsRead], [ReadDate], 
+        [ActionUid], [ActionObjectUid], [ActionObjectId],
+        [Recipient], [ParentObjectId], [ParentObjectUid], [Priority], 
+        [IsParent], [UnreadCount], [ChildCount],
+        [MessageAttachments], [ObjectRecipients], [MessageObjects], 
+        [Url]
+  from @tableInsert
+
+  UPDATE Feed
+  SET
+    [ChangeDateHash] = @ChangeDateHash + right('0000000000000000000' + cast(Feed.Id as varchar(19)), 19),
+    [Subject] = @Parent_Subject,
+    [Text] = @Parent_Text,
+    [TextHtml] = @Parent_TextHtml,
+    [ChangeDate] = @ChangeDate,
+    [HasUnreadChild] = (CASE WHEN t.[HasUnreadChild] = 1 THEN 1 ELSE Feed.[HasUnreadChild] END),
+    [ReadDate] = (CASE WHEN Feed.[ReadDate] is NULL THEN t.[ReadDate] ELSE Feed.[ReadDate] END),
+    [UnreadCount] = ISNULL(Feed.[UnreadCount], 0) + t.[HasUnreadChild],
+    [ChildCount] = Feed.[ChildCount] + t.[ChildCount],
+    [MessageAttachments] = @Parent_MessageAttachments,
+    [ObjectRecipients] = @Parent_ObjectRecipients,
+    [MessageObjects] = @Parent_MessageObjects,
+    [Priority] = t.[Priority],
+    [Url] = @Parent_Url
+  FROM @tableUpdate t
+  Where Feed.Id = t.Id
+    
+END
+        ]]>
+      </text>
+    </procedure>
+
+    <procedure name="FeedToArchiveRecipient">
+      <mappings>
+        <hibernate-mapping xmlns="urn:nhibernate-mapping-2.2">
+          <sql-query name="ExecFeedToArchiveRecipient">
+            <query-param name="DateLimit" type="datetime" />
+            <query-param name="LastUserId" type="long" />
+            <![CDATA[
+            declare @userId bigint;
+            exec &&FeedToArchiveRecipient&& @DateLimit=:DateLimit, @LastUserId=:LastUserId, @NextUserId = @userId output;
+            select @userId;
+            ]]>
+          </sql-query>
+        </hibernate-mapping>
+      </mappings>
+      <text>
+        <![CDATA[
+/**************************************************************************************
+
+   Получить следующего пользователя для архивации
+   
+    DateLimit дата архивации
+    LastUserId последний архивированный пользователь
+    NextUserId следующий пользователь для архивации (выходной параметр)
+   
+**************************************************************************************/
+CREATE PROCEDURE &&FeedToArchiveRecipient&&
+    @DateLimit datetime,
+    @LastUserId bigint,
+    @NextUserId bigint output
+AS
+BEGIN
+    set @NextUserId = null
+  
+    select top 1 @NextUserId = f.&&Recipient&&
+    from &&Feed&& f
+    where
+        f.&&Recipient&& > @LastUserId
+        and f.&&IsParent&& = 1
+        and f.&&ChangeDate&& < @DateLimit
+    order by f.&&Recipient&&
+  
+    if @NextUserId is null
+    begin
+        select top 1 @NextUserId = &&Recipient&&
+        from &&Feed&& f
+        where
+            f.&&IsParent&& = 1
+            and f.&&ChangeDate&& < @DateLimit
+        order by f.&&Recipient&&
+    end
+
+    set @NextUserId = isnull(@NextUserId, 0)
+END
+        ]]>
+      </text>
+    </procedure>
+
+    <procedure name="FeedToArchive">
+      <mappings>
+        <hibernate-mapping xmlns="urn:nhibernate-mapping-2.2">
+          <sql-query name="ExecFeedToArchive">
+            <![CDATA[
+              exec &&FeedToArchive&& @DateLimit=:DateLimit, @LastUserId=:LastUserId, @CurrentDate=:CurrentDate
+            ]]>
+          </sql-query>
+        </hibernate-mapping>
+      </mappings>
+      <text>
+        <![CDATA[
+/**************************************************************************************
+
+   Перенос старых сообщений в архив
+   
+**************************************************************************************/
+CREATE PROCEDURE &&FeedToArchive&&
+  @DateLimit datetime,
+  @LastUserId bigint,
+  @CurrentDate datetime
+AS
+BEGIN
+    declare @tableOld TABLE (
+          &&ParentObjectId&& bigint NULL,
+          &&ParentObjectUid&& uniqueidentifier NULL,
+          &&ParentChangeDate&& datetime NOT NULL
+    )
+
+    declare @userId bigint, @count bigint
+    exec &&FeedToArchiveRecipient&& @DateLimit = @DateLimit, @LastUserId = @LastUserId, @NextUserId = @userId output
+  
+    if @userId <> 0 -- найден следующий пользователь
+    begin
+    
+        insert into @tableOld (&&ParentObjectId&&, &&ParentObjectUid&&, &&ParentChangeDate&&)
+        select &&ParentObjectId&&, &&ParentObjectUid&&, &&ChangeDate&&
+        from &&Feed&& f with (nolock)
+        where
+            f.&&IsParent&& = 1
+            and f.&&ChangeDate&& < @DateLimit 
+            and f.&&Recipient&& = @userId
+            and not exists (select &&Id&& from &&FeedFavorite&& ff
+                           where
+                               ff.&&ActionObjectId&& = f.&&ParentObjectId&&
+                               and ff.&&ActionObjectUid&& = f.&&ParentObjectUid&&
+                               and ff.&&Recipient&& = f.&&Recipient&&
+                               and (ff.&&IsDelete&& is null or ff.&&IsDelete&& = 0))
+
+        -- если есть что обновлять, то обновляем
+        select @count = count(*) from @tableOld
+        if @count <> 0
+        begin
+
+            -- обновляем архив
+            update a
+            set a.Id = f.Id,
+                a.Subject = f.Subject,
+                a.Text = f.Text,
+                a.TextHtml = f.TextHtml,
+                a.ActionObjectUid = f.ActionObjectUid,
+                a.ActionUid = f.ActionUid,
+                a.ActionObjectId = f.ActionObjectId,
+                a.Recipient = f.Recipient,
+                a.CreationDate = f.CreationDate,
+                a.ChangeDate = f.ChangeDate,
+                a.CreationAuthor = f.CreationAuthor,
+                a.IsParent = f.IsParent,
+                a.ParentObjectId = f.ParentObjectId,
+                a.ParentObjectUid = f.ParentObjectUid,
+                a.ChildCount = f.ChildCount,
+                a.IsRead = 1,
+                a.ReadDate = @CurrentDate,
+                a.HasUnreadChild = 0,
+                a.UnreadCount = 0,
+                a.Priority = f.Priority,
+                a.ChangeDateHash = f.ChangeDateHash,
+                a.MessageAttachments = f.MessageAttachments,
+                a.ObjectRecipients = f.ObjectRecipients,
+                a.MessageObjects = f.MessageObjects,
+                a.Url = f.Url
+            from FeedArchive a with (nolock)
+            inner join Feed f with (nolock) on f.Id = a.Id
+            inner join @tableOld t on t.ParentObjectId = f.ParentObjectId and t.ParentObjectUid = f.ParentObjectUid and f.Recipient = @userId
+
+            -- копируем в архив
+            insert into FeedArchive
+            (
+                Id, Subject, Text, TextHtml, ActionObjectUid, ActionUid, ActionObjectId, Recipient, CreationDate, ChangeDate, CreationAuthor, IsParent,
+                ParentObjectId, ParentObjectUid, ChildCount, IsRead, ReadDate, HasUnreadChild, UnreadCount, Priority, ChangeDateHash,
+                MessageAttachments, ObjectRecipients, MessageObjects, Url
+            )
+            select
+                f.Id, f.Subject, f.Text, f.TextHtml, f.ActionObjectUid, f.ActionUid, f.ActionObjectId, f.Recipient, f.CreationDate, f.ChangeDate, f.CreationAuthor, f.IsParent,
+                f.ParentObjectId, f.ParentObjectUid, f.ChildCount, 1, @CurrentDate, 0, 0, f.Priority, f.ChangeDateHash,
+                f.MessageAttachments, f.ObjectRecipients, f.MessageObjects, f.Url
+            from Feed f with (nolock)
+            inner join @tableOld t on t.ParentObjectId = f.ParentObjectId and t.ParentObjectUid = f.ParentObjectUid and f.Recipient = @userId
+            where not exists (select 1 from FeedArchive where Id = f.Id)
+
+            -- удаляем из ленты, если не изменилось и не добавлено в архив
+            delete f from Feed f with (nolock)
+            inner join Feed fp with (nolock) on
+                fp.IsParent = 1
+                and fp.ParentObjectId = f.ParentObjectId
+                and fp.ParentObjectUid = f.ParentObjectUid
+                and fp.Recipient = f.Recipient
+            where
+                f.Recipient = @userId
+                and exists (select *
+                        from @tableOld t
+                        where t.ParentObjectId = f.ParentObjectId
+                            and t.ParentObjectUid = f.ParentObjectUid
+                            and t.ParentChangeDate = fp.ChangeDate)
+                and not exists (select 1 from FeedFavorite ff
+                                where (ff.IsDelete is null or ff.IsDelete = 0)
+                                    and ff.ActionObjectId = f.ParentObjectId
+                                    and ff.ActionObjectUid = f.ParentObjectUid
+                                    and ff.Recipient = @userId)
+            
+        end
+    end
+  
+    select @userId
+END
+        ]]>
+      </text>
+    </procedure>
+
+    <procedure name="FeedSetAsRead">
+      <mappings>
+        <hibernate-mapping xmlns="urn:nhibernate-mapping-2.2">
+          <sql-query name="ExecFeedSetAsRead">
+            exec FeedSetAsRead @ChangeDateHash=:ChangeDateHash, @Recipient=:Recipient, @ActionObjectUid=:ActionObjectUid, @ActionObjectId=:ActionObjectId, @DateTimeNow=:DateTimeNow
+          </sql-query>
+        </hibernate-mapping>
+      </mappings>
+      <text>
+        <![CDATA[
+/**************************************************************************************
+
+   Установка сообщениям статуса "прочитано"
+   
+**************************************************************************************/
+CREATE PROCEDURE FeedSetAsRead
+    @ChangeDateHash nvarchar(35),
+    @Recipient bigint,
+    @ActionObjectUid uniqueidentifier,
+    @ActionObjectId bigint,
+    @DateTimeNow datetime
+AS
+BEGIN
+
+    declare @tableUpdate TABLE (
+      [Id] [bigint] PRIMARY KEY,
+      [HasUnreadChild] [bit] NULL,
+      [UnreadCount] [int] NULL,
+    [UnreadCountOld] [int] NULL,
+      [IsParent] [bit] NOT NULL
+    )
+
+    declare @RowCount bigint
+    
+    INSERT INTO @tableUpdate ([Id], [IsParent], [UnreadCount], [UnreadCountOld])
+    
+    select [Id], IsParent, UnreadCount, UnreadCount
+        from Feed with (nolock)
+        where
+            Recipient = @Recipient
+          and ParentObjectId = @ActionObjectId
+          and ParentObjectUid = @ActionObjectUid
+          and (
+              IsParent = 1
+                    or (
+                        IsRead = 0
+                        and ChangeDateHash <= isnull(@ChangeDateHash, 'z')
+                    )
+      )
+      
+    select @RowCount = COUNT(Id) from @tableUpdate where IsParent = 0
+    
+    update @tableUpdate
+    set
+          UnreadCount = UnreadCount - @RowCount
+      where IsParent = 1
+      
+      update Feed
+      set
+        IsRead = 1,
+        ReadDate = @DateTimeNow,
+        UnreadCount = (CASE WHEN t.IsParent = 1 THEN t.UnreadCount + (Feed.UnreadCount - t.UnreadCountOld) ELSE Feed.UnreadCount END),
+        HasUnreadChild = (CASE WHEN t.IsParent = 1 THEN (CASE WHEN t.UnreadCount + (Feed.UnreadCount - t.UnreadCountOld) = 0 THEN 0 ELSE 1 END) ELSE Feed.HasUnreadChild END)
+      from @tableUpdate t
+      where
+        t.Id = Feed.Id
+
+END
+        ]]>
+
+      </text>
+    </procedure>
+
+    <procedure name="FeedSetAsReadAll">
+      <mappings>
+        <hibernate-mapping xmlns="urn:nhibernate-mapping-2.2">
+          <sql-query name="ExecFeedSetAsReadAll">
+            exec FeedSetAsReadAll @ChangeDateHashMin=:ChangeDateHashMin, @ChangeDateHashMax=:ChangeDateHashMax, @Recipient=:Recipient, @Priority=:Priority, @DateTimeNow=:DateTimeNow
+          </sql-query>
+        </hibernate-mapping>
+      </mappings>
+      <text>
+        <![CDATA[
+/**************************************************************************************
+
+   Отметить все родительские сообщения и их комментарии, как прочитанные.
+   
+**************************************************************************************/
+CREATE PROCEDURE FeedSetAsReadAll
+    @ChangeDateHashMin nvarchar(35),
+    @ChangeDateHashMax nvarchar(35),
+    @Recipient bigint,
+    @Priority int,
+    @DateTimeNow datetime
+AS
+BEGIN
+
+  update fc
+  set
+    IsRead = 1,
+    ReadDate = @DateTimeNow,
+    UnreadCount = 0,
+    HasUnreadChild = 0
+  from Feed fc
+  inner join Feed f with (nolock) on
+      f.IsParent = 1
+      and f.Recipient = @Recipient
+      and (f.IsRead = 0 or f.HasUnreadChild = 1)
+      and f.ChangeDateHash >= isnull(@ChangeDateHashMin, '')
+      and f.ChangeDateHash <= isnull(@ChangeDateHashMax, 'z')
+      and f.ParentObjectId = fc.ParentObjectId
+      and f.ParentObjectUid = fc.ParentObjectUid
+      and (@Priority is null or f.Priority >= @Priority)
+  where
+      fc.Recipient = @Recipient
+      and (fc.IsRead = 0 or fc.HasUnreadChild = 1)
+
+END
+        ]]>
+
+      </text>
+    </procedure>
+
+    <procedure name="FeedLoad">
+      <mappings>
+        <hibernate-mapping xmlns="urn:nhibernate-mapping-2.2">
+          <sql-query name="ExecFeedLoad">
+            exec FeedLoad @MaxCount=:MaxCount, @MaxChildCount=:MaxChildCount, @Recipient=:Recipient, @ChangeDateHash=:ChangeDateHash, @Priority=:Priority, @AllMessages=:AllMessages
+          </sql-query>
+        </hibernate-mapping>
+      </mappings>
+      <text>
+        <![CDATA[
+/**************************************************************************************
+
+   Загрузка сообщений
+   
+**************************************************************************************/
+CREATE PROCEDURE FeedLoad
+  @MaxCount bigint,
+  @MaxChildCount bigint,
+  @Recipient bigint,
+  @ChangeDateHash nvarchar(35),
+  @Priority int,
+  @AllMessages bit
+AS
+BEGIN
+    set @ChangeDateHash = isnull(@ChangeDateHash, 'Z');
+
+    declare @FeedTemp table (ParentObjectUid uniqueidentifier NOT NULL, ParentObjectId bigint NOT NULL, UNIQUE NONCLUSTERED (ParentObjectUid ASC, ParentObjectId ASC))
+
+    insert into @FeedTemp (ParentObjectUid, ParentObjectId)
+    select DISTINCT ParentObjectUid, ParentObjectId from (
+      select TOP (@MaxCount) ParentObjectUid, ParentObjectId
+      from Feed fp WITH (NOLOCK)
+      where
+        fp.IsParent = 1
+        and fp.Recipient = @Recipient
+        and fp.ChangeDateHash < @ChangeDateHash
+        and Priority >= isnull(@Priority, 0)
+        and (@AllMessages = 1 or HasUnreadChild = 1 or IsRead = 0)
+      order by ChangeDateHash DESC) f
+
+    --родительские сообщения
+    select Id, [Subject], [Text], [TextHtml], ActionObjectUid, ActionUid, ActionObjectId, Recipient, CreationDate, ChangeDate, CreationAuthor, fp.ParentObjectId, fp.ParentObjectUid, IsRead, ReadDate, HasUnreadChild, UnreadCount, [Priority], ChangeDateHash, IsParent, ChildCount, MessageAttachments, ObjectRecipients, MessageObjects, [Url]
+    from Feed fp WITH (NOLOCK)
+    right join @FeedTemp ft on ft.ParentObjectUid = fp.ParentObjectUid and ft.ParentObjectId = fp.ParentObjectId
+    where
+      fp.[IsParent] = 1
+      and fp.Recipient = @Recipient
+
+    UNION ALL
+
+    --дочерние сообщения
+    select c.Id, c.[Subject], c.[Text], c.[TextHtml], c.ActionObjectUid, c.ActionUid, c.ActionObjectId, c.Recipient, c.CreationDate, c.ChangeDate, c.CreationAuthor, c.ParentObjectId, c.ParentObjectUid, c.IsRead, c.ReadDate, c.HasUnreadChild, c.UnreadCount, c.[Priority], c.ChangeDateHash, c.IsParent, c.ChildCount, c.MessageAttachments, c.ObjectRecipients, c.MessageObjects, c.[Url]
+    from (
+     select ROW_NUMBER() over(partition by fc.ParentObjectUid, fc.ParentObjectId order by fc.ChangeDateHash desc) rownum, *
+     from Feed fc WITH (NOLOCK)
+     where fc.[IsParent] = 0
+      and fc.Recipient = @Recipient
+      and exists (select TOP 1 Id from @FeedTemp t where t.ParentObjectUid = fc.ParentObjectUid and t.ParentObjectId = fc.ParentObjectId)
+      and (@AllMessages = 1 or fc.IsRead = 0)
+    ) c
+    where c.rownum <= @MaxChildCount
+    order by ChangeDateHash
+  
+END
+        ]]>
+      </text>
+    </procedure>
+
+    <procedure name="FeedFavoriteLoad">
+      <mappings>
+        <hibernate-mapping xmlns="urn:nhibernate-mapping-2.2">
+          <sql-query name="ExecFeedFavoriteLoad">
+            exec FeedFavoriteLoad @MaxCount=:MaxCount, @Recipient=:Recipient, @ChangeDateHash=:ChangeDateHash
+          </sql-query>
+        </hibernate-mapping>
+      </mappings>
+      <text>
+        <![CDATA[
+/**************************************************************************************
+
+   Загрузка избранных сообщений
+   
+**************************************************************************************/
+CREATE PROCEDURE FeedFavoriteLoad
+  @MaxCount bigint,
+  @Recipient bigint,
+  @ChangeDateHash nvarchar(16)
+AS
+BEGIN
+
+    declare @FeedTemp table (ChangeDateHash nvarchar(16), ParentObjectUid uniqueidentifier NOT NULL, ParentObjectId bigint NOT NULL, UNIQUE NONCLUSTERED (ParentObjectUid ASC, ParentObjectId ASC))
+    
+    declare @tableParent TABLE (
+      [FavoriteChangeDateHash] nvarchar(16),
+      [Id] bigint,
+      [Subject] nvarchar(max) NULL,
+      [Text] nvarchar(max) NULL,
+      [ActionObjectUid] uniqueidentifier NOT NULL,
+      [ActionUid] uniqueidentifier NOT NULL,
+      [ActionObjectId] bigint NOT NULL,
+      [Recipient] bigint NOT NULL,
+      [CreationDate] datetime NOT NULL,
+      [ChangeDate] datetime NOT NULL,
+      [CreationAuthor] bigint NULL,
+      [IsParent] bit NOT NULL,
+      [ParentObjectId] bigint NULL,
+      [ParentObjectUid] uniqueidentifier NULL,
+      [ChildCount] int NULL,
+      [IsRead] bit NULL,
+      [ReadDate] datetime NULL,
+      [HasUnreadChild] bit NULL,
+      [UnreadCount] int NULL,
+      [Priority] int NULL,
+      [ChangeDateHash] nvarchar(35) NOT NULL,
+      [MessageAttachments] varbinary(max) NULL,
+      [ObjectRecipients] varbinary(max) NULL,
+      [MessageObjects] varbinary(max) NULL,
+      [Url] nvarchar(max) NULL,
+      [TextHtml] nvarchar(max) NULL,
+      UNIQUE NONCLUSTERED (ParentObjectUid ASC, ParentObjectId ASC)
+    )
+  
+    set @ChangeDateHash = isnull(@ChangeDateHash, 'Z');
+
+    insert into @FeedTemp (ChangeDateHash, ParentObjectUid, ParentObjectId)
+    select ChangeDateHash, ActionObjectUid, ActionObjectId from (
+      select TOP (@MaxCount) ChangeDateHash, ActionObjectUid, ActionObjectId
+      from FeedFavorite fp WITH (NOLOCK)
+      where
+        fp.Recipient = @Recipient
+        and fp.IsDelete = 0
+        and fp.ChangeDateHash < @ChangeDateHash
+      order by ChangeDateHash DESC
+    ) f
+
+    -- сообщения ленты
+    insert into @tableParent (FavoriteChangeDateHash, Id, [Subject], [Text], [TextHtml], ActionObjectUid, ActionUid, ActionObjectId, Recipient, CreationDate, ChangeDate, CreationAuthor, ParentObjectId, ParentObjectUid, IsRead, ReadDate, HasUnreadChild, UnreadCount, [Priority], ChangeDateHash, IsParent, ChildCount, MessageAttachments, ObjectRecipients, MessageObjects, [Url])
+    select ft.ChangeDateHash, fp.Id, [Subject], [Text], [TextHtml], ActionObjectUid, ActionUid, ActionObjectId, Recipient, CreationDate, ChangeDate, CreationAuthor, fp.ParentObjectId, fp.ParentObjectUid, IsRead, ReadDate, HasUnreadChild, UnreadCount, [Priority], fp.ChangeDateHash, IsParent, ChildCount, MessageAttachments, ObjectRecipients, MessageObjects, [Url]
+    from Feed fp WITH (NOLOCK)
+    inner join @FeedTemp ft on ft.ParentObjectUid = fp.ParentObjectUid and ft.ParentObjectId = fp.ParentObjectId
+    where
+      fp.[IsParent] = 1
+      and fp.Recipient = @Recipient
+      
+    -- сообщения ленты и архива
+    select Id, [Subject], [Text], [TextHtml], ActionObjectUid, ActionUid, ActionObjectId, Recipient, CreationDate, ChangeDate, CreationAuthor, ParentObjectId, ParentObjectUid, IsRead, ReadDate, HasUnreadChild, UnreadCount, [Priority], ChangeDateHash, IsParent, ChildCount, MessageAttachments, ObjectRecipients, MessageObjects, [Url]
+    from (
+    select FavoriteChangeDateHash, Id, [Subject], [Text], [TextHtml], ActionObjectUid, ActionUid, ActionObjectId, Recipient, CreationDate, ChangeDate, CreationAuthor, ParentObjectId, ParentObjectUid, IsRead, ReadDate, HasUnreadChild, UnreadCount, [Priority], ChangeDateHash, IsParent, ChildCount, MessageAttachments, ObjectRecipients, MessageObjects, [Url]
+    from @tableParent
+    union all
+    select ft.ChangeDateHash FavoriteChangeDateHash, fp.Id, [Subject], [Text], [TextHtml], ActionObjectUid, ActionUid, ActionObjectId, Recipient, CreationDate, ChangeDate, CreationAuthor, fp.ParentObjectId, fp.ParentObjectUid, IsRead, ReadDate, HasUnreadChild, UnreadCount, [Priority], fp.ChangeDateHash, IsParent, ChildCount, MessageAttachments, ObjectRecipients, MessageObjects, [Url]
+    from FeedArchive fp WITH (NOLOCK)
+    right join (
+        select t.ChangeDateHash, t.ParentObjectId, t.ParentObjectUid from @FeedTemp t
+        left join @tableParent p on p.ParentObjectId = t.ParentObjectId and p.ParentObjectUid = t.ParentObjectUid
+        where p.Id is null
+    ) ft on ft.ParentObjectUid = fp.ParentObjectUid and ft.ParentObjectId = fp.ParentObjectId
+    where
+      fp.[IsParent] = 1
+      and fp.Recipient = @Recipient
+    ) f
+    order by FavoriteChangeDateHash desc
+  
+END
+        ]]>
+      </text>
+    </procedure>
+
+    <procedure name="FeedLoadNew">
+      <mappings>
+        <hibernate-mapping xmlns="urn:nhibernate-mapping-2.2">
+          <sql-query name="ExecFeedLoadNew">
+            exec FeedLoadNew @MaxCount=:MaxCount, @MaxChildCount=:MaxChildCount, @Recipient=:Recipient, @ChangeDateHash=:ChangeDateHash, @AllMessages=:AllMessages
+          </sql-query>
+        </hibernate-mapping>
+      </mappings>
+      <text>
+        <![CDATA[
+/**************************************************************************************
+
+   Загрузка новых сообщений
+   
+**************************************************************************************/
+CREATE PROCEDURE FeedLoadNew
+  @MaxCount bigint,
+  @MaxChildCount bigint,
+  @Recipient bigint,
+  @ChangeDateHash nvarchar(35),
+  @AllMessages bit
+AS
+BEGIN
+
+    set @ChangeDateHash = isnull(@ChangeDateHash, '');
+
+    declare @FeedTemp table (ParentObjectUid uniqueidentifier NOT NULL, ParentObjectId bigint NOT NULL, UNIQUE NONCLUSTERED (ParentObjectUid ASC, ParentObjectId ASC))
+
+    insert into @FeedTemp (ParentObjectUid, ParentObjectId)
+    select DISTINCT ParentObjectUid, ParentObjectId from (
+      select TOP (@MaxCount) ParentObjectUid, ParentObjectId
+      from Feed fp WITH (NOLOCK)
+      where
+        fp.IsParent = 1
+        and fp.Recipient = @Recipient
+        and fp.ChangeDateHash > @ChangeDateHash
+        and (@AllMessages = 1 or HasUnreadChild = 1 or IsRead = 0)
+      order by ChangeDateHash) f
+
+    --родительские сообщения
+    select Id, [Subject], [Text], [TextHtml], ActionObjectUid, ActionUid, ActionObjectId, Recipient, CreationDate, ChangeDate, CreationAuthor, fp.ParentObjectId, fp.ParentObjectUid, IsRead, ReadDate, HasUnreadChild, UnreadCount, [Priority], ChangeDateHash, IsParent, ChildCount, MessageAttachments, ObjectRecipients, MessageObjects, [Url]
+    from Feed fp WITH (NOLOCK)
+    right join @FeedTemp ft on ft.ParentObjectUid = fp.ParentObjectUid and ft.ParentObjectId = fp.ParentObjectId
+    where
+      fp.[IsParent] = 1
+      and fp.Recipient = @Recipient
+
+    UNION ALL
+
+    --дочерние сообщения
+    select c.Id, c.[Subject], c.[Text], c.[TextHtml], c.ActionObjectUid, c.ActionUid, c.ActionObjectId, c.Recipient, c.CreationDate, c.ChangeDate, c.CreationAuthor, c.ParentObjectId, c.ParentObjectUid, c.IsRead, c.ReadDate, c.HasUnreadChild, c.UnreadCount, c.[Priority], c.ChangeDateHash, c.IsParent, c.ChildCount, c.MessageAttachments, c.ObjectRecipients, c.MessageObjects, c.[Url]
+    from (
+     select ROW_NUMBER() over(partition by fc.ParentObjectUid, fc.ParentObjectId order by fc.ChangeDateHash) rownum, *
+     from Feed fc WITH (NOLOCK)
+     where fc.[IsParent] = 0
+      and fc.Recipient = @Recipient
+      and exists (select TOP 1 Id from @FeedTemp t where t.ParentObjectUid = fc.ParentObjectUid and t.ParentObjectId = fc.ParentObjectId)
+      and ChangeDateHash > @ChangeDateHash
+    ) c
+    where c.rownum <= @MaxChildCount
+  
+END
+        ]]>
+      </text>
+    </procedure>
+
+    <procedure name="FeedFavoriteLoadNew">
+      <mappings>
+        <hibernate-mapping xmlns="urn:nhibernate-mapping-2.2">
+          <sql-query name="ExecFeedFavoriteLoadNew">
+            exec FeedFavoriteLoadNew @ChangeDateHash=:ChangeDateHash, @Recipient=:Recipient, @MaxCount=:MaxCount, @AllMessages=:AllMessages
+          </sql-query>
+        </hibernate-mapping>
+      </mappings>
+      <text>
+        <![CDATA[
+/**************************************************************************************
+
+   Загрузка новых сообщений из избранного
+   
+**************************************************************************************/
+CREATE PROCEDURE FeedFavoriteLoadNew
+  @ChangeDateHash nvarchar(16),
+  @Recipient bigint,
+  @MaxCount bigint,
+  @AllMessages bit
+AS
+BEGIN
+
+  set @ChangeDateHash = isnull(@ChangeDateHash, '');
+
+  select top (@MaxCount)
+      Id, Recipient, ActionObjectId, ActionObjectUid, ChangeDateHash, IsDelete
+  from FeedFavorite
+  where
+      Recipient = @Recipient
+      and (IsDelete = 0 or @AllMessages = 1)
+      and ChangeDateHash > @ChangeDateHash
+  order by ChangeDateHash
+  
+END
+        ]]>
+      </text>
+    </procedure>
+
+    <procedure name="FeedInfoLoadNew">
+      <mappings>
+        <hibernate-mapping xmlns="urn:nhibernate-mapping-2.2">
+          <sql-query name="ExecFeedInfoLoadNew">
+            exec FeedInfoLoadNew @ChangeDate=:ChangeDate, @Recipient=:Recipient, @MaxCount=:MaxCount
+          </sql-query>
+        </hibernate-mapping>
+      </mappings>
+      <text>
+        <![CDATA[
+/**************************************************************************************
+
+   Загрузка информации по объектам сообщений ленты
+   
+**************************************************************************************/
+CREATE PROCEDURE FeedInfoLoadNew
+  @ChangeDate datetime,
+  @Recipient bigint,
+  @MaxCount bigint
+AS
+BEGIN
+
+  select top (@MaxCount)
+      i.Id, i.Recipient, i.ActionObjectId, i.ActionObjectUid, i.ChangeDate, i.Data
+  from FeedInfo i with (nolock)
+  inner join (
+      select
+          i1.ActionObjectUid, i1.ActionObjectId, i1.Recipient, MAX(i1.ChangeDate) ChangeDate
+      from FeedInfo i1 with (nolock)
+      where i1.Recipient = @Recipient
+      group by i1.ActionObjectUid, i1.ActionObjectId, i1.Recipient
+  ) f on
+      f.ActionObjectUid = i.ActionObjectUid
+      and f.ActionObjectId = i.ActionObjectId
+      and f.Recipient = i.Recipient
+      and f.ChangeDate = i.ChangeDate
+  where
+      @ChangeDate is NULL or i.ChangeDate > @ChangeDate
+  order by i.ChangeDate
+  
+END
+        ]]>
+      </text>
+    </procedure>
+
+    <procedure name="FeedMessageLoad">
+      <mappings>
+        <hibernate-mapping xmlns="urn:nhibernate-mapping-2.2">
+          <sql-query name="ExecFeedMessageLoad">
+            exec FeedMessageLoad @Id=:Id
+          </sql-query>
+        </hibernate-mapping>
+      </mappings>
+      <text>
+        <![CDATA[
+/**************************************************************************************
+
+   Загружает указанное сообщение со всеми комментариями.
+
+**************************************************************************************/
+CREATE PROCEDURE FeedMessageLoad
+  @Id bigint
+AS
+BEGIN
+
+  select f.*
+  from Feed f with (nolock)
+  inner join Feed ff with (nolock) on
+              ff.Id = @Id
+              and ff.Recipient = f.Recipient
+              and ff.ParentObjectId = f.ParentObjectId
+              and ff.ParentObjectUid = f.ParentObjectUid
+  order by f.IsParent desc, f.ChangeDateHash desc
+  
+END
+        ]]>
+      </text>
+    </procedure>
+
+    <procedure name="FeedParentMessageLoad">
+      <mappings>
+        <hibernate-mapping xmlns="urn:nhibernate-mapping-2.2">
+          <sql-query name="ExecFeedParentMessageLoad">
+            exec FeedParentMessageLoad @p_Recipient=:Recipient, @p_ParentObjectUid=:ParentObjectUid, @p_ParentObjectId=:ParentObjectId
+          </sql-query>
+        </hibernate-mapping>
+      </mappings>
+      <text>
+        <![CDATA[
+/**************************************************************************************
+
+   Загружает указанное родительское сообщение без комментариев.
+
+**************************************************************************************/
+CREATE PROCEDURE FeedParentMessageLoad
+    @p_Recipient bigint,
+    @p_ParentObjectUid uniqueidentifier,
+    @p_ParentObjectId bigint
+AS
+BEGIN
+
+    declare @Id bigint,
+      @Subject nvarchar(max),
+      @Text nvarchar(max),
+      @ActionObjectUid uniqueidentifier,
+      @ActionUid uniqueidentifier,
+      @ActionObjectId bigint,
+      @Recipient bigint,
+      @CreationDate datetime,
+      @ChangeDate datetime,
+      @CreationAuthor bigint,
+      @IsParent bit,
+      @ParentObjectId bigint,
+      @ParentObjectUid uniqueidentifier,
+      @ChildCount int,
+      @IsRead bit,
+      @ReadDate datetime,
+      @HasUnreadChild bit,
+      @UnreadCount int,
+      @Priority int,
+      @ChangeDateHash nvarchar(35),
+      @MessageAttachments varbinary(max),
+      @ObjectRecipients varbinary(max),
+      @MessageObjects varbinary(max),
+      @Url nvarchar(max),
+      @TextHtml nvarchar(max)
+    
+    select
+        @Id = Id,
+        @Subject = Subject,
+        @Text = Text,
+        @ActionObjectUid = ActionObjectUid,
+        @ActionUid = ActionUid,
+        @ActionObjectId = ActionObjectId,
+        @Recipient = Recipient,
+        @CreationDate = CreationDate,
+        @ChangeDate = ChangeDate,
+        @CreationAuthor = CreationAuthor,
+        @IsParent = IsParent,
+        @ParentObjectId = ParentObjectId,
+        @ParentObjectUid = ParentObjectUid,
+        @ChildCount = ChildCount,
+        @IsRead = IsRead,
+        @ReadDate = ReadDate,
+        @HasUnreadChild = HasUnreadChild,
+        @UnreadCount = UnreadCount,
+        @Priority = Priority,
+        @ChangeDateHash = ChangeDateHash,
+        @MessageAttachments = MessageAttachments,
+        @ObjectRecipients = ObjectRecipients,
+        @MessageObjects = MessageObjects,
+        @Url = Url,
+        @TextHtml = TextHtml
+    from Feed with (nolock)
+    where
+        IsParent = 1
+              and Recipient = @p_Recipient
+              and ParentObjectId = @p_ParentObjectId
+              and ParentObjectUid = @p_ParentObjectUid
+
+    if (@Id is null)
+    begin
+        select
+            @Id = Id,
+            @Subject = Subject,
+            @Text = Text,
+            @ActionObjectUid = ActionObjectUid,
+            @ActionUid = ActionUid,
+            @ActionObjectId = ActionObjectId,
+            @Recipient = Recipient,
+            @CreationDate = CreationDate,
+            @ChangeDate = ChangeDate,
+            @CreationAuthor = CreationAuthor,
+            @IsParent = IsParent,
+            @ParentObjectId = ParentObjectId,
+            @ParentObjectUid = ParentObjectUid,
+            @ChildCount = ChildCount,
+            @IsRead = IsRead,
+            @ReadDate = ReadDate,
+            @HasUnreadChild = HasUnreadChild,
+            @UnreadCount = UnreadCount,
+            @Priority = Priority,
+            @ChangeDateHash = ChangeDateHash,
+            @MessageAttachments = MessageAttachments,
+            @ObjectRecipients = ObjectRecipients,
+            @MessageObjects = MessageObjects,
+            @Url = Url,
+            @TextHtml = TextHtml
+        from FeedArchive with (nolock)
+        where
+              Recipient = @p_Recipient
+              and ParentObjectId = @p_ParentObjectId
+              and ParentObjectUid = @p_ParentObjectUid
+        and IsParent = 1
+    end
+
+    select
+        @Id Id,
+        @Subject Subject,
+        @Text Text,
+        @ActionObjectUid ActionObjectUid,
+        @ActionUid ActionUid,
+        @ActionObjectId ActionObjectId,
+        @Recipient Recipient,
+        @CreationDate CreationDate,
+        @ChangeDate ChangeDate,
+        @CreationAuthor CreationAuthor,
+        @IsParent IsParent,
+        @ParentObjectId ParentObjectId,
+        @ParentObjectUid ParentObjectUid,
+        @ChildCount ChildCount,
+        @IsRead IsRead,
+        @ReadDate ReadDate,
+        @HasUnreadChild HasUnreadChild,
+        @UnreadCount UnreadCount,
+        @Priority Priority,
+        @ChangeDateHash ChangeDateHash,
+        @MessageAttachments MessageAttachments,
+        @ObjectRecipients ObjectRecipients,
+        @MessageObjects MessageObjects,
+        @Url Url,
+        @TextHtml TextHtml
+    where not @Id is null
+  
+END
+        ]]>
+      </text>
+    </procedure>
+
+    <procedure name="FeedSearch">
+      <mappings>
+        <hibernate-mapping xmlns="urn:nhibernate-mapping-2.2">
+          <sql-query name="ExecFeedSearch">
+            exec FeedSearch @MaxCount=:MaxCount, @MaxChildCount=:MaxChildCount, @Recipient=:Recipient, @ChangeDateHash=:ChangeDateHash, @FastSearch=:FastSearch, @ChangeDateFrom=:ChangeDateFrom, @ChangeDateTo=:ChangeDateTo, @FeedAuthors=:FeedAuthors, @OnlyUnread=:OnlyUnread
+          </sql-query>
+        </hibernate-mapping>
+      </mappings>
+      <text>
+        <![CDATA[
+/**************************************************************************************
+
+   Фильтрация сообщений
+
+**************************************************************************************/
+CREATE PROCEDURE FeedSearch
+  @MaxCount bigint,
+  @MaxChildCount bigint,
+  @Recipient bigint,
+  @ChangeDateHash nvarchar(35),
+  @FastSearch nvarchar(255),
+  @ChangeDateFrom datetime,
+  @ChangeDateTo datetime,
+  @FeedAuthors nvarchar(max),
+  @OnlyUnread bit
+AS
+BEGIN
+
+  declare @FeedTempAuthors table (Id bigint)
+
+  if (@FeedAuthors is not NULL) 
+  begin
+    insert into @FeedTempAuthors (Id)
+    select VAL from SplitString(@FeedAuthors, ',')
+  end
+
+  declare @FeedTemp table (ParentObjectUid uniqueidentifier NOT NULL, ParentObjectId bigint NOT NULL, UNIQUE NONCLUSTERED (ParentObjectUid ASC, ParentObjectId ASC))
+
+  declare @tableParent TABLE (
+      [Id] bigint,
+      [Subject] nvarchar(max) NULL,
+      [Text] nvarchar(max) NULL,
+      [ActionObjectUid] uniqueidentifier NOT NULL,
+      [ActionUid] uniqueidentifier NOT NULL,
+      [ActionObjectId] bigint NOT NULL,
+      [Recipient] bigint NOT NULL,
+      [CreationDate] datetime NOT NULL,
+      [ChangeDate] datetime NOT NULL,
+      [CreationAuthor] bigint NULL,
+      [IsParent] bit NOT NULL,
+      [ParentObjectId] bigint NULL,
+      [ParentObjectUid] uniqueidentifier NULL,
+      [ChildCount] int NULL,
+      [IsRead] bit NULL,
+      [ReadDate] datetime NULL,
+      [HasUnreadChild] bit NULL,
+      [UnreadCount] int NULL,
+      [Priority] int NULL,
+      [ChangeDateHash] nvarchar(35) NOT NULL,
+      [MessageAttachments] varbinary(max) NULL,
+      [ObjectRecipients] varbinary(max) NULL,
+      [MessageObjects] varbinary(max) NULL,
+      [Url] nvarchar(max) NULL,
+      [TextHtml] nvarchar(max) NULL,
+      UNIQUE NONCLUSTERED (ParentObjectUid ASC, ParentObjectId ASC)
+  )
+  
+  set @ChangeDateHash = isnull(@ChangeDateHash, 'Z');
+
+  if (@FeedAuthors is NULL) --поиск без учета авторов
+  begin
+
+    -- получаем все объекты, соответствующие условиям поиска
+    insert into @FeedTemp (ParentObjectUid, ParentObjectId)
+    select DISTINCT ParentObjectUid, ParentObjectId from (
+      select TOP (999999999999999999) ParentObjectUid, ParentObjectId
+      from Feed fp WITH (NOLOCK)
+      where
+        fp.Recipient = @Recipient
+        and fp.ChangeDate >= @ChangeDateFrom
+        and (@ChangeDateTo is NULL or fp.ChangeDate <= @ChangeDateTo)
+        and fp.ChangeDateHash < @ChangeDateHash
+        and (@OnlyUnread = 0 or fp.IsRead = 0)
+        and (
+            @FastSearch is NULL
+            or fp.[Text] like @FastSearch
+            or fp.[Subject] like @FastSearch
+        )) f
+     
+    group by ParentObjectUid, ParentObjectId
+    
+    
+    --родительские сообщения
+    insert into @tableParent (Id, [Subject], [Text], [TextHtml], ActionObjectUid, ActionUid, ActionObjectId, Recipient, CreationDate, ChangeDate, CreationAuthor, ParentObjectId, ParentObjectUid, IsRead, ReadDate, HasUnreadChild, UnreadCount, [Priority], ChangeDateHash, IsParent, ChildCount, MessageAttachments, ObjectRecipients, MessageObjects, [Url])
+    select TOP (@MaxCount) Id, [Subject], [Text], [TextHtml], ActionObjectUid, ActionUid, ActionObjectId, Recipient, CreationDate, ChangeDate, CreationAuthor, fp.ParentObjectId, fp.ParentObjectUid, IsRead, ReadDate, HasUnreadChild, UnreadCount, [Priority], ChangeDateHash, IsParent, ChildCount, MessageAttachments, ObjectRecipients, MessageObjects, [Url]
+    from Feed fp WITH (NOLOCK)
+    right join @FeedTemp ft on ft.ParentObjectUid = fp.ParentObjectUid and ft.ParentObjectId = fp.ParentObjectId
+    where
+      fp.[IsParent] = 1
+      and fp.Recipient = @Recipient
+      and fp.ChangeDateHash < @ChangeDateHash
+    order by ChangeDateHash DESC
+
+
+    select Id, [Subject], [Text], [TextHtml], ActionObjectUid, ActionUid, ActionObjectId, Recipient, CreationDate, ChangeDate, CreationAuthor, ParentObjectId, ParentObjectUid, IsRead, ReadDate, HasUnreadChild, UnreadCount, [Priority], ChangeDateHash, IsParent, ChildCount, MessageAttachments, ObjectRecipients, MessageObjects, [Url]
+    from @tableParent
+    
+    UNION ALL
+
+    --дочерние сообщения
+    select c.Id, c.[Subject], c.[Text], c.[TextHtml], c.ActionObjectUid, c.ActionUid, c.ActionObjectId, c.Recipient, c.CreationDate, c.ChangeDate, c.CreationAuthor, c.ParentObjectId, c.ParentObjectUid, c.IsRead, c.ReadDate, c.HasUnreadChild, c.UnreadCount, c.[Priority], c.ChangeDateHash, c.IsParent, c.ChildCount, c.MessageAttachments, c.ObjectRecipients, c.MessageObjects, c.[Url]
+    from (
+     select ROW_NUMBER() over(partition by fc.ParentObjectUid, fc.ParentObjectId order by fc.ChangeDateHash desc) rownum, *
+     from Feed fc WITH (NOLOCK)
+     where fc.[IsParent] = 0
+      and fc.Recipient = @Recipient
+      and (@ChangeDateTo is NULL or fc.ChangeDate <= @ChangeDateTo)
+      and exists (select TOP 1 Id from @tableParent t where t.ParentObjectUid = fc.ParentObjectUid and t.ParentObjectId = fc.ParentObjectId)
+      and (@OnlyUnread = 0 or fc.IsRead = 0)
+      and (
+          @FastSearch is NULL
+          or fc.[Text] like @FastSearch
+          or fc.[Subject] like @FastSearch
+      )
+    ) c
+    where c.rownum <= @MaxChildCount
+    order by ChangeDateHash
+
+  end
+  else
+  begin --поиск с учетом авторов
+    
+    -- получаем все объекты, соответствующие условиям поиска
+    insert into @FeedTemp (ParentObjectUid, ParentObjectId)
+    select DISTINCT ParentObjectUid, ParentObjectId from (
+      select TOP (999999999999999999) ParentObjectUid, ParentObjectId
+      from Feed fp WITH (NOLOCK)
+      where
+        fp.Recipient = @Recipient
+        and fp.ChangeDate >= @ChangeDateFrom
+        and (@ChangeDateTo is NULL or fp.ChangeDate <= @ChangeDateTo)
+        and fp.ChangeDateHash < @ChangeDateHash
+        and (fp.CreationAuthor in (select Id from @FeedTempAuthors))
+        and (@OnlyUnread = 0 or fp.IsRead = 0)
+        and (
+            @FastSearch is NULL
+            or fp.[Text] like @FastSearch
+            or fp.[Subject] like @FastSearch
+        )
+      
+      group by ParentObjectUid, ParentObjectId
+      order by MAX(ChangeDateHash) DESC) f
+
+    --родительские сообщения
+    insert into @tableParent (Id, [Subject], [Text], [TextHtml], ActionObjectUid, ActionUid, ActionObjectId, Recipient, CreationDate, ChangeDate, CreationAuthor, ParentObjectId, ParentObjectUid, IsRead, ReadDate, HasUnreadChild, UnreadCount, [Priority], ChangeDateHash, IsParent, ChildCount, MessageAttachments, ObjectRecipients, MessageObjects, [Url])
+    select TOP (@MaxCount) Id, [Subject], [Text], [TextHtml], ActionObjectUid, ActionUid, ActionObjectId, Recipient, CreationDate, ChangeDate, CreationAuthor, fp.ParentObjectId, fp.ParentObjectUid, IsRead, ReadDate, HasUnreadChild, UnreadCount, [Priority], ChangeDateHash, IsParent, ChildCount, MessageAttachments, ObjectRecipients, MessageObjects, [Url]
+    from Feed fp WITH (NOLOCK)
+    right join @FeedTemp ft on ft.ParentObjectUid = fp.ParentObjectUid and ft.ParentObjectId = fp.ParentObjectId
+    where
+      fp.[IsParent] = 1
+      and fp.Recipient = @Recipient
+      and fp.ChangeDateHash < @ChangeDateHash
+    order by ChangeDateHash DESC
+    
+    
+    select Id, [Subject], [Text], [TextHtml], ActionObjectUid, ActionUid, ActionObjectId, Recipient, CreationDate, ChangeDate, CreationAuthor, ParentObjectId, ParentObjectUid, IsRead, ReadDate, HasUnreadChild, UnreadCount, [Priority], ChangeDateHash, IsParent, ChildCount, MessageAttachments, ObjectRecipients, MessageObjects, [Url]
+    from @tableParent
+
+    UNION ALL
+
+    --дочерние сообщения
+    select c.Id, c.[Subject], c.[Text], c.[TextHtml], c.ActionObjectUid, c.ActionUid, c.ActionObjectId, c.Recipient, c.CreationDate, c.ChangeDate, c.CreationAuthor, c.ParentObjectId, c.ParentObjectUid, c.IsRead, c.ReadDate, c.HasUnreadChild, c.UnreadCount, c.[Priority], c.ChangeDateHash, c.IsParent, c.ChildCount, c.MessageAttachments, c.ObjectRecipients, c.MessageObjects, c.[Url]
+    from (
+     select ROW_NUMBER() over(partition by fc.ParentObjectUid, fc.ParentObjectId order by fc.ChangeDateHash) rownum, *
+     from Feed fc WITH (NOLOCK)
+     where fc.[IsParent] = 0
+      and fc.Recipient = @Recipient
+      and fc.ChangeDate >= @ChangeDateFrom
+      and (@ChangeDateTo is NULL or fc.ChangeDate <= @ChangeDateTo)
+      and (fc.CreationAuthor in (select Id from @FeedTempAuthors))
+      and exists (select TOP 1 Id from @tableParent t where t.ParentObjectUid = fc.ParentObjectUid and t.ParentObjectId = fc.ParentObjectId)
+      and (@OnlyUnread = 0 or fc.IsRead = 0)
+      and (
+          @FastSearch is NULL
+          or fc.[Text] like @FastSearch
+          or fc.[Subject] like @FastSearch
+      )
+    ) c
+    where c.rownum <= @MaxChildCount
+
+  end
+  
+END
+        ]]>
+      </text>
+    </procedure>
+
+    <procedure name="FeedArchiveSearch">
+      <mappings>
+        <hibernate-mapping xmlns="urn:nhibernate-mapping-2.2">
+          <sql-query name="ExecFeedArchiveSearch">
+            exec FeedArchiveSearch @MaxCount=:MaxCount, @MaxChildCount=:MaxChildCount, @Recipient=:Recipient, @ChangeDateHash=:ChangeDateHash, @FastSearch=:FastSearch, @ChangeDateFrom=:ChangeDateFrom, @ChangeDateTo=:ChangeDateTo, @FeedAuthors=:FeedAuthors, @OnlyUnread=:OnlyUnread
+          </sql-query>
+        </hibernate-mapping>
+      </mappings>
+      <text>
+        <![CDATA[
+/**************************************************************************************
+
+   Фильтрация сообщений, включая сообщения архива
+
+**************************************************************************************/
+CREATE PROCEDURE FeedArchiveSearch
+  @MaxCount bigint,
+  @MaxChildCount bigint,
+  @Recipient bigint,
+  @ChangeDateHash nvarchar(35),
+  @FastSearch nvarchar(255),
+  @ChangeDateFrom datetime,
+  @ChangeDateTo datetime,
+  @FeedAuthors nvarchar(max),
+  @OnlyUnread bit  
+AS
+BEGIN
+
+  set @ChangeDateHash = isnull(@ChangeDateHash, 'Z');
+
+  declare @FeedTempAuthors table (Id bigint)
+
+  if (@FeedAuthors is not NULL) 
+  begin
+    insert into @FeedTempAuthors (Id)
+    select VAL from SplitString(@FeedAuthors, ',')
+  end
+
+  declare @FeedTemp table (
+    ParentObjectUid uniqueidentifier NOT NULL,
+    ParentObjectId bigint NOT NULL,
+    IsArchive bit NOT NULL,
+    UNIQUE NONCLUSTERED (ParentObjectUid ASC, ParentObjectId ASC))
+
+  declare @tableParent TABLE (
+      [Id] bigint,
+      [Subject] nvarchar(max) NULL,
+      [Text] nvarchar(max) NULL,
+      [ActionObjectUid] uniqueidentifier NOT NULL,
+      [ActionUid] uniqueidentifier NOT NULL,
+      [ActionObjectId] bigint NOT NULL,
+      [Recipient] bigint NOT NULL,
+      [CreationDate] datetime NOT NULL,
+      [ChangeDate] datetime NOT NULL,
+      [CreationAuthor] bigint NULL,
+      [IsParent] bit NOT NULL,
+      [ParentObjectId] bigint NULL,
+      [ParentObjectUid] uniqueidentifier NULL,
+      [ChildCount] int NULL,
+      [IsRead] bit NULL,
+      [ReadDate] datetime NULL,
+      [HasUnreadChild] bit NULL,
+      [UnreadCount] int NULL,
+      [Priority] int NULL,
+      [ChangeDateHash] nvarchar(35) NOT NULL,
+      [MessageAttachments] varbinary(max) NULL,
+      [ObjectRecipients] varbinary(max) NULL,
+      [MessageObjects] varbinary(max) NULL,
+      [Url] nvarchar(max) NULL,
+      [TextHtml] nvarchar(max) NULL,
+      IsArchive bit NOT NULL,
+      UNIQUE NONCLUSTERED (ParentObjectUid ASC, ParentObjectId ASC)
+  )
+
+  if (@FeedAuthors is NULL) --поиск без учета авторов
+  begin
+
+    -- получаем все объекты, соответствующие условиям поиска
+    insert into @FeedTemp (ParentObjectUid, ParentObjectId, IsArchive)
+    select DISTINCT ParentObjectUid, ParentObjectId, Min(IsArchive) from (
+      select TOP (999999999999999999) ParentObjectUid, ParentObjectId, 0 IsArchive
+      from Feed fp WITH (NOLOCK)
+      where
+        fp.Recipient = @Recipient
+        and fp.ChangeDate >= @ChangeDateFrom
+        and (@ChangeDateTo is NULL or fp.ChangeDate <= @ChangeDateTo)
+        and fp.ChangeDateHash < @ChangeDateHash
+        and (@OnlyUnread = 0 or fp.IsRead = 0)
+        and (
+            @FastSearch is NULL
+            or fp.[Text] like @FastSearch
+            or fp.[Subject] like @FastSearch
+        )
+        
+      union all
+      
+      select TOP (999999999999999999) ParentObjectUid, ParentObjectId, 1 IsArchive
+      from FeedArchive fp WITH (NOLOCK)
+      where
+        fp.Recipient = @Recipient
+        and fp.ChangeDate >= @ChangeDateFrom
+        and (@ChangeDateTo is NULL or fp.ChangeDate <= @ChangeDateTo)
+        and fp.ChangeDateHash < @ChangeDateHash
+        and (
+            @FastSearch is NULL
+            or fp.[Text] like @FastSearch
+            or fp.[Subject] like @FastSearch
+        )) f
+    
+    group by ParentObjectUid, ParentObjectId
+    
+    
+    --родительские сообщения
+    insert into @tableParent (Id, [Subject], [Text], [TextHtml], ActionObjectUid, ActionUid, ActionObjectId, Recipient, CreationDate, ChangeDate, CreationAuthor, ParentObjectId, ParentObjectUid, IsRead, ReadDate, HasUnreadChild, UnreadCount, [Priority], ChangeDateHash, IsParent, ChildCount, MessageAttachments, ObjectRecipients, MessageObjects, [Url], IsArchive)
+    select TOP (@MaxCount) Id, [Subject], [Text], [TextHtml], ActionObjectUid, ActionUid, ActionObjectId, Recipient, CreationDate, ChangeDate, CreationAuthor, f.ParentObjectId, f.ParentObjectUid, IsRead, ReadDate, HasUnreadChild, UnreadCount, [Priority], ChangeDateHash, IsParent, ChildCount, MessageAttachments, ObjectRecipients, MessageObjects, [Url], IsArchive
+    from
+    (
+        select TOP (@MaxCount) Id, [Subject], [Text], [TextHtml], ActionObjectUid, ActionUid, ActionObjectId, Recipient, CreationDate, ChangeDate, CreationAuthor, fp.ParentObjectId, fp.ParentObjectUid, IsRead, ReadDate, HasUnreadChild, UnreadCount, [Priority], ChangeDateHash, IsParent, ChildCount, MessageAttachments, ObjectRecipients, MessageObjects, [Url], 0 IsArchive
+        from Feed fp WITH (NOLOCK)
+        right join @FeedTemp ft on ft.IsArchive = 0 and ft.ParentObjectUid = fp.ParentObjectUid and ft.ParentObjectId = fp.ParentObjectId
+        where
+          fp.[IsParent] = 1
+          and fp.Recipient = @Recipient
+          and fp.ChangeDateHash < @ChangeDateHash
+        order by ChangeDateHash DESC
+        union all
+        select TOP (@MaxCount) Id, [Subject], [Text], [TextHtml], ActionObjectUid, ActionUid, ActionObjectId, Recipient, CreationDate, ChangeDate, CreationAuthor, fp.ParentObjectId, fp.ParentObjectUid, IsRead, ReadDate, HasUnreadChild, UnreadCount, [Priority], ChangeDateHash, IsParent, ChildCount, MessageAttachments, ObjectRecipients, MessageObjects, [Url], 1 IsArchive
+        from FeedArchive fp WITH (NOLOCK)
+        right join @FeedTemp ft on ft.IsArchive = 1 and ft.ParentObjectUid = fp.ParentObjectUid and ft.ParentObjectId = fp.ParentObjectId
+        where
+          fp.[IsParent] = 1
+          and fp.Recipient = @Recipient
+          and fp.ChangeDateHash < @ChangeDateHash
+        order by ChangeDateHash DESC
+    ) f
+    order by ChangeDateHash DESC
+
+
+    select Id, [Subject], [Text], [TextHtml], ActionObjectUid, ActionUid, ActionObjectId, Recipient, CreationDate, ChangeDate, CreationAuthor, ParentObjectId, ParentObjectUid, IsRead, ReadDate, HasUnreadChild, UnreadCount, [Priority], ChangeDateHash, IsParent, ChildCount, MessageAttachments, ObjectRecipients, MessageObjects, [Url]
+    from @tableParent
+    
+    UNION ALL
+
+    --дочерние сообщения
+    select c.Id, c.[Subject], c.[Text], c.[TextHtml], c.ActionObjectUid, c.ActionUid, c.ActionObjectId, c.Recipient, c.CreationDate, c.ChangeDate, c.CreationAuthor, c.ParentObjectId, c.ParentObjectUid, c.IsRead, c.ReadDate, c.HasUnreadChild, c.UnreadCount, c.[Priority], c.ChangeDateHash, c.IsParent, c.ChildCount, c.MessageAttachments, c.ObjectRecipients, c.MessageObjects, c.[Url]
+    from (
+        select ROW_NUMBER() over(partition by f.ParentObjectUid, f.ParentObjectId order by f.ChangeDateHash desc) rownum, *
+        from
+        (
+            select Id, [Subject], [Text], [TextHtml], ActionObjectUid, ActionUid, ActionObjectId, Recipient, CreationDate, ChangeDate, CreationAuthor, ParentObjectId, ParentObjectUid, IsRead, ReadDate, HasUnreadChild, UnreadCount, [Priority], ChangeDateHash, IsParent, ChildCount, MessageAttachments, ObjectRecipients, MessageObjects, [Url]
+            from Feed fc WITH (NOLOCK)
+            where fc.[IsParent] = 0
+                and fc.Recipient = @Recipient
+                and (@ChangeDateTo is NULL or fc.ChangeDate <= @ChangeDateTo)
+                and exists (select TOP 1 Id from @tableParent t where t.IsArchive = 0 and t.ParentObjectUid = fc.ParentObjectUid and t.ParentObjectId = fc.ParentObjectId)
+                and (
+                  @FastSearch is NULL
+                  or fc.[Text] like @FastSearch
+                  or fc.[Subject] like @FastSearch
+                )
+            union all
+            select Id, [Subject], [Text], [TextHtml], ActionObjectUid, ActionUid, ActionObjectId, Recipient, CreationDate, ChangeDate, CreationAuthor, ParentObjectId, ParentObjectUid, IsRead, ReadDate, HasUnreadChild, UnreadCount, [Priority], ChangeDateHash, IsParent, ChildCount, MessageAttachments, ObjectRecipients, MessageObjects, [Url]
+            from FeedArchive fc WITH (NOLOCK)
+            where fc.[IsParent] = 0
+                and fc.Recipient = @Recipient
+                and (@ChangeDateTo is NULL or fc.ChangeDate <= @ChangeDateTo)
+                and exists (select TOP 1 Id from @tableParent t where t.IsArchive = 1 and t.ParentObjectUid = fc.ParentObjectUid and t.ParentObjectId = fc.ParentObjectId)
+        and (@OnlyUnread = 0 or fc.IsRead = 0)
+                and (
+                  @FastSearch is NULL
+                  or fc.[Text] like @FastSearch
+                  or fc.[Subject] like @FastSearch
+                )
+        ) f
+    ) c
+    where c.rownum <= @MaxChildCount
+    order by ChangeDateHash
+
+  end
+  else
+  begin --поиск с учетом авторов
+    
+    -- получаем все объекты, соответствующие условиям поиска
+    insert into @FeedTemp (ParentObjectUid, ParentObjectId, IsArchive)
+    select DISTINCT ParentObjectUid, ParentObjectId, Min(IsArchive) from (
+      select TOP (999999999999999999) ParentObjectUid, ParentObjectId, 0 IsArchive
+      from Feed fp WITH (NOLOCK)
+      where
+        fp.Recipient = @Recipient
+        and fp.ChangeDate >= @ChangeDateFrom
+        and (@ChangeDateTo is NULL or fp.ChangeDate <= @ChangeDateTo)
+        and fp.ChangeDateHash < @ChangeDateHash
+        and (fp.CreationAuthor in (select Id from @FeedTempAuthors))
+        and (@OnlyUnread = 0 or fp.IsRead = 0)
+        and (
+            @FastSearch is NULL
+            or fp.[Text] like @FastSearch
+            or fp.[Subject] like @FastSearch
+        )
+      
+      union all
+      
+      select TOP (999999999999999999) ParentObjectUid, ParentObjectId, 1 IsArchive
+      from FeedArchive fp WITH (NOLOCK)
+      where
+        fp.Recipient = @Recipient
+        and fp.ChangeDate >= @ChangeDateFrom
+        and (@ChangeDateTo is NULL or fp.ChangeDate <= @ChangeDateTo)
+        and fp.ChangeDateHash < @ChangeDateHash
+        and (fp.CreationAuthor in (select Id from @FeedTempAuthors))
+        and (
+            @FastSearch is NULL
+            or fp.[Text] like @FastSearch
+            or fp.[Subject] like @FastSearch
+        )) f
+      
+      group by ParentObjectUid, ParentObjectId
+
+    --родительские сообщения
+    insert into @tableParent (Id, [Subject], [Text], [TextHtml], ActionObjectUid, ActionUid, ActionObjectId, Recipient, CreationDate, ChangeDate, CreationAuthor, ParentObjectId, ParentObjectUid, IsRead, ReadDate, HasUnreadChild, UnreadCount, [Priority], ChangeDateHash, IsParent, ChildCount, MessageAttachments, ObjectRecipients, MessageObjects, [Url], IsArchive)
+    select TOP (@MaxCount) Id, [Subject], [Text], [TextHtml], ActionObjectUid, ActionUid, ActionObjectId, Recipient, CreationDate, ChangeDate, CreationAuthor, f.ParentObjectId, f.ParentObjectUid, IsRead, ReadDate, HasUnreadChild, UnreadCount, [Priority], ChangeDateHash, IsParent, ChildCount, MessageAttachments, ObjectRecipients, MessageObjects, [Url], IsArchive
+    from
+    (
+        select TOP (@MaxCount) Id, [Subject], [Text], [TextHtml], ActionObjectUid, ActionUid, ActionObjectId, Recipient, CreationDate, ChangeDate, CreationAuthor, fp.ParentObjectId, fp.ParentObjectUid, IsRead, ReadDate, HasUnreadChild, UnreadCount, [Priority], ChangeDateHash, IsParent, ChildCount, MessageAttachments, ObjectRecipients, MessageObjects, [Url], 0 IsArchive
+        from Feed fp WITH (NOLOCK)
+        right join @FeedTemp ft on ft.IsArchive = 0 and ft.ParentObjectUid = fp.ParentObjectUid and ft.ParentObjectId = fp.ParentObjectId
+        where
+          fp.[IsParent] = 1
+          and fp.Recipient = @Recipient
+          and fp.ChangeDateHash < @ChangeDateHash
+    order by ChangeDateHash DESC
+          union all
+        select TOP (@MaxCount) Id, [Subject], [Text], [TextHtml], ActionObjectUid, ActionUid, ActionObjectId, Recipient, CreationDate, ChangeDate, CreationAuthor, fp.ParentObjectId, fp.ParentObjectUid, IsRead, ReadDate, HasUnreadChild, UnreadCount, [Priority], ChangeDateHash, IsParent, ChildCount, MessageAttachments, ObjectRecipients, MessageObjects, [Url], 1 IsArchive
+        from FeedArchive fp WITH (NOLOCK)
+        right join @FeedTemp ft on ft.IsArchive = 1 and ft.ParentObjectUid = fp.ParentObjectUid and ft.ParentObjectId = fp.ParentObjectId
+        where
+          fp.[IsParent] = 1
+          and fp.Recipient = @Recipient
+          and fp.ChangeDateHash < @ChangeDateHash
+    order by ChangeDateHash DESC
+    ) f
+    order by ChangeDateHash DESC
+    
+    
+    select Id, [Subject], [Text], [TextHtml], ActionObjectUid, ActionUid, ActionObjectId, Recipient, CreationDate, ChangeDate, CreationAuthor, ParentObjectId, ParentObjectUid, IsRead, ReadDate, HasUnreadChild, UnreadCount, [Priority], ChangeDateHash, IsParent, ChildCount, MessageAttachments, ObjectRecipients, MessageObjects, [Url]
+    from @tableParent
+
+    UNION ALL
+
+    --дочерние сообщения
+    select c.Id, c.[Subject], c.[Text], c.[TextHtml], c.ActionObjectUid, c.ActionUid, c.ActionObjectId, c.Recipient, c.CreationDate, c.ChangeDate, c.CreationAuthor, c.ParentObjectId, c.ParentObjectUid, c.IsRead, c.ReadDate, c.HasUnreadChild, c.UnreadCount, c.[Priority], c.ChangeDateHash, c.IsParent, c.ChildCount, c.MessageAttachments, c.ObjectRecipients, c.MessageObjects, c.[Url]
+    from (
+          select ROW_NUMBER() over(partition by f.ParentObjectUid, f.ParentObjectId order by f.ChangeDateHash) rownum, *
+          from
+          (
+              select Id, [Subject], [Text], [TextHtml], ActionObjectUid, ActionUid, ActionObjectId, Recipient, CreationDate, ChangeDate, CreationAuthor, ParentObjectId, ParentObjectUid, IsRead, ReadDate, HasUnreadChild, UnreadCount, [Priority], ChangeDateHash, IsParent, ChildCount, MessageAttachments, ObjectRecipients, MessageObjects, [Url]
+              from Feed fc WITH (NOLOCK)
+              where fc.[IsParent] = 0
+                and fc.Recipient = @Recipient
+                and fc.ChangeDate >= @ChangeDateFrom
+                and (@ChangeDateTo is NULL or fc.ChangeDate <= @ChangeDateTo)
+                and (fc.CreationAuthor in (select Id from @FeedTempAuthors))
+                and exists (select TOP 1 Id from @tableParent t where t.IsArchive = 0 and t.ParentObjectUid = fc.ParentObjectUid and t.ParentObjectId = fc.ParentObjectId)
+                and (
+                  @FastSearch is NULL
+                  or fc.[Text] like @FastSearch
+                  or fc.[Subject] like @FastSearch
+                )
+              union all
+              select Id, [Subject], [Text], [TextHtml], ActionObjectUid, ActionUid, ActionObjectId, Recipient, CreationDate, ChangeDate, CreationAuthor, ParentObjectId, ParentObjectUid, IsRead, ReadDate, HasUnreadChild, UnreadCount, [Priority], ChangeDateHash, IsParent, ChildCount, MessageAttachments, ObjectRecipients, MessageObjects, [Url]
+                from Feed fc WITH (NOLOCK)
+                where fc.[IsParent] = 0
+                  and fc.Recipient = @Recipient
+                  and fc.ChangeDate >= @ChangeDateFrom
+                  and (@ChangeDateTo is NULL or fc.ChangeDate <= @ChangeDateTo)
+                  and (fc.CreationAuthor in (select Id from @FeedTempAuthors))
+                  and exists (select TOP 1 Id from @tableParent t where t.IsArchive = 1 and t.ParentObjectUid = fc.ParentObjectUid and t.ParentObjectId = fc.ParentObjectId)
+            and (@OnlyUnread = 0 or fc.IsRead = 0)
+                  and (
+                    @FastSearch is NULL
+                    or fc.[Text] like @FastSearch
+                    or fc.[Subject] like @FastSearch
+                  )
+          ) f
+    ) c
+    where c.rownum <= @MaxChildCount
+    order by ChangeDateHash
+
+  end
+  
+END
+        ]]>
+      </text>
+    </procedure>
+
+    <procedure name="FeedFavoritsSearch">
+      <mappings>
+        <hibernate-mapping xmlns="urn:nhibernate-mapping-2.2">
+          <sql-query name="ExecFeedFavoritsSearch">
+            exec FeedFavoritsSearch @MaxCount=:MaxCount, @Recipient=:Recipient, @ChangeDateHash=:ChangeDateHash, @FastSearch=:FastSearch, @ChangeDateFrom=:ChangeDateFrom, @ChangeDateTo=:ChangeDateTo, @FeedAuthors=:FeedAuthors, @OnlyUnread=:OnlyUnread
+          </sql-query>
+        </hibernate-mapping>
+      </mappings>
+      <text>
+        <![CDATA[
+/**************************************************************************************
+
+   Поиск в избранных сообщениях
+   
+**************************************************************************************/
+CREATE PROCEDURE FeedFavoritsSearch
+  @MaxCount bigint,
+  @Recipient bigint,
+  @ChangeDateHash nvarchar(16),
+  @FastSearch nvarchar(255),
+  @ChangeDateFrom datetime,
+  @ChangeDateTo datetime,
+  @FeedAuthors nvarchar(max),
+  @OnlyUnread bit
+AS
+BEGIN
+
+  declare @FeedTempAuthors table (Id bigint)
+  
+  set @ChangeDateHash = isnull(@ChangeDateHash, 'Z');
+
+  if (@FeedAuthors is not NULL) 
+  begin
+    insert into @FeedTempAuthors (Id)
+    select VAL from SplitString(@FeedAuthors, ',')
+  end
+
+  declare @FeedTemp table (
+    FavoriteChangeDateHash nvarchar(16),
+      ParentObjectUid uniqueidentifier NOT NULL,
+      ParentObjectId bigint NOT NULL,
+      IsArchive bit NOT NULL,
+      UNIQUE NONCLUSTERED (ParentObjectUid ASC, ParentObjectId ASC)
+  )
+
+
+  if (@FeedAuthors is NULL) --поиск без учета авторов
+  begin
+
+      -- получаем все объекты, соответствующие условиям поиска
+    insert into @FeedTemp (FavoriteChangeDateHash, ParentObjectUid, ParentObjectId, IsArchive)
+    select DISTINCT FavoriteChangeDateHash, ParentObjectUid, ParentObjectId, Min(IsArchive) from (
+      select TOP (@MaxCount) ff.ChangeDateHash FavoriteChangeDateHash, ParentObjectUid, ParentObjectId, 0 IsArchive
+      from Feed fp WITH (NOLOCK)
+      inner join FeedFavorite ff WITH (NOLOCK) on ff.ActionObjectUid = fp.ParentObjectUid and ff.ActionObjectId = fp.ParentObjectId and ff.Recipient = fp.Recipient and ff.IsDelete = 0
+      where
+        fp.IsParent = 1
+        and fp.Recipient = @Recipient
+        and fp.ChangeDate >= @ChangeDateFrom
+        and (@ChangeDateTo is NULL or fp.ChangeDate <= @ChangeDateTo)
+        and ff.ChangeDateHash < @ChangeDateHash
+        and (
+              @FastSearch is NULL
+              or fp.[Text] like @FastSearch
+              or fp.[Subject] like @FastSearch
+        )
+      order by ff.ChangeDateHash desc
+        
+      union all
+      
+      select TOP (@MaxCount) ff.ChangeDateHash FavoriteChangeDateHash, ParentObjectUid, ParentObjectId, 1 IsArchive
+      from FeedArchive fp WITH (NOLOCK)
+      inner join FeedFavorite ff WITH (NOLOCK) on ff.ActionObjectUid = fp.ParentObjectUid and ff.ActionObjectId = fp.ParentObjectId and ff.Recipient = fp.Recipient and ff.IsDelete = 0
+      where
+        fp.IsParent = 1
+        and fp.Recipient = @Recipient
+        and fp.ChangeDate >= @ChangeDateFrom
+        and (@ChangeDateTo is NULL or fp.ChangeDate <= @ChangeDateTo)
+        and ff.ChangeDateHash < @ChangeDateHash
+        and (
+              @FastSearch is NULL
+              or fp.[Text] like @FastSearch
+              or fp.[Subject] like @FastSearch
+        )
+        order by ff.ChangeDateHash desc
+    ) f
+    
+    group by FavoriteChangeDateHash, ParentObjectUid, ParentObjectId
+    
+    
+    select TOP (@MaxCount) Id, [Subject], [Text], [TextHtml], ActionObjectUid, ActionUid, ActionObjectId, Recipient, CreationDate, ChangeDate, CreationAuthor, f.ParentObjectId, f.ParentObjectUid, IsRead, ReadDate, HasUnreadChild, UnreadCount, [Priority], ChangeDateHash, IsParent, ChildCount, MessageAttachments, ObjectRecipients, MessageObjects, [Url], IsArchive
+    from
+    (
+          select TOP (@MaxCount) ft.FavoriteChangeDateHash, Id, [Subject], [Text], [TextHtml], ActionObjectUid, ActionUid, ActionObjectId, Recipient, CreationDate, ChangeDate, CreationAuthor, fp.ParentObjectId, fp.ParentObjectUid, IsRead, ReadDate, HasUnreadChild, UnreadCount, [Priority], ChangeDateHash, IsParent, ChildCount, MessageAttachments, ObjectRecipients, MessageObjects, [Url], 0 IsArchive
+          from Feed fp WITH (NOLOCK)
+          right join @FeedTemp ft on ft.IsArchive = 0 and ft.ParentObjectUid = fp.ParentObjectUid and ft.ParentObjectId = fp.ParentObjectId
+          where
+            fp.[IsParent] = 1
+            and fp.Recipient = @Recipient
+        and ft.FavoriteChangeDateHash < @ChangeDateHash
+          order by ft.FavoriteChangeDateHash DESC
+          union all
+          select TOP (@MaxCount) ft.FavoriteChangeDateHash, Id, [Subject], [Text], [TextHtml], ActionObjectUid, ActionUid, ActionObjectId, Recipient, CreationDate, ChangeDate, CreationAuthor, fp.ParentObjectId, fp.ParentObjectUid, IsRead, ReadDate, HasUnreadChild, UnreadCount, [Priority], ChangeDateHash, IsParent, ChildCount, MessageAttachments, ObjectRecipients, MessageObjects, [Url], 1 IsArchive
+          from FeedArchive fp WITH (NOLOCK)
+          right join @FeedTemp ft on ft.IsArchive = 1 and ft.ParentObjectUid = fp.ParentObjectUid and ft.ParentObjectId = fp.ParentObjectId
+          where
+            fp.[IsParent] = 1
+            and fp.Recipient = @Recipient
+        and ft.FavoriteChangeDateHash < @ChangeDateHash
+          order by ft.FavoriteChangeDateHash DESC
+    ) f
+    order by FavoriteChangeDateHash DESC
+
+  end
+  else
+  begin --поиск с учетом авторов
+    
+      -- получаем все объекты, соответствующие условиям поиска
+    insert into @FeedTemp (FavoriteChangeDateHash, ParentObjectUid, ParentObjectId, IsArchive)
+    select DISTINCT FavoriteChangeDateHash, ParentObjectUid, ParentObjectId, Min(IsArchive) from (
+      select TOP (@MaxCount) ff.ChangeDateHash FavoriteChangeDateHash, ParentObjectUid, ParentObjectId, 0 IsArchive
+      from Feed fp WITH (NOLOCK)
+      inner join FeedFavorite ff WITH (NOLOCK) on ff.ActionObjectUid = fp.ParentObjectUid and ff.ActionObjectId = fp.ParentObjectId and ff.Recipient = fp.Recipient and ff.IsDelete = 0
+      where
+        fp.IsParent = 1
+        and fp.Recipient = @Recipient
+        and fp.ChangeDate >= @ChangeDateFrom
+        and (@ChangeDateTo is NULL or fp.ChangeDate <= @ChangeDateTo)
+        and ff.ChangeDateHash < @ChangeDateHash
+        and (fp.CreationAuthor in (select Id from @FeedTempAuthors))
+        and (
+              @FastSearch is NULL
+              or fp.[Text] like @FastSearch
+              or fp.[Subject] like @FastSearch
+        )
+      order by ff.ChangeDateHash desc
+      
+        union all
+      
+      select TOP (@MaxCount) ff.ChangeDateHash FavoriteChangeDateHash, ParentObjectUid, ParentObjectId, 1 IsArchive
+      from FeedArchive fp WITH (NOLOCK)
+      inner join FeedFavorite ff WITH (NOLOCK) on ff.ActionObjectUid = fp.ParentObjectUid and ff.ActionObjectId = fp.ParentObjectId and ff.Recipient = fp.Recipient and ff.IsDelete = 0
+      where
+        fp.IsParent = 1
+        and fp.Recipient = @Recipient
+        and fp.ChangeDate >= @ChangeDateFrom
+        and (@ChangeDateTo is NULL or fp.ChangeDate <= @ChangeDateTo)
+        and ff.ChangeDateHash < @ChangeDateHash
+        and (fp.CreationAuthor in (select Id from @FeedTempAuthors))
+        and (
+              @FastSearch is NULL
+              or fp.[Text] like @FastSearch
+              or fp.[Subject] like @FastSearch
+        )
+        order by ff.ChangeDateHash desc
+    ) f
+      
+    group by FavoriteChangeDateHash, ParentObjectUid, ParentObjectId
+
+    --родительские сообщения
+    select TOP (@MaxCount) Id, [Subject], [Text], [TextHtml], ActionObjectUid, ActionUid, ActionObjectId, Recipient, CreationDate, ChangeDate, CreationAuthor, f.ParentObjectId, f.ParentObjectUid, IsRead, ReadDate, HasUnreadChild, UnreadCount, [Priority], ChangeDateHash, IsParent, ChildCount, MessageAttachments, ObjectRecipients, MessageObjects, [Url], IsArchive
+    from
+    (
+          select TOP (@MaxCount) ft.FavoriteChangeDateHash, Id, [Subject], [Text], [TextHtml], ActionObjectUid, ActionUid, ActionObjectId, Recipient, CreationDate, ChangeDate, CreationAuthor, fp.ParentObjectId, fp.ParentObjectUid, IsRead, ReadDate, HasUnreadChild, UnreadCount, [Priority], ChangeDateHash, IsParent, ChildCount, MessageAttachments, ObjectRecipients, MessageObjects, [Url], 0 IsArchive
+          from Feed fp WITH (NOLOCK)
+          right join @FeedTemp ft on ft.IsArchive = 0 and ft.ParentObjectUid = fp.ParentObjectUid and ft.ParentObjectId = fp.ParentObjectId
+          where
+            fp.[IsParent] = 1
+        and fp.Recipient = @Recipient
+        and ft.FavoriteChangeDateHash < @ChangeDateHash
+      order by ft.FavoriteChangeDateHash DESC
+          union all
+          select TOP (@MaxCount) ft.FavoriteChangeDateHash, Id, [Subject], [Text], [TextHtml], ActionObjectUid, ActionUid, ActionObjectId, Recipient, CreationDate, ChangeDate, CreationAuthor, fp.ParentObjectId, fp.ParentObjectUid, IsRead, ReadDate, HasUnreadChild, UnreadCount, [Priority], ChangeDateHash, IsParent, ChildCount, MessageAttachments, ObjectRecipients, MessageObjects, [Url], 1 IsArchive
+          from FeedArchive fp WITH (NOLOCK)
+          right join @FeedTemp ft on ft.IsArchive = 1 and ft.ParentObjectUid = fp.ParentObjectUid and ft.ParentObjectId = fp.ParentObjectId
+          where
+            fp.[IsParent] = 1
+            and fp.Recipient = @Recipient
+            and ft.FavoriteChangeDateHash < @ChangeDateHash
+      order by ft.FavoriteChangeDateHash DESC
+      ) f
+    order by FavoriteChangeDateHash DESC
+    
+  end
+  
+END
+        ]]>
+      </text>
+    </procedure>
+
+    <procedure name="FeedCommentsLoad">
+      <mappings>
+        <hibernate-mapping xmlns="urn:nhibernate-mapping-2.2">
+          <sql-query name="ExecFeedCommentsLoad">
+            exec FeedCommentsLoad @Recipient=:Recipient, @ParentObjectUid=:ParentObjectUid, @ParentObjectId=:ParentObjectId, @ChangeDateHash=:ChangeDateHash, @MaxChildCount=:MaxChildCount
+          </sql-query>
+        </hibernate-mapping>
+      </mappings>
+      <text>
+        <![CDATA[
+/**************************************************************************************
+
+   Загружает комментарии к сообщению ленты.
+
+**************************************************************************************/
+CREATE PROCEDURE FeedCommentsLoad
+    @Recipient bigint,
+    @ParentObjectUid uniqueidentifier,
+    @ParentObjectId bigint,
+    @ChangeDateHash nvarchar(16),
+    @MaxChildCount bigint
+AS
+BEGIN
+
+    select *
+    from Feed with (NOLOCK)
+    where ParentObjectId = @ParentObjectId
+      and ParentObjectUid = @ParentObjectUid
+      and Recipient = @Recipient
+      and IsParent = 1
+    union all
+    select * from (select top (@MaxChildCount) *
+        from Feed with (nolock)
+        where ParentObjectId = @ParentObjectId
+          and ParentObjectUid = @ParentObjectUid
+          and Recipient = @Recipient
+          and IsParent = 0
+          and ChangeDateHash < isnull(@ChangeDateHash, 'z')
+          order by ChangeDateHash desc
+    ) fc
+  
+END
+        ]]>
+      </text>
+    </procedure>
+
+    <procedure name="FeedGetUnreadCount">
+      <mappings>
+        <hibernate-mapping xmlns="urn:nhibernate-mapping-2.2">
+          <sql-query name="ExecFeedGetUnreadCount">
+            exec FeedGetUnreadCount @Recipient=:Recipient, @Priority=:Priority
+          </sql-query>
+        </hibernate-mapping>
+      </mappings>
+      <text>
+        <![CDATA[
+/**************************************************************************************
+
+   Возвращает количество непрочитанных сообщений для заданного пользователя.
+
+**************************************************************************************/
+CREATE PROCEDURE FeedGetUnreadCount
+    @Recipient bigint,
+    @Priority int
+AS
+BEGIN
+
+    SELECT 1 WithPriority, COUNT(f.Id) [Count]
+    FROM Feed f with (nolock)
+    WHERE
+        f.Recipient = @Recipient
+        and (f.IsRead = 0)
+        and (f.Priority >= @Priority)
+    UNION
+    SELECT 0 WithPriority, COUNT(f.Id) [Count]
+    FROM Feed f with (nolock)
+    WHERE
+        f.Recipient = @Recipient
+        and (f.IsRead = 0)
+  
+END
+        ]]>
+      </text>
+    </procedure>
+
+    <procedure name="FeedGetNewIds">
+      <mappings>
+        <hibernate-mapping xmlns="urn:nhibernate-mapping-2.2">
+          <sql-query name="ExecFeedGetNewIds">
+            exec FeedGetNewIds @Count=:Count
+          </sql-query>
+        </hibernate-mapping>
+      </mappings>
+      <text>
+        <![CDATA[
+/**************************************************************************************
+
+   Создаёт заданное количество идентификаторов для таблицы Feed и возвращает первый из них.
+
+**************************************************************************************/
+CREATE PROCEDURE FeedGetNewIds
+  @Count bigint
+AS
+BEGIN
+
+    declare @feedId bigint;
+    set @feedId = 0;
+    exec [G_GenId] 'Feed', @Count, @feedId OUTPUT;
+    select @feedId Id;
+  
+END
+        ]]>
+      </text>
+    </procedure>
+
+    <procedure name="FeedChangeDateHashFirst">
+      <mappings>
+        <hibernate-mapping xmlns="urn:nhibernate-mapping-2.2">
+          <sql-query name="ExecFeedChangeDateHashFirst">
+            exec FeedChangeDateHashFirst @Recipient=:Recipient
+          </sql-query>
+        </hibernate-mapping>
+      </mappings>
+      <text>
+        <![CDATA[
+/**************************************************************************************
+
+   Возвращает первый hash из ленты сообщений.
+
+**************************************************************************************/
+CREATE PROCEDURE FeedChangeDateHashFirst
+  @Recipient bigint
+AS
+BEGIN
+
+  select top 1 &&ChangeDateHash&&
+  from &&Feed&& with (nolock)
+  where &&IsParent&& = 1 and &&Recipient&& = @Recipient
+  order by &&ChangeDateHash&&
+  
+END
+        ]]>
+      </text>
+    </procedure>
+
+    <procedure name="FeedChangeDateHashLast">
+      <mappings>
+        <hibernate-mapping xmlns="urn:nhibernate-mapping-2.2">
+          <sql-query name="ExecFeedChangeDateHashLast">
+            exec FeedChangeDateHashLast @Recipient=:Recipient
+          </sql-query>
+        </hibernate-mapping>
+      </mappings>
+      <text>
+        <![CDATA[
+/**************************************************************************************
+
+   Возвращает последний hash из ленты сообщений.
+
+**************************************************************************************/
+CREATE PROCEDURE FeedChangeDateHashLast
+  @Recipient bigint
+AS
+BEGIN
+
+  select top 1 &&ChangeDateHash&&
+  from &&Feed&& with (nolock)
+  where &&IsParent&& = 1 and &&Recipient&& = @Recipient
+  order by &&ChangeDateHash&& desc
+  
+END
+        ]]>
+      </text>
+    </procedure>
+
+    <procedure name="FeedSetAsReadForObject">
+      <mappings>
+        <hibernate-mapping xmlns="urn:nhibernate-mapping-2.2">
+          <sql-query name="ExecFeedSetAsReadForObject">
+            exec FeedSetAsReadForObject @ReadDate=:ReadDate, @ParentObjectUid=:ParentObjectUid, @ParentObjectId=:ParentObjectId, @Recipient=:Recipient
+          </sql-query>
+        </hibernate-mapping>
+      </mappings>
+      <text>
+        <![CDATA[
+/**************************************************************************************
+
+   Отметить все сообщения по указанному объекту, как прочитанные.
+
+**************************************************************************************/
+CREATE PROCEDURE FeedSetAsReadForObject
+    @ReadDate datetime,
+    @ParentObjectUid uniqueidentifier,
+    @ParentObjectId bigint,
+    @Recipient bigint
+AS
+BEGIN
+
+    UPDATE Feed
+    SET
+      IsRead = 1,
+      HasUnreadChild = (CASE WHEN IsParent = 1 THEN 0 ELSE NULL END),
+      UnreadCount = 0,
+      ReadDate = @ReadDate
+    WHERE
+      ParentObjectUid = @ParentObjectUid
+      AND ParentObjectId = @ParentObjectId
+      AND Recipient = @Recipient
+
+END
+        ]]>
+
+      </text>
+    </procedure>
+
+    <procedure name="FeedGetReadedPostsIds">
+      <mappings>
+        <hibernate-mapping xmlns="urn:nhibernate-mapping-2.2">
+          <sql-query name="ExecFeedGetReadedPostsIds">
+            exec FeedGetReadedPostsIds @Recipient=:Recipient, @IsRead=:IsRead, @FromDate=:FromDate
+          </sql-query>
+        </hibernate-mapping>
+      </mappings>
+      <text>
+        <![CDATA[
+/**************************************************************************************
+
+   Получить идентификаторы сообщений после указанной даты.
+
+**************************************************************************************/
+CREATE PROCEDURE FeedGetReadedPostsIds
+    @Recipient bigint,
+    @IsRead bit,
+    @FromDate datetime
+AS
+BEGIN
+
+    select
+      Id
+    from Feed WITH (NOLOCK)
+    where
+      Recipient = @Recipient
+      and IsRead = @IsRead
+      and ((CONVERT(datetime, ISNULL(ReadDate, 0)) > CONVERT(datetime, ISNULL(@FromDate, 0)))    or (ReadDate is null and @FromDate is null))
+  
+END
+        ]]>
+      </text>
+    </procedure>
+
+    <procedure name="FeedLoadMessages">
+      <mappings>
+        <hibernate-mapping xmlns="urn:nhibernate-mapping-2.2">
+          <sql-query name="ExecFeedLoadMessages">
+            exec FeedLoadMessages @Ids=:Ids
+          </sql-query>
+        </hibernate-mapping>
+      </mappings>
+      <text>
+        <![CDATA[
+/**************************************************************************************
+
+   Загружает сообщения без комментариев.
+
+**************************************************************************************/
+CREATE PROCEDURE FeedLoadMessages
+    @Ids NVARCHAR(MAX)
+AS
+BEGIN
+
+    SELECT f.* 
+    FROM Feed f WITH (NOLOCK)
+    WHERE f.IsParent = 1 AND f.Id in (select cast(val as bigint) as Id from SplitString(@Ids, ','))
+  
+END
+        ]]>
+      </text>
+    </procedure>
+
+    <procedure name="FeedUrlUpdateFromInternalMessage">
+      <mappings>
+        <hibernate-mapping xmlns="urn:nhibernate-mapping-2.2">
+          <sql-query name="FeedUrlUpdateFromInternalMessage">
+            <![CDATA[
+update Feed
+SET Url = (SELECT MAX(i.Url)
+                  FROM InternalMailMessage i
+                  where
+                        not i.Url is null
+                        and i.ObjectId = Feed.ParentObjectId
+                        and i.ObjectUid = Feed.ParentObjectUid)
+where IsParent = 1 and (Url is null or Url = '')
+              ]]>
+          </sql-query>
+        </hibernate-mapping>
+      </mappings>
+    </procedure>
+
+    <procedure name="FeedChangeDateHashRecalc">
+      <mappings>
+        <hibernate-mapping xmlns="urn:nhibernate-mapping-2.2">
+          <sql-query name="FeedChangeDateHashRecalc">
+            <![CDATA[
+update Feed
+set ChangeDateHash = LEFT(ChangeDateHash, 16) + right('0000000000000000000' + cast(Id as varchar(19)), 19)
+where IsParent = 1 and ChildCount > 0
+              ]]>
+          </sql-query>
+        </hibernate-mapping>
+      </mappings>
+    </procedure>
+
+    <procedure name="FeedChildCountRecalc">
+      <mappings>
+        <hibernate-mapping xmlns="urn:nhibernate-mapping-2.2">
+          <sql-query name="ExecFeedChildCountRecalc">
+            exec FeedChildCountRecalc
+          </sql-query>
+        </hibernate-mapping>
+      </mappings>
+      <text>
+        <![CDATA[
+/**************************************************************************************
+
+   Пересчитать счётчики количества дочерних сообщений и количества непрочитанных дочерних сообщений.
+   Процедура только для технического обслуживания ленты!!!
+
+**************************************************************************************/
+CREATE PROCEDURE FeedChildCountRecalc
+AS
+BEGIN
+
+  update Feed
+  set
+      ChildCount = fc.ChildCount,
+      UnreadCount = fc.UnreadCount,
+      HasUnreadChild = (CASE WHEN fc.UnreadCount = 0 THEN 0 ELSE 1 END)  from (
+      select f.ParentObjectId, f.ParentObjectUid, f.Recipient, COUNT(f.Id) ChildCount, COUNT(case when f.IsRead = 0 then 1 end) UnreadCount from Feed f
+      where f.IsParent = 0
+      group by f.ParentObjectId, f.ParentObjectUid, f.Recipient
+  ) fc
+  where Feed.IsParent = 1
+      and fc.ParentObjectId = Feed.ParentObjectId
+      and fc.ParentObjectUid = Feed.ParentObjectUid
+      and fc.Recipient = Feed.Recipient
+
+  
+END
+        ]]>
+      </text>
+    </procedure>
+
+  </procedures>
+
+  <scripts>
+
+    <script name="Update_Feed_TextHtml">
+      <text>
+        Update [Feed] Set [TextHtml] = [Text]
+      </text>
+    </script>
+
+    <script ExecuteTime="OnTablesCreating" name="Update_Feed_IdUpdate">
+      <text>
+          declare @t bigint
+          
+          select @t = count(*) from sys.tables st where upper(st.name) = 'Feed'
+          if @t = 1
+          begin
+              select @t = max(Id) from Feed
+              EXEC [G_GenId] 'Feed', @t
+          end
+          
+          select @t = count(*) from sys.procedures sp with (nolock) where Upper(sp.name) = 'G_Feed'
+          if @t > 0
+          begin
+                  DROP PROCEDURE G_Feed
+          end
+          
+          select @t = count(*) from sys.tables st where upper(st.name) = 'GT_Feed'
+          if @t > 0
+          begin
+              drop table GT_Feed
+          end
+      </text>
+    </script>
+
+  </scripts>
+
+  <indexes>
+    <index name="BaseMessageIdIndex" tableName="BaseMessage">
+      <text>
+        CREATE NONCLUSTERED INDEX [BaseMessageIdIndex]
+        ON [BaseMessage] ([TypeUid])
+        INCLUDE ([Id])
+      </text>
+    </index>
+    <index name="RMSStatusIdx" tableName="RecipientMessageStatus" columns="Status" />
+    <index name="RMSObjRecipientIdx" tableName="RecipientMessageStatus" columns="Recipient, MessageObject" />
+    <index name="IX_RMS_Rec_MS" tableName="RecipientMessageStatus">
+      <text>
+        CREATE NONCLUSTERED INDEX [IX_RMS_Rec_MS]
+        ON [RecipientMessageStatus] ([Recipient])
+        INCLUDE ([MessageObject],[Status])
+      </text>
+    </index>
+    <index name="IX_BMRec_UserMess" tableName="M_BaseMessage_Recipients">
+      <text>
+        CREATE NONCLUSTERED INDEX [IX_BMRec_UserMess]
+        ON [M_BaseMessage_Recipients] ([UserId])
+        INCLUDE ([MessageId])
+      </text>
+    </index>
+    <index name="IX_Recipient_Status_Id_MessageObject" tableName="RecipientMessageStatus" columns="Recipient,Status,Id,MessageObject" />
+    <index name="IX_UserId_MessageId" tableName="M_BaseMessage_Recipients" columns="UserId,MessageId" />
+    <index name="IX_BM_IdType" tableName="BaseMessage" columns="Id, TypeUid" />
+    <index name="IX_BM_CreateDateDesc" tableName="BaseMessage">
+      <text>
+        CREATE NONCLUSTERED INDEX [IX_BM_CreateDateDesc]
+        ON [BaseMessage]
+        (
+          [CreationDate] DESC
+        )
+      </text>
+    </index>
+    <index name="IX_RMS_RecStat_IUM" tableName="RecipientMessageStatus">
+      <text>
+        CREATE NONCLUSTERED INDEX [IX_RMS_RecStat_IUM]
+        ON [RecipientMessageStatus] ([Recipient],[Status])
+        INCLUDE ([Id],[Uid],[MessageObject])
+      </text>
+    </index>
+    <index name="IX_Feed_Id" tableName="Feed">
+      <text>
+        CREATE UNIQUE CLUSTERED INDEX [IX_Feed_Id] ON Feed
+        (
+          [ChangeDateHash] DESC,
+          [Id] ASC
+        )
+      </text>
+    </index>
+    <index name="IX_Feed_IdPure" tableName="Feed" columns="Id" />
+    <index name="IX_Feed_ChangeDateHash" tableName="Feed" columns="ChangeDateHash" />
+    <index name="IX_Feed_RecParentHash" tableName="Feed">
+      <text>
+        CREATE NONCLUSTERED INDEX [IX_Feed_RecParentHash] ON Feed
+        (
+          [Recipient] ASC,
+          [IsParent] ASC,
+          [ChangeDateHash] ASC
+        )
+        INCLUDE
+        (
+          [ParentObjectId],
+          [ParentObjectUid]
+        )
+      </text>
+    </index>
+    <index name="IX_Feed_Parent" tableName="Feed">
+      <text>
+        CREATE NONCLUSTERED INDEX [IX_Feed_Parent] ON Feed
+        (
+          [ParentObjectUid] ASC,
+          [ParentObjectId] DESC,
+          [Recipient] ASC,
+          [IsParent] ASC,
+          [ChangeDate] DESC,
+          [ChangeDateHash] DESC
+        )
+        INCLUDE
+        (
+          [Id],
+          [Url],
+          [Subject],
+          [Text],
+          [TextHtml],
+          [ActionObjectUid],
+          [ActionUid],
+          [ActionObjectId],
+          [CreationDate],
+          [IsRead],
+          [HasUnreadChild],
+          [UnreadCount],
+          [Priority],
+          [CreationAuthor],
+          [ChildCount],
+          [MessageAttachments],
+          [ObjectRecipients],
+          [MessageObjects]
+        )
+      </text>
+    </index>
+    <index name="IX_Feed_ParentAuthors" tableName="Feed">
+      <text>
+        CREATE NONCLUSTERED INDEX [IX_Feed_ParentAuthors] ON Feed
+        (
+          [ParentObjectId] ASC,
+          [ParentObjectUid] ASC,
+          [IsParent] ASC,
+          [ChangeDate] ASC,
+          [Recipient] ASC,
+          [ChangeDateHash] ASC,
+          [CreationAuthor] ASC
+        )
+        INCLUDE
+        (
+          [Id],
+          [Url],
+          [Subject],
+          [Text],
+          [TextHtml],
+          [ActionObjectUid],
+          [ActionUid],
+          [ActionObjectId],
+          [CreationDate],
+          [IsRead],
+          [HasUnreadChild],
+          [UnreadCount],
+          [Priority]
+        )
+      </text>
+    </index>
+    <index name="IX_Feed_RecipHash" tableName="Feed">
+      <text>
+        CREATE NONCLUSTERED INDEX [IX_Feed_RecipHash] ON Feed
+        (
+          [Recipient] ASC,
+          [ChangeDate] DESC,
+          [ChangeDateHash] DESC
+        )
+        INCLUDE
+        (
+          [Subject],
+          [Url],
+          [Text],
+          [TextHtml],
+          [Id],
+          [ActionObjectUid],
+          [ActionUid],
+          [ActionObjectId],
+          [CreationDate],
+          [CreationAuthor],
+          [ParentObjectId],
+          [ParentObjectUid],
+          [IsRead],
+          [HasUnreadChild],
+          [UnreadCount],
+          [Priority],
+          [IsParent]
+        )
+      </text>
+    </index>
+    <index name="IX_Feed_RecIsRead" tableName="Feed">
+      <text>
+        CREATE NONCLUSTERED INDEX [IX_Feed_RecIsRead] ON Feed
+        (
+          [Recipient] ASC,
+          [IsRead] ASC,
+          [ReadDate] ASC
+        ) 
+        INCLUDE ([Id])
+      </text>
+    </index>
+    <index name="IX_FeedArchive_Id" tableName="FeedArchive">
+      <text>
+        CREATE UNIQUE CLUSTERED INDEX [IX_FeedArchive_Id] ON FeedArchive
+        (
+          [ChangeDateHash] DESC,
+          [Id] ASC
+        )
+      </text>
+    </index>
+    <index name="IX_FeedInfo_ChangeDate" tableName="FeedInfo" columns="ChangeDate" />
+    <index name="IX_FeedFavorite_ChangeDateHash" tableName="FeedFavorite" columns="ChangeDateHash" />
+    <index name="FeedUniqueParent" tableName="Feed">
+      <text>
+        CREATE UNIQUE INDEX [FeedUniqueParent] ON [Feed] ([Recipient], [ParentObjectId], [ParentObjectUid]) where [IsParent] = 1
+      </text>
+    </index>
+    <index name="IX_Feed_IsParentRecipient" tableName="Feed">
+      <text>
+        CREATE NONCLUSTERED INDEX [IX_Feed_IsParentRecipient] ON [Feed]
+        (
+          [IsParent] ASC,
+          [Recipient] ASC,
+          [ChangeDate] ASC
+        )
+        INCLUDE ([ParentObjectId], [ParentObjectUid])
+      </text>
+    </index>
+  </indexes>
+  
+</root>

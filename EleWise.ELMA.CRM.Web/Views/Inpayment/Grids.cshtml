@@ -1,0 +1,188 @@
+﻿@using EleWise.ELMA
+@using EleWise.ELMA.CRM.Web
+@using EleWise.ELMA.CRM.Web.Controllers
+@using EleWise.ELMA.Web.Mvc.Models.ActionItems.Menu
+@using EleWise.ELMA.BPM.Web.Common.Models
+@using EleWise.ELMA.CRM.Models
+@using EleWise.ELMA.CRM.Web.Menu
+@model GridDataFilter<InpaymentModel>
+
+@{
+    var setStatusPopupId = "SetInpaymentStatusPopup";
+}
+
+<script type="text/javascript" src="@Url.Content("~/Scripts/Elma/Elma.Grids.ObjectSelectColumn.js")"></script>
+
+@Html.Partial("Filter/FilterModel", Model.DataFilter.Builder()
+    .SubmitText(EleWise.ELMA.SR.T("Найти поступления"))
+    .GridAction(Url.Action("Grid"))
+    .ApplayFilterScript(string.Concat(InpaymentController.GetGridIds.Select(i => string.Format("applyFilterGrid('{0}', 'filteringGridForm');", i))))
+    .FilterUrl(Url.Action("Index") + "?FilterId=")
+    .Header(SR.T("План поступлений"))
+    .FilterMenuItemCode(CRMMenuItems.INPAYMENTS_MENU)
+    .Model,
+    new ViewDataDictionary { TemplateInfo = new TemplateInfo { HtmlFieldPrefix = "DataFilter" } })
+
+@{
+    var checkedMenu = new ActionMenu("inpayment_context_menu")
+    {
+        Items = {
+             new ActionMenuItem("btnAddComment") {
+                 IconUrl = "#add.svg",
+                 Text = SR.T("Оставить комментарий"),
+                 Click = "addCommentClick(sender)"
+             },
+             new ActionMenuItem("btnAskQuestion") {
+                 IconUrl = "#question.svg",
+                 Text = SR.T("Задать вопрос"),
+                 Click = "askQuestionClick(sender)"
+             },
+             new ActionMenuItem("btnSetStatus") {
+                 IconUrl = "#change.svg",
+                 Text = SR.T("Изменить статус"),
+                 Click = "setInpaymentStatusClick(sender)"
+             },
+             new ActionMenuItem("btnEdit") {
+                 IconUrl = "#edit.svg",
+                 Text = SR.T("Редактировать"),
+                 Click = "editClick(sender)"
+             }             
+        }
+    };
+
+    var checkedMenuClosed = new ActionMenu("closed_inpayment_context_menu")
+    {
+        Items = {
+             new ActionMenuItem("btnAddComment") {
+                 IconUrl = "#add.svg",
+                 Text = SR.T("Оставить комментарий"),
+                 Click = "addCommentClick(sender)"
+             },
+             new ActionMenuItem("btnAskQuestion") {
+                 IconUrl = "#question.svg",
+                 Text = SR.T("Задать вопрос"),
+                 Click = "askQuestionClick(sender)"
+             }
+        }
+    };       
+}
+
+@Html.ActionMenu(checkedMenu)
+@Html.ActionMenu(checkedMenuClosed)
+
+@Html.PopupWindow("AddCommentPopup", SR.T("Добавить комментарий"), @<text></text>)
+@Html.PopupWindow("AskQuestionPopup", SR.T("Задать вопрос"), @<text></text>)
+@Html.PopupWindow(setStatusPopupId, SR.T("Статус поступления"), @<text></text>, width: 600)
+
+<script type="text/javascript">
+    function addCommentClick(sender) {
+        refreshPopup('AddCommentPopup', '@(Url.Action("AddCommentPopup", "Inpayment", new { area = RouteProvider.AreaName }))/' + sender.id + '?typeUid=' + sender.typeUid + '&popupId=AddCommentPopup');
+    }
+
+    function askQuestionClick(sender) {
+        refreshPopup('AskQuestionPopup', '@(Url.Action("AskQuestionPopup", "Inpayment", new { area = RouteProvider.AreaName }))/' + sender.id + '?typeUid=' + sender.typeUid + '&popupId=AskQuestionPopup');
+    }
+
+    function editClick(sender) {
+        editInpayment(sender.id); // at Index.cshtml
+    }
+
+    function setInpaymentStatusClick(sender) {
+        refreshPopup('@(setStatusPopupId)', '@(Url.Action("SetInpaymentStatus", "Inpayment", new { area = RouteProvider.AreaName }))/' + sender.id + '?prefix=@(setStatusPopupId)', null, '@SR.T("Статус поступления")', null, setInpaymentStatus);
+    }
+
+    function setInpaymentStatus(closeData) {
+        if (!closeData)
+            return;
+
+        elma.openPleaseWait(true);
+        $.ajax({
+            url: '@(Url.Action("SetInpaymentStatus", "Inpayment", new { area =RouteProvider.AreaName }))',
+            type: "POST",
+            dataType: 'html',
+            data: {
+                'InpaymentId': $('#@(setStatusPopupId)_InpaymentId').val(),
+                'Value': $('#@(setStatusPopupId)_Value').val(),
+                'ActualDate': $('#@(setStatusPopupId)_ActualDate').val(),
+                'Comment': $('#@(setStatusPopupId)_Comment').val()
+            },
+            cache: false,
+            success: function (data) {
+                window.reloadPage();
+            }
+        });
+    }
+</script>
+
+<div style="height:10px"></div>
+
+@(Html.CollapsiblePanel()
+            .Id(ViewData.TemplateInfo.GetFullHtmlFieldId("OldInpaymentsGridPanel"))
+            .Header(SR.T("Ранее")).SaveState(true)
+            .Class("separator-gray").Expanded(false)
+            .Url(Url.Action(InpaymentController.GetGridIds[0] + "Action", "Inpayment", 
+                new { area = CRMAreaRegistration.AREA_NAME, FilterId = Model.DataFilter != null && Model.DataFilter.Entity != null ? Model.DataFilter.Entity.Id : 0 }))
+               .Content(@<text></text>).Render())
+
+
+<div style="height:15px"></div>
+
+@(Html.CollapsiblePanel()
+            .Id(ViewData.TemplateInfo.GetFullHtmlFieldId("ThisMonthBeforeWeekGridPanel"))
+            .Header(SR.T("Текущий месяц (До)")).SaveState(true)
+            .Class("separator-gray").Expanded(false)
+            .Url(Url.Action(InpaymentController.GetGridIds[1] + "Action", "Inpayment",
+                new { area = CRMAreaRegistration.AREA_NAME, FilterId = Model.DataFilter != null && Model.DataFilter.Entity != null ? Model.DataFilter.Entity.Id : 0 }))
+           .Content(@<text></text>).Render())
+
+<div style="height:15px"></div>
+
+@(Html.CollapsiblePanel()
+            .Id(ViewData.TemplateInfo.GetFullHtmlFieldId("CurrentWeekGridPanel"))
+            .Header(SR.T("Текущая неделя")).SaveState(true)
+            .Class("separator-gray").Expanded(true)
+            .Url(Url.Action(InpaymentController.GetGridIds[2] + "Action", "Inpayment",
+                new { area = CRMAreaRegistration.AREA_NAME, FilterId = Model.DataFilter != null && Model.DataFilter.Entity != null ? Model.DataFilter.Entity.Id : 0 }))
+           .Content(@<text></text>).Render())
+
+<div style="height:15px"></div>
+
+@(Html.CollapsiblePanel()
+            .Id(ViewData.TemplateInfo.GetFullHtmlFieldId("ThisMonthAfterWeekGridPanel"))
+            .Header(SR.T("Текущий месяц (После)")).SaveState(true)
+            .Class("separator-gray").Expanded(false)
+            .Url(Url.Action(InpaymentController.GetGridIds[3] + "Action", "Inpayment", 
+                new { area = CRMAreaRegistration.AREA_NAME, FilterId = Model.DataFilter != null && Model.DataFilter.Entity != null ? Model.DataFilter.Entity.Id : 0 }))
+               .Content(@<text></text>).Render())
+
+
+<div style="height:15px"></div>
+
+@(Html.CollapsiblePanel()
+            .Id(ViewData.TemplateInfo.GetFullHtmlFieldId("FarFutureGridPanel"))
+            .Header(SR.T("Далее")).SaveState(true)
+            .Class("separator-gray").Expanded(false)
+            .Url(Url.Action(InpaymentController.GetGridIds[4] + "Action", "Inpayment", 
+                new { area = CRMAreaRegistration.AREA_NAME, FilterId = Model.DataFilter != null && Model.DataFilter.Entity != null ? Model.DataFilter.Entity.Id : 0 }))
+               .Content(@<text></text>).Render())
+
+
+@{
+    Html.RegisterContent("updateGridTotalContent", @<text>
+<script type="text/javascript">
+    function updateGridTotal(gridId) {
+        var ajaxData = $('#' + gridId).data('tGrid').ajaxData;
+        $('#' + gridId + '_total #TotalInPlanWithDate').html(ajaxData.TotalInPlanWithDate);
+        $('#' + gridId + '_total #TotalInPlanWithOutDate').html(ajaxData.TotalInPlanWithOutDate);
+        $('#' + gridId + '_total #TotalReceived').html(ajaxData.TotalReceived);
+        $('#' + gridId + '_total #Total').html(ajaxData.Total);
+
+        if ($('#' + gridId + ' .t-grid-pager').is(':visible')) {
+            $('#' + gridId + 'CheckboxesDiv').css('position', 'absolute').css('z-index', '2');
+        }
+        else {
+            $('#' + gridId + 'CheckboxesDiv').css('position', '').css('z-index', '');
+        }
+    }
+</script></text>);
+}

@@ -1,0 +1,20 @@
+﻿@using EleWise.ELMA
+@using EleWise.ELMA.Model.Entities
+@model IEnumerable<EleWise.ELMA.CRM.Models.IMarketingTag>
+@{
+    var enumerator = Model.GetEnumerator();
+    if (enumerator.MoveNext())
+    {
+        <div class="marketing-tags-container">
+            @do
+            {
+                @Html.FilterButton().CloseIconHide(true).Text(enumerator.Current.GetTitleOrDefault(m => m.Name))
+            }
+            while (enumerator.MoveNext());
+        </div>
+    }
+    else
+    {
+        <span class="comment3">@SR.T("Не выбрано")</span>
+    }
+}

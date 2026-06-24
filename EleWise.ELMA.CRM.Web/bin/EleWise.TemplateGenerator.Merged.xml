@@ -1,0 +1,1936 @@
+<?xml version="1.0"?>
+<doc>
+  <assembly>
+    <name>EleWise.TemplateGenerator.Merged</name>
+  </assembly>
+  <members>
+    <member name="T:EleWise.TemplateGenerator.BlockInfo">
+      <summary>
+            Информация о блоке
+            </summary>
+    </member>
+    <member name="P:EleWise.TemplateGenerator.BlockInfo.Count">
+      <summary>
+            Количество элементов
+            </summary>
+    </member>
+    <member name="P:EleWise.TemplateGenerator.BlockInfo.Index">
+      <summary>
+            Текущий индекс
+            </summary>
+    </member>
+    <member name="P:EleWise.TemplateGenerator.BlockInfo.CurrentValue">
+      <summary>
+            Текущее значение
+            </summary>
+    </member>
+    <member name="P:EleWise.TemplateGenerator.BlockInfo.List">
+      <summary>
+            Список значений
+            </summary>
+    </member>
+    <member name="T:EleWise.TemplateGenerator.DocumentGeneratorBase">
+      <summary>
+            Базовый класс генератора по шаблону документа (файла)
+            </summary>
+    </member>
+    <member name="M:EleWise.TemplateGenerator.DocumentGeneratorBase.#ctor(EleWise.TemplateGenerator.IGeneratorProvider)">
+      <summary>
+            Ctor
+            </summary>
+      <param name="provider">Провайдер генерации (по умолчанию используется GlobalGeneratorSettings.DefaultProvider)</param>
+    </member>
+    <member name="M:EleWise.TemplateGenerator.DocumentGeneratorBase.Generate(System.Object)">
+      <summary>
+            Сгенерировать документ по шаблону
+            </summary>
+      <param name="dataSourceObject">Источник данных (объект)</param>
+    </member>
+    <member name="M:EleWise.TemplateGenerator.DocumentGeneratorBase.Validate(System.Object)">
+      <summary>
+            Проверить шаблон документа
+            </summary>
+      <param name="dataSourceObject">Тип или метаданные источника данных</param>
+      <returns>Результат валидации с ошибками</returns>
+    </member>
+    <member name="M:EleWise.TemplateGenerator.DocumentGeneratorBase.Generate(EleWise.TemplateGenerator.DataSources.IGeneratorDataSource)">
+      <summary>
+            Сгенерировать документ по шаблону
+            </summary>
+      <param name="dataSource">Источник данных</param>
+    </member>
+    <member name="M:EleWise.TemplateGenerator.DocumentGeneratorBase.Validate(EleWise.TemplateGenerator.DataSources.IGeneratorDataSource)">
+      <summary>
+            Проверить шаблон документа
+            </summary>
+      <param name="dataSourceType">Тип или метаданные источника данных</param>
+      <returns>Результат валидации с ошибками</returns>
+    </member>
+    <member name="T:EleWise.TemplateGenerator.ExpressionEvaluator">
+      <summary>
+            Вычислитель выражений на языке ADL
+            </summary>
+    </member>
+    <member name="M:EleWise.TemplateGenerator.ExpressionEvaluator.#ctor(System.String,EleWise.TemplateGenerator.IGeneratorProvider)">
+      <summary>
+            Ctor
+            </summary>
+      <param name="expressionText">Текст выражения</param>
+      <param name="provider">Провайдер генерации (по умолчанию используется GlobalGeneratorSettings.DefaultProvider)</param>
+    </member>
+    <member name="M:EleWise.TemplateGenerator.ExpressionEvaluator.Evaluate(System.Object)">
+      <summary>
+            Сгенерировать текст
+            </summary>
+      <param name="dataSourceObject">Источник данных (объект)</param>
+      <returns>Сгенерированный текст</returns>
+    </member>
+    <member name="M:EleWise.TemplateGenerator.ExpressionEvaluator.Evaluate(EleWise.TemplateGenerator.DataSources.IGeneratorDataSource)">
+      <summary>
+            Сгенерировать текст
+            </summary>
+      <param name="dataSource">Источник данных</param>
+      <returns>Сгенерированный текст</returns>
+    </member>
+    <member name="M:EleWise.TemplateGenerator.ExpressionEvaluator.Parse(System.String)">
+      <summary>
+            Разобрать текст выражения
+            </summary>
+      <param name="expressionText">Текст выражения</param>
+      <returns>Разобранное выражение</returns>
+    </member>
+    <member name="P:EleWise.TemplateGenerator.ExpressionEvaluator.Provider">
+      <summary>
+            Получить или установить провайдер генерации (по умолчанию используется GlobalGeneratorSettings.DefaultProvider)
+            </summary>
+    </member>
+    <member name="P:EleWise.TemplateGenerator.ExpressionEvaluator.Expression">
+      <summary>
+            Получить разобранное выражение
+            </summary>
+    </member>
+    <member name="T:EleWise.TemplateGenerator.FormatedValue">
+      <summary>
+            Форматируемое значение
+            </summary>
+    </member>
+    <member name="M:EleWise.TemplateGenerator.FormatedValue.#ctor">
+      <summary>
+            Ctor
+            </summary>
+    </member>
+    <member name="M:EleWise.TemplateGenerator.FormatedValue.#ctor(System.Object,EleWise.TemplateGenerator.BaseFormat)">
+      <summary>
+            Ctor
+            </summary>
+      <param name="value">Значение</param>
+      <param name="format">Формат</param>
+    </member>
+    <member name="M:EleWise.TemplateGenerator.FormatedValue.ToString">
+      <summary>
+            ToString
+            </summary>
+      <returns>ToString value</returns>
+    </member>
+    <member name="P:EleWise.TemplateGenerator.FormatedValue.Value">
+      <summary>
+            Значение
+            </summary>
+    </member>
+    <member name="P:EleWise.TemplateGenerator.FormatedValue.Format">
+      <summary>
+            Формат
+            </summary>
+    </member>
+    <member name="P:EleWise.TemplateGenerator.FormatedValue.BlockInfo">
+      <summary>
+            Информация о блоке, если текущее значение - итератор блока
+            </summary>
+    </member>
+    <member name="T:EleWise.TemplateGenerator.GenerationContext">
+      <summary>
+            Контекст процесса генерации
+            </summary>
+    </member>
+    <member name="M:EleWise.TemplateGenerator.GenerationContext.#ctor">
+      <summary>
+            Ctor
+            </summary>
+    </member>
+    <member name="P:EleWise.TemplateGenerator.GenerationContext.DataSource">
+      <summary>
+            Источник данных
+            </summary>
+    </member>
+    <member name="P:EleWise.TemplateGenerator.GenerationContext.GlobalDataSource">
+      <summary>
+            Источник данных
+            </summary>
+    </member>
+    <member name="P:EleWise.TemplateGenerator.GenerationContext.ExpressionEvaluator">
+      <summary>
+            Вычислитель выражений
+            </summary>
+    </member>
+    <member name="P:EleWise.TemplateGenerator.GenerationContext.FunctionEvaluator">
+      <summary>
+            Вычислитель функций
+            </summary>
+    </member>
+    <member name="P:EleWise.TemplateGenerator.GenerationContext.FormatProvider">
+      <summary>
+            Провайдер форматирования
+            </summary>
+    </member>
+    <member name="P:EleWise.TemplateGenerator.GenerationContext.Localization">
+      <summary>
+            Локализация
+            </summary>
+    </member>
+    <member name="P:EleWise.TemplateGenerator.GenerationContext.ExtendedProperties">
+      <summary>
+            Расширенные настройки
+            </summary>
+    </member>
+    <member name="T:EleWise.TemplateGenerator.GeneratorBase">
+      <summary>
+            Базовый класс генератора по шаблону на языке ADL
+            </summary>
+    </member>
+    <member name="M:EleWise.TemplateGenerator.GeneratorBase.#ctor(EleWise.TemplateGenerator.IGeneratorProvider)">
+      <summary>
+            Ctor
+            </summary>
+      <param name="provider">Провайдер генерации (по умолчанию используется GlobalGeneratorSettings.DefaultProvider)</param>
+    </member>
+    <member name="M:EleWise.TemplateGenerator.GeneratorBase.Parse(System.String)">
+      <summary>
+            Разобрать текст шаблона
+            </summary>
+      <param name="template">Текст шаблона</param>
+      <returns>Разобранный шаблон</returns>
+    </member>
+    <member name="M:EleWise.TemplateGenerator.GeneratorBase.Build(EleWise.TemplateGenerator.Adl.Tree.Template,EleWise.TemplateGenerator.DataSources.IGeneratorDataSource)">
+      <summary>
+            Построить результат по разобранному шаблону
+            </summary>
+      <param name="template">Разобранный шаблон</param>
+      <param name="dataSource">Источник данных</param>
+    </member>
+    <member name="M:EleWise.TemplateGenerator.GeneratorBase.Validate(EleWise.TemplateGenerator.Adl.Tree.Template,EleWise.TemplateGenerator.DataSources.IGeneratorDataSource)">
+      <summary>
+            Проверить корректность шаблона
+            </summary>
+      <param name="template">Разобранный шаблон</param>
+      <param name="dataSourceType">Тип или метаданные источника данных</param>
+    </member>
+    <member name="M:EleWise.TemplateGenerator.GeneratorBase.PostProcessResult(EleWise.TemplateGenerator.GenerationContext)">
+      <summary>
+            Постобработка результата
+            </summary>
+      <param name="context">Контекст генерации</param>
+    </member>
+    <member name="M:EleWise.TemplateGenerator.GeneratorBase.CreateGenerationContext(EleWise.TemplateGenerator.DataSources.IGeneratorDataSource)">
+      <summary>
+            Создать контекст генерации
+            </summary>
+      <param name="dataSource">Источник данных</param>
+      <returns>Контекст генерации</returns>
+    </member>
+    <member name="M:EleWise.TemplateGenerator.GeneratorBase.ValidateItem(EleWise.TemplateGenerator.Adl.Tree.TreeItem)">
+      <summary>
+            Проверить элемент дерева разбора
+            </summary>
+      <param name="item">Элемент дерева</param>
+      <returns>Найденные ошибки</returns>
+    </member>
+    <member name="M:EleWise.TemplateGenerator.GeneratorBase.BuildItem(EleWise.TemplateGenerator.Adl.Tree.TreeItem)">
+      <summary>
+            Построить элемент дерева
+            </summary>
+      <param name="item">Элемент дерева</param>
+    </member>
+    <member name="M:EleWise.TemplateGenerator.GeneratorBase.ValidateVariable(EleWise.TemplateGenerator.Adl.Tree.Variable)">
+      <summary>
+            Проверить элемент переменной
+            </summary>
+      <param name="variable">Переменная</param>
+      <returns>Ошибка валидации или null, если ошибок нет</returns>
+    </member>
+    <member name="M:EleWise.TemplateGenerator.GeneratorBase.ValidateBlockStatement(EleWise.TemplateGenerator.Adl.Tree.BlockStatement)">
+      <summary>
+            Проверить элемент блока
+            </summary>
+      <param name="block">Блок</param>
+      <returns>Найденные ошибки</returns>
+    </member>
+    <member name="M:EleWise.TemplateGenerator.GeneratorBase.ValidateIfStatement(EleWise.TemplateGenerator.Adl.Tree.IfStatement)">
+      <summary>
+            Проверить условное выражение
+            </summary>
+      <param name="statement">Условное выражение</param>
+      <returns>Найденные ошибки</returns>
+    </member>
+    <member name="M:EleWise.TemplateGenerator.GeneratorBase.BuildPlainText(EleWise.TemplateGenerator.Adl.Tree.PlainText)">
+      <summary>
+            Построить простой текст
+            </summary>
+      <param name="plainText">Текст</param>
+    </member>
+    <member name="M:EleWise.TemplateGenerator.GeneratorBase.BuildGlobalVariable(EleWise.TemplateGenerator.Adl.Tree.Globalvariable)">
+      <summary>
+            Построить элемент глобальной переменной
+            </summary>
+      <param name="globalVariable">Глобальная переменная</param>
+    </member>
+    <member name="M:EleWise.TemplateGenerator.GeneratorBase.BuildVariable(EleWise.TemplateGenerator.Adl.Tree.Variable)">
+      <summary>
+            Построить элемент переменной
+            </summary>
+      <param name="variable">Переменная</param>
+    </member>
+    <member name="M:EleWise.TemplateGenerator.GeneratorBase.BuildExpressionStatement(EleWise.TemplateGenerator.Adl.Tree.ExpressionStatement)">
+      <summary>
+            Построить конструкцию, основанную на выражении
+            </summary>
+      <param name="statement">Конструкция, основанная на выражении</param>
+    </member>
+    <member name="M:EleWise.TemplateGenerator.GeneratorBase.BuildIfStatement(EleWise.TemplateGenerator.Adl.Tree.IfStatement)">
+      <summary>
+            Построить условное предложение
+            </summary>
+      <param name="statement">Условное предложение</param>
+    </member>
+    <member name="M:EleWise.TemplateGenerator.GeneratorBase.BuildBlockStatement(EleWise.TemplateGenerator.Adl.Tree.BlockStatement)">
+      <summary>
+            Построить блок
+            </summary>
+      <param name="block">Блок</param>
+    </member>
+    <member name="P:EleWise.TemplateGenerator.GeneratorBase.Provider">
+      <summary>
+            Получить или установить провайдер генерации (по умолчанию используется GlobalGeneratorSettings.DefaultProvider)
+            </summary>
+    </member>
+    <member name="P:EleWise.TemplateGenerator.GeneratorBase.Context">
+      <summary>
+            Контекст генерации (доступен в момент построения в методе Build)
+            </summary>
+    </member>
+    <member name="T:EleWise.TemplateGenerator.DefaultGeneratorProvider">
+      <summary>
+            Провайдер генерации по умолчанию
+            </summary>
+    </member>
+    <member name="M:EleWise.TemplateGenerator.DefaultGeneratorProvider.#ctor">
+      <summary>
+            Ctor
+            </summary>
+    </member>
+    <member name="M:EleWise.TemplateGenerator.DefaultGeneratorProvider.ConvertObjectToDataSource(System.Object)">
+      <summary>
+            Преобразовать объект в источник данных
+            </summary>
+      <param name="dataSourceObject">ОБъект источника данных</param>
+    </member>
+    <member name="M:EleWise.TemplateGenerator.DefaultGeneratorProvider.ConvertObjectToGlobalDataSource(System.Object)">
+      <summary>
+            Преобразовать объект в источник данных
+            </summary>
+      <param name="dataSourceObject">ОБъект источника данных</param>
+    </member>
+    <member name="M:EleWise.TemplateGenerator.DefaultGeneratorProvider.CreateExpressionEvaluator(EleWise.TemplateGenerator.GenerationContext)">
+      <summary>
+            Создать вычислитель выражений
+            </summary>
+      <param name="context">Контекст процесса генерации</param>
+    </member>
+    <member name="M:EleWise.TemplateGenerator.DefaultGeneratorProvider.CreateFunctionEvaluator(EleWise.TemplateGenerator.GenerationContext)">
+      <summary>
+            Создать вычислитель функций
+            </summary>
+      <param name="context">Контекст процесса генерации</param>
+    </member>
+    <member name="M:EleWise.TemplateGenerator.DefaultGeneratorProvider.CreateFormatProvider(EleWise.TemplateGenerator.GenerationContext)">
+      <summary>
+            Создать провайдер форматирования значений
+            </summary>
+      <param name="context">Контекст процесса генерации</param>
+    </member>
+    <member name="P:EleWise.TemplateGenerator.DefaultGeneratorProvider.Localization">
+      <summary>
+            Получить или установить локализацию (по умолчанию установлены английская и русская)
+            </summary>
+    </member>
+    <member name="P:EleWise.TemplateGenerator.DefaultGeneratorProvider.TemplateTimeZoneOffset">
+      <summary>
+            Получить или установить смещение часового пояса (по умолчанию генерируется в часовом поясе runtime)
+            </summary>
+    </member>
+    <member name="T:EleWise.TemplateGenerator.GlobalGeneratorSettings">
+      <summary>
+            Глобальные настройки генератора
+            </summary>
+    </member>
+    <member name="P:EleWise.TemplateGenerator.GlobalGeneratorSettings.DefaultProvider">
+      <summary>
+            Получить или установить провайдер генерации по умолчанию (по умолчанию используется DefaultGeneratorProvider)
+            </summary>
+    </member>
+    <member name="T:EleWise.TemplateGenerator.IGeneratorProvider">
+      <summary>
+            Интерфейс провайдера генерации
+            </summary>
+    </member>
+    <member name="M:EleWise.TemplateGenerator.IGeneratorProvider.ConvertObjectToDataSource(System.Object)">
+      <summary>
+            Преобразовать объект в источник данных
+            </summary>
+      <param name="dataSourceObject">ОБъект источника данных</param>
+    </member>
+    <member name="M:EleWise.TemplateGenerator.IGeneratorProvider.ConvertObjectToGlobalDataSource(System.Object)">
+      <summary>
+            Преобразовать объект в источник данных
+            </summary>
+      <param name="dataSourceObject">ОБъект источника данных</param>
+    </member>
+    <member name="M:EleWise.TemplateGenerator.IGeneratorProvider.CreateExpressionEvaluator(EleWise.TemplateGenerator.GenerationContext)">
+      <summary>
+            Создать вычислитель выражений
+            </summary>
+      <param name="context">Контекст процесса генерации</param>
+    </member>
+    <member name="M:EleWise.TemplateGenerator.IGeneratorProvider.CreateFunctionEvaluator(EleWise.TemplateGenerator.GenerationContext)">
+      <summary>
+            Создать вычислитель функций
+            </summary>
+      <param name="context">Контекст процесса генерации</param>
+    </member>
+    <member name="M:EleWise.TemplateGenerator.IGeneratorProvider.CreateFormatProvider(EleWise.TemplateGenerator.GenerationContext)">
+      <summary>
+            Создать провайдер форматирования значений
+            </summary>
+      <param name="context">Контекст процесса генерации</param>
+    </member>
+    <member name="P:EleWise.TemplateGenerator.IGeneratorProvider.Localization">
+      <summary>
+            Локализация
+            </summary>
+    </member>
+    <member name="P:EleWise.TemplateGenerator.IGeneratorProvider.TemplateTimeZoneOffset">
+      <summary>
+            Смещение часового пояса
+            </summary>
+    </member>
+    <member name="T:EleWise.TemplateGenerator.TextDocumentGenerator">
+      <summary>
+            Генератор по шаблонам текстовых документов
+            </summary>
+    </member>
+    <member name="M:EleWise.TemplateGenerator.TextDocumentGenerator.#ctor(System.String,EleWise.TemplateGenerator.IGeneratorProvider)">
+      <summary>
+            Создать генератор
+            </summary>
+      <param name="templateFileName">Полное имя файла шаблона</param>
+      <param name="provider">Провайдер генерации (по умолчанию используется GlobalGeneratorSettings.DefaultProvider)</param>
+    </member>
+    <member name="M:EleWise.TemplateGenerator.TextDocumentGenerator.#ctor(System.IO.Stream,EleWise.TemplateGenerator.IGeneratorProvider)">
+      <summary>
+            Создать генератор
+            </summary>
+      <param name="templateFileStream">Шаблон файла (поток)</param>
+      <param name="provider">Провайдер генерации (по умолчанию используется GlobalGeneratorSettings.DefaultProvider)</param>
+    </member>
+    <member name="M:EleWise.TemplateGenerator.TextDocumentGenerator.Generate(EleWise.TemplateGenerator.DataSources.IGeneratorDataSource)">
+      <summary>
+            Сгенерировать документ по шаблону
+            </summary>
+      <param name="dataSource">Источник данных</param>
+    </member>
+    <member name="M:EleWise.TemplateGenerator.TextDocumentGenerator.Validate(EleWise.TemplateGenerator.DataSources.IGeneratorDataSource)">
+      <inheritdoc />
+    </member>
+    <member name="M:EleWise.TemplateGenerator.TextDocumentGenerator.PostProcessResult(EleWise.TemplateGenerator.GenerationContext)">
+      <summary>
+            Постобработка результата
+            </summary>
+      <param name="context">Контекст генерации</param>
+    </member>
+    <member name="M:EleWise.TemplateGenerator.TextDocumentGenerator.BuildPlainText(EleWise.TemplateGenerator.Adl.Tree.PlainText)">
+      <summary>
+            Построить простой текст
+            </summary>
+      <param name="plainText">Текст</param>
+    </member>
+    <member name="M:EleWise.TemplateGenerator.TextDocumentGenerator.BuildVariable(EleWise.TemplateGenerator.Adl.Tree.Variable)">
+      <summary>
+            Построить элемент переменной
+            </summary>
+      <param name="variable">Переменная</param>
+    </member>
+    <member name="M:EleWise.TemplateGenerator.TextDocumentGenerator.BuildGlobalVariable(EleWise.TemplateGenerator.Adl.Tree.Globalvariable)">
+      <summary>
+            Построить элемент переменной
+            </summary>
+      <param name="globalVariable">Переменная</param>
+    </member>
+    <member name="M:EleWise.TemplateGenerator.TextDocumentGenerator.BuildExpressionStatement(EleWise.TemplateGenerator.Adl.Tree.ExpressionStatement)">
+      <summary>
+            Построить конструкцию, основанную на выражении
+            </summary>
+      <param name="statement">Конструкция, основанная на выражении</param>
+    </member>
+    <member name="M:EleWise.TemplateGenerator.TextDocumentGenerator.BuildIfStatement(EleWise.TemplateGenerator.Adl.Tree.IfStatement)">
+      <summary>
+            Построить условное предложение
+            </summary>
+      <param name="statement">Условное предложение</param>
+    </member>
+    <member name="M:EleWise.TemplateGenerator.TextDocumentGenerator.BuildBlockStatement(EleWise.TemplateGenerator.Adl.Tree.BlockStatement)">
+      <summary>
+            Построить блок
+            </summary>
+      <param name="block">Блок</param>
+    </member>
+    <member name="P:EleWise.TemplateGenerator.TextDocumentGenerator.Template">
+      <summary>
+            Получить разобранный шаблон
+            </summary>
+    </member>
+    <member name="T:EleWise.TemplateGenerator.TextGenerator">
+      <summary>
+            Генератор по текстовому шаблону на языке ADL
+            </summary>
+    </member>
+    <member name="M:EleWise.TemplateGenerator.TextGenerator.#ctor(System.String,EleWise.TemplateGenerator.IGeneratorProvider)">
+      <summary>
+            Создать генератор
+            </summary>
+      <param name="template">Текстовый шаблон</param>
+      <param name="provider">Провайдер генерации (по умолчанию используется GlobalGeneratorSettings.DefaultProvider)</param>
+    </member>
+    <member name="M:EleWise.TemplateGenerator.TextGenerator.Generate(System.Object)">
+      <summary>
+            Сгенерировать текст
+            </summary>
+      <param name="dataSourceObject">Источник данных (объект)</param>
+      <returns>Сгенерированный текст</returns>
+    </member>
+    <member name="M:EleWise.TemplateGenerator.TextGenerator.Generate(EleWise.TemplateGenerator.DataSources.IGeneratorDataSource)">
+      <summary>
+            Сгенерировать текст
+            </summary>
+      <param name="dataSource">Источник данных</param>
+      <returns>Сгенерированный текст</returns>
+    </member>
+    <member name="M:EleWise.TemplateGenerator.TextGenerator.Validate(System.Object)">
+      <summary>
+            Проверить шаблон документа
+            </summary>
+      <param name="dataSourceType">Тип или метаданные источника данных</param>
+      <returns>Результат валидации</returns>
+    </member>
+    <member name="M:EleWise.TemplateGenerator.TextGenerator.PostProcessResult(EleWise.TemplateGenerator.GenerationContext,System.Text.StringBuilder)">
+      <summary>
+            Постобработка результата
+            </summary>
+      <param name="context">Контекст генерации</param>
+      <param name="result">Результат</param>
+      <returns>Обработанный результат</returns>
+    </member>
+    <member name="M:EleWise.TemplateGenerator.TextGenerator.PostProcessResult(EleWise.TemplateGenerator.GenerationContext)">
+      <summary>
+            Постобработка результата
+            </summary>
+      <param name="context">Контекст генерации</param>
+    </member>
+    <member name="M:EleWise.TemplateGenerator.TextGenerator.BuildPlainText(EleWise.TemplateGenerator.Adl.Tree.PlainText)">
+      <summary>
+            Построить простой текст
+            </summary>
+      <param name="plainText">Текст</param>
+    </member>
+    <member name="M:EleWise.TemplateGenerator.TextGenerator.BuildVariable(EleWise.TemplateGenerator.Adl.Tree.Variable)">
+      <summary>
+            Построить элемент переменной
+            </summary>
+      <param name="variable">Переменная</param>
+    </member>
+    <member name="M:EleWise.TemplateGenerator.TextGenerator.BuildGlobalVariable(EleWise.TemplateGenerator.Adl.Tree.Globalvariable)">
+      <summary>
+            Построить элемент глобальной переменной
+            </summary>
+      <param name="globalVariable">Переменная</param>
+    </member>
+    <member name="M:EleWise.TemplateGenerator.TextGenerator.BuildExpressionStatement(EleWise.TemplateGenerator.Adl.Tree.ExpressionStatement)">
+      <summary>
+            Построить конструкцию, основанную на выражении
+            </summary>
+      <param name="statement">Конструкция, основанная на выражении</param>
+    </member>
+    <member name="M:EleWise.TemplateGenerator.TextGenerator.BuildIfStatement(EleWise.TemplateGenerator.Adl.Tree.IfStatement)">
+      <summary>
+            Построить условное предложение
+            </summary>
+      <param name="statement">Условное предложение</param>
+    </member>
+    <member name="M:EleWise.TemplateGenerator.TextGenerator.BuildBlockStatement(EleWise.TemplateGenerator.Adl.Tree.BlockStatement)">
+      <summary>
+            Построить блок
+            </summary>
+      <param name="block">Блок</param>
+    </member>
+    <member name="P:EleWise.TemplateGenerator.TextGenerator.Template">
+      <summary>
+            Получить разобранный шаблон
+            </summary>
+    </member>
+    <member name="T:EleWise.TemplateGenerator.BaseFormat">
+      <summary>
+            Базовый класс формата значения
+            </summary>
+    </member>
+    <member name="T:EleWise.TemplateGenerator.ValidateErrorType">
+      <summary>
+            Тип ошибки валидации
+            </summary>
+    </member>
+    <member name="F:EleWise.TemplateGenerator.ValidateErrorType.Unknown">
+      <summary>
+            Неизвестно
+            </summary>
+    </member>
+    <member name="F:EleWise.TemplateGenerator.ValidateErrorType.Variable">
+      <summary>
+            Ошибка отсутствия переменной
+            </summary>
+    </member>
+    <member name="F:EleWise.TemplateGenerator.ValidateErrorType.VariableInBlock">
+      <summary>
+            Ошибка отсутствия переменной в блоке
+            </summary>
+    </member>
+    <member name="F:EleWise.TemplateGenerator.ValidateErrorType.Block">
+      <summary>
+            Ошибка отстутсвия блока
+            </summary>
+    </member>
+    <member name="T:EleWise.TemplateGenerator.ValidateMessage">
+      <summary>
+            Сообщение с результатом валидации об ошибке
+            </summary>
+    </member>
+    <member name="M:EleWise.TemplateGenerator.ValidateMessage.#ctor(EleWise.TemplateGenerator.Adl.Tree.TreeItem,EleWise.TemplateGenerator.DataSources.IGeneratorDataSource,System.Int32,System.Int32)">
+      <summary>
+            Ctor
+            </summary>
+      <param name="treeItem">Выражение</param>
+      <param name="dataSource">Источник данных для генерации</param>
+      <param name="start">Индекс начала</param>
+      <param name="stop">Индекс конца</param>
+    </member>
+    <member name="P:EleWise.TemplateGenerator.ValidateMessage.PatternString">
+      <summary>
+            Строка шаблона, например {$TestProp}
+            </summary>
+    </member>
+    <member name="P:EleWise.TemplateGenerator.ValidateMessage.ErrorType">
+      <summary>
+            Тип ошибки
+            </summary>
+    </member>
+    <member name="P:EleWise.TemplateGenerator.ValidateMessage.ValidateErrorPartType">
+      <summary>
+            Часть документа, в которой находится ошибка
+            </summary>
+    </member>
+    <member name="P:EleWise.TemplateGenerator.ValidateMessage.Start">
+      <summary>
+            Индекс начала
+            </summary>
+    </member>
+    <member name="P:EleWise.TemplateGenerator.ValidateMessage.Stop">
+      <summary>
+            Индекс конца
+            </summary>
+    </member>
+    <member name="T:EleWise.TemplateGenerator.ValidateErrorPartType">
+      <summary>
+            Часть документа, в которой находится ошибка
+            </summary>
+    </member>
+    <member name="F:EleWise.TemplateGenerator.ValidateErrorPartType.InMainPart">
+      <summary>
+            Ошибка в основной части
+            </summary>
+    </member>
+    <member name="F:EleWise.TemplateGenerator.ValidateErrorPartType.InRunningTitle">
+      <summary>
+            Ошибка в колонтитуле
+            </summary>
+    </member>
+    <member name="T:EleWise.TemplateGenerator.Keywords.KeywordLocalizationStore">
+      <summary>
+            Хранилище имен ключевых слов
+            </summary>
+    </member>
+    <member name="M:EleWise.TemplateGenerator.Keywords.KeywordLocalizationStore.#ctor(System.Collections.Generic.IEnumerable{EleWise.TemplateGenerator.Localizations.IGeneratorLocalization})">
+      <summary>
+            Ctor
+            </summary>
+      <param name="localizations">Локализации</param>
+    </member>
+    <member name="M:EleWise.TemplateGenerator.Keywords.KeywordLocalizationStore.CheckWord(System.String)">
+      <summary>
+            Проверить, является ли слово ключевым
+            </summary>
+      <param name="word">Слово</param>
+      <returns>Тип ключевого слова. Или null, если оно не является таковым.</returns>
+    </member>
+    <member name="T:EleWise.TemplateGenerator.Keywords.KeywordTokenAttribute">
+      <summary>
+            Атрибут указывает токен ключевого слова
+            </summary>
+    </member>
+    <member name="M:EleWise.TemplateGenerator.Keywords.KeywordTokenAttribute.#ctor(System.Int32)">
+      <summary>
+            Ctor
+            </summary>
+      <param name="token">Токен</param>
+    </member>
+    <member name="P:EleWise.TemplateGenerator.Keywords.KeywordTokenAttribute.Token">
+      <summary>
+            Токен
+            </summary>
+    </member>
+    <member name="T:EleWise.TemplateGenerator.Keywords.KeywordType">
+      <summary>
+            Тип ключевого слова
+            </summary>
+    </member>
+    <member name="F:EleWise.TemplateGenerator.Keywords.KeywordType.And">
+      <summary>
+            И
+            </summary>
+    </member>
+    <member name="F:EleWise.TemplateGenerator.Keywords.KeywordType.Or">
+      <summary>
+            ИЛИ
+            </summary>
+    </member>
+    <member name="F:EleWise.TemplateGenerator.Keywords.KeywordType.If">
+      <summary>
+            ЕСЛИ
+            </summary>
+    </member>
+    <member name="F:EleWise.TemplateGenerator.Keywords.KeywordType.Then">
+      <summary>
+            ТО
+            </summary>
+    </member>
+    <member name="F:EleWise.TemplateGenerator.Keywords.KeywordType.Else">
+      <summary>
+            ИНАЧЕ
+            </summary>
+    </member>
+    <member name="F:EleWise.TemplateGenerator.Keywords.KeywordType.End">
+      <summary>
+            КОНЕЦ
+            </summary>
+    </member>
+    <member name="F:EleWise.TemplateGenerator.Keywords.KeywordType.Block">
+      <summary>
+            БЛОК
+            </summary>
+    </member>
+    <member name="F:EleWise.TemplateGenerator.Keywords.KeywordType.True">
+      <summary>
+            ИСТИНА
+            </summary>
+    </member>
+    <member name="F:EleWise.TemplateGenerator.Keywords.KeywordType.False">
+      <summary>
+            ЛОЖЬ
+            </summary>
+    </member>
+    <member name="F:EleWise.TemplateGenerator.Keywords.KeywordType.In">
+      <summary>
+            В
+            </summary>
+    </member>
+    <member name="F:EleWise.TemplateGenerator.Keywords.KeywordType.Null">
+      <summary>
+            ПУСТО
+            </summary>
+    </member>
+    <member name="T:EleWise.TemplateGenerator.Localizations.GeneratorLocalizationsContainer">
+      <summary>
+            Контейнер локализаций
+            </summary>
+    </member>
+    <member name="M:EleWise.TemplateGenerator.Localizations.GeneratorLocalizationsContainer.Add(EleWise.TemplateGenerator.Localizations.IGeneratorLocalization)">
+      <summary>
+            Добавить локализацию
+            </summary>
+      <param name="localization">
+      </param>
+    </member>
+    <member name="P:EleWise.TemplateGenerator.Localizations.GeneratorLocalizationsContainer.KeywordLocalizationStore">
+      <summary>
+            Получить хранилище имен ключевых слов
+            </summary>
+    </member>
+    <member name="P:EleWise.TemplateGenerator.Localizations.GeneratorLocalizationsContainer.FunctionLocalizationStore">
+      <summary>
+            Получить хранилище имен функций
+            </summary>
+    </member>
+    <member name="T:EleWise.TemplateGenerator.Localizations.IGeneratorLocalization">
+      <summary>
+            Интерфейс локализации генератора
+            </summary>
+    </member>
+    <member name="P:EleWise.TemplateGenerator.Localizations.IGeneratorLocalization.Keywords">
+      <summary>
+            Ключевые слова.
+            </summary>
+    </member>
+    <member name="P:EleWise.TemplateGenerator.Localizations.IGeneratorLocalization.Functions">
+      <summary>
+            Имена функций. Ключ - локализованное имя. Значение - идентфикатор функции.
+            </summary>
+    </member>
+    <member name="T:EleWise.TemplateGenerator.Localizations.GeneratorLocalization_EN">
+      <summary>
+            Английская локализация
+            </summary>
+    </member>
+    <member name="P:EleWise.TemplateGenerator.Localizations.GeneratorLocalization_EN.Keywords">
+      <summary>
+            Ключевые слова
+            </summary>
+    </member>
+    <member name="P:EleWise.TemplateGenerator.Localizations.GeneratorLocalization_EN.Functions">
+      <summary>
+            Имена функций. Ключ - локализованное имя. Значение - идентфикатор функции.
+            </summary>
+    </member>
+    <member name="T:EleWise.TemplateGenerator.Localizations.GeneratorLocalization_RU">
+      <summary>
+            Русская локализация
+            </summary>
+    </member>
+    <member name="P:EleWise.TemplateGenerator.Localizations.GeneratorLocalization_RU.Keywords">
+      <summary>
+            Ключевые слова
+            </summary>
+    </member>
+    <member name="P:EleWise.TemplateGenerator.Localizations.GeneratorLocalization_RU.Functions">
+      <summary>
+            Имена функций. Ключ - локализованное имя. Значение - идентфикатор функции.
+            </summary>
+    </member>
+    <member name="T:EleWise.TemplateGenerator.Helpers.PropertyNamesHelper">
+      <summary>
+            Класс-помощник для работы с именами свойств
+            </summary>
+    </member>
+    <member name="M:EleWise.TemplateGenerator.Helpers.PropertyNamesHelper.GetPropertyNames(System.String)">
+      <summary>
+            Получить массив имен полей из имени переменной
+            </summary>
+      <param name="name">Имя переменной</param>
+      <returns>Массив полей</returns>
+    </member>
+    <member name="T:EleWise.TemplateGenerator.Functions.DefaultFunctions">
+      <summary>
+            Стандартные функции
+            </summary>
+    </member>
+    <member name="M:EleWise.TemplateGenerator.Functions.DefaultFunctions.Count(EleWise.TemplateGenerator.Functions.FunctionEvaluationContext)">
+      <summary>
+            Вернуть количество элементов в блоке
+            </summary>
+      <param name="context">Контекст вычисления значения функции</param>
+      <remarks>
+            * - обязательный параметр
+            Параметры:
+            [0]*: Блок или элемент блока
+            
+            Результат:
+            Количество элементов в блоке
+            
+            Пример:
+            Пусть Товары (Tovary) - переменная типа "Блок", которая имеет два свойства: Наименование (Naimenovanie) и Количество (Kolichestvo).
+            Для вывода значений данной переменной в шаблоне используйте:
+            {for Item in{$Tovary}}
+            {$Item.Naimenovanie}: {$Item.Kolichestvo} шт.{end}
+            
+            Чтобы узнать количество элементов в блоке:
+            {Count({$Tovary})}
+            Внутри цикла так же можно писать:
+            {Count({$Item})}
+            </remarks>
+      <returns>
+      </returns>
+    </member>
+    <member name="M:EleWise.TemplateGenerator.Functions.DefaultFunctions.Index(EleWise.TemplateGenerator.Functions.FunctionEvaluationContext)">
+      <summary>
+            Вернуть текущую позицию в блоке (начиная с 0)
+            </summary>
+      <param name="context">Контекст вычисления значения функции</param>
+      <remarks>
+            * - обязательный параметр
+            Параметры:
+            [0]*: Элемент блока
+            
+            Результат:
+            Текущий индекс в блоке
+            
+            Пример:
+            Пусть Товары (Tovary) - переменная типа "Блок", которая имеет два свойства: Наименование (Naimenovanie) и Количество (Kolichestvo).
+            Для вывода значений данной переменной в шаблоне используйте:
+            {for Item in{$Tovary}}
+            {$Item.Naimenovanie}: {$Item.Kolichestvo} шт.{end}
+            
+            Для получения текущей позиции в блоке необходимо использовать:
+            {Index({$Item})}
+            </remarks>
+      <returns>
+      </returns>
+    </member>
+    <member name="M:EleWise.TemplateGenerator.Functions.DefaultFunctions.Image(EleWise.TemplateGenerator.Functions.FunctionEvaluationContext)">
+      <summary>
+            Вывести в шаблон картинку
+            </summary>
+      <param name="context">Контекст вычисления значения функции</param>
+      <remarks>
+            Параметры:
+            [0]: Переменная типа "Файл" (системный)
+            [1]: Формат отображения картинки (string)
+            
+            Примечание:
+            В качестве формата передается строка, содержащая значение масштаба типа Double в формате "scale:(значение масштаба)"
+            
+            Результат:
+            В шаблон будет добавлена картинка в соответствии с указанным форматом
+            
+            Пример:
+            Пусть FileWithImage - переменная типа "Файл" (системный), содержащая картинку. 
+            Для вывода этой картинки в шаблон в масштабе 10%:
+            {Image({$FileWithImage};’scale:10’)}
+            </remarks>
+      <returns>
+      </returns>
+    </member>
+    <member name="M:EleWise.TemplateGenerator.Functions.DefaultFunctions.HtmlString(EleWise.TemplateGenerator.Functions.FunctionEvaluationContext)">
+      <summary>
+            Представить строку в кодировке HTML.
+            </summary>
+      <remarks>
+            * - Обязательный параметр
+            Параметры:
+            [0]*: Строка с html кодом (string)
+            
+            Результат:
+                Возвращает исходную строку в кодировке HTML.
+            
+            Пример:
+                Пусть Stroka - переменная типа "Строка".
+                Чтобы представить Stroka в кодировке HTML:
+                {(HtmlString({$Stroka})}
+            </remarks>
+      <param name="context">
+      </param>
+      <returns>
+      </returns>
+    </member>
+    <member name="M:EleWise.TemplateGenerator.Functions.DefaultFunctions.StringCut(EleWise.TemplateGenerator.Functions.FunctionEvaluationContext)">
+      <summary>
+            Обрезать строку до указанного количества символов
+            </summary>
+      <remarks>
+            * - Обязательные параметры
+            Параметры:
+            [0]*: Строка (string)
+            [1]*: Максимальная длина строки (int)
+            
+            Результат: 
+                В случае, если длина входной строки больше МаксДлина, то оставляем от строки (МаксДлина - 2) символов и в конце добавляем «..»
+                В противном случае, строка не обрезается.
+            
+            Пример:
+                StringCut(‘Лето, солнце’, 10)
+                (результат: ‘Лето, со..’)
+            </remarks>
+      <param name="context">
+      </param>
+      <returns>
+      </returns>
+    </member>
+    <member name="T:EleWise.TemplateGenerator.Functions.GeneratorFunctionEvaluator">
+      <summary>
+            Вычислитель функций
+            </summary>
+    </member>
+    <member name="M:EleWise.TemplateGenerator.Functions.GeneratorFunctionEvaluator.#ctor(EleWise.TemplateGenerator.GenerationContext)">
+      <summary>
+            Ctor
+            </summary>
+      <param name="context">Контекст процесса генерации</param>
+    </member>
+    <member name="M:EleWise.TemplateGenerator.Functions.GeneratorFunctionEvaluator.Evaluate(System.String,System.Collections.Generic.List{EleWise.TemplateGenerator.FormatedValue})">
+      <summary>
+            Вычислить значение функции
+            </summary>
+      <param name="name">Имя функции</param>
+      <param name="parameters">Параметры функции</param>
+      <returns>Значение функции</returns>
+    </member>
+    <member name="M:EleWise.TemplateGenerator.Functions.GeneratorFunctionEvaluator.RegisterFunctions">
+      <summary>
+            Зарегистрировать функции
+            </summary>
+    </member>
+    <member name="M:EleWise.TemplateGenerator.Functions.GeneratorFunctionEvaluator.RegisterFunctionsContainerType(System.Type)">
+      <summary>
+            Зарегистрировать тип
+            </summary>
+      <param name="type">
+      </param>
+    </member>
+    <member name="M:EleWise.TemplateGenerator.Functions.GeneratorFunctionEvaluator.RegisterFunction(System.String,System.Reflection.MethodInfo,System.Object)">
+      <summary>
+            Зарегистрировать функцию
+            </summary>
+      <param name="name">Имя функции</param>
+      <param name="method">Метод</param>
+      <param name="invoker">Объект, у которого вызывается метод (если он не статический)</param>
+    </member>
+    <member name="P:EleWise.TemplateGenerator.Functions.GeneratorFunctionEvaluator.Context">
+      <summary>
+            Контекст процесса генерации
+            </summary>
+    </member>
+    <member name="T:EleWise.TemplateGenerator.Functions.FunctionEvaluationContext">
+      <summary>
+            Параметры для вычисления функции
+            </summary>
+    </member>
+    <member name="P:EleWise.TemplateGenerator.Functions.FunctionEvaluationContext.GenerationContext">
+      <summary>
+            Контекст генерации
+            </summary>
+    </member>
+    <member name="P:EleWise.TemplateGenerator.Functions.FunctionEvaluationContext.DataSource">
+      <summary>
+            Источник данных
+            </summary>
+    </member>
+    <member name="P:EleWise.TemplateGenerator.Functions.FunctionEvaluationContext.Parameters">
+      <summary>
+            Параметры функции
+            </summary>
+    </member>
+    <member name="T:EleWise.TemplateGenerator.Functions.FunctionLocalizationStore">
+      <summary>
+            Хранилище имен функций
+            </summary>
+    </member>
+    <member name="M:EleWise.TemplateGenerator.Functions.FunctionLocalizationStore.#ctor(System.Collections.Generic.IEnumerable{EleWise.TemplateGenerator.Localizations.IGeneratorLocalization})">
+      <summary>
+            Ctor
+            </summary>
+      <param name="localizations">Локализации</param>
+    </member>
+    <member name="M:EleWise.TemplateGenerator.Functions.FunctionLocalizationStore.CheckName(System.String)">
+      <summary>
+            Проверить, есть ли функция с указанным именем
+            </summary>
+      <param name="word">Слово</param>
+      <returns>Идентификатор функции. Или null, если оно не является таковым.</returns>
+    </member>
+    <member name="T:EleWise.TemplateGenerator.Functions.IGeneratorFunctionEvaluator">
+      <summary>
+            Интерфейс вычислителя функций для генератора
+            </summary>
+    </member>
+    <member name="M:EleWise.TemplateGenerator.Functions.IGeneratorFunctionEvaluator.Evaluate(System.String,System.Collections.Generic.List{EleWise.TemplateGenerator.FormatedValue})">
+      <summary>
+            Вычислить значение функции
+            </summary>
+      <param name="name">Имя функции</param>
+      <param name="parameters">Параметры функции</param>
+      <returns>Значение функции</returns>
+    </member>
+    <member name="T:EleWise.TemplateGenerator.Formats.DrawingFormat">
+      <summary>
+            Формат для отображения картинок
+            </summary>
+    </member>
+    <member name="M:EleWise.TemplateGenerator.Formats.DrawingFormat.Parse(System.String)">
+      <summary>
+            Загрузить из строки
+            </summary>
+      <param name="s">
+      </param>
+    </member>
+    <member name="P:EleWise.TemplateGenerator.Formats.DrawingFormat.Scale">
+      <summary>
+            Масштаб (в процентах)
+            </summary>
+    </member>
+    <member name="P:EleWise.TemplateGenerator.Formats.DrawingFormat.WrapType">
+      <summary>
+            Тип обтекания текстом
+            </summary>
+    </member>
+    <member name="T:EleWise.TemplateGenerator.Formats.GeneratorFormatProvider">
+      <summary>
+            Провайдер форматирования значений по умолчанию
+            </summary>
+    </member>
+    <member name="M:EleWise.TemplateGenerator.Formats.GeneratorFormatProvider.#ctor(EleWise.TemplateGenerator.GenerationContext)">
+      <summary>
+            Ctor
+            </summary>
+      <param name="context">Контекст процесса генерации</param>
+    </member>
+    <member name="M:EleWise.TemplateGenerator.Formats.GeneratorFormatProvider.FormatValue(EleWise.TemplateGenerator.FormatedValue)">
+      <summary>
+            Форматировать значение в строку
+            </summary>
+      <param name="value">Значение</param>
+      <returns>Форматированное значение</returns>
+    </member>
+    <member name="M:EleWise.TemplateGenerator.Formats.GeneratorFormatProvider.TransformDateTime(EleWise.TemplateGenerator.FormatedValue)">
+      <summary>
+            Преобразовать время к указанному для генерации смещению
+            </summary>
+      <param name="value">Значение</param>
+    </member>
+    <member name="M:EleWise.TemplateGenerator.Formats.GeneratorFormatProvider.GetImage(EleWise.TemplateGenerator.FormatedValue)">
+      <summary>
+            Получить изображение
+            </summary>
+      <param name="value">Значение</param>
+      <returns>Изображение</returns>
+    </member>
+    <member name="M:EleWise.TemplateGenerator.Formats.GeneratorFormatProvider.AdaptNewLines(System.String)">
+      <summary>
+            Привести все переносы строк к виду \r\n
+            </summary>
+      <param name="s">
+      </param>
+      <returns>
+      </returns>
+    </member>
+    <member name="P:EleWise.TemplateGenerator.Formats.GeneratorFormatProvider.Context">
+      <summary>
+            Контекст процесса генерации
+            </summary>
+    </member>
+    <member name="T:EleWise.TemplateGenerator.Formats.IGeneratorFormatProvider">
+      <summary>
+            Интерфейс провайдера форматирования значений
+            </summary>
+    </member>
+    <member name="M:EleWise.TemplateGenerator.Formats.IGeneratorFormatProvider.FormatValue(EleWise.TemplateGenerator.FormatedValue)">
+      <summary>
+            Форматировать значение в строку
+            </summary>
+      <param name="value">Значение</param>
+      <returns>Форматированное значение</returns>
+    </member>
+    <member name="M:EleWise.TemplateGenerator.Formats.IGeneratorFormatProvider.GetImage(EleWise.TemplateGenerator.FormatedValue)">
+      <summary>
+            Получить изображение
+            </summary>
+      <param name="value">Значение</param>
+      <returns>Изображение</returns>
+    </member>
+    <member name="T:EleWise.TemplateGenerator.Expressions.GeneratorExpressionEvaluator">
+      <summary>
+            Вычислитель выражений (бинарных и унарных)
+            </summary>
+    </member>
+    <member name="M:EleWise.TemplateGenerator.Expressions.GeneratorExpressionEvaluator.#ctor(EleWise.TemplateGenerator.GenerationContext)">
+      <summary>
+            Ctor
+            </summary>
+      <param name="context">Контекст генерации</param>
+    </member>
+    <member name="M:EleWise.TemplateGenerator.Expressions.GeneratorExpressionEvaluator.Evaluate(EleWise.TemplateGenerator.Adl.Tree.Expression)">
+      <summary>
+            Вычислить значение выражения
+            </summary>
+      <param name="expression">Выражение</param>
+      <returns>Значение выражения</returns>
+    </member>
+    <member name="M:EleWise.TemplateGenerator.Expressions.GeneratorExpressionEvaluator.EvaluateVariable(EleWise.TemplateGenerator.Adl.Tree.Variable)">
+      <summary>
+            Вычислить значение переменной
+            </summary>
+      <param name="variable">Переменная</param>
+      <returns>Значение переменной</returns>
+    </member>
+    <member name="M:EleWise.TemplateGenerator.Expressions.GeneratorExpressionEvaluator.EvaluateGlobalVariable(EleWise.TemplateGenerator.Adl.Tree.Globalvariable)">
+      <summary>
+            Вычислить значение глобальной переменной
+            </summary>
+      <param name="variable">Глобальная переменная</param>
+      <returns>Значение глобальной переменной</returns>
+    </member>
+    <member name="M:EleWise.TemplateGenerator.Expressions.GeneratorExpressionEvaluator.EvaluateConstant(EleWise.TemplateGenerator.Adl.Tree.Constant)">
+      <summary>
+            Вычислить значение константы
+            </summary>
+      <param name="constant">Константа</param>
+      <returns>Значение константы</returns>
+    </member>
+    <member name="M:EleWise.TemplateGenerator.Expressions.GeneratorExpressionEvaluator.EvaluateFunction(EleWise.TemplateGenerator.Adl.Tree.FunctionCall)">
+      <summary>
+            Вычислить значение функции
+            </summary>
+      <param name="function">Функция</param>
+      <returns>Значение функции</returns>
+    </member>
+    <member name="M:EleWise.TemplateGenerator.Expressions.GeneratorExpressionEvaluator.EvaluateBinaryExpression(EleWise.TemplateGenerator.Adl.Tree.BinaryExpression)">
+      <summary>
+            Вычислить бинарное выражение
+            </summary>
+      <param name="expression">Бинарное выражение</param>
+      <returns>Значение выражения</returns>
+    </member>
+    <member name="M:EleWise.TemplateGenerator.Expressions.GeneratorExpressionEvaluator.EvaluateBinaryExpression(EleWise.TemplateGenerator.FormatedValue,EleWise.TemplateGenerator.Adl.Tree.BinaryOperator,EleWise.TemplateGenerator.FormatedValue)">
+      <summary>
+            Вычислить бинарное выражение
+            </summary>
+      <param name="fv1">Операнд 1</param>
+      <param name="op">Оператор</param>
+      <param name="fv2">Операнд 2</param>
+      <returns>Значение выражения</returns>
+    </member>
+    <member name="M:EleWise.TemplateGenerator.Expressions.GeneratorExpressionEvaluator.EvaluatePlusExpression(EleWise.TemplateGenerator.FormatedValue,EleWise.TemplateGenerator.FormatedValue)">
+      <summary>
+            Вычислить выражение "+"
+            </summary>
+      <param name="fv1">Операнд 1</param>
+      <param name="fv2">Операнд 2</param>
+      <returns>Значение выражения</returns>
+    </member>
+    <member name="M:EleWise.TemplateGenerator.Expressions.GeneratorExpressionEvaluator.EvaluateMinusExpression(EleWise.TemplateGenerator.FormatedValue,EleWise.TemplateGenerator.FormatedValue)">
+      <summary>
+            Вычислить выражение "-"
+            </summary>
+      <param name="fv1">Операнд 1</param>
+      <param name="fv2">Операнд 2</param>
+      <returns>Значение выражения</returns>
+    </member>
+    <member name="M:EleWise.TemplateGenerator.Expressions.GeneratorExpressionEvaluator.EvaluateMultExpression(EleWise.TemplateGenerator.FormatedValue,EleWise.TemplateGenerator.FormatedValue)">
+      <summary>
+            Вычислить выражение "*"
+            </summary>
+      <param name="fv1">Операнд 1</param>
+      <param name="fv2">Операнд 2</param>
+      <returns>Значение выражения</returns>
+    </member>
+    <member name="M:EleWise.TemplateGenerator.Expressions.GeneratorExpressionEvaluator.EvaluateDivisionExpression(EleWise.TemplateGenerator.FormatedValue,EleWise.TemplateGenerator.FormatedValue)">
+      <summary>
+            Вычислить выражение "/"
+            </summary>
+      <param name="fv1">Операнд 1</param>
+      <param name="fv2">Операнд 2</param>
+      <returns>Значение выражения</returns>
+    </member>
+    <member name="M:EleWise.TemplateGenerator.Expressions.GeneratorExpressionEvaluator.EvaluateUnaryExpression(EleWise.TemplateGenerator.Adl.Tree.UnaryExpression)">
+      <summary>
+            Вычислить унарное выражение
+            </summary>
+      <param name="expression">Унарное выражение</param>
+      <returns>Значение выражения</returns>
+    </member>
+    <member name="M:EleWise.TemplateGenerator.Expressions.GeneratorExpressionEvaluator.EvaluateUMinusExpression(EleWise.TemplateGenerator.FormatedValue)">
+      <summary>
+            Вычислить унарное выражение "-"
+            </summary>
+      <param name="fv">Операнд</param>
+      <returns>Значение выражения</returns>
+    </member>
+    <member name="M:EleWise.TemplateGenerator.Expressions.GeneratorExpressionEvaluator.CompareValues(System.Object,System.Object)">
+      <summary>
+            Сравнить значения
+            </summary>
+      <param name="v1">Значение 1</param>
+      <param name="v2">Значение 2</param>
+      <returns>Результат сравнения. Если сравнить не удается - NULL.</returns>
+    </member>
+    <member name="P:EleWise.TemplateGenerator.Expressions.GeneratorExpressionEvaluator.Context">
+      <summary>
+            Контекст процесса генерации
+            </summary>
+    </member>
+    <member name="T:EleWise.TemplateGenerator.Expressions.IGeneratorExpressionEvaluator">
+      <summary>
+            Вычислитель выражений (бинарных и унарных)
+            </summary>
+    </member>
+    <member name="M:EleWise.TemplateGenerator.Expressions.IGeneratorExpressionEvaluator.Evaluate(EleWise.TemplateGenerator.Adl.Tree.Expression)">
+      <summary>
+            Вычислить значение выражения
+            </summary>
+      <param name="expression">Выражение</param>
+      <returns>Значение выражения</returns>
+    </member>
+    <member name="T:EleWise.TemplateGenerator.DataSources.DefaultObjectGeneratorGlobalDataSource">
+      <summary>
+            Источник данных на основе объекта
+            </summary>
+    </member>
+    <member name="M:EleWise.TemplateGenerator.DataSources.DefaultObjectGeneratorGlobalDataSource.#ctor(System.Object)">
+      <summary>
+            Ctor
+            </summary>
+      <param name="dataSourceObject">Объект источника данных</param>
+    </member>
+    <member name="M:EleWise.TemplateGenerator.DataSources.DefaultObjectGeneratorGlobalDataSource.GetVariableValue(System.String)">
+      <summary>
+            Получить значение переменной
+            </summary>
+      <param name="name">Имя переменной</param>
+      <returns>Значение переменной</returns>
+    </member>
+    <member name="T:EleWise.TemplateGenerator.DataSources.GetPropertyMode">
+      <summary>
+            Режим получения свойств из источника данных
+            </summary>
+    </member>
+    <member name="F:EleWise.TemplateGenerator.DataSources.GetPropertyMode.GetValueFromObject">
+      <summary>
+            Получать значения свойств из самого объекта
+            </summary>
+    </member>
+    <member name="F:EleWise.TemplateGenerator.DataSources.GetPropertyMode.GetPropertyFromMetadata">
+      <summary>
+            Получать только свойства из типа метаданных или типа объекта
+            </summary>
+    </member>
+    <member name="T:EleWise.TemplateGenerator.DataSources.IGeneratorGlobalDataSource">
+      <summary>
+            Источник данных для генерации
+            </summary>
+    </member>
+    <member name="M:EleWise.TemplateGenerator.DataSources.IGeneratorGlobalDataSource.GetVariableValue(System.String)">
+      <summary>
+            Получить значение переменной
+            </summary>
+      <param name="name">Имя переменной (или поле переменной через точку)</param>
+      <returns>Значение переменной</returns>
+    </member>
+    <member name="T:EleWise.TemplateGenerator.DataSources.ISupportGetPropertyMode">
+      <summary>
+            Интерфейс для поддержки режимов получения свойств из источника данных
+            </summary>
+    </member>
+    <member name="M:EleWise.TemplateGenerator.DataSources.ISupportGetPropertyMode.SetPropertyGetMode(EleWise.TemplateGenerator.DataSources.GetPropertyMode)">
+      <summary>
+            Установить режим получения свойств
+            </summary>
+      <param name="mode">Режим получения свойств</param>
+    </member>
+    <member name="T:EleWise.TemplateGenerator.DataSources.DefaultObjectGeneratorDataSource">
+      <summary>
+            Источник данных на основе объекта
+            </summary>
+    </member>
+    <member name="M:EleWise.TemplateGenerator.DataSources.DefaultObjectGeneratorDataSource.#ctor(System.Object)">
+      <summary>
+            Ctor
+            </summary>
+      <param name="dataSourceObject">Объект источника данных</param>
+    </member>
+    <member name="M:EleWise.TemplateGenerator.DataSources.DefaultObjectGeneratorDataSource.GetVariableValue(System.String)">
+      <inheritdoc />
+    </member>
+    <member name="M:EleWise.TemplateGenerator.DataSources.DefaultObjectGeneratorDataSource.EnterBlock(System.String,EleWise.TemplateGenerator.FormatedValue)">
+      <summary>
+            Войти в блок
+            </summary>
+      <param name="identifier">Идентификатор итератора блока</param>
+      <param name="value">Списковое значение</param>
+      <returns>Информация о блоке</returns>
+    </member>
+    <member name="M:EleWise.TemplateGenerator.DataSources.DefaultObjectGeneratorDataSource.SetBlockIndex(System.String,System.Int32)">
+      <summary>
+            Установить индекс в блоке
+            </summary>
+      <param name="identifier">Идентификатор итератора блока</param>
+      <param name="index">Индекс</param>
+    </member>
+    <member name="M:EleWise.TemplateGenerator.DataSources.DefaultObjectGeneratorDataSource.LeaveBlock(System.String)">
+      <summary>
+            Выйти из блока
+            </summary>
+      <param name="identifier">Идентификатор итератора блока</param>
+    </member>
+    <member name="M:EleWise.TemplateGenerator.DataSources.DefaultObjectGeneratorDataSource.GetBlockInfo(System.String)">
+      <summary>
+            Получить информацию о блоке по имени идентификатор итератора
+            </summary>
+      <param name="identifier">
+      </param>
+      <returns>Информация о блоке или null</returns>
+    </member>
+    <member name="M:EleWise.TemplateGenerator.DataSources.DefaultObjectGeneratorDataSource.CutPropertyNames(System.String[])">
+      <summary>
+            Обрезать из массива имен свойств первый элемент
+            </summary>
+      <param name="arr">Исходные массив</param>
+      <returns>Обрезанный массив</returns>
+    </member>
+    <member name="M:EleWise.TemplateGenerator.DataSources.DefaultObjectGeneratorDataSource.GetPropertiesExpressionValue(EleWise.TemplateGenerator.FormatedValue,System.String[])">
+      <summary>
+            Вычислить значение выражения, состоящего из имен свойств
+            </summary>
+      <param name="value">Текущее значение</param>
+      <param name="propertyNames">Массив имен свойств</param>
+      <returns>Значение переменной</returns>
+    </member>
+    <member name="M:EleWise.TemplateGenerator.DataSources.DefaultObjectGeneratorDataSource.GetPropertyValue(EleWise.TemplateGenerator.FormatedValue,System.String)">
+      <summary>
+            Получить значение свойства
+            </summary>
+      <param name="container">Контейнер (объект)</param>
+      <param name="name">Имя свойства</param>
+      <returns>Значение свойства. Если не найдено свойство с таким именем - NULL</returns>
+    </member>
+    <member name="M:EleWise.TemplateGenerator.DataSources.DefaultObjectGeneratorDataSource.CreateFormatedValue(System.Object)">
+      <summary>
+            Создать форматированное значение
+            </summary>
+      <param name="value">
+      </param>
+      <returns>
+      </returns>
+    </member>
+    <member name="T:EleWise.TemplateGenerator.DataSources.IGeneratorDataSource">
+      <summary>
+            Источник данных для генерации
+            </summary>
+    </member>
+    <member name="M:EleWise.TemplateGenerator.DataSources.IGeneratorDataSource.GetVariableValue(System.String)">
+      <summary>
+            Получить значение переменной
+            </summary>
+      <param name="name">Имя переменной (или поле переменной через точку)</param>
+      <returns>Значение переменной</returns>
+    </member>
+    <member name="M:EleWise.TemplateGenerator.DataSources.IGeneratorDataSource.EnterBlock(System.String,EleWise.TemplateGenerator.FormatedValue)">
+      <summary>
+            Войти в блок
+            </summary>
+      <param name="identifier">Идентификатор итератора блока</param>
+      <param name="value">Списковое значение</param>
+      <returns>Информация о блоке</returns>
+    </member>
+    <member name="M:EleWise.TemplateGenerator.DataSources.IGeneratorDataSource.SetBlockIndex(System.String,System.Int32)">
+      <summary>
+            Установить индекс в блоке
+            </summary>
+      <param name="identifier">Идентификатор итератора блока</param>
+      <param name="index">Индекс</param>
+    </member>
+    <member name="M:EleWise.TemplateGenerator.DataSources.IGeneratorDataSource.LeaveBlock(System.String)">
+      <summary>
+            Выйти из блока
+            </summary>
+      <param name="identifier">Идентификатор итератора блока</param>
+    </member>
+    <member name="M:EleWise.TemplateGenerator.DataSources.IGeneratorDataSource.GetBlockInfo(System.String)">
+      <summary>
+            Получить информацию о блоке по имени идентификатор итератора
+            </summary>
+      <param name="identifier">
+      </param>
+      <returns>Информация о блоке или null</returns>
+    </member>
+    <member name="P:EleWise.TemplateGenerator.Adl.AdlLexer.KeywordLocalizationStore">
+      <summary>
+            Хранилище ключевых слов
+            </summary>
+    </member>
+    <member name="T:EleWise.TemplateGenerator.Adl.Tree.BinaryExpression">
+      <summary>
+            Бинарное выражение
+            </summary>
+    </member>
+    <member name="M:EleWise.TemplateGenerator.Adl.Tree.BinaryExpression.ToString">
+      <summary>
+            ToString
+            </summary>
+      <returns>Строкове представление объекта</returns>
+    </member>
+    <member name="M:EleWise.TemplateGenerator.Adl.Tree.BinaryExpression.CreateCopy(EleWise.TemplateGenerator.Adl.Tree.TreeItem)">
+      <summary>
+            Создать копию элемента
+            </summary>
+      <returns>Клонированный объект</returns>
+    </member>
+    <member name="M:EleWise.TemplateGenerator.Adl.Tree.BinaryExpression.GetChildItems">
+      <summary>
+            Получить подчиненные элементы
+            </summary>
+      <returns>
+      </returns>
+    </member>
+    <member name="P:EleWise.TemplateGenerator.Adl.Tree.BinaryExpression.Start">
+      <summary>
+            Индекс начального символа
+            </summary>
+    </member>
+    <member name="P:EleWise.TemplateGenerator.Adl.Tree.BinaryExpression.Stop">
+      <summary>
+            Индекс конечного символа
+            </summary>
+    </member>
+    <member name="P:EleWise.TemplateGenerator.Adl.Tree.BinaryExpression.Operand1">
+      <summary>
+            Операнд 1
+            </summary>
+    </member>
+    <member name="P:EleWise.TemplateGenerator.Adl.Tree.BinaryExpression.Operator">
+      <summary>
+            Оператор
+            </summary>
+    </member>
+    <member name="P:EleWise.TemplateGenerator.Adl.Tree.BinaryExpression.Operand2">
+      <summary>
+            Операнд 2
+            </summary>
+    </member>
+    <member name="T:EleWise.TemplateGenerator.Adl.Tree.BinaryOperator">
+      <summary>
+            Бинарный оператор
+            </summary>
+    </member>
+    <member name="T:EleWise.TemplateGenerator.Adl.Tree.BlockStatement">
+      <summary>
+            Конструкция "Блок"
+            </summary>
+    </member>
+    <member name="M:EleWise.TemplateGenerator.Adl.Tree.BlockStatement.#ctor">
+      <summary>
+            Ctor
+            </summary>
+    </member>
+    <member name="M:EleWise.TemplateGenerator.Adl.Tree.BlockStatement.ToString">
+      <summary>
+            ToString
+            </summary>
+      <returns>Строкове представление объекта</returns>
+    </member>
+    <member name="M:EleWise.TemplateGenerator.Adl.Tree.BlockStatement.CreateCopy(EleWise.TemplateGenerator.Adl.Tree.TreeItem)">
+      <summary>
+            Создать копию элемента
+            </summary>
+      <returns>Клонированный объект</returns>
+    </member>
+    <member name="M:EleWise.TemplateGenerator.Adl.Tree.BlockStatement.GetChildItems">
+      <summary>
+            Получить подчиненные элементы
+            </summary>
+      <returns>
+      </returns>
+    </member>
+    <member name="P:EleWise.TemplateGenerator.Adl.Tree.BlockStatement.Identifier">
+      <summary>
+            Идентификатор итератора
+            </summary>
+    </member>
+    <member name="P:EleWise.TemplateGenerator.Adl.Tree.BlockStatement.Expression">
+      <summary>
+            Выражение для получения спискового значения
+            </summary>
+    </member>
+    <member name="P:EleWise.TemplateGenerator.Adl.Tree.BlockStatement.Content">
+      <summary>
+            Содержимое блока
+            </summary>
+    </member>
+    <member name="T:EleWise.TemplateGenerator.Adl.Tree.CompositeTreeItem">
+      <summary>
+            Элемент дерева разбора, имеющего подчиненные элементы
+            </summary>
+    </member>
+    <member name="M:EleWise.TemplateGenerator.Adl.Tree.CompositeTreeItem.#ctor">
+      <summary>
+            Ctor
+            </summary>
+    </member>
+    <member name="M:EleWise.TemplateGenerator.Adl.Tree.CompositeTreeItem.AddItem(EleWise.TemplateGenerator.Adl.Tree.TreeItem)">
+      <summary>
+            Добавить элемент
+            </summary>
+      <param name="i">
+      </param>
+    </member>
+    <member name="M:EleWise.TemplateGenerator.Adl.Tree.CompositeTreeItem.AddItems(System.Collections.Generic.IEnumerable{EleWise.TemplateGenerator.Adl.Tree.TreeItem})">
+      <summary>
+            Добавить элементы
+            </summary>
+      <param name="items">
+      </param>
+    </member>
+    <member name="M:EleWise.TemplateGenerator.Adl.Tree.CompositeTreeItem.CreateCopy(EleWise.TemplateGenerator.Adl.Tree.TreeItem)">
+      <summary>
+            Создать копию элемента
+            </summary>
+      <returns>Клонированный объект</returns>
+    </member>
+    <member name="M:EleWise.TemplateGenerator.Adl.Tree.CompositeTreeItem.GetChildItems">
+      <summary>
+            Получить подчиненные элементы
+            </summary>
+      <returns>
+      </returns>
+    </member>
+    <member name="P:EleWise.TemplateGenerator.Adl.Tree.CompositeTreeItem.Start">
+      <summary>
+            Индекс начального символа
+            </summary>
+    </member>
+    <member name="P:EleWise.TemplateGenerator.Adl.Tree.CompositeTreeItem.Stop">
+      <summary>
+            Индекс конечного символа
+            </summary>
+    </member>
+    <member name="P:EleWise.TemplateGenerator.Adl.Tree.CompositeTreeItem.Items">
+      <summary>
+            Подчиненные элементы
+            </summary>
+    </member>
+    <member name="T:EleWise.TemplateGenerator.Adl.Tree.Constant">
+      <summary>
+            Константа
+            </summary>
+    </member>
+    <member name="M:EleWise.TemplateGenerator.Adl.Tree.Constant.ParseNumberConstant(System.String)">
+      <summary>
+            Создать числовую константу
+            </summary>
+      <param name="value">Строковое представление константы</param>
+      <returns>Константа</returns>
+    </member>
+    <member name="M:EleWise.TemplateGenerator.Adl.Tree.Constant.ParseStringConstant(System.String)">
+      <summary>
+            Создать строковую константу
+            </summary>
+      <param name="value">Строковое представление константы</param>
+      <returns>Константа</returns>
+    </member>
+    <member name="M:EleWise.TemplateGenerator.Adl.Tree.Constant.ToString">
+      <summary>
+            ToString
+            </summary>
+      <returns>Строкове представление объекта</returns>
+    </member>
+    <member name="M:EleWise.TemplateGenerator.Adl.Tree.Constant.CreateCopy(EleWise.TemplateGenerator.Adl.Tree.TreeItem)">
+      <summary>
+            Создать копию элемента
+            </summary>
+      <returns>Клонированный объект</returns>
+    </member>
+    <member name="P:EleWise.TemplateGenerator.Adl.Tree.Constant.Value">
+      <summary>
+            Значение
+            </summary>
+    </member>
+    <member name="T:EleWise.TemplateGenerator.Adl.Tree.Globalvariable">
+      <summary>
+            Глобальная переменная
+            </summary>
+    </member>
+    <member name="M:EleWise.TemplateGenerator.Adl.Tree.Globalvariable.ToString">
+      <summary>
+            ToString
+            </summary>
+      <returns>Строкове представление объекта</returns>
+    </member>
+    <member name="M:EleWise.TemplateGenerator.Adl.Tree.Globalvariable.CreateCopy(EleWise.TemplateGenerator.Adl.Tree.TreeItem)">
+      <summary>
+            Создать копию элемента
+            </summary>
+      <returns>Клонированный объект</returns>
+    </member>
+    <member name="P:EleWise.TemplateGenerator.Adl.Tree.Globalvariable.Name">
+      <summary>
+            Имя глобальной переменной
+            </summary>
+    </member>
+    <member name="T:EleWise.TemplateGenerator.Adl.Tree.Expression">
+      <summary>
+            Абстрактное выражение
+            </summary>
+    </member>
+    <member name="T:EleWise.TemplateGenerator.Adl.Tree.ExpressionStatement">
+      <summary>
+            Конструкция какого-либо выражения
+            </summary>
+    </member>
+    <member name="M:EleWise.TemplateGenerator.Adl.Tree.ExpressionStatement.ToString">
+      <summary>
+            ToString
+            </summary>
+      <returns>Строкове представление объекта</returns>
+    </member>
+    <member name="M:EleWise.TemplateGenerator.Adl.Tree.ExpressionStatement.CreateCopy(EleWise.TemplateGenerator.Adl.Tree.TreeItem)">
+      <summary>
+            Создать копию элемента
+            </summary>
+      <returns>Клонированный объект</returns>
+    </member>
+    <member name="M:EleWise.TemplateGenerator.Adl.Tree.ExpressionStatement.GetChildItems">
+      <summary>
+            Получить подчиненные элементы
+            </summary>
+      <returns>
+      </returns>
+    </member>
+    <member name="P:EleWise.TemplateGenerator.Adl.Tree.ExpressionStatement.Expression">
+      <summary>
+            Выражение
+            </summary>
+    </member>
+    <member name="T:EleWise.TemplateGenerator.Adl.Tree.FunctionCall">
+      <summary>
+            Вызов функции
+            </summary>
+    </member>
+    <member name="M:EleWise.TemplateGenerator.Adl.Tree.FunctionCall.#ctor">
+      <summary>
+            Ctor
+            </summary>
+    </member>
+    <member name="M:EleWise.TemplateGenerator.Adl.Tree.FunctionCall.ToString">
+      <summary>
+            ToString
+            </summary>
+      <returns>Строкове представление объекта</returns>
+    </member>
+    <member name="M:EleWise.TemplateGenerator.Adl.Tree.FunctionCall.CreateCopy(EleWise.TemplateGenerator.Adl.Tree.TreeItem)">
+      <summary>
+            Создать копию элемента
+            </summary>
+      <returns>Клонированный объект</returns>
+    </member>
+    <member name="M:EleWise.TemplateGenerator.Adl.Tree.FunctionCall.GetChildItems">
+      <summary>
+            Получить подчиненные элементы
+            </summary>
+      <returns>
+      </returns>
+    </member>
+    <member name="P:EleWise.TemplateGenerator.Adl.Tree.FunctionCall.Name">
+      <summary>
+            Имя фукнции
+            </summary>
+    </member>
+    <member name="P:EleWise.TemplateGenerator.Adl.Tree.FunctionCall.Params">
+      <summary>
+            Параметры функции
+            </summary>
+    </member>
+    <member name="T:EleWise.TemplateGenerator.Adl.Tree.IfStatement">
+      <summary>
+            Конструкция "Если-то"
+            </summary>
+    </member>
+    <member name="M:EleWise.TemplateGenerator.Adl.Tree.IfStatement.#ctor">
+      <summary>
+            Ctor
+            </summary>
+    </member>
+    <member name="M:EleWise.TemplateGenerator.Adl.Tree.IfStatement.ToString">
+      <summary>
+            ToString
+            </summary>
+      <returns>Строкове представление объекта</returns>
+    </member>
+    <member name="M:EleWise.TemplateGenerator.Adl.Tree.IfStatement.CreateCopy(EleWise.TemplateGenerator.Adl.Tree.TreeItem)">
+      <summary>
+            Создать копию элемента
+            </summary>
+      <returns>Клонированный объект</returns>
+    </member>
+    <member name="M:EleWise.TemplateGenerator.Adl.Tree.IfStatement.GetChildItems">
+      <summary>
+            Получить подчиненные элементы
+            </summary>
+      <returns>
+      </returns>
+    </member>
+    <member name="P:EleWise.TemplateGenerator.Adl.Tree.IfStatement.Condition">
+      <summary>
+            Условие
+            </summary>
+    </member>
+    <member name="P:EleWise.TemplateGenerator.Adl.Tree.IfStatement.TrueContent">
+      <summary>
+            Содержимое при верном условии
+            </summary>
+    </member>
+    <member name="P:EleWise.TemplateGenerator.Adl.Tree.IfStatement.FalseContent">
+      <summary>
+            Содержимое при ложном условии
+            </summary>
+    </member>
+    <member name="T:EleWise.TemplateGenerator.Adl.Tree.PlainText">
+      <summary>
+            Простой текст в шаблоне
+            </summary>
+    </member>
+    <member name="M:EleWise.TemplateGenerator.Adl.Tree.PlainText.ToString">
+      <summary>
+            ToString
+            </summary>
+      <returns>Строкове представление объекта</returns>
+    </member>
+    <member name="M:EleWise.TemplateGenerator.Adl.Tree.PlainText.CreateCopy(EleWise.TemplateGenerator.Adl.Tree.TreeItem)">
+      <summary>
+            Создать копию элемента
+            </summary>
+      <returns>Клонированный объект</returns>
+    </member>
+    <member name="P:EleWise.TemplateGenerator.Adl.Tree.PlainText.Text">
+      <summary>
+            Текст
+            </summary>
+    </member>
+    <member name="T:EleWise.TemplateGenerator.Adl.Tree.Template">
+      <summary>
+            Шаблон
+            </summary>
+    </member>
+    <member name="M:EleWise.TemplateGenerator.Adl.Tree.Template.ToString">
+      <summary>
+            ToString
+            </summary>
+      <returns>Строкове представление объекта</returns>
+    </member>
+    <member name="T:EleWise.TemplateGenerator.Adl.Tree.TreeItem">
+      <summary>
+            Элемент дерева разбора
+            </summary>
+    </member>
+    <member name="M:EleWise.TemplateGenerator.Adl.Tree.TreeItem.GetChildItems">
+      <summary>
+            Получить подчиненные элементы
+            </summary>
+      <returns>
+      </returns>
+    </member>
+    <member name="M:EleWise.TemplateGenerator.Adl.Tree.TreeItem.CreateCopy(EleWise.TemplateGenerator.Adl.Tree.TreeItem)">
+      <summary>
+            Создать копию элемента
+            </summary>
+      <param name="parentId">Идентификатор родительского элемента (блока)</param>
+      <param name="indexId">Индекс элемента в блоке</param>
+      <returns>Клонированный объект</returns>
+    </member>
+    <member name="M:EleWise.TemplateGenerator.Adl.Tree.TreeItem.RecalcRange(System.Int32,System.Int32)">
+      <summary>
+            Пересчитать индексы начала и конца
+            </summary>
+      <param name="position">
+      </param>
+      <param name="delta">
+      </param>
+    </member>
+    <member name="M:EleWise.TemplateGenerator.Adl.Tree.TreeItem.RefreshParent">
+      <summary>
+            Обновить родительский элемент
+            </summary>
+    </member>
+    <member name="P:EleWise.TemplateGenerator.Adl.Tree.TreeItem.Start">
+      <summary>
+            Индекс начального символа
+            </summary>
+    </member>
+    <member name="P:EleWise.TemplateGenerator.Adl.Tree.TreeItem.Stop">
+      <summary>
+            Индекс конечного символа
+            </summary>
+    </member>
+    <member name="P:EleWise.TemplateGenerator.Adl.Tree.TreeItem.Parent">
+      <summary>
+            Родительский элемент
+            </summary>
+    </member>
+    <member name="P:EleWise.TemplateGenerator.Adl.Tree.TreeItem.Root">
+      <summary>
+            Корневой элемент
+            </summary>
+    </member>
+    <member name="T:EleWise.TemplateGenerator.Adl.Tree.UnaryExpression">
+      <summary>
+            Унарное выражение
+            </summary>
+    </member>
+    <member name="M:EleWise.TemplateGenerator.Adl.Tree.UnaryExpression.ToString">
+      <summary>
+            ToString
+            </summary>
+      <returns>Строкове представление объекта</returns>
+    </member>
+    <member name="M:EleWise.TemplateGenerator.Adl.Tree.UnaryExpression.CreateCopy(EleWise.TemplateGenerator.Adl.Tree.TreeItem)">
+      <summary>
+            Создать копию элемента
+            </summary>
+      <returns>Клонированный объект</returns>
+    </member>
+    <member name="M:EleWise.TemplateGenerator.Adl.Tree.UnaryExpression.GetChildItems">
+      <summary>
+            Получить подчиненные элементы
+            </summary>
+      <returns>
+      </returns>
+    </member>
+    <member name="P:EleWise.TemplateGenerator.Adl.Tree.UnaryExpression.Operand">
+      <summary>
+            Операнд
+            </summary>
+    </member>
+    <member name="P:EleWise.TemplateGenerator.Adl.Tree.UnaryExpression.Operator">
+      <summary>
+            Оператор
+            </summary>
+    </member>
+    <member name="T:EleWise.TemplateGenerator.Adl.Tree.UnaryOperator">
+      <summary>
+            Унарный оператор
+            </summary>
+    </member>
+    <member name="T:EleWise.TemplateGenerator.Adl.Tree.Variable">
+      <summary>
+            Переменная
+            </summary>
+    </member>
+    <member name="M:EleWise.TemplateGenerator.Adl.Tree.Variable.ToString">
+      <summary>
+            ToString
+            </summary>
+      <returns>Строкове представление объекта</returns>
+    </member>
+    <member name="M:EleWise.TemplateGenerator.Adl.Tree.Variable.CreateCopy(EleWise.TemplateGenerator.Adl.Tree.TreeItem)">
+      <summary>
+            Создать копию элемента
+            </summary>
+      <returns>Клонированный объект</returns>
+    </member>
+    <member name="P:EleWise.TemplateGenerator.Adl.Tree.Variable.Name">
+      <summary>
+            Имя переменной
+            </summary>
+    </member>
+  </members>
+</doc>

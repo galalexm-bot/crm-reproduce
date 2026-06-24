@@ -1,0 +1,21 @@
+﻿@using EleWise.ELMA.Web.Mvc.Models.History
+@using EleWise.ELMA.CRM.Web.Models
+@model EleWise.ELMA.CRM.Models.MarketingBaseChangesHistoryModel
+
+@{ 
+    var changedCount = Model.ChangedProperties != null ? Model.ChangedProperties.Count(p => !Model.BaseProperties.Contains(p.Uid)) : 0;
+}
+@if (Model.OldEntity != null && Model.NewEntity != null && changedCount > 0)
+{
+    <div class="history-type-action history-item-ext">
+        <div class="history-action-editvalues">
+            <div class="history-action-short-values" style="padding: 2px;">
+                @EleWise.ELMA.SR.T("Всего изменено свойств:") <b>@changedCount</b>
+            </div>
+            @Html.RotatableArrow(true, new { @class = "history-action-arrow" })
+            <div class="history-action-all-values">
+                @Html.DisplayChanges(Model.OldEntity, Model.NewEntity, Model.BaseProperties, true)
+            </div>
+        </div>
+    </div>
+}

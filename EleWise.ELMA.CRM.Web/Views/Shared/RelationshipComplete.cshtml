@@ -1,0 +1,29 @@
+﻿@using EleWise.ELMA.CRM.Web.Models
+@using EleWise.ELMA
+@model RelationshipCompleteModel
+@using (Html.ModelForm(Model))
+{
+    @Html.HiddenFor(m => m.RedirectUrl)
+    @Html.HiddenFor(m => m.EntityId)
+    @Html.HiddenFor(m => m.Mode, new {id = "Mode"})
+
+    <div>
+        @Html.TableFormStart()
+        <tr>
+            <td class="captionCell">
+                @SR.T("Комментарий")
+            </td>
+            <td>
+                @Html.TextAreaFor(m => m.Comment, new { rows= 10, @class = "text-box" })
+            </td>
+        </tr>
+        @Html.TableFormEnd()
+    </div>
+
+    @Html.Partial("Relationship/FollowingActions", new ViewDataDictionary()
+                                                             {
+                                                                 { "SubmitFormName", Model.Id }, 
+                                                                 { "LeadConvertItem", Model.Entity.Lead != null }, 
+                                                                 { "CreateSaleItem", Model.Entity.Contractor != null}
+                                                             })
+}

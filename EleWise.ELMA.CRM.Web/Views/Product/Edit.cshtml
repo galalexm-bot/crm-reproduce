@@ -1,0 +1,26 @@
+﻿@model EleWise.ELMA.CRM.Web.Models.ProductViewModel
+@using EleWise.ELMA
+@using EleWise.ELMA.CRM.Web
+
+
+@{
+    if (Model.Entity.IsNew())
+    {
+        Html.Header(SR.T("Создание"));
+    }
+    else
+    {
+        Html.Header(SR.T("Редактирование"));
+    }
+    
+}
+
+@(Html.Toolbar()
+    .Group("toolbar-group-1")
+        .ToolbarSubmit(SR.Save, "#save.svg", "toolbar-action-Save")
+        .ToolbarLink(SR.Cancel, "#close_outline.svg", "javascript:history.back(-1);", "toolbar-action-Cancel"))
+
+@using (Html.ElmaForm())
+{
+    @Html.Partial("EditForm")
+}

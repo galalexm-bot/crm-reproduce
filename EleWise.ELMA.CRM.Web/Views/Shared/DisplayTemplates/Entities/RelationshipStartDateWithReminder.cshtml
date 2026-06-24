@@ -1,0 +1,27 @@
+﻿@using EleWise.ELMA.CRM.Web.Models
+@using EleWise.ELMA.Extensions
+@using EleWise.ELMA.Model.Views
+@using EleWise.ELMA.BPM.Web.Common.Extensions
+@using EleWise.ELMA.BPM.Web.Common.Models
+@using EleWise.ELMA
+@inherits EleWise.ELMA.Web.Mvc.Views.ViewItem.ViewItemControl<PropertyValueViewItem, RelationshipModel, DateTime>
+
+@{
+    var clientDateTime = Model.ToClientDateTime();
+}
+@if (OriginalModel is RelationshipMeetingModel && ((RelationshipMeetingModel) OriginalModel).Entity.TimeNotSet)
+{
+    @clientDateTime.ToString("d")
+    @(" (" + SR.T("точное время начала будет указано позднее") + ")")
+}
+else
+{
+<div class="reminder-display-container">
+    <div class="reminder-display-item">
+    <strong>
+        @clientDateTime.ToString(clientDateTime.IsStartDamperTime() ? "g" : "d")
+    </strong>
+    @(Html.Reminder(new ReminderModel {Entity = OriginalModel.Entity, OriginalDate = OriginalModel.Entity.StartDate, PropertyName = "StartDate", ToolTipText = EleWise.ELMA.SR.T("Напоминания о времени звонка"), Periodical = false}))
+    </div>
+</div>
+}

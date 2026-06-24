@@ -1,0 +1,14 @@
+﻿@model EleWise.ELMA.CRM.Models.IInpayment
+@using EleWise.ELMA;
+@using EleWise.ELMA.CRM.Web
+
+@{
+    Html.Header(SR.T("Редактирование поступления - {0}", Model.Name));
+}
+
+@(Html.Toolbar()
+    .Group("toolbar-group-1")
+        .ToolbarSubmit(SR.Save, "#save.svg", "toolbar-action-Save")
+        .ToolbarLink(SR.Cancel, "#close_outline.svg", "javascript:history.back(-1);", "toolbar-action-Cancel"))
+
+@Html.Partial("Editors/InpaymentEdit")

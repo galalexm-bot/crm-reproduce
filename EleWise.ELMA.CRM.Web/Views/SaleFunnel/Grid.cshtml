@@ -1,0 +1,48 @@
+﻿@using EleWise.ELMA.CRM.Models;
+@using EleWise.ELMA.CRM.Web
+@using EleWise.ELMA;
+@model GridData<ISaleFunnel, ISaleFunnelFilter>
+
+@(Html.DynamicGrid("SaleFunnelGrid", Model, Guid.Empty)
+                .Columns(c =>
+                {
+                    c.For(m => m.Name);
+                    c.For(m => m.SaleStages).Template(m => Html.Partial("DisplayTemplates/Entities/SaleStageSet", m.SaleStages));
+                    c.For(m => MvcHtmlString.Create(
+                    Html.ButtonGroup()
+                    .Item(a=>
+                        a.IconUrl(UIIcons.Edit)
+                        .Url(Url.Action("Edit", "SaleFunnel", new { area = CRMAreaRegistration.AREA_NAME, id = m.Id }))
+                        .Attributes(new { @class = SR.Edit })
+                        .Circle()
+                        .NoBorder()
+                    )
+                    .Item(a=>
+                        a.IconUrl(UIIcons.Remove)
+                        .Click("deleteSaleFunnel("+m.Id+",'"+m.Name+"')")
+                        .Attributes(new { @class = SR.Delete })
+                        .Circle()
+                        .NoBorder()
+                    )
+                    .IsSplitted()
+                    .Attributes(new { @class = "t-button-group-nowrap" })
+                    .ToHtmlString()))
+                    .Width(52).NotSortable();
+                })
+           .Customizable(false))
+           
+<script type="text/javascript">
+    function deleteSaleFunnel(i, name) {
+        jConfirm('@(SR.T("Вы действительно хотите удалить воронку продаж"))'+' "'+name+'" ?', '@(SR.T("Удаление"))', function (r) {
+            if (r) {
+                $.ajax({
+                    url: '@(Url.Action("Delete", "SaleFunnel", new { area = CRMAreaRegistration.AREA_NAME }))/' + i,
+                    type: "POST",
+                    dataType: 'html',
+                    cache: false,
+                    success: function () { window.reloadPage(); }
+                });
+            }
+        });
+    }
+</script>

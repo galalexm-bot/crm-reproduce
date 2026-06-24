@@ -1,0 +1,5 @@
+﻿@using EleWise.ELMA.Model.Entities
+@using EleWise.ELMA
+@using System.Text
+@model EleWise.ELMA.CRM.Models.IAddress
+<span class="display-string">@if (Model != null) {@Model.GetTitleOrDefault(m => m.Name)}</span>

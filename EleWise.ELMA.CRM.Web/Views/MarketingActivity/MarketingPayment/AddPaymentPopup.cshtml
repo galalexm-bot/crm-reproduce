@@ -1,0 +1,15 @@
+﻿@model IMarketingPayment
+
+@using EleWise.ELMA
+@using EleWise.ELMA.CRM.Models
+@using EleWise.ELMA.CRM.Web
+
+@using (Html.ElmaForm(routeValues: new { action = "SavePayment", controller = "MarketingActivity", area = CRMAreaRegistration.AREA_NAME }))
+{
+    @Html.Partial("MarketingPayment/PaymentForm")
+
+    <div class="popup-buttons">
+        <input type="submit" class="confirm" value="@(Model.IsNew() ? SR.T("Добавить") : SR.T("Редактировать"))" />
+        <input type="button" value="@SR.Cancel" onclick="@Html.ClosePopup("AddPaymentPopup")" />
+    </div>
+}

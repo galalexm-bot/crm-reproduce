@@ -1,0 +1,317 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<Notifications description="Оповещения о задачах">
+
+  <Partial Name="TaskFields">
+    {PropertyRow(SR({$New.Subject}))}
+    {PropertyRow({$New.Executor})}
+    {PropertyRow({$New.Priority})}
+    {PropertyRow({$New.StartDate})}
+    {PropertyRow({$New.EndDate})}
+    {PropertyRow({$New.CreationAuthor})}
+  </Partial>
+
+  <Partial Name="DefaultFullMessage">
+    {Partial('TaskFields')}
+    {PropertyFullRow({$Comment.Text};SR('Комментарий'))}
+  </Partial>
+
+  <Partial Name="DefaultShortMessage">
+    {PropertyFullRow({$Comment.Text};'')}
+  </Partial>
+
+
+  <Default>
+    <Filter>
+      <Event>IEntityActionHandler.ActionExecuted</Event>
+      <Object>EleWise.ELMA.Tasks.Models.AccessRequestTask</Object>
+    </Filter>
+    <RecipientSet>
+      <User>{$New.CreationAuthor}</User>
+    </RecipientSet>
+    <RecipientSet Name="Executor">
+      <User>{$New.Executor}</User>
+    </RecipientSet>
+    <URL>
+      /Tasks/AccessRequestTask/Execute/{$New.Id}
+    </URL>
+    <ObjectId>{$New.Id}</ObjectId>
+    <ShortMessage>
+      {TableStart()}
+      {Partial('DefaultShortMessage')}
+      {TableEnd()}
+    </ShortMessage>
+    <FullMessage>
+      {TableStart()}
+      {Partial('DefaultFullMessage')}
+      {TableEnd()}
+    </FullMessage>
+  </Default>
+
+
+  <Notification Name="Create">
+    <Filter>
+      <Condition>
+        (({$Action.Name}='Create') and ({$New.Status.Value}&lt;&gt;'112ea757-36f7-4859-b0d3-6cc0f5a04705'))
+      </Condition>
+    </Filter>
+    <Subject>
+      ({SR('Новая задача')}) {SR({$New.Subject})}
+    </Subject>
+    <ShortMessage>
+      {TableStart()}
+      {PropertyFullRow(SR({$New.Description});'')}
+      {TableEnd()}
+    </ShortMessage>
+    <FullMessage>
+      {TableStart()}
+      {Partial('TaskFields')}
+      {PropertyFullRow({$New.Attachments};'')}
+      {ExtensionZone('EleWise.ELMA.Tasks.Models.Task-CreateFullMessage-AfterAttachments')}
+      {TableEnd()}
+    </FullMessage>
+  </Notification>
+
+
+  <Notification Name="StartWork">
+    <Filter>
+      <Action>StartWork</Action>
+    </Filter>
+    <Subject>
+      ({SR('Начало работы над задачей')}) {SR({$New.Subject})}
+    </Subject>
+  </Notification>
+
+  <Notification Name="AddComment">
+    <Filter>
+      <Action>AddComment</Action>
+    </Filter>
+    <Subject>
+      ({SR('Добавлен комментарий')}) {SR({$New.Subject})}
+    </Subject>
+  </Notification>
+
+
+  <Notification Name="Edit">
+    <Filter>
+      <Action>Edit</Action>
+      <Condition>
+        (SR({$New.Subject})&lt;&gt;SR({$Old.Subject})) or
+        ({$New.Executor}&lt;&gt;{$Old.Executor}) or
+        ({$New.Priority}&lt;&gt;{$Old.Priority}) or
+        ({$New.StartDate}&lt;&gt;{$Old.StartDate}) or
+        ({$New.EndDate}&lt;&gt;{$Old.EndDate})
+      </Condition>
+    </Filter>
+    <Subject>
+      ({SR('Задача изменена')}) {SR({$New.Subject})}
+    </Subject>
+    <ShortMessage>
+      {TableStart()}
+      {PropertyRowIfChanged(SR({$Old.Subject});SR({$New.Subject}))}
+      {PropertyRowIfChanged({$Old.Executor};{$New.Executor})}
+      {PropertyRowIfChanged({$Old.Priority};{$New.Priority})}
+      {PropertyRowIfChanged({$Old.StartDate};{$New.StartDate})}
+      {PropertyRowIfChanged({$Old.EndDate};{$New.EndDate})}
+      {PropertyRowIfChanged(SR({$Old.Description});SR({$New.Description}))}
+      {Partial('DefaultShortMessage')}
+      {TableEnd()}
+    </ShortMessage>
+    <FullMessage>
+      {TableStart()}
+      {PropertyRowWithChanges(SR({$Old.Subject});SR({$New.Subject}))}
+      {PropertyRowWithChanges({$Old.Executor};{$New.Executor})}
+      {PropertyRowWithChanges({$Old.Priority};{$New.Priority})}
+      {PropertyRowWithChanges({$Old.StartDate};{$New.StartDate})}
+      {PropertyRowWithChanges({$Old.EndDate};{$New.EndDate})}
+      {PropertyRowWithChanges({$Old.CreationAuthor};{$New.CreationAuthor})}
+      {PropertyFullRowWithChanges(SR({$Old.Description});SR({$New.Description}))}
+      {PropertyFullRow({$Comment.Text};SR('Комментарий'))}
+      {TableEnd()}
+    </FullMessage>
+  </Notification>
+
+
+  <Notification Name="ApproveAccessRequest">
+    <Filter>
+      <Action>ApproveAccessRequest</Action>
+    </Filter>
+    <Subject>
+      {SR('Доступ предоставлен')}
+    </Subject>
+    <ShortMessage>
+      {TableStart()}
+      {PropertyRow(Link({$New.EntityReference.Object}; '{#BaseUrl#}' + GetEntityUrl({$New.EntityReference.Object}));GetObjectTypeName({$New}))}
+      {PropertyRow({$Comment.Text};SR('Комментарий'))}
+      {TableEnd()}
+    </ShortMessage>
+    <FullMessage>
+      {TableStart()}
+      {PropertyRow(Link({$New.EntityReference.Object}; '{#BaseUrl#}' + GetEntityUrl({$New.EntityReference.Object}));GetObjectTypeName({$New}))}
+      {Partial('DefaultFullMessage')}
+      {TableEnd()}
+    </FullMessage>
+  </Notification>
+
+  <Notification Name="RefuseAccessRequest">
+    <Filter>
+      <Action>RefuseAccessRequest</Action>
+    </Filter>
+    <Subject>
+      {SR('В предоставлении доступа отказано')}
+    </Subject>
+    <ShortMessage>
+      {TableStart()}
+      {PropertyRow(Link({$New.EntityReference.Object}; '{#BaseUrl#}' + GetEntityUrl({$New.EntityReference.Object}));GetObjectTypeName({$New}))}
+      {PropertyRow({$Comment.Text};SR('Комментарий'))}
+      {TableEnd()}
+    </ShortMessage>
+    <FullMessage>
+      {TableStart()}
+      {PropertyRow(Link({$New.EntityReference.Object}; '{#BaseUrl#}' + GetEntityUrl({$New.EntityReference.Object}));GetObjectTypeName({$New}))}
+      {Partial('DefaultFullMessage')}
+      {TableEnd()}
+    </FullMessage>
+  </Notification>
+
+
+  <Notification Name="Incomplete">
+    <Filter>
+      <Action>Incomplete</Action>
+    </Filter>
+    <Subject>
+      ({SR('Задачу выполнить невозможно')}) {SR({$New.Subject})}
+    </Subject>
+  </Notification>
+  
+
+  <Notification Name="Redirect">
+    <Filter>
+      <Condition>
+        ({$Action.Name}='Redirect') or (({$Action.Name}='Replacement') and ({$Old.Executor}&lt;&gt;{$New.Executor}))
+      </Condition>
+    </Filter>
+    <Subject>
+      ({SR('Задача переназначена')}) {SR({$New.Subject})}
+    </Subject>
+    <FullMessage>
+      {TableStart()}
+      {PropertyRowIfChanged({$Old.Executor};{$New.Executor})}
+      {PropertyRowIfChanged({$Old.StartDate};{$New.StartDate})}
+      {PropertyRowIfChanged({$Old.EndDate};{$New.EndDate})}
+      {PropertyRowIfChanged({$Old.Priority};{$New.Priority})}
+      {PropertyFullRow({$Comment.Text};SR('Комментарий'))}
+      {TableEnd()}
+    </FullMessage>
+    <ShortMessage>
+      {TableStart()}
+      {PropertyRowIfChanged({$Old.Executor};{$New.Executor})}
+      {PropertyRowIfChanged({$Old.StartDate};{$New.StartDate})}
+      {PropertyRowIfChanged({$Old.EndDate};{$New.EndDate})}
+      {PropertyRowIfChanged({$Old.Priority};{$New.Priority})}
+      {Partial('DefaultShortMessage')}
+      {TableEnd()}
+    </ShortMessage>
+  </Notification>
+
+
+  <Notification Name="Close">
+    <Filter>
+      <Action>Close</Action>
+    </Filter>
+    <Subject>
+      ({SR('Задача завершена автором')}) {SR({$New.Subject})}
+    </Subject>
+  </Notification>
+
+  <Notification Name="Terminate">
+    <Filter>
+      <Action>Terminate</Action>
+    </Filter>
+    <Subject>
+      ({SR('Задача отменена')}) {SR({$New.Subject})}
+    </Subject>
+  </Notification>
+
+
+  <Notification Name="ChangeEndDate">
+    <Filter>
+      <Action>ChangeEndDate</Action>
+    </Filter>
+    <Subject>
+      ({SR('Изменен срок задачи')}) {SR({$New.Subject})}
+    </Subject>
+    <FullMessage>
+      {TableStart()}
+      {PropertyRowIfChanged({$Old.StartDate};{$New.StartDate})}
+      {PropertyRowIfChanged({$Old.EndDate};{$New.EndDate})}
+      {PropertyRowIfChanged({$Old.Priority};{$New.Priority})}
+      {TableEnd()}
+    </FullMessage>
+    <ShortMessage>
+      {TableStart()}
+      {PropertyRowIfChanged({$Old.StartDate};{$New.StartDate})}
+      {PropertyRowIfChanged({$Old.EndDate};{$New.EndDate})}
+      {PropertyRowIfChanged({$Old.Priority};{$New.Priority})}
+      {TableEnd()}
+    </ShortMessage>
+  </Notification>
+
+  <Notification Name="RemindTask">
+    <Filter>
+      <Action>Remind</Action>
+      <Condition>
+        ({$New.EndWorkDate}=null)
+      </Condition>
+    </Filter>
+    <RecipientSet Clear="true">
+      <User>{$Reminder.CreationAuthor}</User>
+    </RecipientSet>
+    <Subject>
+      {If {$Reminder.PropertyName}='StartDate'}
+        ({SR('Напоминание о начале задачи')}) {SR({$New.Subject})}
+      {else}
+        ({SR('Напоминание о завершении задачи')}) {SR({$New.Subject})}
+      {end if}
+    </Subject>
+    <ShortMessage>
+      {If {$Reminder.PropertyName}='StartDate'}
+        {SR('Через {0} начало выполнения задачи'; GetReminderTimeSpan({$Reminder}))}.
+      {else}
+        {SR('Через {0} завершение задачи'; GetReminderTimeSpan({$Reminder}))}.
+      {end if}
+      {TableStart()}
+      {Partial('DefaultShortMessage')}
+      {TableEnd()}
+    </ShortMessage>
+    <FullMessage>
+      {If {$Reminder.PropertyName}='StartDate'}
+        {SR('Через {0} начало выполнения задачи'; GetReminderTimeSpan({$Reminder}))}.
+      {else}
+        {SR('Через {0} завершение задачи'; GetReminderTimeSpan({$Reminder}))}.
+      {end if}
+      {TableStart()}
+      {Partial('DefaultFullMessage')}
+      {TableEnd()}
+    </FullMessage>
+  </Notification>
+
+  <Notification Name="TaskExpiration">
+    <Filter>
+      <Action>Expired</Action>
+    </Filter>
+    <Subject>
+      ({SR('Задача просрочена')}) {SR({$Old.Subject})}
+    </Subject>
+    <ShortMessage>
+      {SR('Срок:')} {$New.EndDate}. {SR('Исполнитель:')} {$New.Executor}. {SR('Автор:')} {$New.CreationAuthor}.
+    </ShortMessage>
+    <FullMessage>
+      {TableStart()}
+      {PropertyRow({$New.EndDate})}
+      {PropertyRow(SR({$New.Subject}))}
+      {PropertyRow({$New.Executor})}
+      {TableEnd()}
+    </FullMessage>
+  </Notification>
+
+</Notifications>

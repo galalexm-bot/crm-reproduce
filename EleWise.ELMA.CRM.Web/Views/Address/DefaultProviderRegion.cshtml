@@ -1,0 +1,28 @@
+﻿@model IAddress
+@using EleWise.ELMA.CRM.Enums
+@using EleWise.ELMA.CRM.Models
+@using EleWise.ELMA.CRM.Web.Extensions
+
+@Html.AddressContent(@<text>
+                         <div class="table-form-columns-wrapper table-form-column-count-2">
+                            <div class="table-form-column">
+                                @Html.TableFormStart(EleWise.ELMA.Model.Views.ViewType.Edit)
+                                    @Html.AddressItemComboBox(m => m.Region)
+                                    @Html.AddressItemComboBox(m => m.District)
+                                    @Html.AddressItemComboBox(m => m.City)
+                                    @Html.AddressItemComboBox(m => m.Locality)
+                                    @Html.AddressItemComboBox(m => m.Street)
+                                @Html.TableFormEnd()
+                            </div>
+                            <div class="table-form-column">
+                                @Html.TableFormStart(EleWise.ELMA.Model.Views.ViewType.Edit)
+                                    @Html.AddressItemTextBox(m => m.Building)
+                                    @Html.AddressItemTextBox(m => m.Korpus)
+                                    @Html.AddressItemTextBox(m => m.Stroenie)
+                                    @Html.AddressItemTextBoxWithAptType(m => m.Appartment)
+                                    @Html.AddressItemTextBox(m => m.Zip)
+                                    @Html.HiddenFor(m => m.AptType)
+                                @Html.TableFormEnd()
+                            </div>
+                         </div>
+                      </text>, AddresType.Region, AddresType.District, AddresType.City, AddresType.Locality, AddresType.Street)

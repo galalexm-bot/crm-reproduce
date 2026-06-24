@@ -1,0 +1,23 @@
+﻿@model EleWise.ELMA.CRM.Web.Models.SalesPlan.PaymentModel
+@using EleWise.ELMA
+
+@using (Html.AjaxForm("Create", "Payment", new object(), FormMethod.Post, null, "onPaymentCreated();"))
+{
+    @Html.ValidationSummary(false)
+    @Html.ModernHidden(m => m.Entity.PaymentDate)
+    @Html.HiddenFor(m => m.Entity.Sale.Id)
+    
+    using (Html.TableForm(EleWise.ELMA.Model.Views.ViewType.Edit))
+    {
+        @Html.EditableProperty(m => m.Entity.Name)
+        @Html.EditableProperty(m => m.Entity.Sum)
+
+    }
+    <div class="popup-buttons">
+        <input id="createPaymentBtn" type="submit" class="confirm" value="@EleWise.ELMA.SR.T("OK")" />
+        <input type="button" value="@SR.Cancel" onclick="@Html.ClosePopup("CreatePayment")" />
+    </div>
+}
+
+
+

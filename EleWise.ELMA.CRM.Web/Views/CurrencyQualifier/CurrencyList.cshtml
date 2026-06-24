@@ -1,0 +1,61 @@
+﻿@using EleWise.ELMA.CRM.Web
+@using EleWise.ELMA
+@model EleWise.ELMA.CRM.Web.Models.ExchangeRates.CurrencyImportModel
+@if (Model == null || !Model.ItemsList.Any())
+{
+    <div class="note" style="padding:10px;">@SR.T("Не удалось загрузить данные")</div>
+}
+else
+{
+    <div class="currencyImportTextBlock">@SR.T("Выберите валюты для импорта и нажмите \"Импортировать\"")</div>
+    <div class="text-box input-large text-box">
+        <input type="text" class="input-large text-box" style="width: 100%;" placeholder="@SR.T("Что ищем?")" onkeyup="filterList(this)" />
+    </div>
+    <div class="currencyFormButton">
+        <input class="confirm t-button" id="checkAllButtons" type="button" onclick="SelectAll(this)" value="@SR.T("Отметить все")">
+    </div>
+    using (Html.ELMAForm("Import", "CurrencyQualifier", new { area = RouteProvider.AreaName }, FormMethod.Post, new { id = "StartImportForm" }))
+    {
+        <div class="currencyFormButton">
+            <input class="confirm t-button" type="submit" value="@SR.T("Импортировать валюты")">
+        </div>
+        @Html.HiddenFor(a => a.Currencies)
+        @Html.CheckBoxList(Html.NameFor(a => a.ItemsList).ToString(), Model.ItemsList, new Dictionary<string, object> { { "id", "currencyTable" }, { "class", "checkboxes two_cols" } })
+    }
+}
+<script type="text/javascript">
+    function filterList(element) {
+        var value = $(element).val();
+        var reg = new RegExp(value, "i");
+        $("#currencyTable li").each(function () {
+            if ($(this).text().search(reg) > -1) {
+                $(this).show();
+            } else {
+                $(this).hide();
+            }
+        });
+        $('#currencyTable div > li:visible').unwrap();
+    };
+
+    function SelectAll(input) {
+        var checkedCount = $("#currencyTable li input:checked").length;
+        var count = $("#currencyTable li input").length;
+        if (checkedCount < count) {
+            $("#currencyTable li input").attr("checked", true);
+            $(input).val('@SR.T("Снять все")');
+        } else{
+            $("#currencyTable li input").attr("checked", false);
+            $(input).val('@SR.T("Отметить все")');
+        }
+    };
+
+    $('#currencyTable li input').click(function() {
+        var checkedCount = $("#currencyTable li input:checked").length;
+        var count = $("#currencyTable li input").length;
+        if (checkedCount == count) {
+            $('#checkAllButtons').val('@SR.T("Снять все")');
+        } else {
+            $('#checkAllButtons').val('@SR.T("Отметить все")');
+        }
+    });
+</script>

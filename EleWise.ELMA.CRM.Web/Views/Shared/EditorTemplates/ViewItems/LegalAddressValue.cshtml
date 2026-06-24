@@ -1,0 +1,17 @@
+﻿@inherits ViewItemControl<PropertyValueViewItem>
+@using EleWise.ELMA.Model.Views
+@using EleWise.ELMA.Web.Mvc.Views.ViewItem
+
+@if (ViewItem != null)
+{
+    <div>
+        @if (ViewItem.IsReadOnly() || !ViewItem.IsMainPropertyViewItem())
+        {
+            @Html.Partial("DisplayTemplates/Entities/Address")
+        }
+        else
+        {
+            @Html.Partial("EditorTemplates/Entities/Address")
+        }
+    </div>
+}

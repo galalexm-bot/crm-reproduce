@@ -1,0 +1,10 @@
+﻿@model string
+
+@{
+    var viewAttributes = ViewData.ViewAttributes() as WebViewAttributes;
+    var maxlength = viewAttributes != null && viewAttributes.AdditionalViewData != null ? (int?)viewAttributes.AdditionalViewData["maxlength"] : null;
+}
+
+<div class="t-entity-input">
+    @Html.TextBox("", Model, new { @class = "text-box", onchange = "addrGenerateAddress(this)", maxlength })
+</div>

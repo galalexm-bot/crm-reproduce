@@ -1,0 +1,272 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<FormViewItem xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <Name>LeadConverterForm</Name>
+  <Uid>f501560c-69ef-4e6a-8199-da37e09fe62c</Uid>
+  <Items>
+    <RootViewItem xsi:type="PanelViewItem">
+      <Name>AboutContractor</Name>
+      <Uid>ded4e248-5878-4ff6-a467-4ec8560c1035</Uid>
+      <Items>
+        <RootViewItem xsi:type="ColumnsLayoutViewItem">
+          <Name>ColumnsLayout1</Name>
+          <Uid>b20ba00b-fb56-4fb8-9edf-92dec3ff3b49</Uid>
+          <Items>
+            <RootViewItem xsi:type="ColumnViewItem">
+              <Name>Column1</Name>
+              <Uid>369dd1f2-5bcb-48c9-afc3-e4c93839af8f</Uid>
+              <Items>
+                <RootViewItem xsi:type="PropertyViewItem">
+                  <Name>Property1</Name>
+                  <Uid>e997f23b-0039-4a9d-916f-25202c8abd13</Uid>
+                  <Property>36c2a094-7b4f-440c-903c-5904568cb4e6</Property>
+                  <Attributes>
+                    <Required>true</Required>
+                  </Attributes>
+                </RootViewItem>
+                <RootViewItem xsi:type="PropertyViewItem">
+                  <Name>Property17</Name>
+                  <Uid>33c3ac08-f088-4be3-9375-9d972dfd697d</Uid>
+                  <Property>176f489d-ef7e-4ef9-8eef-c14e6b1b4965</Property>
+                  <Attributes />
+                </RootViewItem>
+                <RootViewItem xsi:type="PropertyViewItem">
+                  <Name>Property2</Name>
+                  <Uid>5a881761-d20b-4e88-ae62-19557811ccf4</Uid>
+                  <Property>586a2329-c29b-4be6-85b4-6546d82c457e</Property>
+                  <Attributes />
+                </RootViewItem>
+                <RootViewItem xsi:type="PropertyViewItem">
+                  <Name>Property3</Name>
+                  <Uid>4ab41fdf-f5f7-4ebc-a766-f9b979ac3bf2</Uid>
+                  <Property>7690c6c6-de48-4764-acbb-cebc5bd3c8f8</Property>
+                  <Attributes />
+                </RootViewItem>
+                <RootViewItem xsi:type="PropertyViewItem">
+                  <Name>Property4</Name>
+                  <Uid>fc5b28e3-d2c5-4734-bddb-35d113020fb2</Uid>
+                  <Property>0e2f2de9-c748-4341-b12e-9dfe7b58bd7e</Property>
+                  <Attributes />
+                </RootViewItem>
+                <RootViewItem xsi:type="PropertyViewItem">
+                  <Name>Property5</Name>
+                  <Uid>7a6970aa-8cec-4983-ace8-6d55871373f6</Uid>
+                  <Property>89348517-fe33-4df2-b5cb-158a22088c1c</Property>
+                  <Attributes />
+                </RootViewItem>
+                <RootViewItem xsi:type="PropertyViewItem">
+                  <Name>Property18</Name>
+                  <Uid>25f14910-c16f-4293-ad1a-7eab0e5385c9</Uid>
+                  <Property>7a2f473a-b69b-4277-9a74-7da1d3b14f37</Property>
+                  <Attributes />
+                </RootViewItem>
+                <RootViewItem xsi:type="PropertyViewItem">
+                  <Name>Property6</Name>
+                  <Uid>798c8c3e-75fd-416a-8909-c83eadc33ab0</Uid>
+                  <Property>864cfdb3-fc45-4fc0-8067-6db4bfa59a0d</Property>
+                  <Attributes />
+                </RootViewItem>
+                <RootViewItem xsi:type="PropertyViewItem">
+                  <Name>Property18</Name>
+                  <Uid>bc8e290d-6a02-436d-98fa-d24ea56a608c</Uid>
+                  <Property>69767635-52eb-491e-8074-aeafa1024689</Property>
+                  <Attributes />
+                </RootViewItem>
+                <RootViewItem xsi:type="PropertyViewItem">
+                  <Name>Property19</Name>
+                  <Uid>9fd06825-0bb1-4ed8-b728-9216bca408aa</Uid>
+                  <Property>6bead4b1-a0c0-4519-90c3-1a4d2b683f88</Property>
+                  <Attributes />
+                </RootViewItem>
+              </Items>
+            </RootViewItem>
+            <RootViewItem xsi:type="ColumnViewItem">
+              <Name>Column2</Name>
+              <Uid>64baddb7-f6f7-40fb-bffb-bd255b88d4fa</Uid>
+              <Items>
+                <RootViewItem xsi:type="PropertyViewItem">
+                  <Name>Property7</Name>
+                  <Uid>86c717fe-a78c-4d85-9919-f40e84e8e0fb</Uid>
+                  <Property>f096f764-1594-45b2-a0b1-fc5bec735166</Property>
+                  <Attributes />
+                </RootViewItem>
+                <RootViewItem xsi:type="PropertyViewItem">
+                  <Name>Property8</Name>
+                  <Uid>d13b36e0-c535-4bba-a3e4-cd6b9ec4f395</Uid>
+                  <Property>c08abe4d-fc91-4e11-b5a0-eedb5c7e5cd1</Property>
+                  <Attributes />
+                </RootViewItem>
+                <RootViewItem xsi:type="PropertyViewItem">
+                  <Name>Property9</Name>
+                  <Uid>f2c7397d-b9fb-48d6-9909-9f3b9ee9030a</Uid>
+                  <Property>999c4d57-8e1d-4ff8-bef1-019e69b21754</Property>
+                  <Attributes />
+                </RootViewItem>
+                <RootViewItem xsi:type="PropertyViewItem">
+                  <Name>Property10</Name>
+                  <Uid>e3042dd4-77ec-4474-b019-d2e4a3db274c</Uid>
+                  <Property>5cfe525e-de95-486f-ae46-2c321d08149b</Property>
+                  <Attributes />
+                </RootViewItem>
+                <RootViewItem xsi:type="PropertyViewItem">
+                  <Name>Property11</Name>
+                  <Uid>5d081915-1567-4b27-966d-42d76192d605</Uid>
+                  <Property>385bda25-5635-429f-8d86-6762250befaf</Property>
+                  <Attributes />
+                </RootViewItem>
+                <RootViewItem xsi:type="PropertyViewItem">
+                  <Name>Property12</Name>
+                  <Uid>25bdaae5-db1f-444f-afbd-e079a404a548</Uid>
+                  <Property>c632fb79-cdc2-438d-98c9-0e14ea8c9623</Property>
+                  <Attributes />
+                </RootViewItem>
+                <RootViewItem xsi:type="PropertyViewItem">
+                  <Name>Property13</Name>
+                  <Uid>744f0b3a-c4fe-490f-8b9f-6a9e94ce7d41</Uid>
+                  <Property>f8ac787d-c57e-4033-9b0f-a033e5553acb</Property>
+                  <Attributes />
+                </RootViewItem>
+              </Items>
+            </RootViewItem>
+            <ViewItem xsi:type="DefaultContainerViewItem">
+              <Name>DefaultContainer1</Name>
+              <OnlyUserProperties>true</OnlyUserProperties>
+            </ViewItem>
+          </Items>
+        </RootViewItem>
+      </Items>
+      <Caption>О юридическом лице</Caption>
+      <Collapsible>true</Collapsible>
+      <UseOriginalModel>true</UseOriginalModel>
+    </RootViewItem>
+    <RootViewItem xsi:type="PanelViewItem">
+      <Name>ContractorCategories</Name>
+      <Uid>0165c075-7180-4cfd-905a-8fd15e924d1a</Uid>
+      <Items>
+        <RootViewItem xsi:type="ColumnViewItem">
+          <Name>Column3</Name>
+          <Uid>50fd8f61-9595-4330-825f-280e18130831</Uid>
+          <Items>
+            <RootViewItem xsi:type="PropertyViewItem">
+              <Name>Property14</Name>
+              <Uid>028f0388-0da9-4c18-84ad-640014afddd7</Uid>
+              <Property>fd34e08d-90de-4ba9-961d-28330701014e</Property>
+              <Attributes />
+            </RootViewItem>
+          </Items>
+        </RootViewItem>
+      </Items>
+      <Caption>Категории</Caption>
+      <Collapsible>true</Collapsible>
+      <UseOriginalModel>true</UseOriginalModel>
+    </RootViewItem>
+    <RootViewItem xsi:type="PanelViewItem">
+      <Name>ContractorDescription</Name>
+      <Uid>f819344d-bafc-40dc-9d96-59825dfce01f</Uid>
+      <Items>
+        <RootViewItem xsi:type="ColumnViewItem">
+          <Name>Column4</Name>
+          <Uid>b4c1443e-d2d8-4203-b89d-5d520bcf586d</Uid>
+          <Items>
+            <RootViewItem xsi:type="PropertyViewItem">
+              <Name>Property15</Name>
+              <Uid>413c0367-7726-4512-bb24-1dd42b5b5dc9</Uid>
+              <Property>1204e747-741d-4eb4-9121-39cba7bcba3e</Property>
+              <Attributes />
+            </RootViewItem>
+          </Items>
+        </RootViewItem>
+      </Items>
+      <Caption>Описание</Caption>
+      <Collapsible>true</Collapsible>
+      <Collapsed>true</Collapsed>
+      <UseOriginalModel>true</UseOriginalModel>
+    </RootViewItem>
+    <RootViewItem xsi:type="PanelViewItem">
+      <Name>ContractorAddresses</Name>
+      <Uid>f58ee1ae-a587-434d-be45-74500c748b00</Uid>
+      <Items>
+        <RootViewItem xsi:type="PropertyValueViewItem">
+          <Name>PropertyValue1</Name>
+          <Uid>6d6ded62-af9b-4ccc-919c-0ac90fe9e0b4</Uid>
+          <Property>1920ca8a-cc3b-42e4-ab87-e45792a1dc8e</Property>
+          <Attributes />
+          <CustomViewName>ViewItems/LegalAddress</CustomViewName>
+        </RootViewItem>
+        <RootViewItem xsi:type="PropertyValueViewItem">
+          <Name>PropertyValue2</Name>
+          <Uid>ce60a52d-88d2-4454-9e34-7dd5b6ed274b</Uid>
+          <Property>3f0c5616-5fdd-45a3-a61a-ab1da1210e9e</Property>
+          <Attributes />
+          <CustomViewName>ViewItems/PostalAddress</CustomViewName>
+        </RootViewItem>
+      </Items>
+      <Caption>Адреса</Caption>
+      <Collapsible>true</Collapsible>
+      <Collapsed>true</Collapsed>
+      <UseOriginalModel>true</UseOriginalModel>
+    </RootViewItem>
+    <RootViewItem xsi:type="PanelViewItem">
+      <Name>ContractorRequisites</Name>
+      <Uid>0800c544-0dc2-4e5b-8d57-c954fb262b08</Uid>
+      <Items>
+        <RootViewItem xsi:type="ColumnsLayoutViewItem">
+          <Name>ColumnsLayout2</Name>
+          <Uid>d079fabd-191a-4106-a1b1-411092f653c8</Uid>
+          <Items>
+            <RootViewItem xsi:type="ColumnViewItem">
+              <Name>Column6</Name>
+              <Uid>88f75990-95dc-49fa-a5f2-426886602299</Uid>
+              <Items>
+                <RootViewItem xsi:type="PropertyViewItem">
+                  <Name>Property16</Name>
+                  <Uid>c5d74d35-52b7-4c0a-86a6-2b208ca4a903</Uid>
+                  <Property>205d347d-dc7d-44f9-a8ec-2f120299e653</Property>
+                  <Attributes />
+                </RootViewItem>
+                <RootViewItem xsi:type="PropertyViewItem">
+                  <Name>Property23</Name>
+                  <Uid>b0c077a8-9c4a-4d07-9da6-d251845b56cb</Uid>
+                  <Property>ced01aa3-9dcd-4457-aac4-8e4c50cf5b7c</Property>
+                  <Attributes />
+                </RootViewItem>
+                <RootViewItem xsi:type="PropertyViewItem">
+                  <Name>Property24</Name>
+                  <Uid>4ae9f8fc-7c17-40ec-a91c-a6940d525de4</Uid>
+                  <Property>34e2746d-1aa7-47ac-bba2-8c4f0ceb2874</Property>
+                  <Attributes />
+                </RootViewItem>
+              </Items>
+            </RootViewItem>
+          </Items>
+        </RootViewItem>
+      </Items>
+      <Caption>Реквизиты</Caption>
+      <Collapsible>true</Collapsible>
+      <Collapsed>true</Collapsed>
+      <UseOriginalModel>true</UseOriginalModel>
+    </RootViewItem>
+    <RootViewItem xsi:type="PanelViewItem">
+      <Name>Panel1</Name>
+      <Uid>4115440d-78f2-4476-b49a-31b4003a683f</Uid>
+      <Items>
+        <RootViewItem xsi:type="ColumnViewItem">
+          <Name>Column5</Name>
+          <Uid>e66a5f1f-7d69-41a6-b97c-456d598edc29</Uid>
+          <Items>
+            <RootViewItem xsi:type="PropertyValueViewItem">
+              <Name>PropertyValue3</Name>
+              <Uid>2d15973d-9ad9-4d0f-9337-4e3d40cab033</Uid>
+              <Property>7793e3f3-b2d0-43dc-8d13-2e2ce4358975</Property>
+              <Attributes />
+              <CustomViewName>Entities/BankAccountsSet</CustomViewName>
+            </RootViewItem>
+          </Items>
+        </RootViewItem>
+      </Items>
+      <Caption>Банковские счета</Caption>
+      <Collapsible>true</Collapsible>
+      <SaveState>true</SaveState>
+    </RootViewItem>
+  </Items>
+  <DisplayName>Редактирование для конвертации лида (строго runtime v1)</DisplayName>
+</FormViewItem>

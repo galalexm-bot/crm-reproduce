@@ -1,0 +1,17 @@
+﻿@using EleWise.ELMA
+@model EleWise.ELMA.Common.Models.IAttachment
+
+@{
+    var attachmentId = Convert.ToInt64(ViewData["attachmentId"] ?? 0);    
+}           
+
+@if (Model != null)
+{
+    <div class="crm-attachment">
+        @Html.Display(m => m.File)
+        @if ((bool)ViewData["CanDelete"])
+        {
+            <span class="delete-right-top-icon" onclick = "@("FileDelete(" + attachmentId.ToString() + "," + Model.Id.ToString() + ")")" tooltiptext="@SR.T("Удалить вложение")"></span>
+        }
+    </div>
+}

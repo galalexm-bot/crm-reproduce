@@ -1,0 +1,87 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<Notifications>
+  
+  <Partial Name="CalendarEventFields">
+    {PropertyRow({$New.Event.Subject})}
+    {PropertyRow({$New.Event.Place})}
+    {PropertyRow(GetCalendarEventMembers({$New.Event};0);SR('Участники'))}
+    {PropertyRow(GetCalendarEventMembers({$New.Event};1);SR('Информируемые'))}
+    {PropertyRow({$New.Event.CreationAuthor})}
+    {PropertyRow({$New.Event.StartDate})}
+    {PropertyRow({$New.Event.EndDate})}
+    {PropertyRow({$New.Event.Period})}
+    {PropertyFullRow({$New.Event.Description})}
+  </Partial>
+
+  <Default>
+    <Filter>
+      <Event>IEntityActionHandler.ActionExecuted</Event>
+      <Object>EleWise.ELMA.Calendar.Models.CalendarEventUser</Object>
+    </Filter>
+    <RecipientSet>
+      <User>{$New.Event.CreationAuthor}</User>
+    </RecipientSet>
+    <URL>
+      /Calendar/Event/View/{$New.Event.Id}
+    </URL>
+    <ObjectId>{$New.Id}</ObjectId>
+  </Default>
+
+
+  <Notification Name="ConfirmParticipation">
+    <Filter>
+      <Action>ConfirmParticipation</Action>
+    </Filter>
+    <Subject>
+      ({SR('Подтверждение участия в событии')}) {$New.Event.Subject}
+    </Subject>
+    <ShortMessage>
+      <![CDATA[
+      {SR('Пользователь подтвердил участие в событии')}
+      {If {$New.ConfirmComment}<>''}
+      {SR('Комментарий')}:
+      {$New.ConfirmComment}
+      {End If}
+      ]]>
+    </ShortMessage>
+    <FullMessage>
+      {SR('Пользователь')} {$New.User} {SR('подтвердил свое участие в событии')}
+      {TableStart()}
+      {If {$New.ConfirmComment}&lt;&gt;''}
+      {PropertyRow({$New.ConfirmComment})}
+      {GenerateEmptyRow()}
+      {End If}
+      {Partial('CalendarEventFields')}
+      {TableEnd()}
+    </FullMessage>
+  </Notification>
+
+  <Notification Name="NotConfirmParticipation">
+    <Filter>
+      <Action>NotConfirmParticipation</Action>
+    </Filter>
+    <Subject>
+      ({SR('Отказ от участия в событии')}) {$New.Event.Subject}
+    </Subject>
+    <ShortMessage><![CDATA[
+      {SR('Пользователь отказался от участия в событии')}
+      {If {$New.ConfirmComment}<>''}
+      {SR('Комментарий')}:
+      {$New.ConfirmComment}
+      {End If}
+      ]]>
+    </ShortMessage>
+    <FullMessage>
+      {SR('Пользователь')} {$New.User} {SR('отказался от участия в событии')}
+      {TableStart()}
+      {If {$New.ConfirmComment}&lt;&gt;''}
+      {PropertyRow({$New.ConfirmComment})}
+      {GenerateEmptyRow()}
+      {End If}
+      {Partial('CalendarEventFields')}
+      {TableEnd()}
+    </FullMessage>
+  </Notification>
+
+
+</Notifications>

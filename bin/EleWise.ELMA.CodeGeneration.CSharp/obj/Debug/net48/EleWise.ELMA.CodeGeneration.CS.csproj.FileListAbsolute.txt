@@ -1,0 +1,7 @@
+D:\Prostor\ELMA\Reproduce\bin\EleWise.ELMA.CodeGeneration.CSharp\obj\Debug\net48\EleWise.ELMA.CodeGeneration.CS.csproj.AssemblyReference.cache
+D:\Prostor\ELMA\Reproduce\bin\EleWise.ELMA.CodeGeneration.CSharp\obj\Debug\net48\EleWise.ELMA.CodeGeneration.CS.GeneratedMSBuildEditorConfig.editorconfig
+D:\Prostor\ELMA\Reproduce\bin\EleWise.ELMA.CodeGeneration.CSharp\obj\Debug\net48\EleWise.ELMA.CodeGeneration.CS.csproj.CoreCompileInputs.cache
+D:\Prostor\ELMA\Reproduce\bin\EleWise.ELMA.CodeGeneration.CSharp\bin\Debug\net48\EleWise.ELMA.CodeGeneration.CSharp.dll
+D:\Prostor\ELMA\Reproduce\bin\EleWise.ELMA.CodeGeneration.CSharp\bin\Debug\net48\EleWise.ELMA.CodeGeneration.CSharp.pdb
+D:\Prostor\ELMA\Reproduce\bin\EleWise.ELMA.CodeGeneration.CSharp\obj\Debug\net48\EleWise.ELMA.CodeGeneration.CSharp.dll
+D:\Prostor\ELMA\Reproduce\bin\EleWise.ELMA.CodeGeneration.CSharp\obj\Debug\net48\EleWise.ELMA.CodeGeneration.CSharp.pdb

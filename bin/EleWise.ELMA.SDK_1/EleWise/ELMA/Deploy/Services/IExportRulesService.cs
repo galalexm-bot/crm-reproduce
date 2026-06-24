@@ -1,0 +1,27 @@
+﻿// Decompiled with JetBrains decompiler
+// Type: EleWise.ELMA.Deploy.Services.IExportRulesService
+// Assembly: EleWise.ELMA.SDK, Version=1.0.0.0, Culture=neutral, PublicKeyToken=cb29d04eca9b031d
+// MVID: CEBF4313-ABB2-45F5-B9CA-100E053C346A
+// Assembly location: D:\ELMA-CE\Web\bin\EleWise.ELMA.SDK.dll
+// XML documentation location: D:\ELMA-CE\Web\bin\EleWise.ELMA.SDK.xml
+
+using EleWise.ELMA.Deploy.ExportHelper;
+using EleWise.ELMA.Model.Entities;
+
+namespace EleWise.ELMA.Deploy.Services
+{
+  /// <summary>Сервис правил экспорта</summary>
+  public interface IExportRulesService
+  {
+    /// <summary>Получение смерженых правил экспорта для сущности</summary>
+    /// <param name="entity"></param>
+    /// <param name="customRules"></param>
+    /// <returns></returns>
+    ExportRuleList BaseMerge(IEntity entity, ExportRuleList customRules);
+
+    /// <summary>Получение базовых правил экспорта для сущности</summary>
+    /// <param name="entity"></param>
+    /// <returns></returns>
+    ExportRuleList Base(IEntity entity);
+  }
+}

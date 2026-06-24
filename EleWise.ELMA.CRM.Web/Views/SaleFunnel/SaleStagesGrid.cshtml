@@ -1,0 +1,60 @@
+﻿@model ICollection<EleWise.ELMA.CRM.Models.ISaleStage>
+@using EleWise.ELMA;
+@using EleWise.ELMA.CRM.Web.Models
+
+@{
+    var gridId = (string)ViewData["GridId"];
+    
+    var gridData = Model.OrderBy(s => s.GlobalOrder).CreateGridData();
+    gridData.IsPageable = false;
+}
+
+@Html.Hidden(ViewData.TemplateInfo.GetFullHtmlFieldName("JsonData"), SaleFunnelEditModel.Serialize(Model))
+@(Html.DynamicGrid(gridId, gridData, Guid.Empty)
+            .Columns(c =>
+            {
+                c.For(m => MvcHtmlString.Create(Html.ButtonGroup()
+                   .Item(a =>
+                       a.IconUrl("#thin_arrow_up.svg")
+                       .Click("moveStage(event,'up')")
+                       .Attributes(new { tooltiptext = SR.T("Переместить вверх") })
+                       .NoBorder()
+                       .Circle()
+                   )
+                   .Item(a =>
+                       a.IconUrl("#thin_arrow_down.svg")
+                       .Click("moveStage(event,'down')")
+                       .Attributes(new { tooltiptext = SR.T("Переместить вниз") })
+                       .NoBorder()
+                       .Circle()
+                   )
+                   .IsSplitted()
+                   .ToHtmlString())
+                ).CellHtmlAttributes((x, column) => new { stageId = x.Id }).Width(90);
+                c.For(m => m.Id).Template(s => s.Id > 0 ? s.Id.ToString() : "");
+                c.For(m => m.Name);
+                c.For(m => m.Color);
+                c.For(m => m.Shrinkage).Header(SR.T("Сужение воронки (%)"));
+                c.For(m => MvcHtmlString.Create(Html.ButtonGroup()
+                    .Item(a => 
+                        a.IconUrl(UIIcons.Edit)
+                        .Click("editStage(event)")
+                        .Attributes(new { tooltiptext = SR.Edit })
+                        .NoBorder()
+                        .Circle()
+                    )
+                    .Item(a => 
+                        a.IconUrl(UIIcons.Remove)
+                        .Click("deleteStage(event)")
+                        .Attributes(new { tooltiptext = SR.Delete })
+                        .NoBorder()
+                        .Circle()
+                    )
+                    .IsSplitted()
+                    .ToHtmlString())
+                ).Width(90);
+            })
+            .Customizable(false)
+            .Sortable(false)
+            .ApplyExtensions()
+            .DefaultSortExpression("GlobalOrder"))

@@ -1,0 +1,198 @@
+﻿@model RelationshipMeetingChangeTimeModel
+@using EleWise.ELMA.CRM.Managers
+@using EleWise.ELMA.CRM.Web.Models
+@using EleWise.ELMA
+@using EleWise.ELMA.Helpers
+@using EleWise.ELMA.Model.Types.Settings
+
+@{
+    var currentDateTimeFormat = DateTimeFormatHelper.GetCurrentFullFormat();
+    var currentDateTimeFormatForHiddens = DateTimeFormatHelper.GetCurrentFullFormatWithSeconds();
+    Html.RegisterContent("ChangeTime_CheckTimePeriod",
+        @<text>
+             <script type="text/javascript">
+                 function changetime_toggleTime() {
+                     var checked = $("#@(Model.PopupId)Form #WholeDay").is(":checked");
+                     if (checked) {
+                         elma.hidePartDateTimePicker('@(Model.PopupId)_StartDate', 'time');
+                     }
+                     else {
+                         elma.showPartDateTimePicker('@(Model.PopupId)_StartDate', 'time');
+                     }
+                     $("#@(Model.PopupId)_trEndDate").css('display', checked ? 'none' : '');
+                 }
+
+                 function changetime_getEndDate(startDate) {
+                     var endDate = new Date(startDate);
+                     var end = $("#@(Model.PopupId)_EndDate").val();
+                     if (end != undefined && $("#@(Model.PopupId)_EndDate_time").is(':visible')) {
+                         endDate = $.telerik.datetime.parse({ value: end, format: "@(currentDateTimeFormat)" }).value;
+                     } else {
+                         endDate.setMinutes(endDate.getMinutes() + @(RelationshipManager.GetDefaultDurationByEntityTypeUid(Model.EntityTypeUid)));
+                         if ($('#@(Model.PopupId)Form #WholeDay').is(':checked'))
+                             endDate.setHours(23, 59, 50);
+                     }
+                     return endDate;
+                 }
+
+                 function changetime_checkEventTimePeriod() {
+                     $("#@(Model.PopupId)Form").validate();
+                     if (!$("#@(Model.PopupId)Form").valid())
+                         return;
+                     var start = $("#@(Model.PopupId)_StartDate").val();
+                     var startDate = $.telerik.datetime.parse({ value: start, format: "@(currentDateTimeFormat)" }).value;
+                     if ($('#@(Model.PopupId)Form #WholeDay').is(':checked'))
+                         startDate.setHours(0, 0, 10);
+                     var endDate = changetime_getEndDate(startDate);
+                     if (startDate >= endDate) {
+                         jAlert("@(SR.T("Время начала события позже времени окончания!"))", "@(SR.T("Неверное время начала события"))");
+                         return;
+                     }
+                     var today = new Date();
+                     if (endDate < today) {
+                         jConfirm("@(SR.T("Событие назначено на прошедшее время. Продолжить сохранение?"))", "@(SR.T("Подтвердите время"))", function(r) {
+                             if (r) {
+                                 changetime_checkCrossedEvents(startDate, endDate);
+                             }
+                         });
+                     } else {
+                         changetime_checkCrossedEvents(startDate, endDate);
+                     }
+                 }
+
+                 function changetime_checkCrossedEvents(startDate, endDate) {
+                     var model = {
+                         StartDate: startDate,
+                         EndDate: endDate,
+                         CurrentId: ($("#@(Html.IDFor(m => m.EntityId))").length > 0 ? $("#@(Html.IDFor(m => m.EntityId))").val() : null),
+                         CurrentTypeUid: "@Model.EntityTypeUid",
+                         UserIds: null,
+                         ScheduleIds: null,
+                         SubmitForm: "@(Model.PopupId)Form",
+                         OnSubmitScript: "changetime_selectNewTime(this);",
+                     };
+                     $("#@(Model.PopupId)Form #StartDate").val(startDate.toString("@(currentDateTimeFormatForHiddens)"));
+                     $("#@(Model.PopupId)Form #EndDate").val(endDate.toString("@(currentDateTimeFormatForHiddens)"));
+                     var url = '@(Url.Action("CrossingEvents", "Event", new {area = EleWise.ELMA.BPM.Web.Calendar.CalendarAreaRegistration.AREA_NAME}))';
+                     elma.openPleaseWait(true);
+                     $.post(url, { model: $.toJSON(model) }, function(data, textStatus) {
+                         if (data == "") {
+
+                             $("#@(Model.PopupId)Form").submit();
+                         } else {
+                             $(".elma-window-content", $("#CrossedEventsWindow")).html(data);
+                             elma.closePleaseWait(false);
+                             @(Html.OpenPopup("CrossedEventsWindow"))
+                         }
+                     }, "html");
+                 }
+
+                 function changetime_selectNewTime(button) {
+                     var selector = $(button).closest("#CrossedEventsWindow").find('form .t-state-selected');
+                     var newStartDate = selector.attr('startdate');
+                     var newEndDate = selector.attr('enddate');
+                     if (newStartDate && newEndDate) {
+                        var startDateInput = $("#@(Model.PopupId)Form #StartDate").val(newStartDate);
+                        var endDateInput = $("#@(Model.PopupId)Form #EndDate").val(newEndDate);
+                     }
+                 }
+
+                 $(function() {
+                     jQuery.validator.addMethod("needStartDate", function(value, element) {
+                         var date = $("#@(Model.PopupId)_StartDate_date").val();
+                         var time = $("#@(Model.PopupId)_StartDate_time").val();
+                         var wholeDay = $('#@(Model.PopupId)Form #WholeDay').is(':checked');
+                         return date !== undefined && date && (wholeDay || time !== undefined && time);
+                     });
+                     jQuery.validator.addMethod("needEndDate", function(value, element) {
+                         var date = $("#@(Model.PopupId)_EndDate_date").val();
+                         var time = $("#@(Model.PopupId)_EndDate_time").val();
+                         var wholeDay = $('#@(Model.PopupId)Form #WholeDay').is(':checked');
+                         return date !== undefined && date && (wholeDay || time !== undefined && time);
+                     });
+                 });
+
+                 $(document).ready(function() {
+                     elma.ValidationRulesManager.addRule('@(ViewData.TemplateInfo.GetFullHtmlFieldId(Model.PopupId + ".StartDate"))', 'add', {
+                         needStartDate: true,
+                         messages: {
+                             needStartDate: '@SR.T("Заполните обязательное поле")'
+                         }
+                     });
+                     elma.ValidationRulesManager.addRule('@(ViewData.TemplateInfo.GetFullHtmlFieldId(Model.PopupId + ".EndDate"))', 'add', {
+                         needEndDate: true,
+                         messages: {
+                             needEndDate: '@SR.T("Заполните обязательное поле")'
+                         }
+                     });
+                     changetime_toggleTime();
+                     elma.SetDateTimeDependenceInputs('@(Html.IDFor(m => m.StartDate))', '@(Html.IDFor(m => m.EndDate))');
+                     elma.SetDateTimeDependenceInputs('@(Model.PopupId)_StartDate', '@(Model.PopupId)_EndDate');
+                 });
+             </script>
+         </text>);
+}
+
+@(Html.PopupWindow("CrossedEventsWindow", SR.T("Найдены пересечения"), @<text><div class="elma-window-content" style="min-width: 650px;"></div>></text>))
+
+@using (Html.ModelForm(Model))
+{
+    @Html.HiddenFor(m => m.RedirectUrl)
+    @Html.HiddenFor(m => m.EntityId)
+    @Html.ModernHidden(m => m.StartDate)
+    @Html.ModernHidden(m => m.EndDate)
+    <div class="table-form-container">
+    <table class="table-form">
+
+        @{
+            // редакторы времени будут с другим префиксом, чтобы работала связь между контролами выбора даты/времени и скрытым полем
+            var oldHtmlPrefix = ViewData.TemplateInfo.HtmlFieldPrefix;
+            ViewData.TemplateInfo.HtmlFieldPrefix = Model.PopupId;
+        }
+        <tr>
+            <td class="captionCell">
+                @SR.T("Дата начала")
+            </td>
+            <td>
+                @Html.Editor(m => m.StartDate)
+            </td>
+        </tr>
+        <tr id="@(Model.PopupId)_trEndDate">
+            <td class="captionCell">
+                @SR.T("Дата окончания")
+            </td>
+            <td>
+                @Html.Editor(m => m.EndDate)
+            </td>
+        </tr>       
+        @{
+            ViewData.TemplateInfo.HtmlFieldPrefix = oldHtmlPrefix;
+        }
+        <tr>
+            <td class="captionCell">@SR.T("Целый день")</td>
+            <td>
+                <div id="@ViewData.TemplateInfo.GetFullHtmlFieldId("WholeDayDiv")">
+                    @(Html.ModernCheckBoxFor(m => m.WholeDay, false, true).Attributes(a =>
+                      {
+                          a.@class = "";
+                          a.onclick = "changetime_toggleTime()";
+                      }))
+                </div>
+            </td>
+        </tr>
+        @Html.EditableProperty(m => m.Comment, a =>
+        {
+            a.Name = SR.T("Комментарий");
+            a.TypeSettingsAction = settingsAction =>
+            {
+                var userSettings = (StringSettings)settingsAction;
+                userSettings.MultiLine = true;
+            };
+        })
+    </table>
+    </div>
+    <div class="popup-buttons">
+        <input type="button" class="confirm" value="@SR.T("Изменить")" onclick=" changetime_checkEventTimePeriod(); " />
+        <input type="button" value="@SR.Cancel" onclick="@Html.ClosePopup(Model.PopupId)" />
+    </div>
+}

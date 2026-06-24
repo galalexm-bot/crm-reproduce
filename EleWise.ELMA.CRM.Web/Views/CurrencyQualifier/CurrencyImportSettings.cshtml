@@ -1,0 +1,29 @@
+﻿@using EleWise.ELMA
+@using EleWise.ELMA.ComponentModel
+@using EleWise.ELMA.CRM.Extensions
+
+@model EleWise.ELMA.CRM.Web.Models.ExchangeRates.ExchangeRateImportSettings
+@{
+    var selectedProvider = Model.Provider != Guid.Empty ?
+        ComponentManager.Current.GetExtensionPoints<IExchangeCurrencyRateImportProvider>().FirstOrDefault(a => a.Uid == Model.Provider) : null;
+}
+@if (selectedProvider != null)
+{
+    <div class="table-form-container">
+        <table class="table_with_inputs" id="changeImportType">
+            @if (selectedProvider.CanAutomaticFilling && selectedProvider.CanFillingWithFile)
+            {
+                @Html.EditableProperty(a => a.ExchangeRatesImportType, a => a.Html.onchange = "function(e) {ChangeImportType(e);}")
+            }
+        </table>
+        <div id="LoadFileForCurrencyImport">
+            <div class="currencyImportTextBlock">@SR.T("Загрузите файл и начните импорт")</div>
+            @Html.Editor(a => a.File)
+        </div>
+    </div>
+}
+<script>
+    $(document).ready(function () {
+        $('#LoadFileForCurrencyImport').css('display', 'none');
+    });
+</script>

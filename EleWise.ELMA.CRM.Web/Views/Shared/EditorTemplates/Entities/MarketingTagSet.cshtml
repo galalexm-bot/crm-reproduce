@@ -1,0 +1,90 @@
+﻿@using EleWise.ELMA
+@using EleWise.ELMA.CRM.Models
+@using EleWise.ELMA.CRM.Web.Models
+@using EleWise.ELMA.Model.Services
+@model IEnumerable<IMarketingTag>
+@{
+    var popupId = ViewData.TemplateInfo.GetFullHtmlFieldId("AddMarketingTagPopup");
+    var popupPrefixName = ViewData.TemplateInfo.GetFullHtmlFieldName("NewTag");
+    var popupPrefixId = ViewData.TemplateInfo.GetFullHtmlFieldId("NewTag");
+    const string idAttrName = "tagId";
+    var dicesId = ViewData.TemplateInfo.GetFullHtmlFieldId("Dies");
+    var jsonDataId = ViewData.TemplateInfo.GetFullHtmlFieldId("Json");
+    var prefix = ViewData.TemplateInfo.GetFullHtmlFieldId("");
+
+    var viewAttributes = ViewData.ViewAttributes() as WebViewAttributes;
+    var tagName = viewAttributes != null && viewAttributes.AdditionalViewData != null && viewAttributes.AdditionalViewData.ContainsKey("TagName") ? (string)viewAttributes.AdditionalViewData["TagName"] : "";
+
+    var vals = Model.Select(item => String.Format("{{\"Id\":{0},\"Name\":\"{1}\"}}", item.Id, HttpUtility.HtmlEncode(item.Name))).ToList();
+    var enumerator = Model.GetEnumerator();
+
+    <div class="marketing-tags">
+        <div id="ParentMarketingTag" class="marketing-tags-container"></div>
+        <div id="@(ViewData.TemplateInfo.GetFullHtmlFieldId("Dies"))" class="marketing-tags-container">
+        @while (enumerator.MoveNext())
+        {
+            @Html.FilterButton().Text(enumerator.Current.Name).CloseIconClick(string.Format("{0}_deleteTag(this)", prefix)).Attributes(new { idAttrName = enumerator.Current.Id})
+        }
+        </div>
+        <div class="marketing-tags-add-button">
+            @Html.Button().Text(SR.Add).IconUrl("#add.svg").Click($"{prefix}_addTag()")
+        </div>
+    </div>
+
+    <input type="hidden" id="@(ViewData.TemplateInfo.GetFullHtmlFieldId("Json"))" value="[@(String.Join(",", vals))]"/>
+    <div id="@(ViewData.TemplateInfo.GetFullHtmlFieldId("Dies"))_hiddens"></div>
+        
+    Html.RegisterContent(String.Format("{0}_Content", popupId), (d) => Html.AdaptivePopupWindow(popupId, SR.T("Добавление метки {0}", tagName), @<text>
+        @Html.Partial("MarketingActivity/MarketingTagPopup", new AddMarketingTagPopupViewModel
+   {
+       Id = popupId + "_Form",
+       PopupId = popupId,
+       Prefix = prefix,
+       DicesId = dicesId,
+       JsonDataId = jsonDataId,
+       IdAttributeName = idAttrName,
+       Entity = InterfaceActivator.Create<IMarketingTag>()
+   }, new ViewDataDictionary { TemplateInfo = new TemplateInfo { HtmlFieldPrefix = popupPrefixName } })
+        </text>, UIWindowSize.S));
+}
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        var data = JSON.parse($('#@(jsonDataId)').val());
+        @(prefix)_rebuildHiddenInputs(data);
+    });
+
+    function @(prefix)_addTag() {
+        var popup = $('#@(popupId)');
+        popup.find('#@(popupPrefixId)_Entity_Id').val(0);
+        popup.find('#@(popupPrefixId)_Entity_Name').val('');
+        openWindow('@(popupId)');
+    }
+
+    function @(prefix)_deleteTag(e) {
+        var dice = $(e).closest("[tagid]");
+        var tagId = dice.attr('@(idAttrName)');
+        var data = JSON.parse($('#@(jsonDataId)').val());
+        data = jQuery.grep(data, function (value) {
+            return value.Id != tagId;
+        });
+        @(prefix)_rebuildHiddenInputs(data);
+        $('#@(jsonDataId)').val(JSON.stringify(data));
+        dice.remove();
+    }
+    
+    function @(prefix)_rebuildHiddenInputs(data) {
+        $('#@(dicesId)_hiddens').children().remove();
+
+        if (data.length > 0) {
+            for (var i = 0; i < data.length; i++) {
+                if (data[i].Id > 0) {
+                    $('#@(dicesId)_hiddens').append("<input type='hidden' name='@(ViewData.TemplateInfo.GetFullHtmlFieldName(""))[" + i + "].Id' value='" + data[i].Id + "' />");
+                }
+                $('#@(dicesId)_hiddens').append("<input type='hidden' name='@(ViewData.TemplateInfo.GetFullHtmlFieldName(""))[" + i + "].Name' value='" + data[i].Name + "' />");
+            }
+        } else {
+            $('#@(dicesId)_hiddens').append("<input type='hidden' name='@(ViewData.TemplateInfo.GetFullHtmlFieldName("")).Id' value='' />");
+        }
+    }
+</script>

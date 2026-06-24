@@ -1,0 +1,29 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <AssemblyName>EleWise.ELMA.Tasks.Db.MsSql</AssemblyName>
+    <GenerateAssemblyInfo>False</GenerateAssemblyInfo>
+    <TargetFramework>net48</TargetFramework>
+  </PropertyGroup>
+  <PropertyGroup>
+    <LangVersion>Preview</LangVersion>
+    <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
+  </PropertyGroup>
+  <PropertyGroup>
+    <RootNamespace />
+  </PropertyGroup>
+  <ItemGroup>
+    <None Remove="EleWise.ELMA.Tasks.Db.MsSql.Ta.xml" />
+    <EmbeddedResource Include="EleWise.ELMA.Tasks.Db.MsSql.Ta.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="EleWise.ELMA.SDK">
+      <HintPath>..\EleWise.ELMA.SDK.dll</HintPath>
+    </Reference>
+    <Reference Include="EleWise.ELMA.Extensions.MSSQL">
+      <HintPath>..\EleWise.ELMA.Extensions.MSSQL.dll</HintPath>
+    </Reference>
+    <Reference Include="EleWise.ELMA.Tasks">
+      <HintPath>..\EleWise.ELMA.Tasks.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+</Project>

@@ -1,0 +1,54 @@
+﻿@using EleWise.ELMA.CRM
+@using EleWise.ELMA.BPM.Web.Common.Extensions
+@using EleWise.ELMA
+@using EleWise.ELMA.BPM.Web.Common.Models
+@using EleWise.ELMA.CRM.Models;
+@using EleWise.ELMA.CRM.Web
+@using EleWise.ELMA.Web.Mvc.Html
+@model GridDataFilter<InpaymentModel>
+
+@{ 
+    Html.Title(SR.T("План поступлений"));
+    var typeUid = Model.DataFilter.FilterTypeUid;
+    Html.RenderInZone("FilterModelLinkZone", d => Html.CurrentSearchLinkButton(typeUid));
+    bool canAdd = CRMPermissionProvider.CheckAny(new[] { CRMPermissionProvider.CRMFullAccessPermission, CRMPermissionProvider.CRMSaleCreatePermission });
+}
+
+@(Html.Toolbar().Group("toolbar-group-1")
+            .If(canAdd, b => b.ToolbarButton(new ActionToolbarItem("toolbar-click-AddInpayment")
+            {
+                Text = SR.Create,
+                IconUrl = "#add.svg",
+                Click= "addInpayment()",
+                ToolTip = SR.T("Добавить поступление"),
+                IsMainAction = true
+            })))
+
+@Html.FilterEditButton(new FilterEditButtonModel {        
+    FilterId = Convert.ToInt64(Request["FilterId"]),
+    Area = RouteProvider.AreaName,
+    ControllerName = "Inpayment",
+    BackUrl = Request.RawUrl
+}) 
+
+@(Html.AdaptivePopupWindow("AddInpaymentPopup", SR.T("Поступление"), UIWindowSize.M))
+
+@Html.Partial("Grids")
+
+<script type="text/javascript">
+    var oldDate = "";
+    function addInpayment() {
+        refreshPopup('AddInpaymentPopup', '@MvcHtmlString.Create(Url.Action("AddInpayment", "Inpayment", new { area = RouteProvider.AreaName }))', null, '@SR.T("Добавление поступления")');
+    }
+
+    function editInpayment(id) {        
+        refreshPopup('AddInpaymentPopup', '@MvcHtmlString.Create(Url.Action("EditInpayment", "Inpayment", new { area = RouteProvider.AreaName }))/' + id, null, '@SR.T("Редактирование поступления")');
+    }
+
+    function refreshInpaymentsTable() {
+        //alert($('#AddInpaymentPopup #Inpayment_Date').val());
+        //closeWindow('AddInpaymentPopup', true);
+        elma.openPleaseWait(true);
+        window.reloadPage();
+    }
+</script>

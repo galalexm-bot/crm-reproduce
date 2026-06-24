@@ -1,0 +1,279 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<root uid="{A1087A61-FD1E-4576-AF41-28F770AB10AA}" provider="PostgreSQL">
+
+  <scripts>
+
+    <script ExecuteTime="OnTablesCreated" AlwaysExecute="true" name="CreateHistoryObjectObserverTableType">
+      <text>
+        <![CDATA[
+          DO $$
+            BEGIN
+              IF EXISTS (SELECT 1 FROM pg_proc WHERE proname = 'historyupdatequeueitemsupsert') THEN
+                DROP FUNCTION &&HistoryUpdateQueueItemsUpsert&&(tvp json);
+              END IF;
+            
+              IF EXISTS (SELECT 1 FROM pg_type WHERE typname = 'historyobjectobservertabletype') THEN
+                DROP TYPE &&HistoryObjectObserverTableType&&;
+              END IF;
+                
+              CREATE TYPE &&HistoryObjectObserverTableType&& AS (
+	              &&Parent&& VARCHAR(70),
+                &&Child&& VARCHAR(70));
+            END$$;
+        ]]>
+      </text>
+    </script>
+
+    <script ExecuteTime="OnTablesCreated" AlwaysExecute="true" name="CreateHistoryObjectTableType">
+      <text>
+        <![CDATA[
+          DO $$
+            BEGIN
+              IF EXISTS (SELECT 1 FROM pg_proc WHERE proname = 'historyobjectsupsert') THEN
+                DROP FUNCTION &&HistoryObjectsUpsert&&(tableName text, tvp json);
+              END IF;
+            
+              IF EXISTS (SELECT 1 FROM pg_type WHERE typname = 'historyobjecttabletype') THEN
+                DROP TYPE &&HistoryObjectTableType&&;
+              END IF;
+                
+              CREATE TYPE &&HistoryObjectTableType&& AS (
+	              &&Id&& BIGINT,
+	              &&Uid&& UUID,
+	              &&Object&& VARCHAR(70),
+	              &&Model&& TEXT,
+	              &&ActionDate&& TIMESTAMP,
+	              &&ActionTypeUid&& UUID,
+	              &&CreationAuthor&& BIGINT,
+	              &&EventArgsUid&& UUID,
+	              &&SessionUid&& UUID,
+	              &&UnitOfWorkUid&& UUID,
+                &&IsRelatedEvent&& BOOLEAN);
+            END$$;
+        ]]>
+      </text>
+    </script>
+
+    <script ExecuteTime="OnTablesCreated" AlwaysExecute="true" name="CreateHistoryUpdateQueueItemTableType">
+      <text>
+        <![CDATA[
+          DO $$
+            BEGIN
+              IF EXISTS (SELECT 1 FROM pg_proc WHERE proname = 'historyupdatequeueitemsupsert') THEN
+                DROP FUNCTION &&HistoryUpdateQueueItemsUpsert&&(tvp json);
+              END IF;
+            
+              IF EXISTS (SELECT 1 FROM pg_type WHERE typname = 'historyupdatequeueitemtabletype') THEN
+                DROP TYPE &&HistoryUpdateQueueItemTableType&&;
+              END IF;
+                
+              CREATE TYPE &&HistoryUpdateQueueItemTableType&& AS (
+	              &&Id&& BIGINT,
+                &&ObjectId&& BIGINT,
+	              &&ObjectTypeUid&& UUID,
+                &&DeleteRelated&& BOOLEAN,
+	              &&CreationDate&& TIMESTAMP,
+                &&NextUpdateDate&& TIMESTAMP);
+            END$$;
+        ]]>
+      </text>
+    </script>
+
+  </scripts>
+  
+  <procedures>
+
+    <procedure name="UpdateCachedHistoryObjects">
+      <mappings>
+        <hibernate-mapping xmlns="urn:nhibernate-mapping-2.2">
+          <sql-query name="UpdateCachedHistoryObjects">
+            <query-param name="tableName" type="System.String" />
+            <query-param name="oldObject" type="System.String" />
+            <query-param name="newObject" type="System.String" />
+            SELECT UpdateCachedHistoryObjects(:tableName, :oldObject, :newObject)
+          </sql-query>
+        </hibernate-mapping>
+      </mappings>
+      <text>
+        <![CDATA[
+          CREATE OR REPLACE FUNCTION &&UpdateCachedHistoryObjects&&(tableName text, oldObject text, newObject text) RETURNS void
+          AS $$
+          BEGIN
+	          EXECUTE 'UPDATE ' || tableName || ' SET &&Object&& = ''' || newObject || ''' WHERE &&Object&& = ''' || oldObject || ''';';
+	          UPDATE &&HistoryObjectObserver&& SET &&Parent&& = newObject WHERE &&Parent&& = oldObject;
+            UPDATE &&HistoryObjectObserver&& SET &&Child&& = newObject WHERE &&Child&& = oldObject;
+          END
+          $$
+          LANGUAGE plpgsql;
+        ]]>
+      </text>
+    </procedure>
+
+    <procedure name="DeleteHistoryObserversByType">
+      <mappings>
+        <hibernate-mapping xmlns="urn:nhibernate-mapping-2.2">
+          <sql-query name="DeleteHistoryObserversByType">
+            <query-param name="likeCondition" type="System.String" />
+            <![CDATA[
+              DELETE FROM &&HistoryObjectObserver&& hoo
+              WHERE &&Parent&& LIKE :likeCondition
+              OR &&Child&& LIKE :likeCondition
+              RETURNING hoo.&&Parent&&;
+            ]]>
+          </sql-query>
+        </hibernate-mapping>
+      </mappings>
+      <text></text>
+    </procedure>
+
+    <procedure name="GetHistoryUpdateQueueItems">
+      <mappings>
+        <hibernate-mapping xmlns="urn:nhibernate-mapping-2.2">
+          <sql-query name="GetHistoryUpdateQueueItems">
+            <query-param name="serverConnectionUid" type="System.Guid" />
+            <query-param name="currentTimestamp" type="System.DateTime" />
+            <query-param name="count" type="System.Int32" />
+            <query-param name="attemptLength" type="System.Int32" />
+            <![CDATA[
+            WITH cte AS
+            (
+              SELECT * 
+              FROM &&HistoryUpdateQueueItem&& h
+              WHERE &&ServerConnectionUid&& IS NULL
+                AND &&Attempt&& < :attemptLength
+                AND &&NextUpdateDate&& <= :currentTimestamp
+	            ORDER BY &&Attempt&& DESC, &&CreationDate&& ASC
+              LIMIT :count
+              FOR UPDATE SKIP LOCKED
+            )
+            UPDATE &&HistoryUpdateQueueItem&& huqi SET &&ServerConnectionUid&& = :serverConnectionUid, &&LastUpdateDate&& = :currentTimestamp
+            FROM cte WHERE huqi.&&Id&& = cte.&&Id&&
+            RETURNING cte.*
+            ]]>
+          </sql-query>
+        </hibernate-mapping>
+      </mappings>
+      <text></text>
+    </procedure>
+
+    <procedure name="ReleaseHistoryUpdateQueueItems">
+      <mappings>
+        <hibernate-mapping xmlns="urn:nhibernate-mapping-2.2">
+          <sql-query name="ReleaseHistoryUpdateQueueItems" >
+            <query-param name="serverConnectionUid" type="System.Guid" />
+            <![CDATA[
+            WITH cte AS
+            (
+              SELECT &&Id&& 
+              FROM &&HistoryUpdateQueueItem&& 
+              WHERE &&ServerConnectionUid&& = :serverConnectionUid
+              FOR UPDATE SKIP LOCKED
+            )
+            UPDATE &&HistoryUpdateQueueItem&& huqi SET &&ServerConnectionUid&& = null 
+            FROM cte 
+            WHERE huqi.&&Id&& = cte.&&Id&&
+            ]]>
+          </sql-query>
+        </hibernate-mapping>
+      </mappings>
+      <text></text>
+    </procedure>
+
+    <procedure name="HistoryObjectObserversUpsert">
+      <mappings>
+        <hibernate-mapping xmlns="urn:nhibernate-mapping-2.2">
+          <sql-query name="HistoryObjectObserversUpsert" >
+            <query-param name="tvp" type="System.String" />
+            SELECT HistoryObjectObserversUpsert (:tvp)
+          </sql-query>
+        </hibernate-mapping>
+      </mappings>
+      <text>
+        <![CDATA[
+          CREATE OR REPLACE FUNCTION &&HistoryObjectObserversUpsert&&(tvp json) RETURNS void
+            AS $$
+            DECLARE
+	            tvpTable &&HistoryObjectObserverTableType&&[];
+            BEGIN
+              SELECT array_agg(dataTable::&&HistoryObjectObserverTableType&&)
+              FROM json_populate_recordset(null::&&HistoryObjectObserverTableType&&, tvp) AS dataTable
+	            INTO tvpTable;
+              
+	            INSERT INTO &&HistoryObjectObserver&& (&&Parent&&, &&Child&&)
+	            SELECT &&Parent&&, &&Child&&
+	            FROM unnest(tvpTable) AS tvpTable
+	            WHERE NOT EXISTS (SELECT 1 FROM &&HistoryObjectObserver&& WHERE &&Parent&& = tvpTable.&&Parent&& AND &&Child&& = tvpTable.&&Child&& FOR UPDATE SKIP LOCKED);
+            END
+            $$
+            LANGUAGE plpgsql;
+        ]]>
+      </text>
+    </procedure>
+    
+    <procedure name="HistoryObjectsUpsert">
+      <mappings>
+        <hibernate-mapping xmlns="urn:nhibernate-mapping-2.2">
+          <sql-query name="HistoryObjectsUpsert" >
+            <query-param name="tableName" type="System.String" />
+            <query-param name="tvp" type="System.String" />
+            SELECT HistoryObjectsUpsert(:tableName, :tvp)
+          </sql-query>
+        </hibernate-mapping>
+      </mappings>
+      <text>
+        <![CDATA[
+            CREATE OR REPLACE FUNCTION &&HistoryObjectsUpsert&&(tableName text, tvp json) RETURNS void
+            AS $$
+            DECLARE
+	            tvpTable &&HistoryObjectTableType&&[];
+            BEGIN
+	            SELECT array_agg(dataTable::&&HistoryObjectTableType&&)
+              FROM json_populate_recordset(null::&&HistoryObjectTableType&&, tvp) AS dataTable
+	            INTO tvpTable;
+
+	            EXECUTE 'INSERT INTO ' || tableName ||
+              ' (&&Id&&, &&Uid&&, &&Object&&, &&Model&&, &&ActionDate&&, &&ActionTypeUid&&, &&CreationAuthor&&, &&EventArgsUid&&, &&SessionUid&&, &&UnitOfWorkUid&&, &&IsRelatedevent&&)
+	            SELECT &&Id&&, &&Uid&&, &&Object&&, &&Model&&, &&ActionDate&&, &&ActionTypeUid&&, &&CreationAuthor&&, &&EventArgsUid&&, &&SessionUid&&, &&UnitOfWorkUid&&, (&&IsRelatedEvent&&::int)::smallint
+	            FROM unnest($1) AS tvpTable
+	            WHERE NOT EXISTS (SELECT 1 FROM ' || tableName || ' WHERE &&Id&& = tvpTable.&&Id&& FOR UPDATE SKIP LOCKED);' USING tvpTable;
+            END
+            $$
+            LANGUAGE plpgsql;
+        ]]>
+      </text>
+    </procedure>
+
+    <procedure name="HistoryUpdateQueueItemsUpsert">
+      <mappings>
+        <hibernate-mapping xmlns="urn:nhibernate-mapping-2.2">
+          <sql-query name="HistoryUpdateQueueItemsUpsert" >
+            <query-param name="tvp" type="System.String" />
+            SELECT HistoryUpdateQueueItemsUpsert(:tvp)
+          </sql-query>
+        </hibernate-mapping>
+      </mappings>
+      <text>
+        <![CDATA[
+            CREATE OR REPLACE FUNCTION &&HistoryUpdateQueueItemsUpsert&&(tvp json) RETURNS void
+            AS $$
+            DECLARE
+	            tvpTable &&HistoryUpdateQueueItemTableType&&[];
+            BEGIN
+	            SELECT array_agg(dataTable::&&HistoryUpdateQueueItemTableType&&)
+              FROM json_populate_recordset(null::&&HistoryUpdateQueueItemTableType&&, tvp) AS dataTable
+	            INTO tvpTable;
+
+	            INSERT INTO &&HistoryUpdateQueueItem&& 
+		            (&&Id&&, &&ObjectId&&, &&ObjectTypeUid&&, &&LastActionDate&&, &&DeleteRelated&&, &&CreationDate&&, &&Attempt&&, &&LastUpdateDate&&, &&NextUpdateDate&&, &&ServerConnectionUid&&)
+	            SELECT &&Id&&, &&ObjectId&&, &&ObjectTypeUid&&, NULL, (&&DeleteRelated&&::int)::smallint, &&CreationDate&&, 0, NULL, &&NextUpdateDate&&, NULL 
+	            FROM unnest(tvpTable) AS tvpTable
+	            WHERE NOT EXISTS (SELECT 1 FROM &&HistoryUpdateQueueItem&& WHERE &&ObjectId&& = tvpTable.&&ObjectId&& AND &&ObjectTypeUid&& = tvpTable.&&ObjectTypeUid&& FOR UPDATE SKIP LOCKED);
+            END
+            $$
+            LANGUAGE plpgsql;
+         ]]>
+      </text>
+    </procedure>
+    
+  </procedures>
+</root>

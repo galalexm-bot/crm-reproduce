@@ -1,0 +1,57 @@
+﻿@using EleWise.ELMA
+@model EleWise.ELMA.CRM.Web.Models.AddMarketingTagPopupViewModel
+@using (Html.JavascriptForm(Model.Id, "return false"))
+{
+    @Html.HiddenFor(m => m.Entity.Id)
+    using (Html.TableForm(EleWise.ELMA.Model.Views.ViewType.Edit))
+    {
+        @Html.EditableProperty(m => m.Entity.Name)
+    }
+    <div class="popup-buttons">
+        <input type="submit" class="confirm" onclick="@(Model.Prefix)_addMarketingTagOkClick()" value="@SR.Save" />
+        <input type="button" onclick="closeWindow('@(Model.PopupId)')" value="@SR.Cancel" />
+    </div>
+}
+
+<script type="text/javascript">
+    function @(Model.Prefix)_addMarketingTagOkClick()
+    {
+        elma.openPleaseWait(true);
+        $("#@(Model.Id)").validate();
+        if (!$("#@(Model.Id)").valid())
+        {
+            elma.closePleaseWait(true);
+            return;
+        }
+
+        var data;
+        if ($('#@(Model.JsonDataId)').val())
+            data = JSON.parse($('#@(Model.JsonDataId)').val());
+        else
+            data = [];
+            var minId = 0;
+            for (var i = 0; i < data.length; i++ ) {
+                if (data[i].Id < minId)
+                    minId = data[i].Id;
+            }
+            var tag = {
+                Id: minId - 1,
+				Name: elma.htmlEncode($('#@ViewData.TemplateInfo.GetFullHtmlFieldId("Entity.Name")').val())
+            };
+            data.push(tag);
+        
+        $('#@(Model.JsonDataId)').val(JSON.stringify(data));
+
+        var newTag = elma.filterButton.create({
+            attributes: {@Model.IdAttributeName: tag.Id },
+            text: tag.Name,
+            onclick: '@string.Format("elma.filterButton.closeIcon(event, {0}_deleteTag(this))", Model.Prefix)'
+        });
+        $('#@(Model.DicesId)').append(newTag);
+
+        @(Model.Prefix)_rebuildHiddenInputs(data);
+
+        closeWindow('@(Model.PopupId)');
+        elma.closePleaseWait(true);
+    }
+</script>

@@ -1,0 +1,86 @@
+﻿@using EleWise.ELMA.Calendar
+@using EleWise.ELMA
+@using EleWise.ELMA.Security
+@using EleWise.ELMA.Documents.Models
+@using EleWise.ELMA.CRM.Models
+@using EleWise.ELMA.Security.Audit
+@using EleWise.ELMA.Web.Mvc.ExtensionPoints
+@using EleWise.ELMA.Web.Mvc.Models.History
+@model ChangeAccessContractorHistoryModel
+@if (Model.Info != null) 
+{
+    <div class="history-type-action history-item-ext">
+        <div class="history-action-editvalues">
+            <div class="history-action-short-values">
+                @SR.T("Список изменений")
+            </div> 
+            @Html.RotatableArrow(true, new { @class = "history-action-arrow" })
+            <div class="history-action-all-values">
+                <table>
+                    <tr>
+                        <td>
+                            @RenderPermissionInfo(Model.Info.OldPermissionInfos)
+                        </td>
+                        <td style="padding: 5px 20px;">
+                            @Html.Image("#forward.svg", "")
+                        </td>
+                        <td>
+                            @RenderPermissionInfo(Model.Info.NewPermissionInfos)
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
+}
+
+@helper RenderPermissionInfo(IList<HistoryPermissionInfo> infos)
+{ 
+    <table>
+        @foreach (var info in infos)
+        {
+            object obj;
+            if (info.ObjectId == 0)
+            {
+                obj = "";
+                if (CommonRoleTypes.ParticipantWork.Id == info.RoleTypeUid)
+                {
+                    obj = CommonRoleTypes.ParticipantWork.Name;
+                }
+                else if (CommonRoleTypes.Informs.Id == info.RoleTypeUid)
+                {
+                    obj = CommonRoleTypes.Informs.Name;
+                }
+                else if (CommonRoleTypes.Responsible.Id == info.RoleTypeUid)
+                {
+                    obj = CommonRoleTypes.Responsible.Name;
+                }
+                else if (CommonRoleTypes.Author.Id == info.RoleTypeUid)
+                {
+                    obj = CommonRoleTypes.Author.Name;
+                }
+            }
+            else
+            {
+                obj = info.GetObject();
+            }
+            
+            var perm = info.GetPermission();
+            if (obj != null && perm != null)
+            {
+                <tr>
+                    <td class="history-item-changerow-caption">
+                        @obj
+                    </td>
+                    <td class="history-item-changerow-values">
+                        @SR.T(perm.Name)
+                        @if (info.PermissionId != EleWise.ELMA.CRM.CRMPermissionProvider.CRMContractorFullAccessPermission.Id && info.ManageAccess)
+                        {
+                            <span>(@SR.T("Выдача прав"))</span>
+                        }
+                    </td>
+                </tr>
+            }
+        }
+    </table>
+}

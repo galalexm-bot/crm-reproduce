@@ -1,0 +1,39 @@
+﻿@inherits RootViewItemControl<object, PanelViewItem>
+@using System.Runtime.InteropServices
+@using EleWise.ELMA.CRM.ViewItems
+@using EleWise.ELMA.Extensions
+@using EleWise.ELMA.Model.Views
+@using EleWise.ELMA.Web.Mvc.Views.ViewItem
+@using Telerik.Web.Mvc.UI.Html
+@using EleWise.ELMA.Web.Mvc.Models.Panels
+
+@if (ViewItem != null)
+{
+    if (ViewItem.Items.Count == 1
+        && ViewItem.Items[0] is ColumnsLayoutViewItem
+        && ((RootViewItem)ViewItem.Items[0]).Items.Count == 2)
+    {
+        <div class="general-info-container">
+            <div class="general-info-container-left">
+                @foreach (var viewItem in ((RootViewItem)ViewItem.Items[0]).Items[0].GetRenderItems())
+                {
+                    @Html.ViewItem(viewItem)
+                }
+            </div>
+            @using (Html.CollapsiblePanel(new CollapsiblePanel { Id = "RelationshipGeneralInfoRightPanel", Expanded = true, Class = "separator-gray general-info-container-right  ", SaveState = false, Header = SR.T("Дополнительно") }))
+            {
+                foreach (var viewItem in ((RootViewItem)ViewItem.Items[0]).Items[1].GetRenderItems())
+                {
+                    @Html.ViewItem(viewItem)
+                }
+            }
+        </div>
+    }
+    else
+    {
+        foreach (var viewItem in ViewItem.GetRenderItems())
+        {
+            @Html.ViewItem(viewItem)
+        }
+    }
+}

@@ -1,0 +1,20 @@
+﻿@inherits TabCaptionViewItemControl<IContractor, TabViewItem>
+@using EleWise.ELMA
+@using EleWise.ELMA.CRM.Managers
+@using EleWise.ELMA.CRM.Models
+@using EleWise.ELMA.Model.Services
+@using EleWise.ELMA.Model.Views
+@using EleWise.ELMA.Tasks.Managers
+@using EleWise.ELMA.Web.Mvc.Views.ViewItem
+
+@if (ViewItem != null && Model != null)
+{
+    var taskFilter = EleWise.ELMA.CRM.Web.Controllers.TaskController.CreateFilter();
+    taskFilter.Contractor = Model;
+    Counter = TaskBaseManager.Instance.Count(taskFilter);
+    @(ViewItem.Caption ?? SR.T("Задачи"))
+}
+else
+{
+    @SR.T("Задачи")
+}

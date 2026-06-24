@@ -1,0 +1,53 @@
+﻿@using EleWise.ELMA.Web.Mvc.Models.History
+@using EleWise.ELMA.CRM.Web.Models
+@model EleWise.ELMA.CRM.Models.RelationshipChangesHistoryModel
+
+@{
+    var changedCount = Model.ChangedProperties != null ? Model.ChangedProperties.Count(p => !Model.BaseProperties.Contains(p.Uid)) : 0;
+    var eventUsersChanged = Model.NewEventUsers != null && Model.NewEventUsers.Count > 0 || Model.OldEventUsers != null && Model.OldEventUsers.Count > 0;
+    if (eventUsersChanged)
+    {
+        changedCount++;
+    }
+}
+
+@if (Model.OldEntity != null && Model.NewEntity != null && changedCount > 0)
+{
+    <div class="history-type-action history-item-ext">
+        <div class="history-action-editvalues">
+            <div class="history-action-short-values">
+                @EleWise.ELMA.SR.T("Всего изменено свойств:") <b>@changedCount</b>
+            </div>
+            @Html.RotatableArrow(true, new { @class = "history-action-arrow" })
+            <div class="history-action-all-values">
+                @Html.Partial("HistoryParts/RelationshipEditedProperties", new EleWise.ELMA.CRM.Web.Models.RelationshipEditedPropertiesModel { NewEntity = Model.NewEntity, OldEntity = Model.OldEntity, ChangedProperties = Model.ChangedProperties, BaseProperties = Model.BaseProperties })
+                
+                @if (eventUsersChanged)
+                {
+                    <table>
+                        <tr>
+                            <td class="history-item-changerow-caption">
+                                @EleWise.ELMA.SR.T("Участники")
+                            </td>
+                            <td class="history-item-changerow-values">
+                                @{
+                                    if (Model.OldEventUsers.Count > 0)
+                                    {
+                                        @EleWise.ELMA.SR.T("Удалены")
+                                        @MvcHtmlString.Create(": " + string.Join(", ", Model.OldEventUsers.Select(u => @Html.DisplayValue(u))))
+                                        <br />
+                                    }
+                                    if (Model.NewEventUsers.Count > 0)
+                                    {
+                                        @EleWise.ELMA.SR.T("Добавлены")
+                                        @MvcHtmlString.Create(": " + string.Join(", ", Model.NewEventUsers.Select(u => @Html.DisplayValue(u))))
+                                    }
+                                }
+                            </td>
+                        </tr>
+                    </table>
+                }
+            </div>
+        </div>
+    </div>
+}

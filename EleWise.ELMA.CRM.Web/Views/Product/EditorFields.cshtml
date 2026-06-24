@@ -1,0 +1,17 @@
+﻿@using EleWise.ELMA.CRM.Web.Components
+@using EleWise.ELMA
+@model EleWise.ELMA.CRM.Web.Models.ProductViewModel
+<script type="text/javascript">
+$("input").change(
+    function ()
+      {
+        if ($("input[id$='Entity_IsGroup_yes']").is(':checked')) {
+            $("tr[id$='Entity_Price_Container']").hide();
+            $("input[id$='Entity_Price']").last().val("");
+            $("div[class$='t-formatted-value']").last().text("");
+        } else {
+            $("tr[id$='Entity_Price_Container']").show();
+        }
+    });
+</script>
+@Html.Partial("EditForm")

@@ -1,0 +1,17 @@
+﻿@using EleWise.ELMA
+@using EleWise.ELMA.CRM.Web.Models
+@using EleWise.ELMA.Model.Types.Settings
+@model InpaymentChangeDateModel
+
+@Html.Hidden("InpaymentId")
+@using (Html.TableForm(EleWise.ELMA.Model.Views.ViewType.Edit))
+{
+    <tr>
+        <td class="captionCell">@Model.Name</td>
+        <td>@Html.Editor(x => x.Value, a => a.TypeSettings = new DateTimeSettings {SetCurrentDate = true, ShowTime = false})</td>
+    </tr>
+}
+<div class="popup-buttons">
+    <input type="button" class="confirm" value="@SR.Save" onclick="@(Model.OnClick)"/>
+    <input type="button" value="@SR.Cancel" onclick="closeWindow(this)"/>
+</div>

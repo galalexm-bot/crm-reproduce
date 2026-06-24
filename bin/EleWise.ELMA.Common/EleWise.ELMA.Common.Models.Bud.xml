@@ -1,0 +1,12 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<FormViewItem xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <Name>DisplayForm</Name>
+  <Uid>99f883e1-a913-4f65-88ba-f399081848de</Uid>
+  <Items>
+    <ViewItem xsi:type="DefaultContainerViewItem">
+      <Name>DefaultContainer1</Name>
+    </ViewItem>
+  </Items>
+  <DisplayName>Display</DisplayName>
+  <ReadOnly>true</ReadOnly>
+</FormViewItem>

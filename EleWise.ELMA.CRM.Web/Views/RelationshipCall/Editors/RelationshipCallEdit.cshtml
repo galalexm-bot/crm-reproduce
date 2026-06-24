@@ -1,0 +1,22 @@
+﻿@model EleWise.ELMA.CRM.Web.Models.RelationshipCallModel
+@using EleWise.ELMA
+@using EleWise.ELMA.CRM.Managers
+@using EleWise.ELMA.Model.Types.Settings
+@using EleWise.ELMA.CRM.Web.Models
+@using EleWise.ELMA.CRM.Web
+@using EleWise.ELMA.Web.Mvc.Html.Forms
+
+@{ 
+    var formId = ((string)ViewData["FormId"]) ?? HtmlExtensions.GLOBALFORMID;
+    if(Model.DynamicFormSettings != null)
+    {
+        Model.DynamicFormSettings.FormId = formId;
+    }
+}
+
+@using (Html.ElmaForm(formId, confirmOnClose: true))
+{
+    <div class="general-form-container">
+        @Html.Partial("RelationshipCall/RelationshipCallEditForm")
+    </div>
+}

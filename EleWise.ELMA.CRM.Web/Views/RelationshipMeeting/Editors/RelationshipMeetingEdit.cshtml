@@ -1,0 +1,25 @@
+﻿@model EleWise.ELMA.CRM.Web.Models.RelationshipMeetingModel
+@using EleWise.ELMA
+
+@{ 
+    Html.RegisterScriptSrc(Html.Url().Content("~/Modules/EleWise.ELMA.BPM.Web.Calendar/Scripts/ELMA.Calendar.js"));
+    var formId = ((string)ViewData["FormId"]) ?? HtmlExtensions.GLOBALFORMID;
+    if (Model.DynamicFormSettings != null)
+    {
+        Model.DynamicFormSettings.FormId = formId;
+    }
+}
+
+@(Html.Toolbar()
+    .Group("toolbar-group-1")
+        .If(Model.SchedulesList.Any(), b => b
+            .ToolbarClick(SR.T("Общие календари"), SR.T("Показать/Скрыть общие календари"),
+                "#calendar.svg", "$(this).toggleClass('active'); $('#trSchedules').toggle($(this).hasClass('active'))",
+                @checked: Model.ShowSchedules, itemUid: "toolbar-click-ToggleCommonCalendars")))
+
+@using (Html.ElmaForm(formId, confirmOnClose: true))
+{
+    <div class="general-form-container">
+        @Html.Partial("RelationshipMeeting/RelationshipMeetingEditForm")
+    </div>
+}

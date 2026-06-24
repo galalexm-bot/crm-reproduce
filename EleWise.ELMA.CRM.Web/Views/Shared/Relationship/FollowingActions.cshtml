@@ -1,0 +1,54 @@
+﻿@using EleWise.ELMA
+@using EleWise.ELMA.CRM.Web
+@using EleWise.ELMA.Web.Mvc.Html
+@{
+    var form = ViewData["SubmitFormName"];
+    var leadConvertItem = (bool?) ViewData["LeadConvertItem"] ?? false;
+    var createSaleItem = (bool?)ViewData["CreateSaleItem"] ?? false;
+    var format = "elma.openPleaseWait(); $('#Mode').val({0}); $('#{1}').submit();";
+}
+<div>@SR.T("Дальнейшие действия")</div>
+<div class="base-element-margin-top">
+    <div class="base-element-margin-bottom">
+        @Html.Button().Text(SR.T("Добавить звонок")).IconUrl(UIIcons.Add).Click(string.Format(format, 1, form)).AsLink()
+        <div class="comment">
+            @SR.T("Выполнить взаимоотношение и создать новый звонок")
+        </div>
+    </div>
+    <div class="base-element-margin-bottom">
+        @Html.Button().Text(SR.T("Добавить встречу")).IconUrl("#users.svg").Click(string.Format(format, 2, form)).AsLink()
+        <div class="comment">
+            @SR.T("Выполнить взаимоотношение и создать новую встречу")
+        </div>
+    </div>
+    <div class="base-element-margin-bottom">
+        @Html.Button().Text(SR.T("Добавить письмо")).IconUrl("#add_message.svg").Click(string.Format(format, 3, form)).AsLink()
+        <div class="comment">
+            @SR.T("Выполнить взаимоотношение и наметить написание письма")
+        </div>
+    </div>
+    @if (createSaleItem)
+    {
+        <div class="base-element-margin-bottom">
+            @Html.Button().Text(SR.T("Добавить сделку")).IconUrl("#sale.svg").Click(string.Format(format, 4, form)).AsLink()
+            <div class="comment">
+                @SR.T("Выполнить взаимоотношение и создать сделку")
+            </div>
+        </div>
+    }
+    @if (leadConvertItem)
+    {
+        <div class="base-element-margin-bottom">
+            @Html.Button().Text(SR.T("Конвертировать")).Click(string.Format(format, 5, form)).AsLink()
+            <div class="comment">
+                @SR.T("Выполнить взаимоотношение и конвертировать")
+            </div>
+        </div>
+    }       
+    <div class="base-element-margin-bottom">
+        @Html.Button().Text(SR.Close).IconUrl("#close_outline.svg").Click(string.Format("elma.openPleaseWait(); $('#{0}').submit();", form)).AsLink()
+        <div class="comment">
+            @SR.T("Закрыть взаимоотношение")
+        </div>
+    </div>
+</div>

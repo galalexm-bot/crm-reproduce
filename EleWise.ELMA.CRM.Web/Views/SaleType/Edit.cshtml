@@ -1,0 +1,34 @@
+﻿@using EleWise.ELMA;
+@using EleWise.ELMA.CRM.Models
+@using EleWise.ELMA.CRM.Web
+@using CommonHtmlExtensions = EleWise.ELMA.BPM.Web.Common.Extensions.HtmlExtensions
+@model ISaleType
+
+@{    
+    Html.Title(SR.T("Тип сделки"));
+    var indexUrl = Url.Action("Index", "SaleType", new {area = CRMAreaRegistration.AREA_NAME});
+    var button = Html.Button().Url(indexUrl).Text(SR.T("Тип сделки"));
+    Html.RenderInZone("Header", d => CommonHtmlExtensions.GetCatalogHeaderEditBreadcrumbs(Html, button, Model.IsNew()));
+
+    Html.Toolbar().Group("toolbar-group-1")
+        .ToolbarSubmit(SR.Save, "#save.svg", itemUid: "ToolbarSubmitEditCatalogItem")
+        .ToolbarButton(new ActionToolbarItem("CancelAddCatalogRecord")
+                           {
+                               Text = SR.Cancel,
+                               IconUrl = "#close_outline.svg",
+                               Url = indexUrl,
+                           });
+}
+<div class="general-form-container">
+@using (Html.ElmaForm(routeValues: new { action = "Save", controller = "SaleType", area = CRMAreaRegistration.AREA_NAME }))
+{
+    @Html.HiddenFor(m => m.Id)
+    using (Html.TableForm(EleWise.ELMA.Model.Views.ViewType.Edit))
+    {
+        @Html.EditableProperty(m => m.Name)
+        @Html.EditableProperty(m => m.SaleFunnel)
+        @Html.ExtensionZone("EleWise.ELMA.CRM.Workflow.Processes.Web.WorkflowHeadSaleType")
+    }
+}
+</div>
+    

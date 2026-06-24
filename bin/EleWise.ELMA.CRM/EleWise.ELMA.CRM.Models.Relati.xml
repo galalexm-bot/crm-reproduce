@@ -1,0 +1,100 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<FormViewItem xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <Name>LeadConverterForm</Name>
+  <Uid>d371feec-2404-477d-8020-beabec93b145</Uid>
+  <Items>
+    <RootViewItem xsi:type="ColumnsLayoutViewItem">
+      <Name>ColumnsLayout1</Name>
+      <Uid>0a8cb0cf-639a-4798-9ced-94bcd034fa15</Uid>
+      <Items>
+        <RootViewItem xsi:type="ColumnViewItem">
+          <Name>Column1</Name>
+          <Uid>89c7487b-7def-4508-a31d-3a9c82a113c2</Uid>
+          <Items>
+            <RootViewItem xsi:type="PropertyViewItem">
+              <Name>Property1</Name>
+              <Uid>8fce5300-4c98-41c6-9021-582029f9ada7</Uid>
+              <Property>ae9cb006-2754-4c1e-8bcc-08c4564abac0</Property>
+              <Attributes />
+            </RootViewItem>
+            <RootViewItem xsi:type="RelationshipParticipantsViewItem">
+              <Name>RelationshipParticipants1</Name>
+              <Uid>ed9016e3-a5f3-445b-a535-28dd7c9d2fdd</Uid>
+              <Property>00000000-0000-0000-0000-000000000000</Property>
+              <Attributes>
+                <Name>Участники</Name>
+                <Description />
+              </Attributes>
+            </RootViewItem>
+            <RootViewItem xsi:type="RelationshipInformToViewItem">
+              <Name>RelationshipInformTo1</Name>
+              <Uid>c8907302-7dca-4714-a006-0345f437ee1d</Uid>
+              <Property>00000000-0000-0000-0000-000000000000</Property>
+              <Attributes>
+                <Name>Информировать</Name>
+                <Description />
+              </Attributes>
+            </RootViewItem>
+            <RootViewItem xsi:type="PropertyViewItem">
+              <Name>Property2</Name>
+              <Uid>5b4bdf2f-5d97-44e9-8eca-2b1acaa27611</Uid>
+              <Property>7fed75fd-4596-4bde-9d21-3ef9a5430c3d</Property>
+              <Attributes>
+                <Name>Дата</Name>
+                <Description />
+              </Attributes>
+            </RootViewItem>
+            <RootViewItem xsi:type="PropertyViewItem">
+              <Name>Property3</Name>
+              <Uid>142d8f60-5630-4ca5-9025-34a82572d212</Uid>
+              <Property>e7d67fed-af03-42bc-9854-bc9a9150914c</Property>
+              <Attributes />
+            </RootViewItem>
+            <RootViewItem xsi:type="RelationshipIsPrivateViewItem">
+              <Name>RelationshipIsPrivate1</Name>
+              <Uid>68da7851-bffd-4569-94c7-dd61a6bd4095</Uid>
+              <Property>f0c97ee0-1a77-4b56-9153-a22d83ad9c24</Property>
+              <Attributes>
+                <Name>Конфедициально</Name>
+              </Attributes>
+            </RootViewItem>
+            <RootViewItem xsi:type="RelationshipLinkedEntityViewItem">
+              <Name>RelationshipLinkedEntity1</Name>
+              <Uid>c73ae39b-a020-4117-b865-d97008f4556a</Uid>
+              <Property>00000000-0000-0000-0000-000000000000</Property>
+              <Attributes>
+                <Name>Кому</Name>
+                <Description />
+              </Attributes>
+            </RootViewItem>
+            <RootViewItem xsi:type="RelationshipIntervalViewItem">
+              <Name>RelationshipInterval1</Name>
+              <Uid>aa79c627-0349-4b0e-b91c-c4f78eac9718</Uid>
+              <Property>00000000-0000-0000-0000-000000000000</Property>
+              <Attributes>
+                <Name>Период</Name>
+                <Description />
+              </Attributes>
+            </RootViewItem>
+            <RootViewItem xsi:type="PropertyViewItem">
+              <Name>Property5</Name>
+              <Uid>d06dd4a9-b2dd-449b-98a4-2a7fd22d6be6</Uid>
+              <Property>ea005438-f63d-4093-b828-63b4e81f8c57</Property>
+              <Attributes />
+            </RootViewItem>
+            <ViewItem xsi:type="DefaultContainerViewItem">
+              <Name>DefaultContainer1</Name>
+            </ViewItem>
+            <RootViewItem xsi:type="PropertyViewItem">
+              <Name>Property6</Name>
+              <Uid>2e4d6f99-91b3-4c6e-a5b3-b44639d5e419</Uid>
+              <Property>099d27da-e0ec-49a2-8354-f048ab02b68b</Property>
+              <Attributes />
+            </RootViewItem>
+          </Items>
+        </RootViewItem>
+      </Items>
+    </RootViewItem>
+  </Items>
+  <DisplayName>Создание для конвертации лида (строго runtime v1)</DisplayName>
+</FormViewItem>

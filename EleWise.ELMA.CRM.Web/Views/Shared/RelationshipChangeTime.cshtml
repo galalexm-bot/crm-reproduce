@@ -1,0 +1,143 @@
+﻿@model RelationshipChangeTimeModel
+@using EleWise.ELMA.CRM.Managers
+@using EleWise.ELMA.CRM.Web.Models
+@using EleWise.ELMA
+@using EleWise.ELMA.Helpers
+
+@{
+    var currentDateTimeFormat = DateTimeFormatHelper.GetCurrentFullFormat();
+    Html.RegisterContent("ChangeTime_CheckTimePeriod",
+        @<text>    
+             <script type="text/javascript">
+                 function changetime_getEndDate(startDate) {
+                     var endDate = new Date(startDate);
+                     endDate.setMinutes(endDate.getMinutes() + @(RelationshipManager.GetDefaultDurationByEntityTypeUid(Model.EntityTypeUid)));
+                     return endDate;
+                 }
+
+                 function changetime_checkEventTimePeriod() {
+                     $("#@(Model.PopupId)Form").validate();
+                     if (!$("#@(Model.PopupId)Form").valid())
+                         return;
+                     var start = $("#@(Model.PopupId)_StartDate").val();
+                     if (start != undefined) {
+                         var startDate = $.telerik.datetime.parse({ value: start, format: "@(currentDateTimeFormat)" }).value;
+                         var endDate = changetime_getEndDate(startDate);
+                         if (startDate >= endDate) {
+                             jAlert("@(SR.T("Время начала события позже времени окончания!"))", "@(SR.T("Неверное время начала события"))");
+                             return;
+                         }
+                         var today = new Date();
+                         if (endDate < today) {
+                             jConfirm("@(SR.T("Событие назначено на прошедшее время. Продолжить сохранение?"))", "@(SR.T("Подтвердите время"))", function(r) {
+                                 if (r) {
+                                     changetime_checkCrossedEvents(startDate, endDate);
+                                 }
+                             });
+                         } else {
+                             changetime_checkCrossedEvents(startDate, endDate);
+                         }
+                     } else {
+                         // перед отправкой запишем значения
+                         $("#@(Model.PopupId)Form #StartDate").val($("#@(Model.PopupId)_StartDate").val());
+                         $("#@(Model.PopupId)Form").submit();
+                     }
+                 }
+
+                 function changetime_checkCrossedEvents(startDate, endDate) {
+                     var model = {
+                         StartDate: startDate,
+                         EndDate: endDate,
+                         CurrentId: ($("#@(Html.IDFor(m => m.EntityId))").length > 0 ? $("#@(Html.IDFor(m => m.EntityId))").val() : null),
+                         CurrentTypeUid: "@Model.EntityTypeUid",
+                         UserIds: null,
+                         ScheduleIds: null,
+                         SubmitForm: "@(Model.PopupId)Form",
+                         OnSubmitScript: "changetime_selectNewTime(this);",
+                     };
+
+                     // перед отправкой запишем значения
+                     $("#@(Model.PopupId)Form #StartDate").val($("#@(Model.PopupId)_StartDate").val());
+
+                     var url = '@(Url.Action("CrossingEvents", "Event", new {area = EleWise.ELMA.BPM.Web.Calendar.CalendarAreaRegistration.AREA_NAME}))';
+                     elma.openPleaseWait(true);
+                     $.post(url, { model: $.toJSON(model) }, function(data, textStatus) {
+                         if (data == "") {
+                             $("#@(Model.PopupId)Form").submit();
+                         } else {
+                             $(".elma-window-content", $("#CrossedEventsWindow")).html(data);
+                             elma.closePleaseWait(false);
+                             @(Html.OpenPopup("CrossedEventsWindow"))
+                         }
+                     }, "html");
+                 }
+
+                 function changetime_selectNewTime(button) {
+                     var selector = $(button).closest("#CrossedEventsWindow").find('form .t-state-selected');
+                     var newStartDate = selector.attr('startdate');
+                     var newEndDate = selector.attr('enddate');
+                     if (newStartDate && newEndDate) {
+                        var startDateInput = $("#@(Model.PopupId)Form #StartDate").val(newStartDate);
+                        var endDateInput = $("#@(Model.PopupId)Form #EndDate").val(newEndDate);
+                     }
+                 }
+
+                 $(function() {
+                     jQuery.validator.addMethod("needStartDate", function(value, element) {
+                         var date = $("#@(Model.PopupId)_StartDate_date").val();
+                         var time = $("#@(Model.PopupId)_StartDate_time").val();
+                         var wholeDay = $('#@(Model.PopupId)Form #WholeDay').is(':checked');
+                         return date !== undefined && date && (wholeDay || time !== undefined && time);
+                     });
+                 });
+
+                 $(document).ready(function() {
+                     elma.ValidationRulesManager.addRule('@(ViewData.TemplateInfo.GetFullHtmlFieldId(Model.PopupId + ".StartDate"))', 'add', {
+                         needStartDate: true,
+                         messages: {
+                             needStartDate: '@SR.T("Заполните обязательное поле")'
+                         }
+                     });
+                 });
+             </script>
+         </text>);
+}
+
+@(Html.PopupWindow("CrossedEventsWindow", SR.T("Найдены пересечения"), @<text><div class="elma-window-content" style="min-width: 650px;"></div>></text>))
+
+@using (Html.ModelForm(Model))
+{
+    @Html.HiddenFor(m => m.RedirectUrl)
+    @Html.HiddenFor(m => m.EntityId)
+    @Html.ModernHidden(m => m.StartDate)
+
+    <table class="table-form">
+        @{
+            // редактор времени будет с другим префиксом, чтобы работала связь между контролами выбора даты/времени и скрытым полем
+            var oldHtmlPrefix = ViewData.TemplateInfo.HtmlFieldPrefix;
+            ViewData.TemplateInfo.HtmlFieldPrefix = Model.PopupId;
+        }        
+        <tr>
+            <td style="width: 125px;">
+                @SR.T("Дата начала")
+            </td>
+            <td>@Html.Editor(m => m.StartDate)
+            </td>
+        </tr>
+        @{
+            ViewData.TemplateInfo.HtmlFieldPrefix = oldHtmlPrefix;
+        }
+        <tr>
+            <td colspan="2" style="padding-bottom: 0">
+                @SR.T("Комментарий")
+                <div style="padding-top: 5px;">
+                    @Html.TextAreaFor(m => m.Comment, new {style = "height:160px;width:100%;width:400px;", @class = "text-box"})
+                </div>
+            </td>
+        </tr>
+    </table>
+    <div class="popup-buttons">
+        <input type="button" class="confirm" value="@SR.T("Изменить")" onclick=" changetime_checkEventTimePeriod(); " />
+        <input type="button" value="@SR.Cancel" onclick="@Html.ClosePopup(Model.PopupId)" />
+    </div>
+}

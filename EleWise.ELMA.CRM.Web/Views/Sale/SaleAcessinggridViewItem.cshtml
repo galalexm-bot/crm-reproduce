@@ -1,0 +1,10 @@
+﻿@using EleWise.ELMA.CRM.Models
+@using EleWise.ELMA.CRM.Web
+@model EleWise.ELMA.CRM.Web.Models.SaleModel
+
+
+
+@if (Model != null)
+{
+    @Html.Action("PermissionSettings", "Sale", new { area = CRMAreaRegistration.AREA_NAME, id = Model.Entity.Id });
+}

@@ -1,0 +1,30 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<root uid="{08A021DC-05DA-49E2-9724-265B5D8FB825}">
+
+  <methods>
+    <method ExecuteTime="OnTablesCreated" AlwaysExecute="true" name="CreateFeedTable" />
+    <method ExecuteTime="OnTablesCreated" AlwaysExecute="true" name="CreateFeedArchiveTable" />
+    <method ExecuteTime="OnTablesCreated" AlwaysExecute="true" name="CreateFavoriteTable" />
+    <method ExecuteTime="OnTablesCreated" AlwaysExecute="true" name="CreateDataInfoTable" />
+  </methods>
+
+  <indexes>
+    <index name="IX_Feed_Id" unique="true" tableName="Feed" columns="Id"/>
+    <index name="IX_Feed_ParentRecipient" tableName="Feed" columns="ParentObjectId, ParentObjectUid, Recipient"/>
+    <index name="IX_Feed_ActionObject" tableName="Feed" columns="ActionObjectId, ActionObjectUid"/>
+    <index name="IX_Feed_HasUnreadChild" tableName="Feed" columns="HasUnreadChild"/>
+    <index name="IX_Feed_Priority" tableName="Feed" columns="Priority"/>
+    <index name="IX_FeedArchive_Object" tableName="FeedArchive" columns="ParentObjectId, ParentObjectUid, Recipient"/>
+    <index name="IX_FeedArchive_Id_Object" tableName="FeedArchive" columns="Id, ParentObjectId, ParentObjectUid, Recipient"/>
+    <index name="IX_FeedFavorite_MessageObject" unique="true" tableName="FeedFavorite" columns="ActionObjectId, ActionObjectUid, Recipient"/>
+    <index name="IX_FeedInfo_MessageObject" tableName="FeedInfo" columns="ActionObjectId, ActionObjectUid, Recipient"/>
+    <index name="IX_MessageException_OUOA" tableName="MessageException" columns="ObjectUid, ActionUid" />
+    <index name="IX_MessageException_CHU" tableName="MessageException" columns="ChannelUid" />
+    <index name="IX_InformationChannel_SD" tableName="InformationChannel" columns="IsSubscriptionManagementDenied" />
+    <index name="IX_InformationChannel_G" tableName="InformationChannel" columns="GroupUid" />
+    <index name="IX_InformationChannel_IAC" tableName="InformationChannel" columns="IsActive" />
+    <index name="IX_InformationChannel_IARCH" tableName="InformationChannel" columns="IsArchive" />
+    <index name="IX_DiscussionObject_OIOT" tableName="DiscussionObject" columns="ObjectId, ObjectType" />
+  </indexes>
+  
+</root>

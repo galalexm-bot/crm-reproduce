@@ -1,0 +1,246 @@
+﻿@model CrmCustomPermissionsModel
+@using EleWise.ELMA
+@using EleWise.ELMA.BPM.Web.Security.Services
+@using EleWise.ELMA.CRM.Web.Models
+@using EleWise.ELMA.Security
+@using EleWise.ELMA.Services
+@using EleWise.ELMA.Web.Mvc.Models.Panels
+@using EleWise.ELMA.Web.Mvc.Html
+@using EleWise.ELMA.Web.Mvc.Html.EditableList
+@using EleWise.ELMA.BPM.Web.Security.Models
+@using System.Linq
+@using EleWise.ELMA.BPM.Web.Security.Code
+
+@{
+    var id = Model.Category.Id;
+    var name = id + Model.ModelType;
+    var addTemplate = "<td>{0}</td>" +
+
+    "<td><label class=\"input-label\"><input onclick='setPermissionCanRead(this, \"" + name + "\")' class='permission' name='CanRead' id='CanRead" + name + "' type='checkbox' /><span/></label></td>" +
+    "<td><label class=\"input-label\"><input onclick='setPermissionCanEdit(this, \"" + name + "\")' class='permission' name='CanEdit' id='CanEdit" + name + "' type='checkbox' /><span/></label></td>" + 
+    "<td>{1}</td>";
+}
+    @using (Html.ElmaForm(string.Format("{0}_{1}CategoryForm", Model.Category.Id, Model.ModelType), new { action = "SetPermissionsCrmCategory", controller = "Security" }))
+    {
+        @Html.HiddenFor(m => m.Category.Id)
+        @Html.HiddenFor(m => m.ModelType, new { id = "modelType", name = "modelType" })
+        using (Html.CollapsiblePanel(new CollapsiblePanel { Id = "Category" + name, Header = SR.T(Model.Category.Name), LoadMode = DynamicLoadMode.Client, Class = "separator-gray", Expanded = false, SaveState = false }))
+        {
+            var editableList = Html.EditableList("CategoryMembers" + name)
+                .ListTemplate(
+                    @<text>
+                         <div class="t-grid">
+                             <table class="t-grid-table">
+                                 <thead class="t-grid-header">
+                                     <tr>
+                                         <th class="t-header">
+                                             <span class="t-header-content">@SR.T("Группа")</span>
+                                         </th>
+                                         <th class="t-header">
+                                             <span class="t-header-content">@SR.T("Чтение")</span>
+                                         </th>
+                                         <th class="t-header">
+                                             <span class="t-header-content">@SR.T("Редактирование")</span>
+                                         </th>
+                                     </tr>
+                                 </thead>
+                                 <tbody>
+                                     @item
+                                 </tbody>
+                             </table>
+                         </div>
+                    </text>)
+                .ItemTemplate(
+                    @<text>
+                        @{
+                            var objData = item.Item2.Value.FromJson<CrmPermissionData>();
+                            var data = Model.SelectedPermissionsData.FirstOrDefault(p => p.ObjectType == objData.ObjectType && p.Id == objData.Id);
+                            var checkedCanRead = data != null && data.CanRead;
+                            var checkedCanEdit = data != null && data.CanEdit;
+                            //var checkedFullAccess = data != null && data.FullAccess;
+                        }
+                             <td>
+                                 @item.Item1
+                             </td>
+                             <td>
+                                 @(Html.ModernCheckBox(false)
+                                     .Name("CanRead")
+                                     .Checked(checkedCanRead)
+                                     .Attributes(new { onclick = "setPermissionCanRead(this, '" + name + "')", @class = "permission", id = "CanRead" + name }))
+                             </td>
+                             <td>
+                                 @(Html.ModernCheckBox(false)
+                                     .Name("CanEdit")
+                                     .Checked(checkedCanEdit)
+                                     .Attributes(new { onclick = "setPermissionCanEdit(this, '" + name + "')", @class = "permission", id = "CanEdit" + name }))
+                             </td>
+                    </text>)
+                .Items(Model.AssignedRoleTypeModels.Select(a => new EditableListItem
+                    {
+                        Value = new
+                            {
+                                ObjectType = a.PermissionRoleType.Id,
+                                Id = a.Value != null ? a.Value.GetId() : null
+                            }.ToJson().ToString(),
+                        DisplayText = a.PermissionRoleType.Name,
+                        Content = Html.DisplayValue(a.Value),
+                        Description = a.PermissionRoleType.Name,
+                        Image = a.PermissionRoleType.Image ?? "#role.svg"
+                    }))
+                .AddTemplate(addTemplate)
+                .Edit(true);
+            <div style="padding: 10px 10px 10px 20px; background-color: #fff;">
+                @editableList.ToMvcHtmlString()
+                <div style="padding-top: 5px; padding-left: 5px" >
+                    @{
+                        var permissionsModelService = Locator.GetServiceNotNull<PermissionsModelService>();
+                        var permissionRoleTypeSelectorModel = new PermissionRoleTypeSelectorModel
+                                                                  {
+                                                                      PopupId = "CategoryMembersPopup",
+                                                                      Title = SR.T("Выбор участника"),
+                                                                      TypeRoles = new[] {CommonRoleTypes.Group},
+                                                                      SelectedTypeRole = CommonRoleTypes.Group,
+                                                                      ObjectId = "theCategoryId",
+                                                                      SubmitScript = "elma.appendFromPermissionPopup($('#CategoryMembersPopup_form #objectId').val())",
+                                                                      CreatePopup = true,
+                                                                      OrganizationTreeModel = permissionsModelService.CreateOrganizationTreeModel("CategoryMembersPopup"),
+                                                                      GroupsTreeModel = permissionsModelService.CreateGroupsModel("CategoryMembersPopup"),
+                                                                      ExtGroupsTreeModel = permissionsModelService.CreateExtGroupsModel("CategoryMembersPopup"),
+                                                                      UserModel = permissionsModelService.CreateUserModel("CategoryMembersPopup", Url)
+                                                                  };
+                        Html.RegisterContent("PermissionRoleTypeSelector_CategoryMembersPopup",
+                                             o => Html.PopupWindow(
+                                                 "CategoryMembersPopup",
+                                                 SR.T("Выбор участника"),
+                                                 @<text>
+                                                      @Html.Partial("Permission/PermissionTypeRoleSelectorPopup", permissionRoleTypeSelectorModel)
+                                                  </text>));
+                        var script = Html.OpenPopup("CategoryMembersPopup",
+                                                    string.Format("$(\\\'#CategoryMembersPopup_form #objectId\\\').val(\\\'CategoryMembers{0}{1}\\\');elma.SelectPermissionRadio(\\\'CategoryMembersPopup\\\',\\\'{2}\\\')",
+                                                                  Model.Category.Id,
+                                                                  Model.ModelType,
+                                                                  CommonRoleTypes.Group.Id));
+                    }
+                    @Html.ImageButton("#add.svg", SR.T("Добавить группу"), script.ToString(), null, new { style="padding-right: 5px;" }, SR.T("Добавить группу"))
+                    @Html.ImageButton("#save.svg", SR.T("Сохранить"), string.Format("submitForm({0}, '{1}');", Model.Category.Id, Model.ModelType), new { style = "vertical-align: text-top;" }, null, SR.T("Сохранить"))
+                </div>
+            </div>
+        }
+
+        <input type="submit" value="submit" name="CategoryForm+@(name)submit" style="display: none" />
+
+        <script type="text/javascript" language="javascript" >
+            $(window).load(function () {
+                setPermissionForControls('CanRead', '@name');
+                setPermissionForControls('CanEdit', '@name');
+                setPermissionForControls('FullAccess', '@name');
+            });
+        </script>
+
+        Html.RegisterContent("CrmPermissionsGrid_Scripts", @<text>
+<script type="text/javascript" language="javascript" >
+    function submitForm(id, type) {
+        var data = $('#CategoryMembers' + id + type + '_value');
+        data.attr('name', 'editableListModel_value');
+
+        $('#' + id + '_' + type + 'CategoryForm').submit();
+    }
+
+    function setPermissionForControls(controlsId, categoryId) {
+
+        var controls = $('input[id="' + controlsId + categoryId + '"]');
+        for (var i = 0; i < controls.length; i++) {
+            setPermission(controls[i], categoryId);
+        }
+    }
+
+    function setPermissionCanRead(control, categoryId) {
+        setPermission(control, categoryId);
+
+        if ($(control).prop('checked') != 'checked') {
+            var canEditControl = GetControl("CanEdit" + categoryId, $(control));
+            $(canEditControl).prop('checked', false);
+            setPermission(canEditControl, categoryId, 'false');
+            /*var fullAccessControl = GetControl("FullAccess" + categoryId, $(control));
+            $(fullAccessControl).prop('checked', false);
+            setPermission(fullAccessControl, categoryId, 'false');*/
+        }
+    }
+
+    function setPermissionCanEdit(control, categoryId) {
+        setPermission(control, categoryId);
+
+        if ($(control).is(':checked')) {
+            var canReadControl = GetControl("CanRead" + categoryId, $(control));
+            $(canReadControl).prop('checked', true);
+            setPermission(canReadControl, categoryId, 'true');
+        } else {
+            /*var fullAccessControl = GetControl("FullAccess" + categoryId, $(control));
+            $(fullAccessControl).prop('checked', false);
+            setPermission(fullAccessControl, categoryId, 'false');*/
+        }
+    }
+
+    function setPermissionFullAccess(control, categoryId) {
+        setPermission(control, categoryId);
+
+        var checkedStr;
+        if ($(control).is(':checked')) {
+            checkedStr = 'true';
+            var canReadControl = GetControl("CanRead" + categoryId, $(control));
+            $(canReadControl).prop('checked', true);
+            setPermission(canReadControl, categoryId, checkedStr);
+            var canEditControl = GetControl("CanEdit" + categoryId, $(control));
+            $(canEditControl).prop('checked', true);
+            setPermission(canEditControl, categoryId, checkedStr);
+        }
+    }
+
+    function GetControl(name, control) {
+        var result = control.parent().parent().parent().find('input[id="' + name + '"]');
+        return result[0];
+    }
+
+    function setPermission(control, categoryId) {
+        var permissionStatus = 'false';
+        if ($(control).is(':checked')) {
+            permissionStatus = 'true';
+        }
+
+        setPermissionStatus(control, categoryId, permissionStatus);
+    }
+
+    function setPermissionStatus(control, categoryId, permissionStatus) {
+        var id = getObjectId(control);
+
+        var categoryMembers = $('#CategoryMembers' + categoryId + '_value');
+        var data = $.parseJSON(categoryMembers.val());
+
+        for (var i = 0; i < data.length; i++) {
+            var dataItem = $.parseJSON(data[i].Value);
+            if (dataItem.ObjectType == id.ObjectType && dataItem.Id == id.Id) {
+                addPermission(control, categoryId, data, i, dataItem, permissionStatus);
+                return;
+            }
+        }
+    }
+
+    function getObjectId(control) {
+        var objectIdJson = $(control).parent().parent().parent().attr('item');
+        var obj = $.parseJSON(objectIdJson);
+        return obj;
+    }
+
+    function addPermission(control, categoryId, data, i, dataItem, permissionStatus) {
+        var permissionName = $(control).attr('name');
+
+        var addProperyJson = '{ "' + permissionName + '" : "' + permissionStatus + '"}';
+        var addProperyObj = $.parseJSON(addProperyJson);
+        $.extend(dataItem, addProperyObj);
+        data[i].Value = $.toJSON(dataItem);
+
+        $('#CategoryMembers' + categoryId + '_value').attr('value', $.toJSON(data));
+    }
+</script>
+</text>);
+    }

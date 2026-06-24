@@ -1,0 +1,158 @@
+﻿@model LeadScoringModel
+
+@using EleWise.ELMA;
+@using EleWise.ELMA.CRM.Web
+@using EleWise.ELMA.CRM.Web.Models;
+
+@{
+    Html.Header(SR.T("{0} - {1}", SR.T("Таблица скоринга"), Model.Entity.IsNew() ? SR.T("Добавление записи") : SR.T("Редактирование записи")));
+
+    Html.Toolbar().Group("toolbar-group-1")
+        .ToolbarSubmit(SR.Save, "#save.svg")
+        .ToolbarButton(new ActionToolbarItem("CancelAddScoringSettings")
+                           {
+                               Text = SR.Cancel,
+                               IconUrl = "#close_outline.svg",
+                               Url = Url.Action("Index", "LeadScoringSettings", new { area = CRMAreaRegistration.AREA_NAME }),
+                           });
+
+    var listOfTypes = Model.LeadPropertyList;
+    var listOfTypesContractor = Model.ContractorPropertyList;
+    var listOfTypesLeadContact = Model.LeadContactPropertyList;
+    var listOfTypesContractorContact = Model.ContractorContactPropertyList;
+    listOfTypesContractor.Insert(0, new SelectListItem { Text = string.Empty, Value = Guid.Empty.ToString(), Selected = false });
+    listOfTypesLeadContact.Insert(0, new SelectListItem { Text = string.Empty, Value = Guid.Empty.ToString(), Selected = false });
+    listOfTypesContractorContact.Insert(0, new SelectListItem { Text = string.Empty, Value = Guid.Empty.ToString(), Selected = false });
+}
+<div class="general-form-container">
+@using (Html.ElmaForm(routeValues: new { action = "Save", controller = "LeadScoringSettings", area = CRMAreaRegistration.AREA_NAME }))
+{
+    using (Html.TableForm(EleWise.ELMA.Model.Views.ViewType.Edit))
+    {
+        @Html.HiddenFor(m => m.Entity.Id)
+        <tr id="Property_Container">
+            <td id="Property_CaptionContainer" class="captionCell">
+                @Html.Caption(m => m.Entity.Property)
+            </td>
+            <td id="Property_ValueContainer">
+                <div>
+                    @(Html.Telerik().DropDownList()
+                          .BindTo(listOfTypes)
+                          .Name("Property")
+                          .ClientEvents(events => events.OnChange("LeadProperty_Change"))
+                          .HtmlAttributes(new { style = "width: 250px;", id = "Property_Lead" })
+                          )
+                </div>
+                <span id="Property_validate_validationMessage" class="field-validation-valid"></span>
+            </td>
+        </tr>
+    
+        @Html.EditableProperty(m => m.UseLeadContactProperty, a =>
+        {
+            a.Html.onchange = "toggleLeadContact";
+        })
+        <tr id="LeadContactProperty_Container" class="@(Model.UseLeadContactProperty ? "" : "hide-property")">
+            <td id="LeadContactProperty_CaptionContainer" class="captionCell">
+                @Html.Caption(m => m.Entity.LeadContactProperty)
+            </td>
+            <td id="LeadContactProperty_ValueContainer">
+                <div>
+                    @(Html.Telerik().DropDownList()
+                        .BindTo(listOfTypesLeadContact)
+                        .Name("LeadContactProperty")
+                        .ClientEvents(events => events.OnChange("LeadContactProperty_Change"))
+                        .HtmlAttributes(new { style = "width: 250px;", id = "LeadContactProperty_Lead" })
+                    )
+                </div>
+                <span id="LeadContactProperty_validate_validationMessage" class="field-validation-valid"></span>
+            </td>
+        </tr>
+        <tr>
+            <td class="captionCell">@Html.Caption(m => m.LeadPercentValue)</td>
+            <td>+ <div style="display: inline-block">@Html.Editor(m => m.LeadPercentValue, a => a.ValidationMessage = false)</div> %</td>
+        </tr>
+    
+        <tr id="Property_Container" class="scoring-contractor">
+            <td id="Property_CaptionContainer" class="captionCell">
+                @Html.Caption(m => m.Entity.ContractorProperty)
+            </td>
+            <td id="Property_ValueContainer">
+                <div>
+                    @(Html.Telerik().DropDownList()
+                          .BindTo(listOfTypesContractor)
+                          .Name("ContractorProperty")
+                          .ClientEvents(events => events.OnChange("ContractorProperty_Change"))
+                          .HtmlAttributes(new { style = "width: 250px;", id = "Property_Contractor" })
+
+                          )
+                </div>
+                <span id="Property_validate_validationMessage" class="field-validation-valid"></span>
+            </td>
+        </tr>
+
+        @Html.EditableProperty(m => m.UseContractorContactProperty, a =>
+        {
+            a.Html.onchange = "toggleContractorContact";
+            a.TrClass = "scoring-contractor";
+        })
+        <tr id="ContractorContactProperty_Container" class="scoring-contractor @(Model.UseContractorContactProperty ? "" : "hide-property")">
+            <td id="ContractorContactProperty_CaptionContainer" class="captionCell">
+                @Html.Caption(m => m.Entity.ContractorContactProperty)
+            </td>
+            <td id="ContractorContactProperty_ValueContainer">
+                <div>
+                    @(Html.Telerik().DropDownList()
+                                .BindTo(listOfTypesContractorContact)
+                                .Name("ContractorContactProperty")
+                                .ClientEvents(events => events.OnChange("ContractorContactProperty_Change"))
+                                .HtmlAttributes(new { style = "width: 250px;", id = "ContractorContactProperty_Contractor" })
+                    )
+                </div>
+                <span id="LeadContactProperty_validate_validationMessage" class="field-validation-valid"></span>
+            </td>
+        </tr>
+        <tr class="scoring-contractor">
+            <td class="captionCell">@Html.Caption(m => m.ContractorPercentValue)</td>
+            <td>+ <div style="display: inline-block">@Html.Editor(m => m.ContractorPercentValue, a => a.ValidationMessage = false)</div> %</td>
+        </tr>
+        @Html.EditableProperty(m => m.Operator)
+    }
+}
+</div>
+
+<script type="text/javascript">
+    function LeadProperty_Change() {
+        $('[name="Property"]').val($('div#Property_Lead').val());
+    }
+
+    function ContractorProperty_Change() {
+        $('[name="ContractorProperty"]').val($('div#Property_Contractor').val());
+    }
+
+    function LeadContactProperty_Change() {
+        $('[name="LeadContactProperty"]').val($('div#LeadContactProperty_Lead').val());
+    }
+
+    function ContractorContactProperty_Change() {
+        $('[name="ContractorContactProperty"]').val($('div#ContractorContactProperty_Contractor').val());
+    }
+
+    function toggleLeadContact() {
+        if ($("#UseLeadContactProperty_yes").is(":checked")) {
+            $("#LeadContactProperty_Container").removeClass("hide-property");
+        }
+        else {
+            $("#LeadContactProperty_Container").addClass("hide-property");
+        }
+    }
+
+    function toggleContractorContact() {
+        if ($("#UseContractorContactProperty_yes").is(":checked")) {
+            $("#ContractorContactProperty_Container").removeClass("hide-property");
+        }
+        else {
+            $("#ContractorContactProperty_Container").addClass("hide-property");
+        }
+    }
+</script>
+

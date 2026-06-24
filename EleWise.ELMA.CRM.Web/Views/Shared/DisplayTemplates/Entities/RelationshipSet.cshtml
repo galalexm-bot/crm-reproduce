@@ -1,0 +1,8 @@
+﻿@model IEnumerable<EleWise.ELMA.CRM.Models.IRelationship>
+@if (Model != null)
+{
+    foreach (var item in Model)
+    {
+        <div>@Html.Partial("DisplayTemplates/Entities/Relationship", item)</div>
+    }
+}

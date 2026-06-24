@@ -1,0 +1,18 @@
+﻿@using EleWise.ELMA
+@model EleWise.ELMA.CRM.Web.Models.CrmAttachment
+
+@{
+    var popupId = Model.PopupId;
+}
+
+@using (Html.ModelForm(Model, Model.UseJson, callback: Html.ClosePopup(popupId).ToString()))
+{
+    @Html.EditorForModel()
+    <div class="popup-buttons">
+        <input type="submit" class="confirm" value="@SR.T("Добавить")" @if (!Model.UseJson)
+                                                                       {
+                                                                           @:onclick="elma.openPleaseWait(true)"
+                                                                       } />
+        <input type="button" value="@SR.Cancel" onclick="@Html.ClosePopup(popupId)" />
+    </div>
+} 

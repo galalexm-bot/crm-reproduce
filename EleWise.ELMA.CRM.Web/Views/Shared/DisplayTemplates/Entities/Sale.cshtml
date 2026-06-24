@@ -1,0 +1,15 @@
+﻿@using EleWise.ELMA.CRM.Web
+@using EleWise.ELMA.Model.Entities
+@model EleWise.ELMA.CRM.Models.ISale
+
+@if (Model != null)
+{
+    if (Model.IsNew() || Model.IsDeleted)
+    {
+        @Model.GetTitleOrDefault(m => m.Name)
+    }
+    else
+    {
+        <a href="@Url.Action("Details", "Sale", new {id = Model.Id, area = CRMAreaRegistration.AREA_NAME})">@Model.GetTitleOrDefault(m => m.Name)</a>
+    }
+}

@@ -1,0 +1,47 @@
+﻿@inherits DynamicViewControl<RelationshipGrid>
+@using System.ComponentModel
+@using EleWise.ELMA.CRM.Models
+@using EleWise.ELMA.CRM.Web.Models
+@using EleWise.ELMA.Model.Views
+@using EleWise.ELMA.Extensions
+@using EleWise.ELMA
+@using EleWise.ELMA.Web.Mvc.Views.ViewItem
+@{
+    bool isAjaxRequest = ViewContext.HttpContext.Request.IsAjaxRequest() && !FormViewItemControl.IsAsync && !ViewContext.IsChildAction;
+    Func<object, object> template = null;
+    if (!isAjaxRequest)
+    {
+        template = (r => Html.Partial("CommentsTemplate", r as IRelationship));
+    }
+    Func<string> clientTemplate = (() => Html.Partial("CommentsClientTemplate", Model).ToHtmlString());
+    var timeNotSetMsg = " (" + SR.T("время не указано" + ")");
+}
+
+@(DynamicGrid(Model.GridId, Model.Data).Columns(c =>
+{
+    c.For(m => m.Theme).Template(m => Html.Button().IconUrl(Url.Action("Object", "Images", new { area = SDKAreaRegistration.AREA_NAME, id = m.TypeUid }))
+    .Url(Url.Entity(m)).Text(m.Theme.HtmlEncode()).AsLink().ToHtmlString());
+    c.For(m => m.StartDate).Template(m => (m is IRelationshipMeeting && ((IRelationshipMeeting)m).TimeNotSet) ? MvcHtmlString.Create(m.StartDate.ToClientDateTime().ToShortDateString() + timeNotSetMsg) : Html.HtmlHelperFunc(m, helper => helper.Display(x => x.StartDate)));
+    c.For(m => m.EndDate).Template(m => (m is IRelationshipMeeting && ((IRelationshipMeeting)m).TimeNotSet) ? MvcHtmlString.Create(m.EndDate.ToClientDateTime().ToShortDateString() + timeNotSetMsg) : Html.HtmlHelperFunc(m, helper => helper.Display(x => x.EndDate)));
+    c.For(m => m.CreationAuthor);
+    c.For(m => m.CreationDate);
+    if (isAjaxRequest)
+    {
+        c.For(m => m.Comments).Header("").Sortable(false).Template(item => Html.Partial("CommentsTemplate", item));
+    }
+}).DefaultSortExpression("CreationDate").DefaultSortDirection(ListSortDirection.Descending)
+        .DetailViewClientTemplate(clientTemplate)
+        .DetailViewTemplate(template, true)
+        .DetailViewTemplateVisible(r => (r != null) && (((IRelationship)r).Comments != null) && (((IRelationship)r).Comments.Any()))
+        .DefaultColumns(true)
+        .RowClass((e, g) => (e.Completed.HasValue && e.Completed.Value)
+                ? (e.EndDate < (e.DoneDate ?? DateTime.Now) ? "line-through color-red" : "line-through")
+                : (e.EndDate < (e.DoneDate ?? DateTime.Now) ? "color-red" : ""))
+                        .ClientEvents(ce => ce.OnRowDataBound(writer =>
+    @"function(evt){var grid=$(this).data('tGrid');grid.expandRow(evt.row);
+    $(this).find('.no-comments').each(function () { 
+        var commentRow = $(this).parent().parent().parent(); 
+        commentRow.css('display', 'none'); 
+        commentRow.prev().find('.t-hierarchy-cell > a').css('display','none');
+    });
+}")))

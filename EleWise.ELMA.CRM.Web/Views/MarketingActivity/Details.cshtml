@@ -1,0 +1,318 @@
+﻿@model MarketingActivityModel
+
+@using EleWise.ELMA
+@using EleWise.ELMA.BPM.Web.Tasks.Extensions
+@using EleWise.ELMA.BPM.Web.Tasks.Models
+@using EleWise.ELMA.CRM
+@using EleWise.ELMA.CRM.Managers
+@using EleWise.ELMA.CRM.Models
+@using EleWise.ELMA.BPM.Web.Common.Models
+@using EleWise.ELMA.CRM.Web.Controllers
+@using EleWise.ELMA.CRM.Web
+@using EleWise.ELMA.CRM.Web.Models
+@using EleWise.ELMA.BPM.Web.Common.Extensions
+@using EleWise.ELMA.BPM.Web.Common.Mvc.html
+@using EleWise.ELMA.Extensions
+@using EleWise.ELMA.Model.Services
+@using EleWise.ELMA.Security
+@using EleWise.ELMA.Services
+@using EleWise.ELMA.Web.Mvc.ExtensionPoints
+
+@{
+    Html.LabeledHeader(Model.Entity.Name, Model.Entity);
+
+    Func<string, string, string, string> SR_T = (e, a, g) => Model.Entity is IMarketingEffect ? e : Model.Entity is IMarketingActivity ? a : g;
+
+    ViewContext.Controller.ViewData["HelpPageContentUrl"] = EleWise.ELMA.Services.Locator.GetServiceNotNull<EleWise.ELMA.BPM.Web.Common.Components.HelpPageUrlProvider>().FindUrl(Html.ViewContext.Controller.ControllerContext,
+        string.Format("{0}?type={1}", ViewContext.HttpContext.Request.AppRelativeCurrentExecutionFilePath, SR_T("Effect", "Activity", "Group")));
+
+    var commentTip = string.Format("<b>{0}</b><br>{1}", SR.T("Добавить новый комментарий"), SR.T("Перейти к странице создания комментария"));
+    var editTip = string.Format("<b>{0}</b><br>{1}",
+        SR_T(SR.T("Изменить атрибуты маркетингового воздействия"), SR.T("Изменить атрибуты маркетингового мероприятия"), SR.T("Изменить атрибуты группы маркетинговогых мероприятий")),
+        SR_T(SR.T("Перейти к странице редактирования маркетингового воздействия"), SR.T("Перейти к странице редактирования маркетингового мероприятия"), SR.T("Перейти к странице редактирования группы маркетинговогых мероприятий")));
+    var delTip = string.Format("<b>{0}</b><br>{1}",
+        SR_T(SR.T("Удалить маркетинговое воздействие"), SR.T("Удалить маркетинговое мероприятие"), SR.T("Удалить группу маркетинговых мероприятий")),
+        SR_T(SR.T("Текущее маркетинговое воздействие будет удалено. Действие требует подтверждения."), SR.T("Текущее маркетинговое мероприятие будет удалено. Действие требует подтверждения."), SR.T("Текущая группа маркетинговых мероприятий будет удалена. Действие требует подтверждения.")));
+
+    var service = Locator.GetServiceNotNull<ISecurityService>();
+
+    var hasFullRights = CRMPermissionProvider.CheckAny(new[] { CRMPermissionProvider.CRMFullAccessPermission, CRMPermissionProvider.MarketingFullAccessPermission });
+    var canEdit = hasFullRights || service.HasPermission(CRMPermissionProvider.EditMarketingPermission, Model.Entity);
+    var canAddElements = hasFullRights || service.HasPermission(CRMPermissionProvider.CRMMarketingCreateElementPermission, Model.Entity);
+    var canControlBudget = hasFullRights || service.HasPermission(CRMPermissionProvider.CRMMarketingBudgetControlPermission, Model.Entity);
+    var canDelete = hasFullRights || service.HasPermission(CRMPermissionProvider.CRMMarketingFullAccessPermission, Model.Entity);
+
+    var confirmArchive = MvcHtmlString.Create(string.Format("{0}<br>{1}<br>{2}",
+        SR_T(SR.T("Отправить маркетинговое воздействие в архив."), SR.T("Отправить маркетинговое мероприятие в архив."), SR.T("Отправить группу маркетинговых мероприятий в архив.")),
+        Model.Entity is IMarketingGroup || Model.Entity is IMarketingActivity
+            ? SR.T("<br>Также в архив будут отправлены все вложенные мероприятия: {0}<br>", ChildrenList(Model.Entity))
+            : "",
+        SR.T("После отправки в архив платежи по данному мероприятию продолжат учитываться в расчетах. Возможности по данному мероприятию будут отображаться в маркетинговом календаре только в режиме \\\"Показывать архив\\\".")));
+
+    string confirmDelete;
+    var canDeleteConfirm = true;
+    var group = Model.Entity as IMarketingGroup;
+    if (group != null && group.MarketingActivities.Any(m => !m.IsDeleted))
+    {
+        canDeleteConfirm = false;
+    }
+    var activity = Model.Entity as IMarketingActivity;
+    if (activity != null && activity.MarketingEffects.Any(m => !m.IsDeleted))
+    {
+        canDeleteConfirm = false;
+    }
+
+    if (canDeleteConfirm)
+    {
+        var filterLead = InterfaceActivator.Create<ILeadFilter>();
+        filterLead.MarketingObjects.Add(Model.Entity);
+        confirmDelete = LeadManager.Instance.Count(filterLead) > 0 
+            ? SR.T("Данное мероприятие связано с одним или несколькими возможностями, при удалении статистика по ним будет потеряна, продолжить удаление?")
+            : SR_T(SR.T("Вы действительно хотите удалить маркетинговое воздействие?"), SR.T("Вы действительно хотите удалить маркетинговое мероприятие?"), SR.T("Вы действительно хотите удалить группу маркетинговых мероприятий?"));
+    }
+    else
+    {
+        confirmDelete = SR_T(SR.T("Нельзя удалить маркетинговое воздействие"), SR.T("Нельзя удалить маркетинговое мероприятие, т.к. оно содержит не удаленные маркетинговые воздействия."), SR.T("Нельзя удалить группу маркетинговых мероприятий, т.к. она содержит не удаленные маркетинговые мероприятия."));
+    }
+      
+    var actionList = new List<ActionToolbarItem>()
+    {
+        new ActionToolbarItem("MarketingActivity_add_comment_btn")
+        {
+            Text = SR.T("Добавить комментарий"),
+            IconUrl = "#comment_outline.svg",
+            Click = Html.AddComment("AddCommentPopup"),
+            ToolTip = commentTip
+        },
+        new ActionToolbarItem("MarketingActivity_question_btn")
+        {
+            Text = SR.T("Задать вопрос"),
+            IconUrl = Url.Image("#question.svg"),
+            Click = Html.OpenPopup("AddQuestionPopup").ToString()
+        }
+    };
+
+    if (canControlBudget)
+    {
+        actionList.Add(new ActionToolbarSeparator());
+        actionList.Add(new ActionToolbarItem("MarketingActivity_budget_edit_btn")
+        {
+            Text = SR.T("Управление бюджетом"),
+            IconUrl = "#budget.svg",
+            Url = Url.Action<MarketingActivityController>(c => c.BudgetEdit(Model.Entity.Id)),
+        });
+    }
+
+    if (canEdit)
+    {
+        actionList.Add(new ActionToolbarSeparator());
+        actionList.Add(new ActionToolbarItem("MarketingActivity_edit_btn")
+        {
+            Text = SR.Edit, 
+            IconUrl = "#edit.svg", 
+            Url = Url.Action<MarketingActivityController>(c => c.Edit(Model.Entity.Id)), 
+            ToolTip = editTip
+        });
+        if (Model.Entity.Status != MarketingObjectStatus.Archived)
+        {
+            actionList.Add(new ActionToolbarItem("MarketingActivity_archive_btn")
+                        {
+                            Text = SR.T("В архив"),
+                            IconUrl = Url.Image("#archive.svg"),
+                            Click = "openPopupArchive()"
+                        });
+        }
+        if (Model.Entity.Status == MarketingObjectStatus.Archived)
+        {
+            actionList.Add(new ActionToolbarItem("MarketingActivity_activate_btn")
+                        {
+                            Text = SR.T("Из архива"),
+                            IconUrl = Url.Image("#archive.svg"),
+                            Click = Html.OpenPopup("ActivatePopup").ToString()
+                        });            
+        }      
+    }
+
+    if (canDelete)
+    {
+        actionList.Add(new ActionToolbarItem("MarketingActivity_delete_btn")
+        {
+            Text = SR.Delete,
+            ToolTip = delTip,
+            IconUrl = Url.Image("#delete.svg"),
+            Click = "MarketingActivityDelete()"
+        });
+    }
+
+    var labeledText = "";
+    if (Model.Entity is IMarketingGroup)
+    {
+        labeledText = SR.T("Группа мероприятий");
+    }
+    else if (Model.Entity is IMarketingActivity)
+    {
+        labeledText = SR.T("Мероприятие");
+    }
+    else if (Model.Entity is IMarketingEffect)
+    {
+        labeledText = SR.T("Воздействие");
+    }
+}
+
+@functions
+{
+    string ChildrenList(IMarketingBase obj)
+    {
+        var group = obj as IMarketingGroup;
+        if (group != null)
+        {
+            return String.Join("", group.MarketingActivities.Where(m => !m.IsDeleted && m.Status == MarketingObjectStatus.Active).Select(m => string.Format("<br>{0}{1}", m.Name.HtmlEncode(), ChildrenList(m))));
+        }
+        var activity = obj as IMarketingActivity;
+        if (activity != null)
+        {
+            return String.Join("", activity.MarketingEffects.Where(m => !m.IsDeleted && m.Status == MarketingObjectStatus.Active).Select(m => string.Format("<br>{0}", m.Name.HtmlEncode())));
+        }
+        return "";
+    }
+}
+
+@(Html.Toolbar()
+        .AdditionalButton(a =>
+        {
+            actionList.ForEach(b => a.Add(b));
+        })
+        .Group("toolbar-group-1")
+        .If(canAddElements && Model.Entity.Status != MarketingObjectStatus.Archived, z => z
+            .Group("toolbar-group-2")
+                .ToolbarButton(new ActionToolbarItem("toolbar-action-Add")
+                {
+                    Text = SR.Add,
+                    IsMainAction = true,
+                    Items = new ActionItemList
+                    {
+                        new ActionToolbarItem("toolbar-action-AddEffect")
+                        {
+                            Text = SR.T("Воздействие"),
+                            Url = Url.Action("Create", "MarketingActivity", new { area = CRMAreaRegistration.AREA_NAME, typeUid = InterfaceActivator.UID<IMarketingEffect>(), parentId = Model.Entity.Id }),
+                            Visible = Model.Entity is IMarketingActivity
+                        },
+                        new ActionToolbarItem("toolbar-action-AddActivity")
+                        {
+                            Text = SR.T("Мероприятие"),
+                            Url = Url.Action("Create", "MarketingActivity", new { area = CRMAreaRegistration.AREA_NAME, typeUid = InterfaceActivator.UID<IMarketingActivity>(), parentId = Model.Entity.Id }),
+                            Visible = Model.Entity is IMarketingGroup
+                        },
+                        new ActionToolbarSeparator(),
+                        new ActionToolbarItem("toolbar-click-AddContractor")
+                        {
+                            Text = SR.T("Контрагента"),
+                            Click = "linkContractor()",
+                            ToolTipHeader = SR.T("Добавить контрагента"),
+                            ToolTip = SR_T(SR.T("Связать контрагента с текущим маркетинговым воздействием"), SR.T("Связать контрагента с текущим маркетинговым мероприятием"), SR.T("Связать контрагента с текущей группой маркетинговых мероприятий"))
+                        },
+                        new ActionToolbarItem("toolbar-click-AddPotentialClient")
+                        {
+                            Text = SR.T("Возможность"),
+                            Click = "linkLead()",
+                            ToolTipHeader = SR.T("Добавить возможность"),
+                            ToolTip = SR_T(SR.T("Связать возможность с текущим маркетинговым воздействием"), SR.T("Связать возможность с текущим маркетинговым мероприятием"), SR.T("Связать возможность с текущей группой маркетинговых мероприятий"))
+                        },
+                        new ActionToolbarItem("toolbar-click-AddSale")
+                        {
+                            Text = SR.T("Сделку"),
+                            Click = "linkSale()",
+                            ToolTipHeader = SR.T("Добавить сделку"),
+                            ToolTip = SR_T(SR.T("Связать сделку с текущим маркетинговым воздействием"), SR.T("Связать сделку с текущим маркетинговым мероприятием"), SR.T("Связать сделку с текущей группой маркетинговых мероприятий"))
+                        }
+                    }
+                }))
+        .Group("toolbar-group-5"))
+
+@(Html.AddCommentPopup(new CommentWithAttachments
+{
+    ShowAttachment = false,
+    PopupId = "AddCommentPopup",
+    ObjectId = Model.Entity.Id,
+    ObjectTypeUid = Model.Entity.TypeUid,
+    AddCommentActionUid = MarketingBaseActions.AddCommentGuid,
+    RedirectUrl = Url.Action("Details", "MarketingActivity", new { area = CRMAreaRegistration.AREA_NAME, id = Model.Entity.Id })
+}))
+@(Html.AddQuestionPopup(new QuestionModel
+{   
+    PopupId = "AddQuestionPopup",
+    ObjectId = Model.Entity.Id,
+    ObjectTypeUid = Model.Entity.TypeUid,
+    AddQuestionActionUid = MarketingBaseActions.AddQuestionGuid,
+    RedirectUrl = Url.Action("Details", "MarketingActivity", new { area = CRMAreaRegistration.AREA_NAME, id = Model.Entity.Id })
+}))
+@if (canEdit)
+{
+    @(Html.AddCommentPopup(new CommentWithAttachments
+    {
+        ActionName = SR.T("Отправка в архив"),
+        ShowAttachment = false,
+        PopupId = "ArchivePopup",
+        ObjectId = Model.Entity.Id,
+        ObjectTypeUid = Model.Entity.TypeUid,
+        PostAction = "Archive",
+        PostController = "MarketingActivity",
+        PostArea = CRMAreaRegistration.AREA_NAME,
+        AddCommentActionUid = MarketingBaseActions.ArchiveGuid,
+        RedirectUrl = Url.Action("Details", "MarketingActivity", new { area = CRMAreaRegistration.AREA_NAME, id = Model.Entity.Id })
+    }))
+    @(Html.AddCommentPopup(new CommentWithAttachments
+    {
+        ActionName = SR.T("Восстановление из архива"),
+        ShowAttachment = false,
+        PopupId = "ActivatePopup",
+        ObjectId = Model.Entity.Id,
+        ObjectTypeUid = Model.Entity.TypeUid,
+        AddCommentActionUid = MarketingBaseActions.ActivateGuid,
+        PostAction = "Activate",
+        PostController = "MarketingActivity",
+        PostArea = CRMAreaRegistration.AREA_NAME,
+        RedirectUrl = Url.Action("Details", "MarketingActivity", new { area = CRMAreaRegistration.AREA_NAME, id = Model.Entity.Id })
+    }))
+}
+
+@Html.PopupWindow("LinkEntityPopup", SR.T("Добавление"))
+
+@using (Html.ELMAForm("Delete", "MarketingActivity", new { area = CRMAreaRegistration.AREA_NAME, id = Model.Entity.Id }, FormMethod.Get, new { id = "MarketingActivityDeleteForm" }))
+{
+}
+
+@using (Html.LabeledContainer(labeledText))
+{
+    @Html.Partial("TabView", Model)
+}
+
+<script type="text/javascript">
+    function MarketingActivityDelete() {
+        @if (canDeleteConfirm) {
+            @:jConfirm("@confirmDelete", "@SR.T("Подтверждение удаления")", function(r) { if (r) { $('#MarketingActivityDeleteForm').submit(); }});
+        }
+        else {
+            @:jAlert("@confirmDelete", "@SR.T("Подтверждение")");
+        }
+
+    }
+
+    function linkContractor() {
+        refreshPopup('LinkEntityPopup', '@(Url.Action("LinkContractor", "MarketingActivity", new { area = CRMAreaRegistration.AREA_NAME, id = Model.Entity.Id }))', null, '@SR.T("Добавление")');
+    }
+    function linkLead() {
+        refreshPopup('LinkEntityPopup', '@(Url.Action("LinkLead", "MarketingActivity", new { area = CRMAreaRegistration.AREA_NAME, id = Model.Entity.Id }))', null, '@SR.T("Добавление")');
+    }
+    function linkSale() {
+        refreshPopup('LinkEntityPopup', '@(Url.Action("LinkSale", "MarketingActivity", new { area = CRMAreaRegistration.AREA_NAME, id = Model.Entity.Id }))', null, '@SR.T("Добавление")');
+    }
+
+    function openPopupArchive() {
+        jConfirm("@confirmArchive", '@SR.T("Подтверждение")', function (r) {
+            if (r) {
+                openWindow("ArchivePopup", false);
+            }
+        });
+    }
+</script>

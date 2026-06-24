@@ -1,0 +1,532 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>EleWise.ELMA.BPM</name>
+    </assembly>
+    <members>
+        <member name="T:EleWise.ELMA.BPM.Components.ExpirationChecker">
+            <summary>
+            Компонент отправки сообщений о скором истечении лицензии компонентов
+            </summary>
+        </member>
+        <member name="F:EleWise.ELMA.BPM.Components.ExpirationChecker.userManager">
+            <summary>
+            Менеджер пользователей
+            </summary>
+        </member>
+        <member name="F:EleWise.ELMA.BPM.Components.ExpirationChecker.userGroupManager">
+            <summary>
+            Менеджер групп пользователей
+            </summary>
+        </member>
+        <member name="F:EleWise.ELMA.BPM.Components.ExpirationChecker.expirationInfoService">
+            <summary>
+            Сервис проверки лицензии
+            </summary>
+        </member>
+        <member name="F:EleWise.ELMA.BPM.Components.ExpirationChecker.notificationManager">
+            <summary>
+            Менеджер оповещений
+            </summary>
+        </member>
+        <member name="F:EleWise.ELMA.BPM.Components.ExpirationChecker.lastRun">
+            <summary>
+            Дата последней проверки
+            </summary>
+        </member>
+        <member name="M:EleWise.ELMA.BPM.Components.ExpirationChecker.#ctor(EleWise.ELMA.Security.Managers.UserManager,EleWise.ELMA.Security.Managers.UserGroupManager,EleWise.ELMA.Services.ExpirationInfoService,EleWise.ELMA.Notifications.Impl.NotificationManager)">
+            <summary>
+            ctor
+            </summary>
+            <param name="userManager">Менеджер пользователей</param>
+            <param name="userGroupManager">Менеджер груп пользоватлей</param>
+            <param name="expirationInfoService">Сервис проверки лицензии компонентов</param>
+            <param name="notificationManager">Менеджер оповещений</param>
+        </member>
+        <member name="M:EleWise.ELMA.BPM.Components.ExpirationChecker.Execute">
+            <summary>
+            Проверить существование истекающих лицензий и отправить уведомление
+            </summary>
+        </member>
+        <member name="T:EleWise.ELMA.BPM.Models.ComponentsExpiration">
+            <summary>
+            Информация о завершении срока временной лицензии для подстановки в шаблон оповещения
+            </summary>
+        </member>
+        <member name="F:EleWise.ELMA.BPM.Models.ComponentsExpiration.expiringComponents">
+            <summary>
+            Список компонентов с истекающим сроком лицензии
+            </summary>
+        </member>
+        <member name="F:EleWise.ELMA.BPM.Models.ComponentsExpiration.adminGroup">
+            <summary>
+            Список пользователей в группе "Администраторы" для использования в качестве получателей оповещения
+            </summary>
+        </member>
+        <member name="M:EleWise.ELMA.BPM.Models.ComponentsExpiration.#ctor(EleWise.ELMA.Security.Managers.UserGroupManager,EleWise.ELMA.Services.ExpirationInfoService,System.Int32)">
+            <summary>
+            ctor
+            </summary>
+            <param name="daysBeforeNotification">Количество дней до начала оповещений</param>
+            <param name="userGroupManager">Менеджер групп пользователей</param>
+            <param name="expirationInfoService">Сервис проверки лицензии</param>
+        </member>
+        <member name="P:EleWise.ELMA.BPM.Models.ComponentsExpiration.ExpiringComponents">
+            <summary>
+            Получить список компонентов с истекающим сроком лицензии
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.BPM.Models.ComponentsExpiration.AdminGroup">
+            <summary>
+            Получить список пользователей в группе "Администраторы" для использования в качестве получателей оповещения
+            </summary>
+        </member>
+        <member name="M:EleWise.ELMA.BPM.Models.ComponentsExpiration.ComputeStoreComponentInfos(EleWise.ELMA.Services.ExpirationInfoService,System.Int32)">
+            <summary>
+            Вычислить список компонентов с истекающим сроком лицензии
+            </summary>
+            <param name="expirationInfoService">Сервис проверки лицензии компонентов</param>
+            <param name="daysBeforeNotification">Количество дней до начала оповещений</param>
+            <returns>Список компонентов с истекающим сроком лицензии</returns>
+        </member>
+        <member name="M:EleWise.ELMA.BPM.Models.ComponentsExpiration.ComputeAdminUsers(EleWise.ELMA.Security.Managers.UserGroupManager)">
+            <summary>
+            Вычислить список пользователей в группе "Администраторы"
+            </summary>
+            <param name="userGroupManager">Менеджер групп пользователей</param>
+            <returns>Список пользователей в группе "Администраторы"</returns>
+        </member>
+        <member name="T:EleWise.ELMA.BPM.Mvc.Application.MainMenuItems">
+            <summary>
+            Элементы главного меню
+            </summary>
+        </member>
+        <member name="F:EleWise.ELMA.BPM.Mvc.Application.MainMenuItems.Administration">
+            <summary>
+            Администратор
+            </summary>
+        </member>
+        <member name="F:EleWise.ELMA.BPM.Mvc.Application.MainMenuItems.TopCreate">
+            <summary>
+            Создать в главном меню
+            </summary>
+        </member>
+        <member name="F:EleWise.ELMA.BPM.Mvc.Application.MainMenuItems.Catalogs">
+            <summary>
+            Справочники
+            </summary>
+        </member>
+        <member name="T:EleWise.ELMA.BPM.Mvc.Application.Orchard.ELMAEnviromentStarter">
+            <summary>
+            Класс для запуска приложения
+            </summary>
+        </member>
+        <member name="M:EleWise.ELMA.BPM.Mvc.Application.Orchard.ELMAEnviromentStarter.InitMetadataProviders">
+            <summary>
+            Инициализация провайдеров метаданных. По умолчанию создается ElmaModelMetadataProvider
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.BPM.Mvc.Application.Orchard.ELMAEnviromentStarter.ContainerProvider">
+            <summary>
+            Провайдер контейнера Autofac
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.BPM.Mvc.Application.Orchard.ELMAEnviromentStarter.StartupExceptionText">
+            <summary>
+            Текст ошибки запуска приложения
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.BPM.Mvc.Application.Orchard.ELMAEnviromentStarter.StartupException">
+            <summary>
+            Ошибка запуска приложения
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.BPM.Mvc.Application.Orchard.ELMAEnviromentStarter.OrchardHost">
+            <summary>
+            Хост Orchard-а
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.BPM.Mvc.Application.Orchard.ELMAEnviromentStarter.Initialized">
+            <summary>
+            Инициализировано ли приложение
+            </summary>
+        </member>
+        <member name="M:EleWise.ELMA.BPM.Mvc.Application.Orchard.ELMAEnviromentStarter.StartApplication">
+            <summary>
+            Запустить приложение или возобновить его запуск (например, после ошибки лицензирования) в отдельном потоке
+            </summary>
+        </member>
+        <member name="M:EleWise.ELMA.BPM.Mvc.Application.Orchard.ELMAEnviromentStarter.Continue">
+            <summary>
+            Продолжить запуск сервера с того места, где приостановились
+            </summary>
+        </member>
+        <member name="F:EleWise.ELMA.BPM.Mvc.Application.Orchard.ELMAEnviromentStarter.StartStep.Beginning">
+            <summary>
+            Начало инициализации
+            </summary>
+        </member>
+        <member name="F:EleWise.ELMA.BPM.Mvc.Application.Orchard.ELMAEnviromentStarter.StartStep.Complete">
+            <summary>
+            Инициализация завершена, приложение работает
+            </summary>
+        </member>
+        <member name="F:EleWise.ELMA.BPM.Mvc.Application.Orchard.ELMAEnviromentStarter.StartStep.FatalError">
+            <summary>
+            Критическая ошибка приложения
+            </summary>
+        </member>
+        <member name="M:EleWise.ELMA.BPM.Mvc.Application.Orchard.ELMAEnviromentStarter.StartApplicationInThread">
+            <summary>
+            Запустить приложение или возобновить его запуск (например, после ошибки лицензирования)
+            </summary>
+        </member>
+        <member name="M:EleWise.ELMA.BPM.Mvc.Application.Orchard.ELMAEnviromentStarter.InitRazorCompileEvents">
+            <summary>
+            Зарегистрируем событие для обработки компиляции представлений
+            </summary>
+        </member>
+        <member name="M:EleWise.ELMA.BPM.Mvc.Application.Orchard.ELMAEnviromentStarter.ApplyConfigTransformation(System.String,System.String)">
+            <summary>
+            Выполнить преобразование конфигурационного файла
+            </summary>
+            <param name="configurationDirectory">Папка с конфигурацией ELMA, где будет искаться XSLT-файл</param>
+            <param name="originalFile">Оригинальный файл, который нужно преобразовать</param>
+            <returns>True, если выполнено преобразование</returns>
+        </member>
+        <member name="M:EleWise.ELMA.BPM.Mvc.Application.Orchard.ELMAEnviromentStarter.ApplySettingsTransformation(System.String,System.String)">
+            <summary>
+            Выполнить преобразование файла с настройками (Settings.config)
+            </summary>
+            <param name="configurationDirectory">Папка с конфигурацией ELMA, где будет искаться XSLT-файл</param>
+            <param name="originalFile">Оригинальный файл, который нужно преобразовать</param>
+            <returns>True, если выполнено преобразование</returns>
+        </member>
+        <member name="P:EleWise.ELMA.BPM.Mvc.Application.Orchard.ELMAEnviromentStarter.OnStart">
+            <summary>
+            Вызывается в потоке инициализации приложения при запуске
+            </summary>
+        </member>
+        <member name="T:EleWise.ELMA.BPM.Mvc.Application.Orchard.OrchardApplication">
+            <summary>
+            Main Web Application
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.BPM.Mvc.Application.Orchard.OrchardApplication.Initialized">
+            <summary>
+            Инициализировано ли приложение
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.BPM.Mvc.Application.Orchard.OrchardApplication.StartupExceptionText">
+            <summary>
+            Текст ошибки при запуске приложения
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.BPM.Mvc.Application.Orchard.OrchardApplication.ContainerProvider">
+            <summary>
+            Провайдер контейнера Autofac
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.BPM.Mvc.Application.Orchard.OrchardApplication.MakeBackupPage">
+            <summary>
+            Возвращает страницу с бэкапом
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.BPM.Mvc.Application.Orchard.OrchardApplication.PrerequisitesPage">
+            <summary>
+            Страница "Повторить проверку"
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.BPM.Mvc.Application.Orchard.OrchardApplication.ConfigurationScriptsErrorPage">
+            <summary>
+            Страница "Требуется исправить сценарии в объектах в дизайнере"
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.BPM.Mvc.Application.Orchard.OrchardApplication.UseInPlaceWinAuth">
+            <summary>
+            true, если должна использоваться сквозная Windows-авторизация из текущего запроса (без редиректа на внешний SSPI)
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.BPM.Mvc.Application.Orchard.OrchardApplication.ActivationPage">
+            <summary>
+            Страница активации
+            </summary>
+        </member>
+        <member name="M:EleWise.ELMA.BPM.Mvc.Application.Orchard.OrchardApplication.Application_Start">
+            <summary>
+            Старт приложения
+            </summary>
+        </member>
+        <member name="M:EleWise.ELMA.BPM.Mvc.Application.Orchard.OrchardApplication.Session_Start(System.Object,System.EventArgs)">
+            <summary>
+            Старт сессии
+            </summary>
+            <param name="sender">Объект</param>
+            <param name="e"></param>
+        </member>
+        <member name="M:EleWise.ELMA.BPM.Mvc.Application.Orchard.OrchardApplication.Application_Error(System.Object,System.EventArgs)">
+            <summary>
+            Ошибка старта приложения
+            </summary>
+            <param name="sender"></param>
+            <param name="e"></param>
+        </member>
+        <member name="M:EleWise.ELMA.BPM.Mvc.Application.Orchard.OrchardApplication.Application_BeginRequest">
+            <summary>
+            Начало запроса в приложении
+            </summary>
+        </member>
+        <member name="M:EleWise.ELMA.BPM.Mvc.Application.Orchard.OrchardApplication.Application_EndRequest">
+            <summary>
+            Окончание запроса
+            </summary>
+        </member>
+        <member name="M:EleWise.ELMA.BPM.Mvc.Application.Orchard.OrchardApplication.Application_AuthenticateRequest">
+            <summary>
+            Запрос аутентификации
+            </summary>
+        </member>
+        <member name="M:EleWise.ELMA.BPM.Mvc.Application.Orchard.OrchardApplication.GetRequestCultureInfo(System.Web.HttpContext)">
+            <summary>
+            Запрос на получение CultureInfo
+            </summary>
+            <param name="context">Http контекст</param>
+            <returns></returns>
+        </member>
+        <member name="M:EleWise.ELMA.BPM.Mvc.Application.Orchard.OrchardApplication.Application_AcquireRequestState(System.Object,System.EventArgs)">
+            <summary>
+            Получить состояние
+            </summary>
+            <param name="sender"></param>
+            <param name="e"></param>
+        </member>
+        <member name="M:EleWise.ELMA.BPM.Mvc.Application.Orchard.OrchardApplication.SetTimeZoneOffsetsToCookies">
+            <summary>
+            Установить куки смещений часовых поясов
+            </summary>
+        </member>
+        <member name="M:EleWise.ELMA.BPM.Mvc.Application.Orchard.OrchardApplication.GetCultureFromCookies(System.Web.HttpContext)">
+            <summary>
+            Достать культуру из куки
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:EleWise.ELMA.BPM.Mvc.Application.Orchard.OrchardApplication.SetCultureToCookies(System.Web.HttpContext)">
+            <summary>
+            Положить культуру в куку
+            </summary>
+        </member>
+        <member name="M:EleWise.ELMA.BPM.Mvc.Application.Orchard.OrchardApplication.GetCultureFromClient(System.Web.HttpContext)">
+            <summary>
+            Достать культуру с клиента
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:EleWise.ELMA.BPM.Mvc.Application.Orchard.OrchardApplication.GetVaryByCustomString(System.Web.HttpContext,System.String)">
+            <inheritdoc/>
+        </member>
+        <member name="T:EleWise.ELMA.BPM.Mvc.Application.Orchard.Security.AuthenticationService">
+            <summary>
+            Сервис для управления аутентификацией
+            </summary>
+        </member>
+        <member name="M:EleWise.ELMA.BPM.Mvc.Application.Orchard.Security.AuthenticationService.#ctor(EleWise.ELMA.Security.Services.IAuthenticationService)">
+            <summary>
+            Ctor
+            </summary>
+            <param name="authenticationService">Сервис аутентификации</param>
+        </member>
+        <member name="M:EleWise.ELMA.BPM.Mvc.Application.Orchard.Security.AuthenticationService.SignIn(Orchard.Security.IUser,System.Boolean)">
+            <summary>
+            Авторизоваться
+            </summary>
+            <param name="user">Пользователь</param>
+            <param name="createPersistentCookie">Создать хранимые куки</param>
+        </member>
+        <member name="M:EleWise.ELMA.BPM.Mvc.Application.Orchard.Security.AuthenticationService.SignOut">
+            <summary>
+            Разлогиниться
+            </summary>
+        </member>
+        <member name="M:EleWise.ELMA.BPM.Mvc.Application.Orchard.Security.AuthenticationService.SetAuthenticatedUserForRequest(Orchard.Security.IUser)">
+            <summary>
+            Получить авторизованных пользователей
+            </summary>
+            <param name="user">Пользователь</param>
+        </member>
+        <member name="M:EleWise.ELMA.BPM.Mvc.Application.Orchard.Security.AuthenticationService.GetAuthenticatedUser">
+            <summary>
+            Устновить авторизованного пользователя
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="T:EleWise.ELMA.BPM.Mvc.Application.Orchard.Security.OrchardUser">
+            <summary>
+            Польльвоатель Orchard
+            </summary>
+        </member>
+        <member name="M:EleWise.ELMA.BPM.Mvc.Application.Orchard.Security.OrchardUser.#ctor(EleWise.ELMA.Security.Models.IUser)">
+            <summary>
+            Ctor
+            </summary>
+            <param name="elmaUser">Пользователь ELMA</param>
+        </member>
+        <member name="P:EleWise.ELMA.BPM.Mvc.Application.Orchard.Security.OrchardUser.ContentItem">
+            <summary>
+            Элемент
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.BPM.Mvc.Application.Orchard.Security.OrchardUser.Id">
+            <summary>
+            Идентификатор
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.BPM.Mvc.Application.Orchard.Security.OrchardUser.UserName">
+            <summary>
+            Имя пользователя
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.BPM.Mvc.Application.Orchard.Security.OrchardUser.Email">
+            <summary>
+            Электронная почта
+            </summary>
+        </member>
+        <member name="T:EleWise.ELMA.BPM.Mvc.Application.TopMenu.TopMenuHelper">
+            <summary>
+            Хелпер для верхнего меню
+            </summary>
+        </member>
+        <member name="F:EleWise.ELMA.BPM.Mvc.Application.TopMenu.TopMenuHelper.UID">
+            <summary>
+            Уникальный идентификатор меню
+            </summary>
+        </member>
+        <member name="F:EleWise.ELMA.BPM.Mvc.Application.TopMenu.TopMenuHelper.Guid">
+            <summary>
+            GUID меню
+            </summary>
+        </member>
+        <member name="T:EleWise.ELMA.BPM.Mvc.Controllers.BPMController">
+            <summary>
+            Базовый контроллер для модулей Платформы. Содержит несколько вспомогательных сервисов.
+            </summary>
+        </member>
+        <member name="M:EleWise.ELMA.BPM.Mvc.Controllers.BPMController.GetCurrentUser">
+            <summary>
+            Получить текущего пользователя как модель Платформы <see cref="T:EleWise.ELMA.Security.Models.IUser"/>
+            </summary>
+            <returns>Текущий пользователь контекста или <c>null</c></returns>
+        </member>
+        <member name="T:EleWise.ELMA.BPM.Mvc.Controllers.BPMController`2">
+            <summary>
+            Базовый контроллер для модулей Платформы, основанный на модели. Содержит несколько вспомогательных сервисов.
+            </summary>
+            <typeparam name="TModel">Тип модели</typeparam>
+            <typeparam name="TModelId">Тип ИД модели</typeparam>
+        </member>
+        <member name="M:EleWise.ELMA.BPM.Mvc.Controllers.BPMController`2.GetCurrentUser">
+            <summary>
+            Получить текущего пользователя как модель Платформы <see cref="T:EleWise.ELMA.Security.Models.IUser"/>
+            </summary>
+            <returns>Текущий пользователь контекста или <c>null</c></returns>
+        </member>
+        <member name="T:EleWise.ELMA.BPM.Notifications.BPMGeneratorFunctionContainer">
+            <summary>
+            Функции для генерации BPM
+            </summary>
+        </member>
+        <member name="M:EleWise.ELMA.BPM.Notifications.BPMGeneratorFunctionContainer.ExpirationDate(EleWise.TemplateGenerator.Functions.FunctionEvaluationContext)">
+            <summary>
+            Получить дату истечения лицензии переданного компонента
+            </summary>
+            <remarks>
+            * - Обязательные параметры
+            Параметры:
+            [0]*: Установленный компонент (IStoreComponentInfo)
+            Пример:
+                Пусть Info - Переменная типа "Информация о компоненте ELMA Store".
+                Чтобы определить дату истечения лицензии этого компонента:
+                {ExpirationDate({$Info})}
+            </remarks>
+            <param name="context">Контекстная переменная</param>
+            <returns>Форматированное значение даты</returns>
+        </member>
+        <member name="M:EleWise.ELMA.BPM.Notifications.BPMGeneratorFunctionContainer.DaysBeforeExpiration(EleWise.TemplateGenerator.Functions.FunctionEvaluationContext)">
+            <summary>
+            Получить количество дней до истечения лицензии переданного компонента
+            </summary>
+            <remarks>
+            * - Обязательные параметры
+            Параметры:
+            [0]*: Установленный компонент (IStoreComponentInfo)
+            Пример:
+                Пусть Info - Переменная типа "Информация о компоненте ELMA Store".
+                Чтобы определить количество дней до истечения лицензии этого компонента:
+                {DaysBeforeExpiration({$Info})}
+            </remarks>
+            <param name="context">Контекстная переменная</param>
+            <returns>Форматированное значение количества дней</returns>
+        </member>
+        <member name="M:EleWise.ELMA.BPM.Notifications.BPMGeneratorFunctionContainer.ComponentLicenseIsExpired(EleWise.TemplateGenerator.Functions.FunctionEvaluationContext)">
+            <summary>
+            Истекла ли лицензия переданного компонента
+            </summary>
+            <remarks>
+            * - Обязательные параметры
+            Параметры:
+            [0]*: Установленный компонент (IStoreComponentInfo)
+            Пример:
+                Пусть Info - Переменная типа "Информация о компоненте ELMA Store".
+                Чтобы определить дату истечения лицензии этого компонента:
+                {ComponentLicenseIsExpired({$Info})}
+            </remarks>
+            <param name="context">Контекстная переменная</param>
+        </member>
+        <member name="M:EleWise.ELMA.BPM.Notifications.BPMGeneratorFunctionContainer.GetDate(System.Object)">
+            <summary>
+            Получить дату истечения лицензии
+            </summary>
+            <param name="param">Параметр контекстной переменной</param>
+            <remarks>param приводится к IStoreComponentInfo</remarks>
+            <returns>Дата истечения лицензии</returns>
+        </member>
+        <member name="M:EleWise.ELMA.BPM.Notifications.BPMGeneratorFunctionContainer.GetDays(System.Nullable{System.DateTime})">
+            <summary>
+            Получить количество дней до истечения лицензии
+            </summary>
+            <param name="date">Дата истечения лицензии</param>
+            <returns>Количество дней до истечения лицензии</returns>
+        </member>
+        <member name="T:EleWise.ELMA.BPM.Notifications.BPMNotificationsDataSource">
+            <summary>
+            Источник данных шаблонов оповещений, для объектов модуля
+            </summary>
+        </member>
+        <member name="T:EleWise.ELMA.BPM.Properties.Resources">
+            <summary>
+              A strongly-typed resource class, for looking up localized strings, etc.
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.BPM.Properties.Resources.ResourceManager">
+            <summary>
+              Returns the cached ResourceManager instance used by this class.
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.BPM.Properties.Resources.Culture">
+            <summary>
+              Overrides the current thread's CurrentUICulture property for all
+              resource lookups using this strongly typed resource class.
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.BPM.Properties.Resources.settings_config">
+            <summary>
+              Looks up a localized resource of type System.Byte[].
+            </summary>
+        </member>
+        <member name="P:EleWise.ELMA.BPM.Properties.Resources.web_config_xslt">
+            <summary>
+              Looks up a localized resource of type System.Byte[].
+            </summary>
+        </member>
+    </members>
+</doc>

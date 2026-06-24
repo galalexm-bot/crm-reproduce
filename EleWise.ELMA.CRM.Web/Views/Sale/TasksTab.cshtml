@@ -1,0 +1,5 @@
+﻿@using EleWise.ELMA.CRM.Web
+<div>
+    @Html.Action("TasksOfSale", "Task", new { area = CRMAreaRegistration.AREA_NAME, saleId = Model.Entity.Id })
+    @Html.ExtensionZone("Sale.TabView.Tasks")
+</div>

@@ -1,0 +1,84 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <AssemblyName>EleWise.ELMA.Tasks</AssemblyName>
+    <GenerateAssemblyInfo>False</GenerateAssemblyInfo>
+    <TargetFramework>net48</TargetFramework>
+  </PropertyGroup>
+  <PropertyGroup>
+    <LangVersion>Preview</LangVersion>
+    <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
+  </PropertyGroup>
+  <PropertyGroup>
+    <RootNamespace />
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Remove="EleWise.ELMA.Tasks.Models.Acce.cs" />
+    <Compile Remove="EleWise.ELMA.Tasks.Models.Repl.cs" />
+    <Compile Remove="EleWise.ELMA.Tasks.Models.Work.cs" />
+    <None Remove="EleWise.ELMA.Tasks.Notificatio.xml" />
+    <None Remove="EleWise.ELMA.Tasks.Notificatio.xml" />
+    <None Remove="EleWise.ELMA.Tasks.Notificatio.xml" />
+    <None Remove="EleWise.ELMA.Tasks.Db.TaskDbSt.xml" />
+    <None Remove="EleWise.ELMA.Tasks.Notificatio.xml" />
+    <None Remove="EleWise.ELMA.Tasks.Notificatio.xml" />
+    <None Remove="EleWise.ELMA.Tasks.Notificatio.xml" />
+    <None Remove="EleWise.ELMA.Tasks.Models.Task.xml" />
+    <None Remove="EleWise.ELMA.Tasks.Models.Task.xml" />
+    <None Remove="EleWise.ELMA.Tasks.Notificatio.xml" />
+    <None Remove="EleWise.ELMA.Tasks.Models.Task.Png" />
+    <None Remove="EleWise.ELMA.Tasks.Models.Task.Png" />
+    <None Remove="EleWise.ELMA.Tasks.Models.Task.Png" />
+    <EmbeddedResource Include="EleWise.ELMA.Tasks.Models.Acce.cs" />
+    <EmbeddedResource Include="EleWise.ELMA.Tasks.Models.Repl.cs" />
+    <EmbeddedResource Include="EleWise.ELMA.Tasks.Models.Work.cs" />
+    <EmbeddedResource Include="EleWise.ELMA.Tasks.Notificatio.xml" />
+    <EmbeddedResource Include="EleWise.ELMA.Tasks.Notificatio.xml" />
+    <EmbeddedResource Include="EleWise.ELMA.Tasks.Notificatio.xml" />
+    <EmbeddedResource Include="EleWise.ELMA.Tasks.Db.TaskDbSt.xml" />
+    <EmbeddedResource Include="EleWise.ELMA.Tasks.Notificatio.xml" />
+    <EmbeddedResource Include="EleWise.ELMA.Tasks.Notificatio.xml" />
+    <EmbeddedResource Include="EleWise.ELMA.Tasks.Notificatio.xml" />
+    <EmbeddedResource Include="EleWise.ELMA.Tasks.Models.Task.xml" />
+    <EmbeddedResource Include="EleWise.ELMA.Tasks.Models.Task.xml" />
+    <EmbeddedResource Include="EleWise.ELMA.Tasks.Notificatio.xml" />
+    <EmbeddedResource Include="EleWise.ELMA.Tasks.Models.Task.Png" />
+    <EmbeddedResource Include="EleWise.ELMA.Tasks.Models.Task.Png" />
+    <EmbeddedResource Include="EleWise.ELMA.Tasks.Models.Task.Png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="EleWise.ELMA.SDK">
+      <HintPath>..\EleWise.ELMA.SDK.dll</HintPath>
+    </Reference>
+    <Reference Include="EleWise.ELMA.Security">
+      <HintPath>..\EleWise.ELMA.Security.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="EleWise.ELMA.Calendar">
+      <HintPath>..\EleWise.ELMA.Calendar.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.Extensions" />
+    <Reference Include="EleWise.ELMA.Common">
+      <HintPath>..\EleWise.ELMA.Common.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Core" />
+    <Reference Include="Iesi.Collections" />
+    <Reference Include="NHibernate" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+    <Reference Include="EleWise.TemplateGenerator.Merged">
+      <HintPath>..\EleWise.TemplateGenerator.Merged.dll</HintPath>
+    </Reference>
+    <Reference Include="EleWise.ELMA.Content">
+      <HintPath>..\EleWise.ELMA.Content.dll</HintPath>
+    </Reference>
+    <Reference Include="EleWise.ELMA.SDK.Web">
+      <HintPath>..\EleWise.ELMA.SDK.Web.dll</HintPath>
+    </Reference>
+    <Reference Include="EleWise.ELMA.Messages">
+      <HintPath>..\EleWise.ELMA.Messages.dll</HintPath>
+    </Reference>
+    <Reference Include="EleWise.ELMA.History">
+      <HintPath>..\EleWise.ELMA.History.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+</Project>

@@ -1,0 +1,113 @@
+﻿@model IInpayment
+@using EleWise.ELMA
+@using EleWise.ELMA.BPM.Web.Tasks.Extensions
+@using EleWise.ELMA.BPM.Web.Tasks.Models
+@using EleWise.ELMA.CRM
+@using EleWise.ELMA.CRM.Extensions
+@using EleWise.ELMA.CRM.Web
+@using EleWise.ELMA.CRM.Models
+@using EleWise.ELMA.BPM.Web.Common.Models
+@using EleWise.ELMA.BPM.Web.Common.Mvc.html
+@using EleWise.ELMA.BPM.Web.Common.Extensions
+@using EleWise.ELMA.CRM.Web.Controllers
+@using EleWise.ELMA.Security
+@using EleWise.ELMA.Security.Services
+@using EleWise.ELMA.Services
+@{
+    Html.LabeledHeader(Model.Name, Model);
+    var commentTip = string.Format("<b>{0}</b><br>{1}", SR.T("Добавить новый комментарий"), SR.T("Перейти к странице создания комментария"));
+    var editTip = string.Format("<b>{0}</b><br>{1}", SR.T("Изменить атрибуты поступления"), SR.T("Перейти к странице редактирования поступления"));
+    var metadata = EleWise.ELMA.Model.Metadata.MetadataLoader.LoadMetadata(Model.GetType());
+
+    var canEdit = Locator.GetServiceNotNull<ISecurityService>().HasPermission(CRMPermissionProvider.CRMSaleCreateElementPermission, Model.Sale);
+    var canDelete = CRMPermissionProvider.CheckAny(new[] { CRMPermissionProvider.CRMFullAccessPermission, CRMPermissionProvider.CRMDeleteInpaymentPermission });
+    var closed = Model.Sale.SaleClosed();
+
+    var setStatusPopupId = "SetInpaymentStatusPopup";
+
+    var list = new List<ActionToolbarItem>();
+
+    list.Add(new ActionToolbarItem("toolbar-click-AddComment") { Text = SR.T("Добавить комментарий"), IconUrl = "#comment_outline.svg", Click = Html.AddComment("AddCommentPopup"), ToolTip = commentTip });
+    list.Add(new ActionToolbarItem("toolbar-click-AddQuestion") { Text = SR.T("Задать вопрос"), IconUrl = Url.Image("#question.svg"), Click = Html.OpenPopup("AddQuestionToInpayment").ToString(), ToolTip = SR.T("Задать вопрос") });
+    list.Add(new ActionToolbarSeparator());
+    if(canEdit && !closed)
+    {
+        list.Add(new ActionToolbarItem("toolbar-action-Edit") { Text = SR.Edit, ToolTip = editTip, IconUrl = "#edit.svg", Url = Url.Action<InpaymentController>(c => c.Edit(Model.Id)) });
+        if (canDelete)
+        {
+            list.Add(new ActionToolbarItem("Inpayment_delete_btn") { Text = SR.Delete, ToolTip = SR.T("Удалить поступление"), IconUrl = Url.Image("#delete.svg"), Click = "InpaymentDelete();" });
+        }
+    }
+}
+
+@(Html.Toolbar()
+        .AdditionalButton(a =>
+        {
+            list.ForEach(b => a.Add(b));
+        })
+        .If(canEdit && !closed, b => b
+            .Group("toolbar-group-2")
+                .ToolbarButton(new ActionToolbarItem("toolbar-click-ChangeStatus") { Text = SR.T("Изменить статус"), IconUrl = null, Click = String.Format("setInpaymentStatusClick({0})", Model.Id), ToolTip = SR.T("Изменить статус сделки") })
+        )
+    .Group("toolbar-group-1"))
+@(Html.AddCommentPopup(new CommentWithAttachments
+{
+    ShowAttachment = false,
+    PopupId = "AddCommentPopup",
+    ObjectId = Model.Id,
+    ObjectTypeUid = metadata.Uid,
+    AddCommentActionUid = InpaymentActions.AddCommentGuid,
+    RedirectUrl = Url.Action("Details", "Inpayment", new { area = CRMAreaRegistration.AREA_NAME, id = Model.Id })
+}))
+@(Html.AddQuestionPopup(new QuestionModel
+{   
+    PopupId = "AddQuestionToInpayment",
+    ObjectId = Model.Id,
+    ObjectTypeUid = metadata.Uid,
+    AddQuestionActionUid = InpaymentActions.AddQuestionGuid,
+    RedirectUrl = Url.Action("Details", "Inpayment", new { area = CRMAreaRegistration.AREA_NAME, id = Model.Id } ) 
+}))
+@Html.PopupWindow(setStatusPopupId, SR.T("Статус поступления"), @<text></text>, width: 600)
+@using (Html.ELMAForm("Delete", "Inpayment", new { area = CRMAreaRegistration.AREA_NAME, id = Model.Id }, FormMethod.Get, new { id = "InpaymentDeleteForm" }))
+{
+}
+<script type="text/javascript">
+    function InpaymentDelete() {
+        jConfirm('@SR.T("Вы действительно хотите удалить поступление?")', '@SR.T("Подтверждение удаления")', function (r) {
+            if (r) {
+                $('#InpaymentDeleteForm').submit();
+            }
+        });
+    }
+    
+    function setInpaymentStatusClick(id) {
+        refreshPopup('@(setStatusPopupId)', '@(Url.Action("SetInpaymentStatus", "Inpayment", new { area = RouteProvider.AreaName }))/' + id + '?prefix=@(setStatusPopupId)', null, '@SR.T("Статус поступления")', null, setInpaymentStatus);
+    }
+
+    function setInpaymentStatus(closeData) {
+        if (!closeData)
+            return;
+
+        elma.openPleaseWait(true);
+        $.ajax({
+            url: '@(Url.Action("SetInpaymentStatus", "Inpayment", new { area = RouteProvider.AreaName }))',
+            type: "POST",
+            dataType: 'html',
+            data: {
+                'InpaymentId': $('#@(setStatusPopupId)_InpaymentId').val(),
+                'Value': $('#@(setStatusPopupId)_Value').val(),
+                'ActualDate': $('#@(setStatusPopupId)_ActualDate').val(),
+                'Comment': $('#@(setStatusPopupId)_Comment').val()
+            },
+            cache: false,
+            success: function (data) {
+                window.reloadPage();
+            }
+        });
+    }    
+</script>
+
+@using (Html.LabeledContainer(SR.T("Поступление")))
+{
+    @Html.Partial("TabView", Model)
+}

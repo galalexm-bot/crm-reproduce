@@ -1,0 +1,35 @@
+﻿@using EleWise.ELMA
+@using EleWise.ELMA.CRM.Web
+@using EleWise.ELMA.Web.Content
+@using EleWise.ELMA.Extensions
+@model EleWise.ELMA.CRM.Web.Models.BankAccountModel
+
+@using (Html.AjaxForm(Model.PostAction, Model.PostController, new { area = CRMAreaRegistration.AREA_NAME }, FormMethod.Post, new { id = Model.DefaultFormId }, callback: Model.CallbackFunc))
+{
+    @Html.Hidden("CreatorRequest", true)
+    @Html.Hidden("CreatorPrefix", Model.Prefix)
+
+    var oldPrefix = Html.ViewData.TemplateInfo.HtmlFieldPrefix;
+    ViewData.TemplateInfo.HtmlFieldPrefix = Model.Prefix;
+
+    @Html.DynamicFormSettings(Model.DynamicFormSettings)
+
+    if (Model.RowId != null)
+    {
+        @Html.HiddenFor(p => p.RowId)
+    }
+
+    @Html.FormViewItem(Model.View, m => m.Entity, new ActionRoute("AsyncViewItem", Model.PostController, new { area = CRMAreaRegistration.AREA_NAME, id = Model.Entity.Id, viewType = Model.ViewType }), Model.ViewType,
+            Model.ItemType,
+            EntityObjectViewItemProvider.UID, Model.ViewItemId,
+            Model.DynamicFormSettings != null ? Model.DynamicFormSettings.DynamicFormsProviderUid : Guid.Empty,
+            Model.DynamicFormSettings != null ? Model.DynamicFormSettings.DynamicFormsProviderData : null,
+            Model.FormId)
+
+    <div class="popup-buttons">
+        <input type="submit" class="confirm" value=@Model.ButtonText />
+        <input type="button" class="t-button" value=@SR.Cancel onclick="closeWindow('@(Model.PopupId)', true);" />
+    </div>
+
+    Html.ViewData.TemplateInfo.HtmlFieldPrefix = oldPrefix;
+}

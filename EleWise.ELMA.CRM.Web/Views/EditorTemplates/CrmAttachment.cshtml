@@ -1,0 +1,28 @@
+﻿@model EleWise.ELMA.CRM.Web.Models.CrmAttachment
+
+@Html.HiddenFor(m => m.EntityId)
+@Html.HiddenFor(m => m.RedirectUrl)
+@Html.HiddenFor(m => m.EntityTypeUid)
+@Html.HiddenFor(m => m.UseJson)
+
+@Html.TableFormStart()
+<tr class="full-fow">
+    <td>
+        @Html.TextAreaFor(m => m.ActionModel.Comment, new { rows=10, @class = "text-box" })
+    </td>
+</tr>
+<tr class="full-fow">
+    <td >
+         @(Html.CombinedEditableProperty()
+            .OnlyContent(true)
+            .ButtonText(SR.T("Вложения"))
+            .ViewAttributesAction(a =>
+                {
+                    a.Html.AddClass("commentWithAttachment");
+                })
+            .Add((Func<dynamic, HelperResult>)(@<text>@Html.Editor(m => m.ActionModel.Files)</text>))
+            .Add((Func<dynamic, HelperResult>)(@<text>@Html.Editor(m => m.ActionModel.Documents)</text>))
+            .Render())
+    </td>
+</tr>
+@Html.TableFormEnd()

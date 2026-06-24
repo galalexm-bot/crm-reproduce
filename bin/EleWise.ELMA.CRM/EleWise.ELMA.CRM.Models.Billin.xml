@@ -1,0 +1,57 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<FormViewItem xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <Name>Display</Name>
+  <Uid>dd18a120-48e1-4914-8986-d4a1b94161f9</Uid>
+  <Items>
+    <RootViewItem xsi:type="ColumnsLayoutViewItem">
+      <Name>ColumnsLayout1</Name>
+      <Uid>72daadee-7e7d-4553-a4ca-0403cdd56391</Uid>
+      <Items>
+        <RootViewItem xsi:type="ColumnViewItem">
+          <Name>Column1</Name>
+          <Uid>c94e1aeb-38c6-4c3c-a87f-267fc9cb8a65</Uid>
+          <Items>
+            <RootViewItem xsi:type="PropertyViewItem">
+              <Name>Property1</Name>
+              <Uid>4568471a-ed2c-4808-89fd-25c6b3258b76</Uid>
+              <Property>054d6c7d-6618-430e-879a-c4844a176f3a</Property>
+              <Attributes />
+            </RootViewItem>
+            <RootViewItem xsi:type="PropertyViewItem">
+              <Name>Property2</Name>
+              <Uid>84d87d4a-96cd-46c0-b0ea-c6fa47539b4c</Uid>
+              <Property>d2875964-586c-4e9a-9bf6-376ecd6913b7</Property>
+              <Attributes />
+            </RootViewItem>
+            <RootViewItem xsi:type="PropertyViewItem">
+              <Name>Property3</Name>
+              <Uid>d6a4a673-3332-4605-b786-abe479a42d21</Uid>
+              <Property>afe250f9-f049-42f6-923c-b327ccd6ec30</Property>
+              <Attributes />
+            </RootViewItem>
+            <RootViewItem xsi:type="PropertyViewItem">
+              <Name>Property4</Name>
+              <Uid>afc11bd5-d843-4160-a8c8-7ff248217984</Uid>
+              <Property>deff3572-8a49-4448-b621-6a877b9ca7a0</Property>
+              <Attributes />
+            </RootViewItem>
+            <RootViewItem xsi:type="PropertyViewItem">
+              <Name>Property5</Name>
+              <Uid>3599d957-950e-4453-9f4b-932913948438</Uid>
+              <Property>516db906-4269-4d98-8ad0-d03f27e7c34e</Property>
+              <Attributes />
+            </RootViewItem>
+            <RootViewItem xsi:type="PropertyViewItem">
+              <Name>Property6</Name>
+              <Uid>f0db69d5-4336-4b1d-a8cc-68ef13e73242</Uid>
+              <Property>1d0a74b8-4333-4930-a8b3-13b989a5d697</Property>
+              <Attributes />
+            </RootViewItem>
+          </Items>
+        </RootViewItem>
+      </Items>
+    </RootViewItem>
+  </Items>
+  <DisplayName>Просмотр</DisplayName>
+  <ReadOnly>true</ReadOnly>
+</FormViewItem>

@@ -1,0 +1,10 @@
+﻿@inherits ViewItemControl<RelationshipContactInfoViewItem, EleWise.ELMA.CRM.Web.Models.RelationshipModel, EleWise.ELMA.CRM.Models.IRelationship>
+@using EleWise.ELMA.CRM.ViewItems
+@using EleWise.ELMA.Web.Mvc.Views.ViewItem
+
+
+@if (ViewItem != null && (Model.Contractor != null || Model.Contact != null || Model.Lead != null || Model.ContractorsContacts != null && Model.ContractorsContacts.Count > 0))
+{
+    @Html.Partial("Relationship/ContactInfo", Model, new ViewDataDictionary { TemplateInfo = new TemplateInfo { HtmlFieldPrefix = ViewData.TemplateInfo.GetFullHtmlFieldName("Entity") } })
+}
+

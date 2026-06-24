@@ -1,0 +1,25 @@
+﻿@using EleWise.ELMA.ComponentModel
+@using EleWise.ELMA.CRM.Extensions
+@using EleWise.ELMA
+@model EleWise.ELMA.CRM.Models.CurrencyImportGridRowModel
+@{
+    var currenciesString = " ";
+    if (!string.IsNullOrEmpty(Model.EstimatedCode) && !string.IsNullOrEmpty(Model.ValuationCode))
+    {
+        currenciesString = Model.EstimatedCode + " -> " + Model.ValuationCode;
+    }
+    var provider = ComponentManager.Current.GetExtensionPoints<IExchangeCurrencyRateImportProvider>().FirstOrDefault(a => a.Uid == Model.Provider);
+    var providerName = provider != null ? provider.Name : " ";
+}
+<tr class="gridRow">
+    <td>
+        @currenciesString
+    </td>
+    <td class="providerCell">
+        @providerName
+    </td>
+    <td style="text-align: center;">
+        <a onclick="editRow(this)">@Html.Image("#edit.svg", SR.T("Редактировать"))</a>
+        <a onclick="removeRow(this)">@Html.Image("#delete.svg", SR.T("Удалить"))</a>
+    </td>
+</tr>

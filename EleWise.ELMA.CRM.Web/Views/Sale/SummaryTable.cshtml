@@ -1,0 +1,12 @@
+﻿@using EleWise.ELMA.CRM.Web.Models
+
+@model IEnumerable<SalesVolumesInfo>
+
+@(Html.Table(Model)
+    .Customizable(false)
+    .Header(false)
+    .Columns(c =>
+    {
+        c.For(m => m.Currency).Template(m => m.Currency);
+        c.For(m => m.Volume).Template(m => m.Volume);
+    }))

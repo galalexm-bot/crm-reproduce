@@ -1,0 +1,110 @@
+﻿@using EleWise.ELMA
+@using EleWise.ELMA.BPM.Web.Common
+@using EleWise.ELMA.BPM.Web.Common.Extensions
+@using EleWise.ELMA.BPM.Web.Common.Models
+@using EleWise.ELMA.CRM.Web
+@using EleWise.ELMA.Model.Entities
+@model EleWise.ELMA.CRM.Web.Models.ProductViewModel
+@{
+    var displayName = SR.T("Товары и услуги");
+    Html.Header(displayName);
+    Html.Toolbar()
+        .Group("toolbar-group-1").ToolbarButton(new ActionToolbarItem
+            {
+                IconUrl = "#add.svg",
+                Text = SR.T("Создать"),
+                IsMainAction = true,
+                Url = Url.Action("Edit", "Product", new { area = EleWise.ELMA.CRM.Web.RouteProvider.AreaName, parentId = Model.CurrentFolderObject != null ? Model.CurrentFolderObject.Id.ToString() : null })
+            });
+
+    Html.FilterEditButton(new FilterEditButtonModel
+        {
+            FilterId = Convert.ToInt64(Request["FilterId"]),
+            Area = CRMAreaRegistration.AREA_NAME,
+            ControllerName = "Product",
+            BackUrl = Request.RawUrl
+        });
+    var folder = Model.CurrentFolderObject;
+    var processedFolders = new List<IEntity>();
+
+    var breadcrumbs = Html.Breadcrumbs("catalog-view")
+           .Item(btn => btn.Text(SR.T("Справочники")).Url(Url.Action("Index", "Catalogs", new {
+               area = CommonAreaRegistration.AREA_NAME
+           })))
+           // Корень
+           .Item(btn => {
+               if (Model.CurrentFolderObject != null)
+               {
+                   btn.Url(Url.Action("Index", "Product", new
+                   {
+                       area = CRMAreaRegistration.AREA_NAME,
+                       FilterId = Model.Filter.Entity != null && Model.Filter.Entity.Id > 0 ? Model.Filter.Entity.Id : (long?)null
+                   }));
+               }
+               btn.Text(Html.Encode(displayName));
+           });
+
+    while (folder != null)
+    {
+        processedFolders.Add(folder);
+
+        breadcrumbs.Item(btn => {
+            if (folder != Model.CurrentFolderObject)
+            {
+                btn.Url(Url.Action("Index", "Product", new
+                {
+                    area = CRMAreaRegistration.AREA_NAME,
+                    parentId = folder.GetId(),
+                    FilterId = Model.Filter.Entity != null && Model.Filter.Entity.Id > 0 ? Model.Filter.Entity.Id : (long?)null
+                }));
+            }
+            btn.Text(Html.Encode(folder));
+        });
+
+        // Получаем родительский объект
+        folder = folder.Parent;
+        if (processedFolders.Contains(folder))
+        {
+            // Прекращаем бесконечный цикл
+            break;
+        }
+    }
+}
+
+@Html.Partial("Filter/FilterModel", Model.Filter.Builder()
+    .SubmitText(SR.T("Найти"))
+    .Header(breadcrumbs.ToHtmlString())
+    .GridAction(Url.Action("Grid", "Product", new {area = CRMAreaRegistration.AREA_NAME}))
+    .ApplayFilterScript(string.Format("applyFilterGrid('{0}', 'filteringGridForm')", Model.GridId))
+    .FilterUrl(Url.Action("Index", "Product", new {area = CRMAreaRegistration.AREA_NAME }) + "?FilterId=")
+    .Model,
+    new ViewDataDictionary {TemplateInfo = new TemplateInfo {HtmlFieldPrefix = "DataFilter"}})
+
+
+@Html.Action("Grid", "Product", new { area = CRMAreaRegistration.AREA_NAME, FilterId = Model.Filter != null && Model.Filter.Entity != null ? Model.Filter.Entity.Id : (long?)null })
+<script type="text/javascript">
+    function editProduct(id, parentId) {
+        var url = "@(Url.Action("Edit", "Product", new { area = CRMAreaRegistration.AREA_NAME, id = (long?) null }))/"
+            + (id != null ? id : '')
+            + (parentId > '' ? '?parentId=' + parentId : '');
+        window.navigateToUrl(url);
+    }
+    function showProductInfo(id) {
+        var url = "@(Url.Action("Details", "Product", new { area = CRMAreaRegistration.AREA_NAME, id = (long?) null }))/" + id;
+        window.navigateToUrl(url);
+    }
+    function deleteProduct(id) {
+        $.ajax({
+            url: '@(Url.Action("Delete", "Product", new { area = CRMAreaRegistration.AREA_NAME, id = (long?)null}))/'+id,
+            type: 'POST',
+            success: function (data) {
+                if (data.success) {
+                    $('#'+data.gridId).data('tGrid').ajaxRequest();
+                }
+                else {
+                    jAlert(data.error, '@SR.T("Удаление")');
+                }
+            }
+        });
+    }
+</script>

@@ -1,0 +1,22 @@
+﻿@using EleWise.ELMA.BPM.Web.Security.Extensions
+@using EleWise.ELMA.CRM.Web
+@using EleWise.ELMA.Model.Metadata
+@using EleWise.ELMA
+@model EleWise.ELMA.CRM.Models.ICRMAttachment
+
+<div class="history-item">
+    <div class="history-item-image">
+        @Html.UserPhotoWithoutSize(Model.CreationAuthor, "history-item-image")
+    </div>
+    <div class="history-item-container">
+         @Html.Partial("CrmAttachmentItems", Model)
+         <div class="history-additional-info">
+            <div class="history-action-author">
+                @Html.Partial("DisplayTemplates/Entities/User", Model.CreationAuthor)
+            </div>
+            <div class="history-action-date">
+                @Model.CreationDate.ToClientDateTime()
+            </div>
+         </div>
+    </div>
+</div>

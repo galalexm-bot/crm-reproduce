@@ -1,0 +1,66 @@
+﻿@model EleWise.ELMA.CRM.Web.Models.SaleChangeStageModel
+@using EleWise.ELMA
+@using EleWise.ELMA.CRM.Managers
+@using System.Linq
+@using EleWise.ELMA.CRM.Web
+
+@{
+    var sale = SaleManager.Instance.Load(Model.EntityId);
+
+    var changeStageError =
+        sale.SaleType == null ? SR.T("У сделки не задан тип") :
+        sale.SaleType.SaleFunnel == null ? SR.T("У типа сделки <a href=\"{0}\" target=\"_blank\">{1}</a> не задана воронка продаж", Url.Action("Edit", "SaleType", new { area = RouteProvider.AreaName, id = sale.SaleType.Id }), HttpUtility.HtmlEncode(sale.SaleType.Name)) :
+        sale.SaleType.SaleFunnel.SaleStages == null || sale.SaleType.SaleFunnel.SaleStages.Count == 0 ? SR.T("У воронки продаж не указаны стадии") : null;
+    
+    IEnumerable<SelectListItem> stagesItems = null;
+    if (changeStageError == null)
+    {
+        var stages = sale.SaleType.SaleFunnel.SaleStages.OrderBy(x => x.GlobalOrder);
+        stagesItems = stages.Select(s => new SelectListItem()
+            { 
+                Selected = sale.SaleStage != null && s.Name == sale.SaleStage.Name, 
+                Text = s.Name, 
+                Value = s.Id.ToString()
+            });
+    }
+}
+
+@using (Html.ModelForm(Model))
+{
+    @Html.HiddenFor(m => m.RedirectUrl)
+    @Html.HiddenFor(m => m.EntityId)
+
+    using (Html.TableForm())
+    {
+        if (changeStageError == null)
+        {
+            <tr>
+                <td class="captionCell">@SR.T("Новая стадия")</td>
+                <td>@Html.DropDownList("Stage.Id", stagesItems, "Value", "Text", new HtmlAttributes {})</td>
+            </tr>
+            <tr>
+                <td class="captionCell">@SR.T("Комментарий")</td>
+                <td>@Html.TextAreaFor(m => m.Comment, new { @class = "text-box", rows=10 })</td>
+            </tr>
+            <tr>
+                <td class="captionCell">@SR.T("Краткий статус")</td>
+                <td>@Html.Editor(m => m.ShortStatus)</td>
+            </tr>
+            @Html.ExtensionZone("EleWise.ELMA.CRM.Web.SaleStageEdit")
+        }
+        else
+        {
+            <tr class="full-row">
+                <td colspan="3">@Html.Raw(changeStageError)</td>
+            </tr>
+        }
+    }
+    
+    <div class="popup-buttons">
+        @if (changeStageError == null)
+        {
+            <input type="submit" class="confirm" value="@SR.T("Установить")" @(Html.SubmitOnClick(Model)) />
+        }
+        <input type="button" value="@SR.Cancel" onclick="@Html.ClosePopup(Model.PopupId)" />
+    </div>
+}

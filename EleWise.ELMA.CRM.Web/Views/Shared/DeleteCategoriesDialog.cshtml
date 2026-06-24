@@ -1,0 +1,37 @@
+﻿@model IDeleteCategoriesDialogModel
+@using EleWise.ELMA
+@using EleWise.ELMA.CRM.Web.Models
+@using EleWise.ELMA.Extensions
+
+@if (Model.CategoriesToDelete != null && Model.CategoriesToDelete.Any())
+{
+    var message = SR.T("Удалить автоматически добавленные по устаревшим правилам категории:\n{0}", Model.CategoriesToDelete.Select(c => c.Name).ToSeparatedString("\n"));
+
+    @Html.HiddenFor(m => m.UnassignOldCategories)
+    <script type="text/javascript">
+    $(document).ready(function () {
+        jDialog('@HttpUtility.JavaScriptStringEncode(message.Replace("\n", "<br>"))', '@SR.T("Удаление категорий")',
+            ['@SR.T("Удалить")', '@SR.T("Не удалять")', '@SR.Cancel'],
+            function (a) {
+                switch (a) {
+                    case 0:
+                        // Delete
+                        $('#@ViewData.TemplateInfo.GetFullHtmlFieldId("UnassignOldCategories")').val("True");
+                        elma.openPleaseWait(true);
+                        $('#@ViewData.TemplateInfo.GetFullHtmlFieldId("UnassignOldCategories")')[0].form.submit();
+                        break;
+                    case 1:
+                        // Don't delete
+                        $('#@ViewData.TemplateInfo.GetFullHtmlFieldId("UnassignOldCategories")').val("False");
+                        elma.openPleaseWait(true);
+                        $('#@ViewData.TemplateInfo.GetFullHtmlFieldId("UnassignOldCategories")')[0].form.submit();
+                        break;
+                    case 2:
+                        $('#@ViewData.TemplateInfo.GetFullHtmlFieldId("UnassignOldCategories")').val("");
+                        break;
+                }
+            },
+            "confirm", 0);
+    });
+    </script>
+}

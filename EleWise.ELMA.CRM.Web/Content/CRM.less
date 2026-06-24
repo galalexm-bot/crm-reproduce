@@ -1,0 +1,801 @@
+﻿@scoring-table-color: @green--300;
+
+@saleFuunel-table-headers-line-height: 24px;
+@saleFunnel-table-padding: 19px 19px 7px 24px;
+@saleFunnel-table-border-spacing: 0 10px;
+@crm-address-name-table-form-container: 5px;
+
+@crm-to-contractors-margin-top: 24px;
+@crm-contractor-contact-checkbox-item-margin-top: 8px;
+
+@sale-inpayment-add-button-padding: 10px 0px 10px 0px;
+@sale-inpayment-money-table-padding-right: 20px;
+@sale-inpayment-money-table-line-height: 26px;
+@sale-inpayment-money-table-divider-width: 16px;
+
+@crm-budget-sum-panel-header-width: 212px;
+@crm-marketing-counters-table-col3-padding-left: 40px;
+@crm-inpayment-subgrid-total-value-margin-right: 40px;
+@crm-address-table-padding-y: 6px;
+
+
+/*Маркетинг*/
+@crm-lead-dynamic-grid-td-height: 30px;
+@crm-period-block-width: @crm-lead-dynamic-grid-td-height + 1px;
+@crm-marketing-info-brick-panel-padding-right: @base-element-size--1-4;
+@crm-budget-edit-width: 38px;
+
+/* Воронка продаж */
+@crm-sale-stage-order-shrinkage-width: 54px;
+
+@crm-contact-tab-info-max-width: 100px;
+
+/* CRM */
+.saleFunnel-table {
+    width: 100%;
+}
+.saleFunnel-table th {
+    padding-bottom: 2px;
+}
+.saleFunnel-table td {
+    vertical-align: middle;
+}
+.saleFunnel-table .captionCell {
+    min-width: 100px;
+    width: 20%;
+}
+
+.saleFunnel-table .saleFunnel-barCell {
+    min-width: 150px;
+    width: 70%;
+}
+
+.saleFunnel-table .saleFunnel-barCell .saleFunnel-bar {
+    padding: 4px 0 4px 5px;
+    height: 22px;
+}
+
+.saleFunnel-table .saleFunnel-barCell .saleFunnel-bar div.outer-item {
+    margin: 3px;
+    min-width: 2px;
+}
+.saleFunnel-table .saleFunnel-barCell .saleFunnel-bar div.inner-item {
+    height: 8px;
+    background-color: @white;
+}
+
+.saleFunnel-table .saleFunnel-barCell .saleFunnel-bar div.saleFunnel-barPlan {
+    margin-top: 11px;
+}
+
+.saleFunnel-table .saleFunnel-barCell .saleFunnel-bar div.saleFunnel-barFact {
+    margin-top: -19px;
+}
+
+.saleFunnel-table .saleFunnel-barCell .saleFunnel-bar div.saleFunnel-barPlan div.inner-item {
+    opacity: 0.6;
+    filter:alpha(opacity=60);
+}
+
+.saleFunnel-table .saleFunnel-barCell .saleFunnel-bar div.saleFunnel-barFact div.inner-item {
+    opacity: 0.4;
+    filter:alpha(opacity=40);
+}
+
+.saleFunnel-table .saleFunnel-count, .saleFunnel-table .saleFunnel-fact, .saleFunnel-table .saleFunnel-plan {
+    padding-left: 5px;
+    text-align: right;
+    min-width: 50px;
+}
+
+.saleFunnel-table .saleFunnel-fact {
+    min-width: 55px;
+}
+
+.saleFunnel-table th.saleFunnel-count, .saleFunnel-table th.saleFunnel-fact, .saleFunnel-table th.saleFunnel-plan {
+    text-align: center;
+}
+
+.saleFunnel-table .saleFunnel-fact {
+    font-weight: bold;
+}
+
+.saleFunnel-table .saleFunnel-plan {
+    padding-right: 5px;
+}
+
+.marketingCountersTable {
+    width: 100%;
+}
+
+.marketingCountersTable tr td {
+    text-align: right;
+
+    &:first-child {
+        text-align: left;
+    }
+}
+
+.marketingCountersTable .col3 {
+    padding-left: @crm-marketing-counters-table-col3-padding-left;
+}
+
+.marketing-tags {
+    display: flex;
+    flex-direction: column;
+}
+
+.marketing-tags-container {
+    display: flex;
+    flex-wrap: wrap;
+    padding-bottom: @base-element-size--1-8;
+
+    & > div {
+        margin-right: @base-element-size--1-4;
+        margin-bottom: @base-element-size--1-8;
+    }
+
+    .parent-utm-label {
+        vertical-align: sub;
+    }
+}
+
+#MarketingPaymentGrid {
+    &.t-grid table.t-grid-table > tbody > tr > td:not(.payment-name) {
+        word-break: normal;
+    }
+}
+
+.inpayment-subgrid-total {
+    padding-top: @base-element-size--1-2;
+
+    .total-caption {
+        margin-right: @base-element-size--1-2;
+        color: @general-font-color--captionCell;
+    }
+
+    .total-value {
+        margin-right: @crm-inpayment-subgrid-total-value-margin-right;
+    }
+
+    & > div {
+        display: inline-block;
+        padding-bottom: @base-element-size--1-4;
+    }
+}
+
+.global-order-up, .global-order-up-disabled, .global-order-down, .global-order-down-disabled 
+{
+    height: 12px;
+    width: 16px;
+    background-image: @icon--bar-chart-vertical;
+    display: block;
+}
+
+.global-order-up {
+    background-position: 0px 0px;
+}
+
+.global-order-up-disabled {
+    background-position: -16px 0px;    
+}
+
+.global-order-down {
+    background-position: -32px 0px;    
+}
+
+.global-order-down-disabled {
+    background-position: -48px 0px;    
+}
+
+.order-block-footer {
+    margin-bottom: 12px;
+}
+
+.order-block-content {
+    margin-bottom: -1px;
+    border-radius: @base-border-radius;
+}
+
+.order-block-content td {
+    padding: @base-element-size--1-4; 
+    margin:0;
+    vertical-align: middle;
+
+    border-top: 1px solid @separator-color;
+    border-bottom: 1px solid @separator-color;
+
+    &.order-arrow-up {
+        border-left: 1px solid @separator-color;
+        border-radius: @base-border-radius 0 0 @base-border-radius;
+    }
+
+   &.order-block-name,
+   &.order-block-sale-funnel {
+       width: 50%;
+   }
+
+    &.order-shrinkage {
+        border-color: transparent;
+        border-radius: 0 @base-border-radius @base-border-radius 0;
+    }
+}
+
+.order-arrow-up a, .order-arrow-down a
+{
+    position: relative;
+    top: 2px;
+}
+
+.order-arrow-up a {
+    float: right;
+}
+
+.order-arrow-down {
+    width: @control-height--medium;
+}
+
+.order-shrinkage {
+    span {
+        width: @crm-sale-stage-order-shrinkage-width;
+        text-align: center;
+        display: block;
+    }
+}
+
+/*Scoring panel*/
+.scoring-container {
+    background-color: @block-background-color;
+    padding: 10px;
+
+    .t-grid .scoring-contractor {
+        background-color: @scoring-table-color;
+    }
+}
+
+
+#LeadDublicateSettingsProperty .t-grid-table-container, #ContractorDublicateSettingsProperty .t-grid-table-container {
+    border: none !important;
+}
+
+.lead-dynamic-grid {
+    overflow: auto;
+
+    .lead-dynamic {
+        display: inline-block;
+
+        button.t-state-selected {
+            font-weight: bold;
+        }
+    }
+}
+
+.hide-property {
+    display: none;
+}
+.currencyImportTextBlock {
+    padding-bottom: 10px;
+}
+
+.currencyFormButton {
+    padding-top: 10px;
+}
+
+
+.checkboxes.two_cols > li {
+    float: left;
+    width: 300px;
+    margin-left: 7px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+}
+
+.checkboxes.two_cols > li:hover {
+    overflow: visible;
+    white-space:normal;
+}
+
+#CurrencyList {
+    padding: 20px 0 0 10px;
+}
+
+#currencyTable {
+    padding: 10px 0 10px 0;
+}
+
+#currencyImportContent {
+    padding: 10px 0 10px 20px;
+}
+
+#currencyImportContent .exchangeRateImportGridTable {
+    width: 100%;
+    min-width: 600px;
+}
+
+.exchangeRateImportGridTable tr.gridRow {
+    height:35px;
+}
+
+.exchangeRateImportGridTable tr.gridRow td {
+    vertical-align:inherit;
+}
+
+#LoadFileForCurrencyImport {
+    padding-top: 10px;
+}
+
+#ExchangeRateImportGrid {
+    width: 500px;
+}
+
+#ExchangeRateImportGrid tr:last-child {
+    width: 50px;
+}
+
+#CurrencyImportForm .currencyDynamicsSettingsTable {
+    width: 700px;
+}
+
+#CurrencyImportForm .currencyDynamicsSettingsTable > tbody > tr >  td {
+    padding-top: 3px;
+}
+
+.lead-count {
+    cursor: pointer;
+}
+
+.lead-count-hide {
+    opacity: 0.2;
+}
+
+#LeadDynamicGrid {
+    width: 100%;
+    background-color: @block-background-color;
+    z-index: 1;
+    position: relative;
+    .box-shadow(@shadow--2-2);
+    padding-bottom: @base-element-size--1-2;
+}
+
+.crm-marketing-header {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    padding-bottom: @base-element-size--1-2;
+
+    .crm-marketing-header-name {
+        .font-size(large)
+    }
+
+    .crm-marketing-header-bar .td_calendar_navigator {
+        padding-left: @base-element-size--3-4 / 2;
+        padding-right: @base-element-size--3-4 / 2;
+    }
+}
+
+.lead-dynamic-grid-table {
+    display: table;
+    width: 100%;
+    table-layout: fixed;
+}
+
+.lead-dynamic-grid-head {
+    display: table-header-group;
+    background-color: @panel-header-color-gray;
+}
+
+.lead-dynamic-grid-th {
+    display: table-cell;
+    text-align: center;
+    padding-top: @base-element-size--1-2;
+    padding-bottom: @base-element-size--1-4;
+
+    .lead-date {
+        padding-bottom: @base-element-size--1-4;
+    }
+}
+
+.lead-dynamic-grid-body {
+    display: table-row-group;
+    background-color: transparent !important;
+}
+
+.lead-dynamic-grid-row {
+    display: table-row;
+
+    .lead-dynamic-grid-td {
+        .t-in {
+            .tree-item-button {
+                min-height: @crm-lead-dynamic-grid-td-height;
+            }
+
+            .marketing-activity-button {
+                white-space: normal;
+                .font-size(small);
+                color: @general-font-color;
+            }
+        }
+    }
+}
+
+.lead-dynamic-grid-td {
+    display: table-cell;
+    padding: 0;
+    padding-left: 10px;
+    text-align: center;
+    border-style: solid;
+    border-color: @panel-header-color-gray;
+    border-width: 0 0 1px 0;
+    height: @crm-lead-dynamic-grid-td-height;
+}
+
+.lead-dynamic-grid-td:first-child {
+    border: 0;
+    text-align: left;
+}
+
+div.period-block {
+    background-color: @blue--50;
+    position: absolute;
+    z-index: -1;
+    height: @crm-period-block-width;
+}
+
+.mc-activity-div {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+}
+
+.marketing-budget-collapse {
+    vertical-align: 3px;
+}
+
+.tag-caption-bottom td.dft_table_td {
+    vertical-align: bottom !important;
+}
+
+#MarketingStatisticGrid {
+    width: 100%;
+    border-radius: @base-border-radius;
+    position: relative;
+    border: 1px solid @separator-color;
+
+    table {
+        width: 100%;
+        table-layout: fixed;
+
+        thead td {
+            background-color: @panel-header-color-gray;
+            text-align: center;
+            padding-top: @base-element-size--1-2;
+            padding-bottom: @base-element-size--1-4;
+
+            div.lead-date {
+                text-align: center;
+            }
+        }
+
+        tbody tr {
+
+            &:first-child td {
+                padding-top: @base-element-size--1-2;
+            }
+
+
+            &:last-child td {
+                border-bottom: none;
+            }
+
+            td {
+                padding: @base-element-size--1-8 / 2 0;
+                text-align: center;
+                border-bottom: 1px solid @separator-color;
+
+                &:first-child {
+                    text-align: left;
+                    padding-left: @base-element-size--1-2;
+                }
+
+                .indent-first {
+                    padding-left: @base-element-size--1-4;
+                }
+
+                .indent-second {
+                    padding-left: @base-element-size--1-2;
+                }
+            }
+        }
+    }
+}
+
+.sale-inpayment-add-button a
+{
+    display: block;
+    padding-top: 5px;
+}
+.sale-inpayment-add-button img{
+    height: 24px;
+}
+
+#PhoneDiv {
+    .font-size(large); 
+    padding-left: @base-element-size--1-4; 
+    vertical-align: middle;
+}
+
+.t-button.phone-button {
+    padding-right: 0;
+}
+
+#ShowCRMTaskBaseMenu{
+    cursor: pointer;
+    white-space: nowrap;
+    position: relative;
+}
+.crm-attachment-container {
+    overflow: auto;
+    display: flex;
+    justify-content: space-between;
+
+    & > div:last-of-type {
+        padding-left: 10px;
+    }
+}
+.crm-attachment  {
+    position: relative;
+    display: inline-block;
+    line-height: 1;
+    vertical-align: middle;
+
+    .attachment-container  {
+        margin: 0;
+    }
+    .delete-right-top-icon {
+        display: none;
+    }
+    &:hover .delete-right-top-icon {
+         display: block;
+    }
+}
+
+.contractor-task-status {
+    white-space: nowrap;
+}
+
+#SaleFunnelsContainer {
+    overflow-x: auto;
+    table.saleFunnel-table {
+        background-color: @block-background-color;
+        border-spacing: @saleFunnel-table-border-spacing;
+        border-collapse: separate;
+        padding: @saleFunnel-table-padding;
+        .box-shadow(@shadow--2-2);
+        border-radius: @base-border-radius;
+
+        .saleFuunel-table-headers {
+            line-height: @saleFuunel-table-headers-line-height;
+        }
+
+        .saleFunnel-stage-label {
+            font-weight: bold;
+            text-align: left;
+        }
+    }
+}
+
+table.table-form > tbody > tr > td.captionCell + td {
+    .editable-address-panel {
+        margin-bottom: -@base-element-size--3-4;
+
+        .display-address-table-container {
+
+            &[container-size="xs"] {
+                margin-top: @crm-address-table-padding-y;
+
+                .display-address span.display-string:not(:empty) {
+                    padding-top: 0;
+                }
+            }
+
+            .display-address span.display-string:not(:empty) {
+                padding-top: @crm-address-table-padding-y;
+            }
+        }
+    }
+}
+
+.addressNameContainer .display-address {
+    span.display-string:not(:empty) {
+        display: block;
+        padding-bottom: @base-element-size--3-4;
+    }
+}
+
+.address-view {
+    .heading-in-panel {
+        .font-size(large);
+        font-weight: bold;
+        padding-bottom: @base-element-size--1-2;
+    }
+
+    table.table-form > tbody > tr > td.property-value-container.matching-addresses {
+        padding-left: 0;
+    }
+}
+
+.AddressProviderRegion .table-form-columns-wrapper {
+    padding-top: 0;
+}
+
+.to-property-container {
+    .to-contractor-contact-container,
+    .to-contractor-lead-container,
+    .to-contractor-container {
+        margin-top: @crm-to-contractors-margin-top;
+    }
+
+    .contractor-contact-list-container,
+    .contractor-contact-checkbox-item {
+        margin-top: @crm-contractor-contact-checkbox-item-margin-top;
+    }
+}
+
+body:not(.mobile-mode) .general-info-container .sale-table-td-panel {
+    width: 50%;
+    flex-basis: 50%;
+    min-width: inherit;
+    max-width: inherit;
+    border-left: inherit;
+}
+
+body:not(.mobile-mode) .general-info-container .sale-table-td-main-info {
+    width: 50%;
+    flex-basis: 50%;
+    min-width: inherit;
+    max-width: inherit;
+}
+
+#SaleDynamicContainer{
+    overflow-x: auto;
+    padding-top: 10px;
+}
+
+#saleInpaymentsGridContainer {
+
+    .table-form-container {
+        margin-left: 0px;
+    }
+
+    #SalesVolumeHiddenDiv {
+        display: none
+    }
+
+    .sale-inpayment-add-button {
+        padding: @sale-inpayment-add-button-padding;
+    }
+
+    .sale-inpayment-money-table-container {
+        display: flex;
+
+        .sale-inpayment-money-table:first-child {
+            padding-right: @sale-inpayment-money-table-padding-right;
+        }
+
+        .sale-inpayment-money-table {
+            width: 50%;
+            line-height: @sale-inpayment-money-table-line-height;
+
+            table {
+                width: 100%;
+            }
+
+            .sale-inpayment-money-table-divider {
+                width: @sale-inpayment-money-table-divider-width;
+            }
+
+            .sale-inpayment-money-table-value {
+                color: @general-font-color--description;
+            }
+
+            .sale-inpayment-money-table-value {
+                text-align: right;
+            }
+        }
+    }
+}
+
+body:not(.mobile-mode) .general-info-container {
+    .marketing-info-left-panel.general-info-container-left {
+        flex-grow: 1;
+    }
+
+    .general-info-container-right.marketing-info-right-panel {
+        max-width: initial;
+        min-width: 350px;
+        border-left-color: transparent;
+    }
+}
+
+.general-info-container-right.marketing-info-right-panel {
+    #MarketingActivityBudgetPanel {
+        .budget-panel-header {
+            display: flex;
+            justify-content: space-between;
+
+            & > div:last-of-type {
+                width: @crm-budget-sum-panel-header-width;
+
+                .budget-sum {
+                    font-weight: bold;
+                    display: inline-block;
+                }
+            }
+        }
+
+        & + div {
+            .t-grid {
+                td {
+                    word-break: normal;
+
+                    &.budget-edit-td,
+                    &.budget-delete-td {
+                        padding-right: 0;
+                        width: @crm-budget-edit-width;
+                    }
+                }
+            }
+
+            .add-budget-button {
+                margin-top: @base-element-size--1-2;
+            }
+        }
+    }
+}
+
+.crm-contact-tab-info {
+    .t-grid-table-container > .t-grid-table > tbody {
+        white-space: nowrap;
+
+        .t-button {
+            max-width: @crm-contact-tab-info-max-width;
+
+            & > span {
+                white-space: nowrap !important;
+            }
+        }
+    }
+}
+
+.marketing-statistic {
+    margin-bottom: @base-element-size--1-2;
+    display: flex;
+    justify-content: flex-end;
+}
+
+.add-product-button {
+    margin-top: @base-element-size--1-2;
+}
+
+.inpayment-status-info {
+    display: flex;
+    flex-direction: column;
+    
+    .inpayment-status-date-row 
+    {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: @base-element-size--1-2;
+    }
+
+    .inpayment-status-text {
+        color: @general-font-color--captionCell;
+    }
+}
+
+.marketing-event-history-container {
+    margin-top: @base-element-size;
+}

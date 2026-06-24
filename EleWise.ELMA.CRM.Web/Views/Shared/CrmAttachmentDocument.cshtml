@@ -1,0 +1,57 @@
+﻿@using EleWise.ELMA
+@using EleWise.ELMA.BPM.Web.Common.Models
+@using EleWise.ELMA.CRM.Web
+@using EleWise.ELMA.Model.Metadata
+@using EleWise.ELMA.Web.Mvc.Models.ActionItems
+@using UIExtension = EleWise.ELMA.Web.Mvc.Html.UIExtensions;
+
+@model EleWise.ELMA.Documents.Models.IDocument
+
+@{
+    var attachmentId = Convert.ToInt64(ViewData["attachmentId"] ?? 0);
+}           
+
+@if (Model != null)
+{
+    var baseAttachmentModel = new BaseAttachmentModel
+    {
+        Name = MvcHtmlString.Create(HttpUtility.HtmlEncode(Model.Name)),
+        Href = Url.Action("View", "Document", new { area = "EleWise.ELMA.Documents.Web", id = Model.Id }),
+        Icon = new ActionButton
+        {
+            IconUrl = Url.Action("Object", "Images", new
+            {
+                area = "EleWise.ELMA.SDK.Web",
+                id = MetadataLoader.LoadMetadata(Model.GetType(), true, true).Uid,
+                useParent = true
+            }),
+            Disabled = true,
+            Attributes = new { @class = "file-attachment-image" }
+        }
+    };
+
+    if (Model.CurrentVersion != null && Model.CurrentVersion.File != null)
+    {
+        var uniqueUid = UIExtension.PrepareId(Guid.NewGuid().ToString());
+
+        var click = string.Format("elma.DownloadCurrentVersion({0}, {1}, '{2}', '{3}', '{4}'); return false; ",
+                Model.Id,
+                Model.CurrentVersion.Id,
+                Model.CurrentVersion.File.Id, UIExtension.PrepareId(Model.CurrentVersion.File.Id),
+                uniqueUid);
+
+        baseAttachmentModel.Icon.Disabled = false;
+        baseAttachmentModel.Icon.Click = click;
+        baseAttachmentModel.Icon.Url = Url.Action("Download", "DocumentVersion", "EleWise.ELMA.Documents.Web", new
+        {
+            id = Model.CurrentVersion.Id
+        });
+    }
+    <div class="crm-attachment">
+        @Html.Partial("BaseAttachment", baseAttachmentModel)
+        @if ((bool)ViewData["CanDelete"])
+        {
+            <span class="delete-right-top-icon" onclick = "@("DocumentDelete(" + attachmentId.ToString() + "," + Model.Id.ToString() + ")")" tooltiptext="@SR.T("Удалить вложение")"></span>
+        }
+    </div>
+}

@@ -1,0 +1,72 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <AssemblyName>EleWise.ELMA.Calendar</AssemblyName>
+    <GenerateAssemblyInfo>False</GenerateAssemblyInfo>
+    <TargetFramework>net48</TargetFramework>
+  </PropertyGroup>
+  <PropertyGroup>
+    <LangVersion>Preview</LangVersion>
+    <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
+  </PropertyGroup>
+  <PropertyGroup>
+    <RootNamespace />
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Remove="EleWise.ELMA.Calendar.Models.C.cs" />
+    <Compile Remove="EleWise.ELMA.Calendar.Models.C.cs" />
+    <Compile Remove="EleWise.ELMA.Calendar.Models.S.cs" />
+    <None Remove="EleWise.ELMA.Calendar.Notifica.xml" />
+    <None Remove="EleWise.ELMA.Calendar.Db.Calen.xml" />
+    <None Remove="EleWise.ELMA.Calendar.Notifica.xml" />
+    <None Remove="EleWise.ELMA.Calendar.Models.C.xml" />
+    <None Remove="EleWise.ELMA.Calendar.Models.C.xml" />
+    <None Remove="EleWise.ELMA.Calendar.Models.C.xml" />
+    <None Remove="EleWise.ELMA.Calendar.Models.C.xml" />
+    <None Remove="EleWise.ELMA.Calendar.Models.C.xml" />
+    <EmbeddedResource Include="EleWise.ELMA.Calendar.Models.C.cs" />
+    <EmbeddedResource Include="EleWise.ELMA.Calendar.Models.C.cs" />
+    <EmbeddedResource Include="EleWise.ELMA.Calendar.Models.S.cs" />
+    <EmbeddedResource Include="EleWise.ELMA.Calendar.Notifica.xml" />
+    <EmbeddedResource Include="EleWise.ELMA.Calendar.Db.Calen.xml" />
+    <EmbeddedResource Include="EleWise.ELMA.Calendar.Notifica.xml" />
+    <EmbeddedResource Include="EleWise.ELMA.Calendar.Models.C.xml" />
+    <EmbeddedResource Include="EleWise.ELMA.Calendar.Models.C.xml" />
+    <EmbeddedResource Include="EleWise.ELMA.Calendar.Models.C.xml" />
+    <EmbeddedResource Include="EleWise.ELMA.Calendar.Models.C.xml" />
+    <EmbeddedResource Include="EleWise.ELMA.Calendar.Models.C.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="EleWise.ELMA.SDK">
+      <HintPath>..\EleWise.ELMA.SDK.dll</HintPath>
+    </Reference>
+    <Reference Include="Iesi.Collections" />
+    <Reference Include="EleWise.ELMA.Security">
+      <HintPath>..\EleWise.ELMA.Security.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.Extensions" />
+    <Reference Include="EleWise.ELMA.Common">
+      <HintPath>..\EleWise.ELMA.Common.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web" />
+    <Reference Include="System.Core" />
+    <Reference Include="EleWise.TemplateGenerator.Merged">
+      <HintPath>..\EleWise.TemplateGenerator.Merged.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="EleWise.ELMA.Content">
+      <HintPath>..\EleWise.ELMA.Content.dll</HintPath>
+    </Reference>
+    <Reference Include="NHibernate" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+    <Reference Include="EleWise.ELMA.Messages">
+      <HintPath>..\EleWise.ELMA.Messages.dll</HintPath>
+    </Reference>
+    <Reference Include="System.ServiceModel" />
+    <Reference Include="EleWise.ELMA.SDK.Web">
+      <HintPath>..\EleWise.ELMA.SDK.Web.dll</HintPath>
+    </Reference>
+    <Reference Include="System.ServiceModel.Web" />
+    <Reference Include="System.Configuration" />
+  </ItemGroup>
+</Project>

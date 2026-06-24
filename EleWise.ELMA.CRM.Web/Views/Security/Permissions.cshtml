@@ -1,0 +1,20 @@
+﻿@model EleWise.ELMA.CRM.Web.Models.SecurityPermissionModel
+@using EleWise.ELMA
+@using EleWise.ELMA.CRM.Web
+
+@{
+    Html.Title(Model.GlobalPermissionsModel.Title);
+}
+
+@(Html.Toolbar()
+    .Group("toolbar-group-1")
+        .ToolbarButton(new ActionToolbarItem("AddCategoryItemButton")
+        {
+            Text = SR.T("Категории"),
+            IconUrl = "#category.svg",
+            Url = Url.Action("Index", "Category", new { area = RouteProvider.AreaName })
+        }))
+
+@Html.Partial("PermissionManagment/GlobalPermissions", Model.GlobalPermissionsModel )
+
+  

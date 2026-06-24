@@ -1,0 +1,90 @@
+﻿@model EleWise.ELMA.CRM.Web.Models.CategoryRuleEditModel
+@using EleWise.ELMA
+@using EleWise.ELMA.BPM.Web.Common.Models
+@using EleWise.ELMA.CRM.Web
+@using EleWise.ELMA.Model.Types
+@using EleWise.ELMA.Web.Mvc.Models.Panels
+
+@{
+    if (Model.CategoryRule.IsNew())
+    {
+        Html.Header(SR.T("Создать правило"));
+    }
+    else
+    {
+        Html.Header(SR.T("Редактировать правило"));
+    }
+}
+
+@(Html.Toolbar()
+    .Group("toolbar-group-1")
+        .ToolbarSubmit(SR.Save, "#save.svg", "toolbar-action-Save")
+        .ToolbarLink(SR.Cancel, "#close_outline.svg", Url.Action("Index"), "toolbar-action-Cancel"))
+
+@using (Html.ElmaForm(routeValues: new { action = "Save" }))
+{
+    @Html.ValidationSummary()
+
+    if (!Model.CategoryRule.IsNew())
+    {
+        @Html.HiddenFor(m => m.CategoryRule.Id) 
+    }
+    
+    @Html.HiddenFor(m => m.CategoryRule.Type)
+
+    using (Html.CollapsiblePanel(new CollapsiblePanel
+    {
+        Header = SR.T("Параметры правила"),
+        Expanded = true,
+        SaveState = false,
+        Id = "DefaultFolderFromPanel",
+        Class = "separator-gray"
+    }))
+    {
+        using(Html.TableForm(EleWise.ELMA.Model.Views.ViewType.Edit))
+        {
+            @Html.EditableProperty(m => m.CategoryRule.Name, a => a.Name = SR.T("Название правила"))
+            @Html.EditableProperty(m => m.CategoryRule.Categories)
+        }
+    }
+
+    using (Html.CollapsiblePanel(new CollapsiblePanel
+    {
+        Header = SR.T("Правило назначения категорий"),
+        Expanded = true,
+        SaveState = false,
+        Id = "DefaultFolderFromPanel234",
+        Class = "separator-gray",
+    }))
+    {
+        <div id="filteringGridForm">
+            @if (Model.DataFilter.EnableEqlQuery)
+            {
+                var eqlAutoComplete = new EQLAutoComplete
+                {
+                    QueryField = "DataFilter.Filter.Query",
+                    TypeNameField = "Filter.__TypeName",
+                    FilterTypeUid = Model.DataFilter.FilterTypeUid,
+                    QueryFieldValue = Model.DataFilter.Filter != null ? Model.DataFilter.Filter.Query : null,
+                };
+
+                <div class="base-element-margin-bottom base-element-margin-top">
+                    @Html.Partial("Filter/EQLTextBox", eqlAutoComplete)
+                    @Html.Partial("Filter/EQLAutoComplete", eqlAutoComplete)
+                </div>
+            }
+            else
+            {
+                @Html.HiddenFor(m => m.DataFilter.Filter.Query)
+            }
+        
+            <div id="filteringGridFields">
+                @Html.Partial("Filter/FilterModelFields", Model.DataFilter, new ViewDataDictionary
+                        {
+                            TemplateInfo = new TemplateInfo { HtmlFieldPrefix = ViewData.TemplateInfo.GetFullHtmlFieldName("DataFilter") }
+                        })
+            </div>     
+        </div>
+    }
+}
+

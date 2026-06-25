@@ -27,7 +27,7 @@
         }
         </div>
         <div class="marketing-tags-add-button">
-            @Html.Button().Text(SR.Add).IconUrl("#add.svg").Click($"{prefix}_addTag()")
+            @Html.Button().Text(SR.Add).IconUrl("#add.svg").Click(string.Format("{0}_addTag()", prefix))
         </div>
     </div>
 

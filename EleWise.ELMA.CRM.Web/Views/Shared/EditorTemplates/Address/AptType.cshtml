@@ -30,7 +30,7 @@
             });
         }
     })
-    .Click($"changeAppartmentType{uid}(this)"))
+    .Click(string.Format("changeAppartmentType{0}(this)", uid)))
 
 <script>
     function changeAppartmentType@(uid)(sender) {

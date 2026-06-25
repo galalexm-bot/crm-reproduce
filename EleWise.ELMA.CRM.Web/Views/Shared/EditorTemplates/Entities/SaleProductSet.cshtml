@@ -36,12 +36,12 @@
                 {
                     foreach (var item in Model)
                     {
-                        <tr @(idAttrName)="@(item.Id)">
+                        @Html.Raw(string.Format("<tr {0}=\"{1}\">", idAttrName, item.Id))
                             <td>@(MvcHtmlString.Create(Html.ImageLink("#edit.svg", null, "javascript:void(0)", null, new {style = "margin-right: 5px", onclick = "editProduct(event)"}, SR.T("Редактировать"), true).ToString()
                                                     + Html.ImageLink("#delete.svg", null, "javascript:void(0)", null, new {onclick = "deleteProduct(event)"}, SR.T("Удалить"), true).ToString()))</td>
                             <td><span class="display-string">@item.Product.Name</span></td>
                             <td style="text-align: center">@item.Quantity</td>
-                        </tr>
+                            @Html.Raw("</tr>")
                     }
                 }
                 else

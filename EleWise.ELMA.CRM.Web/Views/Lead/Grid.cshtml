@@ -54,13 +54,13 @@
 {
     var value = summaryLeadStatus != null ? summaryLeadStatus.ToString() : "All";
     var statusName = summaryLeadStatus != null ? EleWise.ELMA.Helpers.EnumHelper.GetDisplayName(summaryLeadStatus) : SR.T("Всего");
-    var template = $"{statusName}: <span>{count}</span>";
+    var template = string.Format("{0}: <span>{1}</span>", statusName, count);
     @(Html.Button()
-        .Click($"filterSummary('{value}')")
+        .Click(string.Format("filterSummary('{0}')", value))
         .Text(template)
         .NoBorder()
         .Checked(filterSummaryLeadStatus == summaryLeadStatus)
-        .Attributes(new { id = $"{value}Count" }))
+        .Attributes(new { id = string.Format("{0}Count", value) }))
 }
 @helper HeaderContent(HtmlHelper<FilterModel> Html, FilterModel Model, bool showSummary) {
     var formId = "filteringGridForm";
@@ -75,14 +75,14 @@
             @(Html.ModernSwitchButton(false)
                 .Id("SpanFilterShowOnlyMyProperty")
                 .ContainerAttributes(new Dictionary<string, object> { { "class", "base-element-margin-right switch-label input-label" } })
-                .Attributes(new HtmlAttributes { onchange = $"invertShowOnlyMyProperty(); $('#{formId}').submit();" })
+                .Attributes(new HtmlAttributes { onchange = string.Format("invertShowOnlyMyProperty(); $('#{0}').submit();", formId) })
                 .LabelText(SR.T("Только мои"))
                 .Checked(((ILeadFilter)Model.Filter).ShowOnlyMy)
                 .TextPosition(ModernSwitchButton.LabelPosition.Left))
             @(Html.ModernSwitchButton(false)
                 .Id("SpanFilterShowSummary")
                 .ContainerAttributes(new Dictionary<string, object> { { "class", "base-element-margin-right switch-label input-label" } })
-                .Attributes(new HtmlAttributes { onchange = $"toogleSummary(); $('#{formId}').submit();" })
+                .Attributes(new HtmlAttributes { onchange = string.Format("toogleSummary(); $('#{0}').submit();", formId) })
                 .LabelText(SR.T("Разбиение по статусам"))
                 .Checked(showSummary)
                 .TextPosition(ModernSwitchButton.LabelPosition.Left))
